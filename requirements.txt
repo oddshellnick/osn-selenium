@@ -1,0 +1,7 @@
+trio>=0.30.0
+setuptools>=78.1.1
+pywin32>=308
+selenium>=4.34.0
+pandas>=2.3.0
+osn-windows-cmd>=1.1.0
+osn-requests>=1.1.0
