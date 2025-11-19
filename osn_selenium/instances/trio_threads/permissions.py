@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
@@ -6,29 +7,53 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import PERMISSIONS_TYPEHINT
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+from osn_selenium.instances.unified.permissions import UnifiedPermissions
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
 )
 
 
-class Permissions(_TrioThreadMixin, AbstractPermissions):
+__all__ = ["Permissions"]
+
+
+class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
+	"""
+	Wrapper for the legacy Selenium Permissions instance.
+
+	Provides methods to set and modify browser permissions (e.g., camera, microphone, geolocation)
+	via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_permissions: legacyPermissions,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
-		super().__init__(lock=lock, limiter=limiter)
+		"""
+		Initializes the Permissions wrapper.
+
+		Args:
+			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
 		
-		self._selenium_permissions = selenium_permissions
+		UnifiedPermissions.__init__(self, selenium_permissions=selenium_permissions)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_permissions: legacyPermissions,
+			legacy_object: PERMISSIONS_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -39,7 +64,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 		instance into the new interface.
 
 		Args:
-			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance.
+			legacy_object (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -47,11 +72,20 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 			Self: A new instance of a class implementing Permissions.
 		"""
 		
-		return cls(selenium_permissions=selenium_permissions, lock=lock, limiter=limiter)
+		legacy_permissions_obj = get_legacy_instance(instance=legacy_object)
+		
+		if not isinstance(legacy_permissions_obj, legacyPermissions):
+			raise CannotConvertTypeError(from_=legacyPermissions, to_=legacy_object)
+		
+		return cls(
+				selenium_permissions=legacy_permissions_obj,
+				lock=lock,
+				limiter=limiter
+		)
 	
 	@property
 	def legacy(self) -> legacyPermissions:
-		return self._selenium_permissions
+		return self._legacy_impl
 	
 	async def set_permission(
 			self,
@@ -60,8 +94,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 			origin: str,
 			user_context: Optional[str] = None,
 	) -> None:
-		await self._wrap_to_trio(
-				self.legacy.set_permission,
+		await self.sync_to_trio(sync_function=self._set_permission_impl)(
 				descriptor=descriptor,
 				state=state,
 				origin=origin,

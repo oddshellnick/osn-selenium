@@ -1,32 +1,59 @@
 import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Dict,
 	Optional,
 	Self,
 	Union
 )
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+from osn_selenium.instances._typehints import (
+	WEB_EXTENSION_TYPEHINT
+)
+from osn_selenium.instances.unified.web_extension import UnifiedWebExtension
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
 
 
-class WebExtension(_TrioThreadMixin, AbstractWebExtension):
+__all__ = ["WebExtension"]
+
+
+class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
+	"""
+	Wrapper for the legacy Selenium WebExtension instance.
+
+	Manages the installation and uninstallation of browser extensions via the
+	WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_web_extension: legacyWebExtension,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
-		super().__init__(lock=lock, limiter=limiter)
+		"""
+		Initializes the WebExtension wrapper.
+
+		Args:
+			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
 		
-		self._selenium_web_extension = selenium_web_extension
+		UnifiedWebExtension.__init__(self, selenium_web_extension=selenium_web_extension)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_web_extension: legacyWebExtension,
+			legacy_object: WEB_EXTENSION_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -37,7 +64,7 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 		instance into the new interface.
 
 		Args:
-			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance.
+			legacy_object (WEB_EXTENSION_TYPEHINT): The legacy Selenium WebExtension instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -45,8 +72,13 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 			Self: A new instance of a class implementing WebExtension.
 		"""
 		
+		legacy_web_extension_obj = get_legacy_instance(instance=legacy_object)
+		
+		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
+			raise CannotConvertTypeError(from_=legacyWebExtension, to_=legacy_object)
+		
 		return cls(
-				selenium_web_extension=selenium_web_extension,
+				selenium_web_extension=legacy_web_extension_obj,
 				lock=lock,
 				limiter=limiter
 		)
@@ -57,16 +89,11 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 			archive_path: Optional[str] = None,
 			base64_value: Optional[str] = None,
 	) -> Dict:
-		return await self._wrap_to_trio(
-				self.legacy.install,
-				path=path,
-				archive_path=archive_path,
-				base64_value=base64_value
-		)
+		return await self.sync_to_trio(sync_function=self._install_impl)(path=path, archive_path=archive_path, base64_value=base64_value)
 	
 	@property
 	def legacy(self) -> legacyWebExtension:
-		return self._selenium_web_extension
+		return self._legacy_impl
 	
 	async def uninstall(self, extension_id_or_result: Union[str, Dict]) -> None:
-		await self._wrap_to_trio(self.legacy.uninstall, extension_id_or_result=extension_id_or_result)
+		await self.sync_to_trio(sync_function=self._uninstall_impl)(extension_id_or_result=extension_id_or_result)

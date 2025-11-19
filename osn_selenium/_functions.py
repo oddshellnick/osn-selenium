@@ -1,35 +1,84 @@
-import re
 import pathlib
+from types import UnionType
+from osn_selenium.exceptions.path import PathValidationError
+from typing import (
+	Iterable,
+	Optional,
+	Set,
+	Union,
+	get_args,
+	get_origin
+)
+from osn_selenium._typehints import (
+	PATH_TYPEHINT,
+	TYPES_FOR_FLATTENING_TYPEHINT
+)
 
-from osn_selenium.utils import JS_Scripts
+
+__all__ = ["flatten_types", "validate_path"]
 
 
-def read_js_scripts() -> JS_Scripts:
+def validate_path(path: Optional[PATH_TYPEHINT]) -> Optional[pathlib.Path]:
 	"""
-	Reads JavaScript scripts from files and returns them in a JS_Scripts object.
+	Validates the provided path and converts it to a pathlib.Path object.
 
-	This function locates all `.js` files within the 'js_scripts' directory, which is expected to be located two levels above the current file's directory.
-	It reads the content of each JavaScript file, using UTF-8 encoding, and stores these scripts in a dictionary-like `_JS_Scripts` object.
-	The filenames (without the `.js` extension) are used as keys in the `_JS_Scripts` object to access the script content.
+	Args:
+		path (Optional[PATH_TYPEHINT]): The path to be validated and converted.
 
 	Returns:
-		JS_Scripts: An object of type _JS_Scripts, containing the content of each JavaScript file as attributes.
+		Optional[pathlib.Path]: A Path object if valid, or None if the input was None.
+
+	Raises:
+		PathValidationError: If the path conversion fails due to an exception.
 	"""
+	
+	try:
+		if path is None:
+			return None
+	
+		return pathlib.Path(path)
+	except (Exception,) as exception:
+		raise PathValidationError(path=path, exception=exception)
 
-	scripts = {}
 
-	for script_file in (pathlib.Path(__file__).parent / "js_scripts").iterdir():
-		scripts[re.sub(r"\.js$", "", script_file.name)] = open(script_file, "r", encoding="utf-8").read()
+def flatten_types(
+		types_: Union[TYPES_FOR_FLATTENING_TYPEHINT, Iterable[TYPES_FOR_FLATTENING_TYPEHINT]]
+) -> Set[str]:
+	"""
+	Recursively extracts type names from a type, a union of types, or a collection of types.
 
-	return JS_Scripts(
-			check_element_in_viewport=scripts["check_element_in_viewport"],
-			get_document_scroll_size=scripts["get_document_scroll_size"],
-			get_element_css=scripts["get_element_css"],
-			get_element_rect_in_viewport=scripts["get_element_rect_in_viewport"],
-			get_random_element_point_in_viewport=scripts["get_random_element_point_in_viewport"],
-			get_viewport_position=scripts["get_viewport_position"],
-			get_viewport_rect=scripts["get_viewport_rect"],
-			get_viewport_size=scripts["get_viewport_size"],
-			open_new_tab=scripts["open_new_tab"],
-			stop_window_loading=scripts["stop_window_loading"],
-	)
+	Args:
+		types_ (Union[Type, Iterable[Type]]): The type definition or collection of types to flatten.
+
+	Returns:
+		Set[str]: A set of strings representing the names of the types found.
+	"""
+	
+	types_of_level = set()
+	
+	if isinstance(types_, Iterable) and not isinstance(types_, str):
+		for t in types_:
+			types_of_level.update(flatten_types(t))
+	
+		return types_of_level
+	
+	if isinstance(types_, str):
+		types_of_level.add(types_)
+	
+	origin = get_origin(types_)
+	args = get_args(types_)
+	
+	is_union = origin is Union or isinstance(types_, UnionType)
+	
+	if is_union:
+		for arg in args:
+			types_of_level.update(flatten_types(arg))
+	else:
+		if types_ is None or types_ is type(None):
+			types_of_level.add("NoneType")
+		elif hasattr(types_, "__name__"):
+			types_of_level.add(types_.__name__)
+		else:
+			types_of_level.add(str(types_))
+	
+	return types_of_level

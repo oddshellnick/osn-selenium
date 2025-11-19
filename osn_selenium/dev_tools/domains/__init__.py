@@ -1,14 +1,13 @@
-from __future__ import annotations
-
-from osn_selenium.types import DictModel
+from osn_selenium.models import DictModel
 from typing import (
 	Literal,
 	Optional,
 	Union
 )
-from osn_selenium.dev_tools.domains.fetch import (
-	FetchSettings,
-)
+from osn_selenium.dev_tools.domains.fetch import FetchSettings
+
+
+__all__ = ["DomainsSettings", "domains_classes_type", "domains_type"]
 
 
 class DomainsSettings(DictModel):
@@ -27,6 +26,5 @@ class DomainsSettings(DictModel):
 
 domains_type = Literal["fetch"]
 domains_classes_type = Union[FetchSettings]
-
 
 DomainsSettings.model_rebuild()
