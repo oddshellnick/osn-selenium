@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 import trio
 from selenium.webdriver.common.bidi.cdp import CdpConnectionClosed
 
@@ -19,7 +21,7 @@ class WrongHandlerSettingsTypeError(Exception):
 		"""
 		
 		super().__init__(
-				f"Wrong event handler settings type ({handler_settings_type}). It must be a dict!"
+				f"Wrong event handler settings type ({handler_settings_type}). It must be a Dict!"
 		)
 
 
@@ -31,13 +33,13 @@ class WrongHandlerSettingsError(Exception):
 	exactly one of the expected keys, as specified in the `one_of` attribute.
 	"""
 	
-	def __init__(self, handler_settings: dict, one_of: list[str]):
+	def __init__(self, handler_settings: Dict, one_of: List[str]):
 		"""
 		Initializes WrongHandlerSettingsError with the incorrect handler settings and expected keys.
 
 		Args:
-			handler_settings (dict[str, Any]): The dictionary of handler settings that caused the error.
-			one_of (Sequence[str]): A list of expected keys, exactly one of which should be in `handler_settings`.
+			handler_settings (Dict[str, Any]): The dictionary of handler settings that caused the error.
+			one_of (Sequence[str]): A List of expected keys, exactly one of which should be in `handler_settings`.
 		"""
 		
 		super().__init__(

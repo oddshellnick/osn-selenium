@@ -1,8 +1,8 @@
 import pathlib
-from typing import TypedDict
+from osn_selenium.types import DictModel
 
 
-class Browser(TypedDict):
+class Browser(DictModel):
 	"""
 	Represents a browser installed on the system.
 

@@ -1,23 +1,27 @@
-import trio
+import json
 import shutil
 import logging
 import warnings
 import traceback
 import functools
 from pathlib import Path
-from dataclasses import dataclass
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
-from osn_selenium.dev_tools._types import (
-	devtools_background_func_type
-)
 from typing import (
 	Any,
 	Callable,
-	Iterable,
-	Literal,
+	Dict, Iterable,
+	List, Literal,
 	Optional,
 	TYPE_CHECKING,
 	Union
+)
+
+import trio
+from pydantic import Field
+
+from osn_selenium.types import DictModel
+from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.dev_tools._types import (
+	devtools_background_func_type
 )
 
 
@@ -144,8 +148,8 @@ def extract_exception_trace(exception: BaseException) -> str:
 	...
 	"""
 	
-	def flatten_exceptions(exception_: BaseException) -> list[BaseException]:
-		"""Recursively flattens an ExceptionGroup into a list of individual exceptions."""
+	def flatten_exceptions(exception_: BaseException) -> List[BaseException]:
+		"""Recursively flattens an ExceptionGroup into a List of individual exceptions."""
 		
 		if isinstance(exception_, ExceptionGroup):
 			inner_exceptions = exception_.exceptions
@@ -168,7 +172,7 @@ def extract_exception_trace(exception: BaseException) -> str:
 	return "\n".join(format_exception(exc) for exc in flatten_exceptions(exception))
 
 
-def log_exception(exception: BaseException):
+def log_exception(exception: BaseException, extra_data: Optional[Dict[str, Any]] = None):
 	"""
 	Logs the full traceback of an exception at the ERROR level.
 
@@ -178,8 +182,20 @@ def log_exception(exception: BaseException):
 	Args:
 		exception (BaseException): The exception object to log.
 	"""
+
+	if extra_data is None:
+		exception_data = extract_exception_trace(exception)
+	else:
+		trace = extract_exception_trace(exception)
+		max_len = max(len(line) for line in trace.splitlines())
+
+		exception_data = "{bound}\n{exception}\nWith extra data:\n{extra_data}\n{bound}".format(
+				bound="=" * max_len,
+				exception=trace,
+				extra_data=json.dumps(extra_data, indent=4, ensure_ascii=False)
+		)
 	
-	logging.log(logging.ERROR, extract_exception_trace(exception))
+	logging.log(logging.ERROR, exception_data)
 
 
 class ExceptionThrown:
@@ -250,7 +266,15 @@ async def execute_cdp_command(
 		if error_mode == "raise":
 			raise error
 		elif error_mode == "log":
-			await self.log_error(error=error)
+			await self.log_error(
+					error=error,
+					extra_data={
+						"cdp_command": function.__name__,
+						"args": args,
+						"kwargs": kwargs
+					}
+			)
+
 			return ExceptionThrown(exception=error)
 		elif error_mode == "pass":
 			return ExceptionThrown(exception=error)
@@ -260,8 +284,8 @@ async def execute_cdp_command(
 
 def _validate_log_filter(
 		filter_mode: Literal["include", "exclude"],
-		log_filter: Optional[Union[Any, Iterable[Any]]]
-) -> Callable[[Any], bool]:
+		log_filter: Optional[Union[str, Iterable[str]]]
+) -> Callable[[str], bool]:
 	"""
 	Creates a callable filter function based on the specified filter mode and values.
 
@@ -274,14 +298,14 @@ def _validate_log_filter(
 		filter_mode (Literal["include", "exclude"]): The mode of the filter.
 			"include" means only items present in `log_filter` will pass.
 			"exclude" means all items except those present in `log_filter` will pass.
-		log_filter (Optional[Union[Any, Sequence[Any]]]):
+		log_filter (Optional[Union[str, Sequence[str]]]):
 			A single log filter item or a sequence of such items.
 			If None:
 				- In "include" mode, the generated filter will always return False (nothing is included).
 				- In "exclude" mode, the generated filter will always return True (nothing is excluded).
 
 	Returns:
-		Callable[[Any], bool]: A callable function that takes a single argument (e.g., a log level or target type)
+		Callable[[str], bool]: A callable function that takes a single argument (e.g., a log level or target type)
 			and returns True if it passes the filter, False otherwise.
 
 	Raises:
@@ -316,15 +340,11 @@ def _validate_log_filter(
 		elif filter_mode == "exclude":
 			return lambda x: True
 	
-		raise ValueError(f"Invalid log filter_mode ({filter_mode}).")
-	
 	if isinstance(log_filter, Iterable):
 		if filter_mode == "include":
 			return lambda x: x in log_filter
 		elif filter_mode == "exclude":
 			return lambda x: x not in log_filter
-	
-		raise ValueError(f"Invalid log filter_mode ({filter_mode}).")
 	
 	if filter_mode == "include":
 		return lambda x: x == log_filter
@@ -415,8 +435,7 @@ def _background_task_decorator(func: devtools_background_func_type) -> devtools_
 	return wrapper
 
 
-@dataclass
-class TargetFilter:
+class TargetFilter(DictModel):
 	"""
 	Dataclass to define a filter for discovering new browser targets.
 
@@ -430,30 +449,11 @@ class TargetFilter:
 			If False or None, targets matching `type_` will be included.
 	"""
 	
-	type_: Optional[str] = None
+	type_: Optional[str] = Field(default=None, alias="type")
 	exclude: Optional[bool] = None
-	
-	def to_dict(self) -> dict[str, Any]:
-		"""
-		Converts the target filter to a dictionary suitable for CDP command parameters.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the target filter.
-		"""
-		
-		dict_ = {}
-		
-		if self.type_ is not None:
-			dict_["type"] = self.type_
-		
-		if self.exclude is not None:
-			dict_["exclude"] = self.exclude
-		
-		return dict_
 
 
-@dataclass
-class TargetData:
+class TargetData(DictModel):
 	"""
 	Dataclass to hold essential information about a browser target (e.g., a tab, iframe, or worker).
 
@@ -475,35 +475,7 @@ class TargetData:
 	opener_frame_id: Optional[str] = None
 	browser_context_id: Optional[str] = None
 	subtype: Optional[str] = None
-	
-	def to_dict(self) -> dict[str, Any]:
-		"""
-		Converts the target data to a dictionary.
 
-		Returns:
-			dict[str, Any]: A dictionary representation of the target data.
-		"""
-		
-		return {
-			"target_id": self.target_id,
-			"type": self.type_,
-			"title": self.title,
-			"url": self.url,
-		}
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the target data to a JSON-serializable dictionary.
 
-		Note: `cdp_session` is converted to its string representation as it's not directly JSON-serializable.
-
-		Returns:
-			dict[str, Any]: A JSON-serializable dictionary representation of the target data.
-		"""
-		
-		return {
-			"target_id": self.target_id,
-			"type": self.type_,
-			"title": self.title,
-			"url": self.url,
-		}
+TargetFilter.model_rebuild()
+TargetData.model_rebuild()
