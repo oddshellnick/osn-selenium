@@ -1,4 +1,4 @@
 include description.txt
 include README.md
 include requirements.txt
-include osn_selenium/webdrivers/js_scripts/*.js
+include osn_selenium/js_scripts/*.js

@@ -1,8 +1,8 @@
 import trio
-from typing import Any, Optional, Self
+from typing import Optional, Self
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 
 
 class Alert(_TrioThreadMixin, AbstractAlert):

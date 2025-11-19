@@ -1,7 +1,5 @@
 import pathlib
 from selenium import webdriver
-
-from osn_selenium.abstract.webdriver.chrome import AbstractChromeWebDriver
 from osn_selenium.types import WindowRect
 from typing import (
 	Optional,
@@ -13,6 +11,9 @@ from osn_selenium.flags.utils.chrome import ChromeFlags
 from osn_selenium.flags.chrome import ChromeFlagsManager
 from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.sync.blink import BlinkWebDriver
+from osn_selenium.abstract.webdriver.chrome import (
+	AbstractChromeWebDriver
+)
 
 
 class ChromeWebDriver(BlinkWebDriver, AbstractChromeWebDriver):

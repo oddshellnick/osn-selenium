@@ -5,7 +5,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension

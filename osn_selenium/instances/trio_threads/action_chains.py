@@ -9,7 +9,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from osn_selenium.instances.trio_threads.web_element import WebElement
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
 )

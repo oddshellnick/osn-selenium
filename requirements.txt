@@ -3,5 +3,5 @@ selenium~=4.38.0
 setuptools~=80.9.0
 pydantic~=2.12.4
 trio-websocket~=0.12.2
-pywin32~=311
+pywin32==311
 pandas~=2.3.3

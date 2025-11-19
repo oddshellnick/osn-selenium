@@ -2,7 +2,7 @@ import trio
 from typing import List, Optional, Self
 from selenium.webdriver.common.fedcm.account import Account
 from osn_selenium.abstract.instances.dialog import AbstractDialog
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )

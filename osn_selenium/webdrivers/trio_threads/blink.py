@@ -7,6 +7,7 @@ from subprocess import Popen
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
 from osn_selenium.flags.blink import BlinkFlagsManager
+from osn_selenium.trio_base_mixin import requires_driver
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_selenium.webdrivers.trio_threads.base import WebDriver
@@ -87,35 +88,32 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 					use_browser_exe=use_browser_exe,
 			)
 	
-	async def _ensure_driver(self) -> None:
-		await super()._ensure_driver()
-	
+	@requires_driver
 	async def delete_network_conditions(self) -> None:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.delete_network_conditions)
 	
+	@requires_driver
 	async def get_issue_message(self) -> str:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.get_issue_message)
 	
+	@requires_driver
 	async def get_log(self, log_type: str):
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.get_log, log_type=log_type)
 	
+	@requires_driver
 	async def get_network_conditions(self) -> Dict[str, Any]:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.get_network_conditions)
 	
+	@requires_driver
 	async def get_sinks(self) -> List[str]:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.get_sinks)
 	
+	@requires_driver
 	async def launch_app(self, id: str) -> Dict[str, Any]:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.launch_app, id=id)
 	
+	@requires_driver
 	async def log_types(self) -> List[str]:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(lambda: self.driver.log_types)
 	
 	@property
@@ -226,7 +224,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 			warnings.warn("Browser is already running.")
 	
 	async def _create_driver(self) -> None:
-		raise NotImplementedError("This function must be implemented in child classes.")
+		await super()._create_driver()
 	
 	async def _check_browser_exe_active(self) -> bool:
 		pids_with_addrs = await self._wrap_to_trio(
@@ -359,26 +357,26 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 				window_rect=window_rect,
 		)
 	
+	@requires_driver
 	async def set_network_conditions(self, **network_conditions: Dict[str, Any]) -> None:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.set_network_conditions, **network_conditions)
 	
+	@requires_driver
 	async def set_permissions(self, name: str, value: str) -> None:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.set_permissions, name=name, value=value)
 	
+	@requires_driver
 	async def set_sink_to_use(self, sink_name: str) -> Dict:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.set_sink_to_use, sink_name=sink_name)
 	
+	@requires_driver
 	async def start_desktop_mirroring(self, sink_name: str) -> Dict:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.start_desktop_mirroring, sink_name=sink_name)
 	
+	@requires_driver
 	async def start_tab_mirroring(self, sink_name: str) -> Dict:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.start_tab_mirroring, sink_name=sink_name)
 	
+	@requires_driver
 	async def stop_casting(self, sink_name: str) -> Dict:
-		await self._ensure_driver()
 		return await self._wrap_to_trio(self.driver.stop_casting, sink_name=sink_name)

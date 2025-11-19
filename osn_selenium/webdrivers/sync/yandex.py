@@ -1,6 +1,4 @@
 import pathlib
-
-from osn_selenium.abstract.webdriver.yandex import AbstractYandexWebDriver
 from osn_selenium.types import WindowRect
 from typing import (
 	Optional,
@@ -11,6 +9,9 @@ from osn_selenium.flags.utils.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
+from osn_selenium.abstract.webdriver.yandex import (
+	AbstractYandexWebDriver
+)
 
 
 class YandexWebDriver(ChromeWebDriver, AbstractYandexWebDriver):
@@ -93,7 +94,6 @@ class YandexWebDriver(ChromeWebDriver, AbstractYandexWebDriver):
 			start_page_url: str = "",
 			window_rect: Optional[WindowRect] = None,
 	):
-		
 		super().reset_settings(
 				flags=flags,
 				browser_exe=browser_exe,

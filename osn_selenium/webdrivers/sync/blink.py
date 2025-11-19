@@ -6,19 +6,22 @@ from subprocess import Popen
 from selenium import webdriver
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
-from typing import (
-	Any,
-	Mapping, Optional,
-	Sequence, Type,
-	Union
-)
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.webdrivers.sync.base import WebDriver
+from osn_selenium.trio_base_mixin import requires_driver
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
 from osn_windows_cmd.taskkill import (
 	ProcessID,
 	taskkill_windows
+)
+from typing import (
+	Any,
+	Mapping,
+	Optional,
+	Sequence,
+	Type,
+	Union
 )
 from osn_selenium.abstract.webdriver.blink import (
 	AbstractBlinkWebDriver
@@ -108,72 +111,33 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 				use_browser_exe=use_browser_exe,
 				start_page_url=start_page_url
 		)
-
-	async def _ensure_driver(self) -> None:
-		if self.driver is None:
-			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
-
-	def stop_casting(self, sink_name: str) -> Mapping[str, Any]:
-		self._ensure_driver()
-
-		return self.driver.stop_casting(sink_name=sink_name)
-
-	def start_tab_mirroring(self, sink_name: str) -> Mapping[str, Any]:
-		self._ensure_driver()
-
-		return self.driver.start_tab_mirroring(sink_name=sink_name)
-
-	def start_desktop_mirroring(self, sink_name: str) -> Mapping[str, Any]:
-		self._ensure_driver()
-
-		return self.driver.start_desktop_mirroring(sink_name=sink_name)
-
-	def set_sink_to_use(self, sink_name: str) -> Mapping:
-		self._ensure_driver()
-
-		return self.driver.set_sink_to_use(sink_name=sink_name)
-
-	def set_permissions(self, name: str, value: str) -> None:
-		self._ensure_driver()
-
-		self.driver.set_permissions(name=name, value=value)
-
-	def set_network_conditions(self, **network_conditions: Mapping[str, Any]) -> None:
-		self._ensure_driver()
-
-		self.driver.set_network_conditions(**network_conditions)
-
-	def launch_app(self, id: str) -> Mapping[str, Any]:
-		self._ensure_driver()
-
-		return self.driver.launch_app(id=id)
-
-	def get_sinks(self) -> Sequence:
-		self._ensure_driver()
-
-		return self.driver.get_sinks()
-
-	def get_network_conditions(self) -> Mapping[str, Any]:
-		self._ensure_driver()
-
-		return self.driver.get_network_conditions()
-
-	def get_log(self, log_type: str) -> Any:
-		self._ensure_driver()
-
-		return self.driver.get_log(log_type=log_type)
 	
+	@requires_driver
 	def delete_network_conditions(self) -> None:
-		self._ensure_driver()
-
 		self.driver.delete_network_conditions()
 	
+	@requires_driver
 	def get_issue_message(self) -> Any:
-		self._ensure_driver()
-
 		return self.driver.get_issue_message()
 	
+	@requires_driver
+	def get_log(self, log_type: str) -> Any:
+		return self.driver.get_log(log_type=log_type)
+	
+	@requires_driver
+	def get_network_conditions(self) -> Mapping[str, Any]:
+		return self.driver.get_network_conditions()
+	
+	@requires_driver
+	def get_sinks(self) -> Sequence:
+		return self.driver.get_sinks()
+	
+	@requires_driver
+	def launch_app(self, id: str) -> Mapping[str, Any]:
+		return self.driver.launch_app(id=id)
+	
 	@property
+	@requires_driver
 	def log_types(self) -> Any:
 		return self.driver.log_types
 	
@@ -391,3 +355,27 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 				use_browser_exe=use_browser_exe,
 				start_page_url=start_page_url,
 		)
+	
+	@requires_driver
+	def set_network_conditions(self, **network_conditions: Mapping[str, Any]) -> None:
+		self.driver.set_network_conditions(**network_conditions)
+	
+	@requires_driver
+	def set_permissions(self, name: str, value: str) -> None:
+		self.driver.set_permissions(name=name, value=value)
+	
+	@requires_driver
+	def set_sink_to_use(self, sink_name: str) -> Mapping:
+		return self.driver.set_sink_to_use(sink_name=sink_name)
+	
+	@requires_driver
+	def start_desktop_mirroring(self, sink_name: str) -> Mapping[str, Any]:
+		return self.driver.start_desktop_mirroring(sink_name=sink_name)
+	
+	@requires_driver
+	def start_tab_mirroring(self, sink_name: str) -> Mapping[str, Any]:
+		return self.driver.start_tab_mirroring(sink_name=sink_name)
+	
+	@requires_driver
+	def stop_casting(self, sink_name: str) -> Mapping[str, Any]:
+		return self.driver.stop_casting(sink_name=sink_name)
