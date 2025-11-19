@@ -1,6 +1,6 @@
 import sys
 import pathlib
-from typing import Optional
+from typing import List, Optional
 from osn_selenium.browsers_handler.types import Browser
 from osn_selenium.errors import (
 	PlatformNotSupportedError
@@ -10,15 +10,15 @@ from osn_selenium.browsers_handler._windows import (
 )
 
 
-def get_installed_browsers() -> list[Browser]:
+def get_installed_browsers() -> List[Browser]:
 	"""
-	Retrieves a list of installed browsers on the system.
+	Retrieves a List of installed browsers on the system.
 
 	This function detects and lists the browsers installed on the operating system.
 	It supports different operating systems and uses platform-specific methods to find installed browsers.
 
 	Returns:
-		list[Browser]: A list of installed browsers. Each item in the list is a dictionary of type `Browser` containing information about the browser like name, version, and path.
+		List[Browser]: A List of installed browsers. Each item in the List is a dictionary of type `Browser` containing information about the browser like name, version, and path.
 
 	Raises:
 		PlatformNotSupportedError: If the operating system is not supported.
@@ -64,7 +64,7 @@ def get_path_to_browser(browser_name: str) -> Optional[pathlib.Path]:
 	"""
 	
 	for browser in get_installed_browsers():
-		if browser["name"] == browser_name:
-			return browser["path"]
+		if browser.name == browser_name:
+			return browser.path
 	
 	return None

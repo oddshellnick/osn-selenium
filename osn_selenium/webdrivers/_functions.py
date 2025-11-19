@@ -5,8 +5,12 @@ import pathlib
 from copy import deepcopy
 from random import randint
 from subprocess import PIPE, Popen
-from typing import Optional, Union
 from pandas import DataFrame, Series
+from typing import (
+	List,
+	Optional,
+	Union
+)
 from osn_selenium.errors import (
 	PlatformNotSupportedError
 )
@@ -14,10 +18,9 @@ from osn_windows_cmd.netstat import (
 	get_netstat_connections_data as windows_netstat_connections_data
 )
 from osn_selenium.webdrivers.types import (
-	ActionPoint,
-	JS_Scripts,
 	MoveOffset,
 	MovePart,
+	Point,
 	ScrollDelta,
 	ScrollPart,
 	TextInputPart,
@@ -25,11 +28,11 @@ from osn_selenium.webdrivers.types import (
 )
 
 
-def text_input_to_parts(text: str) -> list[TextInputPart]:
+def text_input_to_parts(text: str) -> List[TextInputPart]:
 	"""
 	Breaks down a text string into smaller parts for simulating human-like typing.
 
-	Generates a list of `TextInputPart` objects, where each part contains a character
+	Generates a List of `TextInputPart` objects, where each part contains a character
 	or sequence of characters and a calculated duration. The duration simulates pauses
 	between key presses, with potentially longer pauses between different consecutive
 	characters.
@@ -38,7 +41,7 @@ def text_input_to_parts(text: str) -> list[TextInputPart]:
 		text (str): The input string to be broken down.
 
 	Returns:
-		list[TextInputPart]: A list of `TextInputPart` objects representing the sequence
+		List[TextInputPart]: A List of `TextInputPart` objects representing the sequence
 							 of text segments and their associated durations for simulated typing.
 	"""
 	
@@ -73,7 +76,7 @@ def str_adding_validation_function(value: Optional[str]) -> bool:
 	return bool(value)
 
 
-def scroll_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> list[ScrollPart]:
+def scroll_to_parts(start_position: Point, end_position: Point) -> List[ScrollPart]:
 	"""
 	Calculates a sequence of smaller scroll steps with durations for human-like scrolling.
 
@@ -82,11 +85,11 @@ def scroll_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> l
 	containing the scroll delta for that step and a random duration.
 
 	Args:
-		start_position (ActionPoint): The starting conceptual scroll position.
-		end_position (ActionPoint): The target conceptual scroll position.
+		start_position (Point): The starting conceptual scroll position.
+		end_position (Point): The target conceptual scroll position.
 
 	Returns:
-		list[ScrollPart]: A list of `ScrollPart` objects representing the sequence of scroll
+		List[ScrollPart]: A List of `ScrollPart` objects representing the sequence of scroll
 						  movements and their associated durations. The `delta` in each part
 						  represents the scroll amount for that step, and the `point` represents
 						  the conceptual position *after* applying that delta.
@@ -145,37 +148,6 @@ def scroll_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> l
 	return parts
 
 
-def read_js_scripts() -> JS_Scripts:
-	"""
-	Reads JavaScript scripts from files and returns them in a _JS_Scripts object.
-
-	This function locates all `.js` files within the 'js_scripts' directory, which is expected to be located two levels above the current file's directory.
-	It reads the content of each JavaScript file, using UTF-8 encoding, and stores these scripts in a dictionary-like `_JS_Scripts` object.
-	The filenames (without the `.js` extension) are used as keys in the `_JS_Scripts` object to access the script content.
-
-	Returns:
-		JS_Scripts: An object of type _JS_Scripts, containing the content of each JavaScript file as attributes.
-	"""
-	
-	scripts = {}
-	
-	for script_file in (pathlib.Path(__file__).parent / "js_scripts").iterdir():
-		scripts[re.sub(r"\.js$", "", script_file.name)] = open(script_file, "r", encoding="utf-8").read()
-	
-	return JS_Scripts(
-			check_element_in_viewport=scripts["check_element_in_viewport"],
-			get_document_scroll_size=scripts["get_document_scroll_size"],
-			get_element_css=scripts["get_element_css"],
-			get_element_rect_in_viewport=scripts["get_element_rect_in_viewport"],
-			get_random_element_point_in_viewport=scripts["get_random_element_point_in_viewport"],
-			get_viewport_position=scripts["get_viewport_position"],
-			get_viewport_rect=scripts["get_viewport_rect"],
-			get_viewport_size=scripts["get_viewport_size"],
-			open_new_tab=scripts["open_new_tab"],
-			stop_window_loading=scripts["stop_window_loading"],
-	)
-
-
 def path_adding_validation_function(value: Optional[Union[str, pathlib.Path]]) -> bool:
 	"""
 	Validation function that checks if a value is a non-empty string or a pathlib.Path object.
@@ -213,7 +185,7 @@ def optional_bool_adding_validation_function(value: Optional[bool]) -> bool:
 	return value is not None
 
 
-def move_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> list[MovePart]:
+def move_to_parts(start_position: Point, end_position: Point) -> List[MovePart]:
 	"""
 	Calculates a sequence of smaller move steps with durations for human-like mouse movement.
 
@@ -223,11 +195,11 @@ def move_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> lis
 	the target point for that segment, the offset from the previous point, and a random duration.
 
 	Args:
-		start_position (ActionPoint): The starting coordinates for the movement.
-		end_position (ActionPoint): The target coordinates for the movement.
+		start_position (Point): The starting coordinates for the movement.
+		end_position (Point): The target coordinates for the movement.
 
 	Returns:
-		list[MovePart]: A list of `MovePart` objects representing the sequence of mouse
+		List[MovePart]: A List of `MovePart` objects representing the sequence of mouse
 						movements and their associated durations. Each `MovePart` indicates
 						the `point` to move to, the `offset` from the previous point,
 						and the `duration` for that movement segment.
@@ -244,7 +216,7 @@ def move_to_parts(start_position: ActionPoint, end_position: ActionPoint) -> lis
 		deviation_y = step.amplitude_y * math.cos(linear_progress * 2 * math.pi)
 		current_y_linear = start_position.y + (end_position.y - start_position.y) * linear_progress
 		
-		return ActionPoint(
+		return Point(
 				x=int(current_x_linear + deviation_x),
 				y=int(current_y_linear + deviation_y)
 		)

@@ -1,4 +1,6 @@
 import pathlib
+from typing import List
+
 from setuptools import find_packages, setup
 
 
@@ -11,7 +13,7 @@ def get_long_description() -> str:
 		raise FileNotFoundError("README.md not found")
 
 
-def get_install_requires() -> list[str]:
+def get_install_requires() -> List[str]:
 	requirement_path = pathlib.Path("requirements.txt")
 	
 	if requirement_path.is_file():
@@ -31,7 +33,7 @@ def get_description() -> str:
 
 setup(
 		name="osn-selenium",
-		version="0.0.0-beta.0",
+		version="0.0.1-beta.0",
 		author="oddshellnick",
 		author_email="oddshellnick.programming@gmail.com",
 		description=get_description(),
@@ -39,6 +41,6 @@ setup(
 		long_description_content_type="text/markdown",
 		packages=find_packages(exclude=["unit_tests*"]),
 		install_requires=get_install_requires(),
-		package_data={"osn_selenium": ["webdrivers/js_scripts/*.js"]},
+		package_data={"osn_selenium": ["js_scripts/*.js"]},
 		include_package_data=True,
 )

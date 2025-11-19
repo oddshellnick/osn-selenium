@@ -2,7 +2,7 @@ import re
 import winreg
 import pathlib
 import subprocess
-from typing import Optional, Union
+from typing import List, Optional, Union
 from osn_selenium.browsers_handler.types import Browser
 from win32api import (
 	GetFileVersionInfo,
@@ -81,15 +81,15 @@ def get_browser_version(browser_path: Union[pathlib.Path, str]) -> str:
 	return ".".join(map(str, (HIWORD(ms), LOWORD(ms), HIWORD(ls), LOWORD(ls))))
 
 
-def get_installed_browsers_win32() -> list[Browser]:
+def get_installed_browsers_win32() -> List[Browser]:
 	"""
-	Retrieves a list of installed browsers on a Windows system by querying the registry.
+	Retrieves a List of installed browsers on a Windows system by querying the registry.
 
 	This function iterates through different registry locations to identify installed browsers and their paths.
-	It constructs a list of unique `Browser` objects, each representing an installed browser.
+	It constructs a List of unique `Browser` objects, each representing an installed browser.
 
 	Returns:
-		list[Browser]: A list of unique installed browsers.
+		List[Browser]: A List of unique installed browsers.
 	"""
 	
 	installed_browsers = []

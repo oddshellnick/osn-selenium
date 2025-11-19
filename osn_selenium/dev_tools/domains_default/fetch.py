@@ -1,14 +1,15 @@
+from __future__ import annotations
+
 import trio
+from osn_selenium.types import DictModel
 from osn_selenium.dev_tools.utils import (
-	TargetData,
 	log_exception
 )
 from typing import (
 	Any,
-	Literal,
+	Dict, Literal,
 	Sequence,
 	TYPE_CHECKING,
-	TypedDict,
 	Union
 )
 
@@ -53,7 +54,7 @@ def on_error_func(self: "DevToolsTarget", event: Any, error: BaseException):
 	log_exception(error)
 
 
-class HeaderInstance(TypedDict):
+class HeaderInstance(DictModel):
 	"""
 	Type definition for header modification instructions used by the `headers_handler`.
 
@@ -76,9 +77,9 @@ class HeaderInstance(TypedDict):
 async def headers_handler(
 		self: "DevToolsTarget",
 		ready_event: trio.Event,
-		headers_instances: dict[str, HeaderInstance],
+		headers_instances: Dict[str, HeaderInstance],
 		event: Any,
-		kwargs: dict[str, Any]
+		kwargs: Dict[str, Any]
 ):
 	"""
 	A parameter handler function to modify request headers.
@@ -91,17 +92,17 @@ async def headers_handler(
 	Args:
 		self (DevToolsTarget): The DevToolsTarget instance.
 		ready_event (trio.Event): A Trio event to signal when the handler has completed its work.
-		headers_instances (dict[str, HeaderInstance]): A dictionary where keys are header names
+		headers_instances (Dict[str, HeaderInstance]): A dictionary where keys are header names
 			and values are `HeaderInstance` objects defining the modification.
 		event (Any): The CDP event object (e.g., `RequestPaused`) containing the original request headers.
-		kwargs (dict[str, Any]): The dictionary of keyword arguments to which the modified headers will be added.
+		kwargs (Dict[str, Any]): The dictionary of keyword arguments to which the modified headers will be added.
 
 	Raises:
 		Exception: If an error occurs during header modification.
 	"""
 	
 	try:
-		header_entry_class = await self.get_devtools_object("fetch.HeaderEntry")
+		header_entry_class = getattr(self.devtools_package, "fetch.HeaderEntry")
 		headers = {name: value for name, value in event.request.headers.items()}
 	
 		for name, instance in headers_instances.items():
@@ -135,7 +136,7 @@ async def headers_handler(
 		raise error
 
 
-def auth_required_choose_func(self: "DevToolsTarget", target_data: TargetData, event: Any) -> Sequence["auth_required_actions_literal"]:
+def auth_required_choose_func(self: "DevToolsTarget", event: Any) -> Sequence["auth_required_actions_literal"]:
 	"""
 	Default function to choose actions for a 'fetch.AuthRequired' event.
 
@@ -145,7 +146,6 @@ def auth_required_choose_func(self: "DevToolsTarget", target_data: TargetData, e
 
 	Args:
 		self (DevToolsTarget): The DevToolsTarget instance.
-		target_data (TargetData): Data about the current browser target.
 		event (Any): The 'AuthRequired' event object.
 
 	Returns:

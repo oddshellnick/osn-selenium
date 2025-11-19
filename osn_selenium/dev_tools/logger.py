@@ -1,8 +1,10 @@
-import json
+from __future__ import annotations
+
 import trio
 from pathlib import Path
 from datetime import datetime
-from dataclasses import dataclass
+from osn_selenium.types import DictModel
+from osn_selenium.dev_tools.utils import TargetData
 from osn_selenium.dev_tools._types import LogLevelsType
 from osn_selenium.dev_tools.errors import trio_end_exceptions
 from osn_selenium.dev_tools.utils import (
@@ -11,20 +13,14 @@ from osn_selenium.dev_tools.utils import (
 )
 from typing import (
 	Any,
-	Literal,
+	Dict, Literal,
 	Optional,
 	Sequence,
-	TYPE_CHECKING,
-	Union
+	Tuple, Union
 )
 
 
-if TYPE_CHECKING:
-	from osn_selenium.dev_tools.utils import TargetData
-
-
-@dataclass
-class LoggerSettings:
+class LoggerSettings(DictModel):
 	"""
 	Settings for configuring the LoggerManager.
 
@@ -58,60 +54,23 @@ class LoggerSettings:
 	target_type_filter: Optional[Union[str, Sequence[str]]] = None
 
 
-@dataclass(frozen=True)
-class LogEntry:
+class LogEntry(DictModel):
 	"""
 	Represents a single log entry with detailed information.
 
 	Attributes:
-		target_data ("TargetData"): Data about the target (browser tab/session) from which the log originated.
+		target_data (TargetData): Data about the target (browser tab/session) from which the log originated.
 		message (str): The main log message.
 		level (LogLevelsType): The severity level of the log (e.g., "INFO", "ERROR").
 		timestamp (datetime): The exact time when the log entry was created.
-		source_function (str): The name of the function that generated the log.
-		extra_data (Optional[dict[str, Any]]): Optional additional data associated with the log.
+		extra_data (Optional[Dict[str, Any]]): Optional additional data associated with the log.
 	"""
 	
-	target_data: "TargetData"
+	target_data: TargetData
 	message: str
 	level: LogLevelsType
 	timestamp: datetime
-	source_function: str
-	extra_data: Optional[dict[str, Any]] = None
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the log entry to a JSON-serializable dictionary.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the log entry.
-		"""
-		
-		log_dict = {
-			"target_data": self.target_data.to_json(),
-			"timestamp": self.timestamp.isoformat(),
-			"level": self.level,
-			"source_function": self.source_function,
-			"message": self.message,
-		}
-		
-		if self.extra_data is not None:
-			log_dict["extra_data"] = {key: str(value) for key, value in self.extra_data.items()}
-		
-		return log_dict
-	
-	def to_string(self) -> str:
-		"""
-		Converts the log entry to a human-readable string format.
-
-		Returns:
-			str: A multi-line string representation of the log entry.
-		"""
-		
-		return "\n\n".join(
-				f"{key}: {json.dumps(value, indent=4, ensure_ascii=False)}"
-				for key, value in self.to_json().items()
-		)
+	extra_data: Optional[Dict[str, Any]] = None
 
 
 class TargetLogger:
@@ -122,7 +81,7 @@ class TargetLogger:
 	related to its associated `TargetData` to a dedicated file.
 
 	Attributes:
-		_target_data ("TargetData"): The data of the browser target this logger is associated with.
+		_target_data (TargetData): The data of the browser target this logger is associated with.
 		_nursery_object (trio.Nursery): The Trio nursery for managing concurrent tasks.
 		_receive_channel (trio.MemoryReceiveChannel[LogEntry]): The receive channel for log entries specific to this target.
 		_log_level_filter (Callable[[Any], bool]): Filter function for log levels.
@@ -134,7 +93,7 @@ class TargetLogger:
 	
 	def __init__(
 			self,
-			target_data: "TargetData",
+			target_data: TargetData,
 			nursery_object: trio.Nursery,
 			receive_channel: trio.MemoryReceiveChannel[LogEntry],
 			logger_settings: LoggerSettings,
@@ -143,7 +102,7 @@ class TargetLogger:
 		Initializes the TargetLogger.
 
 		Args:
-			target_data ("TargetData"): The data of the browser target this logger will log for.
+			target_data (TargetData): The data of the browser target this logger will log for.
 			nursery_object (trio.Nursery): The Trio nursery to spawn background tasks.
 		"""
 		
@@ -219,7 +178,7 @@ class TargetLogger:
 			async with await trio.open_file(self._file_path, "a+", encoding="utf-8") as file:
 				async for log_entry in self._receive_channel:
 					if self._log_level_filter(log_entry.level) and self._target_type_filter(log_entry.target_data.type_):
-						await file.write(log_entry.to_string() + end_of_entry)
+						await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
 		except* trio_end_exceptions:
 			pass
 		except* BaseException as error:
@@ -234,7 +193,7 @@ class TargetLogger:
 		try:
 			if not self._is_active:
 				self._file_writing_stopped = trio.Event()
-		
+
 				if self._file_path is not None:
 					self._nursery_object.start_soon(self._write_file,)
 		
@@ -247,20 +206,20 @@ class TargetLogger:
 
 
 def build_target_logger(
-		target_data: "TargetData",
+		target_data: TargetData,
 		nursery_object: trio.Nursery,
 		logger_settings: LoggerSettings
-) -> tuple[trio.MemorySendChannel[LogEntry], TargetLogger]:
+) -> Tuple[trio.MemorySendChannel[LogEntry], TargetLogger]:
 	"""
 	Builds and initializes a `TargetLogger` instance along with its send channel.
 
 	Args:
-		target_data ("TargetData"): The data for the target this logger will serve.
+		target_data (TargetData): The data for the target this logger will serve.
 		nursery_object (trio.Nursery): The Trio nursery to associate with the logger for background tasks.
 		logger_settings (LoggerSettings): The logger configuration settings.
 
 	Returns:
-		tuple[trio.MemorySendChannel[LogEntry], TargetLogger]: A tuple containing
+		Tuple[trio.MemorySendChannel[LogEntry], TargetLogger]: A tuple containing
 			the send channel for `LogEntry` objects and the initialized `TargetLogger` instance.
 	"""
 	
@@ -270,8 +229,7 @@ def build_target_logger(
 	return send_channel, target_logger
 
 
-@dataclass
-class LogLevelStats:
+class LogLevelStats(DictModel):
 	"""
 	Dataclass to store statistics for a specific log level.
 
@@ -282,23 +240,9 @@ class LogLevelStats:
 	
 	num_logs: int
 	last_log_time: datetime
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the statistics to a JSON-serializable dictionary.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the log level statistics.
-		"""
-		
-		return {
-			"num_logs": self.num_logs,
-			"last_log_time": self.last_log_time.isoformat()
-		}
 
 
-@dataclass
-class LoggerChannelStats:
+class LoggerChannelStats(DictModel):
 	"""
 	Dataclass to store statistics for a specific logging channel (per target).
 
@@ -308,7 +252,7 @@ class LoggerChannelStats:
 		url (str): The URL of the target.
 		num_logs (int): The total number of log entries for this channel.
 		last_log_time (datetime): The timestamp of the most recent log entry for this channel.
-		log_level_stats (dict[str, LogLevelStats]): A dictionary mapping log levels to their specific statistics.
+		log_level_stats (Dict[str, LogLevelStats]): A dictionary mapping log levels to their specific statistics.
 	"""
 	
 	target_id: str
@@ -316,7 +260,7 @@ class LoggerChannelStats:
 	url: str
 	num_logs: int
 	last_log_time: datetime
-	log_level_stats: dict[str, LogLevelStats]
+	log_level_stats: Dict[str, LogLevelStats]
 	
 	async def add_log(self, log_entry: LogEntry):
 		"""
@@ -334,32 +278,9 @@ class LoggerChannelStats:
 		else:
 			self.log_level_stats[log_entry.level].num_logs += 1
 			self.log_level_stats[log_entry.level].last_log_time = log_entry.timestamp
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the channel statistics to a JSON-serializable dictionary.
-
-		Nested statistics objects are converted to their JSON representations.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the logger channel statistics.
-		"""
-		
-		return {
-			"target_id": self.target_id,
-			"title": self.title,
-			"url": self.url,
-			"num_logs": self.num_logs,
-			"last_log_time": self.last_log_time.isoformat(),
-			"log_level_stats": {
-				log_level: log_level_stats.to_json()
-				for log_level, log_level_stats in self.log_level_stats.items()
-			}
-		}
 
 
-@dataclass
-class TargetTypeStats:
+class TargetTypeStats(DictModel):
 	"""
 	Dataclass to store statistics for a specific target type.
 
@@ -368,73 +289,25 @@ class TargetTypeStats:
 	"""
 	
 	num_targets: int
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the statistics to a JSON-serializable dictionary.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the target type statistics.
-		"""
-		
-		return {"num_targets": self.num_targets}
 
 
-@dataclass(frozen=True)
-class MainLogEntry:
+class MainLogEntry(DictModel):
 	"""
 	Represents a summary log entry for the entire logging system.
 
 	Attributes:
 		num_channels (int): The total number of active logging channels (targets).
-		targets_types_stats (dict[str, TargetTypeStats]): Statistics grouped by target type.
+		targets_types_stats (Dict[str, TargetTypeStats]): Statistics grouped by target type.
 		num_logs (int): The total number of log entries across all channels.
-		log_level_stats (dict[str, LogLevelStats]): Overall statistics for each log level.
-		channels_stats (Sequence[LoggerChannelStats]): A list of statistics for each active logging channel.
+		log_level_stats (Dict[str, LogLevelStats]): Overall statistics for each log level.
+		channels_stats (Sequence[LoggerChannelStats]): A List of statistics for each active logging channel.
 	"""
 	
 	num_channels: int
-	targets_types_stats: dict[str, TargetTypeStats]
+	targets_types_stats: Dict[str, TargetTypeStats]
 	num_logs: int
-	log_level_stats: dict[str, LogLevelStats]
+	log_level_stats: Dict[str, LogLevelStats]
 	channels_stats: Sequence[LoggerChannelStats]
-	
-	def to_json(self) -> dict[str, Any]:
-		"""
-		Converts the main log entry to a JSON-serializable dictionary.
-
-		Nested statistics objects are converted to their JSON representations.
-
-		Returns:
-			dict[str, Any]: A dictionary representation of the main log entry.
-		"""
-		
-		return {
-			"num_channels": self.num_channels,
-			"targets_types_stats": {
-				type_: target_type_stats.to_json()
-				for type_, target_type_stats in self.targets_types_stats.items()
-			},
-			"num_logs": self.num_logs,
-			"log_level_stats": {
-				log_level: log_level_stats.to_json()
-				for log_level, log_level_stats in self.log_level_stats.items()
-			},
-			"channels_stats": [channel_stats.to_json() for channel_stats in self.channels_stats]
-		}
-	
-	def to_string(self) -> str:
-		"""
-		Converts the main log entry to a human-readable string format.
-
-		Returns:
-			str: A multi-line string representation of the main log entry.
-		"""
-		
-		return "\n\n".join(
-				f"{key}: {json.dumps(value, indent=4, ensure_ascii=False)}"
-				for key, value in self.to_json().items()
-		)
 
 
 class MainLogger:
@@ -506,7 +379,7 @@ class MainLogger:
 		try:
 			async with await trio.open_file(self._file_path, "w+", encoding="utf-8") as file:
 				async for log_entry in self._receive_channel:
-					await file.write(log_entry.to_string())
+					await file.write(log_entry.model_dump_json(indent=4))
 					await file.seek(0)
 		except* trio_end_exceptions:
 			pass
@@ -539,7 +412,7 @@ class MainLogger:
 			await self.close()
 
 
-def build_main_logger(nursery_object: trio.Nursery, logger_settings: LoggerSettings) -> tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]:
+def build_main_logger(nursery_object: trio.Nursery, logger_settings: LoggerSettings) -> Tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]:
 	"""
 	Builds and initializes a `MainLogger` instance along with its send channel.
 
@@ -548,7 +421,7 @@ def build_main_logger(nursery_object: trio.Nursery, logger_settings: LoggerSetti
 		logger_settings (LoggerSettings): The logger configuration settings.
 
 	Returns:
-		tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]: A tuple containing
+		Tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]: A tuple containing
 			the send channel for `MainLogEntry` objects and the initialized `MainLogger` instance.
 	"""
 	
@@ -556,3 +429,11 @@ def build_main_logger(nursery_object: trio.Nursery, logger_settings: LoggerSetti
 	target_logger = MainLogger(logger_settings, nursery_object, receive_channel)
 	
 	return send_channel, target_logger
+
+
+LoggerSettings.model_rebuild()
+LogEntry.model_rebuild()
+LogLevelStats.model_rebuild()
+LoggerChannelStats.model_rebuild()
+TargetTypeStats.model_rebuild()
+MainLogEntry.model_rebuild()
