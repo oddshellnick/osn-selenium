@@ -2,7 +2,7 @@ import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
@@ -12,9 +12,7 @@ from typing import (
 	List,
 	Optional,
 	Self,
-	TYPE_CHECKING,
-	Type,
-	Union
+	Type
 )
 
 

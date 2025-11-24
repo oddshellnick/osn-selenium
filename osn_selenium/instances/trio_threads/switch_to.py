@@ -8,7 +8,7 @@ from osn_selenium.instances.trio_threads.alert import Alert
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
 )

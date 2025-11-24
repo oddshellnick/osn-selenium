@@ -1,7 +1,7 @@
 import trio
 from typing import List, Self, Union
 from osn_selenium.abstract.instances.mobile import AbstractMobile
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType

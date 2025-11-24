@@ -7,7 +7,7 @@ from typing import (
 )
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 
 
 class FedCM(_TrioThreadMixin, AbstractFedCM):

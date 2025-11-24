@@ -7,7 +7,7 @@ from typing import (
 	TYPE_CHECKING
 )
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
