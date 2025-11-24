@@ -6,6 +6,7 @@ from contextlib import (
 	AbstractAsyncContextManager
 )
 from osn_selenium.flags.base import BrowserFlagsManager
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.instances.trio_threads.mobile import Mobile
@@ -25,7 +26,6 @@ from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.instances.trio_threads.permissions import Permissions
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.instances.trio_threads.web_extension import WebExtension
-from osn_selenium.instances.trio_threads.base_mixin import _TrioThreadMixin
 from osn_selenium.dev_tools.manager import (
 	DevTools,
 	DevToolsSettings
@@ -729,16 +729,6 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			await self.quit()
 			self._driver = None
 	
-	async def window_handles(self) -> List[str]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(lambda: self.driver.window_handles)
-	
-	async def close(self) -> None:
-		await self._ensure_driver()
-		
-		await self._wrap_to_trio(self.driver.close)
-	
 	async def switch_to(self) -> SwitchTo:
 		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.switch_to)
@@ -748,6 +738,16 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 				lock=self._lock,
 				limiter=self._capacity_limiter
 		)
+	
+	async def window_handles(self) -> List[str]:
+		await self._ensure_driver()
+		
+		return await self._wrap_to_trio(lambda: self.driver.window_handles)
+	
+	async def close(self) -> None:
+		await self._ensure_driver()
+		
+		await self._wrap_to_trio(self.driver.close)
 	
 	async def get(self, url: str) -> None:
 		await self._ensure_driver()
@@ -760,23 +760,21 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		return await self._wrap_to_trio(lambda: self.driver.current_window_handle)
 	
 	async def close_window(self, window: Optional[Union[str, int]] = None) -> None:
-		start_window_handle = await self.current_window_handle()
-		close_window_handle = await self.get_window_handle(window)
+		current = await self.current_window_handle()
+		target = await self.get_window_handle(window)
 		
-		is_current_closing = (close_window_handle == start_window_handle)
+		if target == current:
+			await self.close()
+			remaining = await self.window_handles()
 		
-		if not is_current_closing:
-			await (await self.switch_to()).window(close_window_handle)
+			if remaining:
+				await (await self.switch_to()).window(remaining[-1])
+		else:
+			switch_to = await self.switch_to()
 		
-		await self.close()
-		
-		handles = await self.window_handles()
-		
-		if len(handles) > 0:
-			if is_current_closing:
-				await (await self.switch_to()).window(await self.get_window_handle(-1))
-			else:
-				await (await self.switch_to()).window(start_window_handle)
+			await switch_to.window(target)
+			await self.close()
+			await switch_to.window(current)
 	
 	async def execute_script(self, script: str, *args: Any) -> Any:
 		await self._ensure_driver()
@@ -790,6 +788,16 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			return window
 		
 		if isinstance(window, int):
-			return (await self.window_handles())[window]
+			handles = await self.window_handles()
+		
+			if not handles:
+				raise RuntimeError("No window handles available")
+		
+			idx = window if window >= 0 else len(handles) + window
+		
+			if idx < 0 or idx >= len(handles):
+				raise IndexError(f"Window index {window} out of range [0, {len(handles) - 1}]")
+		
+			return handles[idx]
 		
 		return await self.current_window_handle()
