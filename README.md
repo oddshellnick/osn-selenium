@@ -41,17 +41,17 @@ An advanced, asynchronous wrapper for Selenium designed for fine-grained browser
 1.  Install library:
     *   **With pip:**
         ```bash
-        pip install osn_selenium
+        pip install osn-selenium
         ```
 
         **With pip (beta versions):**
         ```bash
-        pip install -i https://test.pypi.org/simple/ osn_selenium
+        pip install -i https://test.pypi.org/simple/ osn-selenium
         ```
 
     *   **With git:**
         ```bash
-        pip install git+https://github.com/oddshellnick/osn_selenium.git
+        pip install git+https://github.com/oddshellnick/osn-selenium.git
         ```
         *(Ensure you have git installed)*
 
