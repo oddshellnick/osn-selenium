@@ -6,7 +6,6 @@ from contextlib import (
 	AbstractAsyncContextManager
 )
 from osn_selenium.flags.base import BrowserFlagsManager
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.instances.trio_threads.mobile import Mobile
@@ -31,6 +30,10 @@ from osn_selenium.dev_tools.manager import (
 	DevToolsSettings
 )
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
+from osn_selenium.trio_base_mixin import (
+	_TrioThreadMixin,
+	requires_driver
+)
 from osn_selenium.instances.trio_threads.browsing_context import BrowsingContext
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
@@ -100,62 +103,57 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		if flags is not None:
 			self._webdriver_flags_manager.update_flags(flags)
 	
+	@requires_driver
 	async def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Dict[str, Any]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.execute_cdp_cmd, cmd=cmd, cmd_args=cmd_args)
 	
+	@requires_driver
 	async def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.execute, driver_command=driver_command, params=params)
 	
+	def _ensure_driver(self) -> None:
+		if self.driver is None:
+			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
+	
+	@requires_driver
 	async def _session(self) -> Any:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver._session)
 	
+	@requires_driver
 	async def action_chain(
 			self,
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
-		await self._ensure_driver()
-		
 		return ActionChains(
 				self.driver,
-				legacyActionChains(driver=self.driver, duration=duration, devices=devices,),
+				legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def add_cookie(self, cookie_dict: Dict[str, Any]) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.add_cookie, cookie_dict=cookie_dict)
 	
+	@requires_driver
 	async def add_credential(self, credential: Credential) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.add_credential, credential=credential)
 	
+	@requires_driver
 	async def add_virtual_authenticator(self, options: VirtualAuthenticatorOptions) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.add_virtual_authenticator, options=options)
 	
+	@requires_driver
 	async def back(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.back)
 	
+	@requires_driver
 	async def bidi_connection(self) -> AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.bidi_connection())
 	
+	@requires_driver
 	async def browser(self) -> Browser:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.browser)
 		
 		return Browser(
@@ -164,19 +162,18 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 				limiter=self._capacity_limiter
 		)
 	
+	@requires_driver
 	async def browsing_context(self) -> BrowsingContext:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.browsing_context)
 		
 		return BrowsingContext(
 				selenium_browsing_context=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def capabilities(self) -> Dict[str, Any]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.capabilities)
 	
 	@property
@@ -184,269 +181,257 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		return self._cdp_executor
 	
 	async def close_all_windows(self) -> None:
-		for h in await self.window_handles():
-			await self.close_window(h)
+		for window_handle in await self.window_handles():
+			await self.close_window(window_handle)
 	
-	async def current_url(self) -> str:
-		await self._ensure_driver()
+	@requires_driver
+	async def command_executor(self) -> RemoteConnection:
+		return await self._wrap_to_trio(lambda: self.driver.command_executor)
+	
+	@requires_driver
+	async def create_web_element(self, element_id: str) -> WebElement:
+		legacy = await self._wrap_to_trio(self.driver.create_web_element, element_id=element_id)
 		
+		return WebElement(
+				selenium_web_element=legacy,
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
+	
+	@requires_driver
+	async def current_url(self) -> str:
 		return await self._wrap_to_trio(lambda: self.driver.current_url)
 	
+	@requires_driver
 	async def delete_all_cookies(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.delete_all_cookies)
 	
+	@requires_driver
 	async def delete_cookie(self, name: str) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.delete_cookie, name=name)
 	
+	@requires_driver
 	async def delete_downloadable_files(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.delete_downloadable_files)
 	
 	@property
 	def dev_tools(self) -> DevTools:
 		return self._dev_tools
 	
+	@requires_driver
 	async def dialog(self) -> Dialog:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.dialog)
 		
 		return Dialog(legacy, lock=self._lock, limiter=self._capacity_limiter)
 	
+	@requires_driver
 	async def download_file(self, file_name: str, target_directory: str) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(
 				self.driver.download_file,
 				file_name=file_name,
-				target_directory=target_directory
+				target_directory=target_directory,
 		)
 	
+	@requires_driver
 	async def execute_async_script(self, script: str, *args: Any) -> Any:
-		await self._ensure_driver()
-		
 		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
 		
 		return await self._wrap_to_trio(self.driver.execute_async_script, script, *args)
 	
+	@requires_driver
 	async def fedcm(self) -> FedCM:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.fedcm)
 		
 		return FedCM(selenium_fedcm=legacy, lock=self._lock, limiter=self._capacity_limiter)
 	
+	@requires_driver
 	async def fedcm_dialog(
 			self,
 			timeout: int = 5,
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Any = None,
 	) -> Dialog:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(
 				self.driver.fedcm_dialog,
 				timeout=timeout,
 				poll_frequency=poll_frequency,
-				ignored_exceptions=ignored_exceptions
+				ignored_exceptions=ignored_exceptions,
 		)
 		
 		return Dialog(
 				selenium_dialog=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def file_detector(self) -> Any:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.file_detector)
 	
+	@requires_driver
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> WebElement:
-		await self._ensure_driver()
-		el = await self._wrap_to_trio(self.driver.find_element, by=by, value=value)
+		element = await self._wrap_to_trio(self.driver.find_element, by=by, value=value)
 		
 		return WebElement(
-				selenium_web_element=el,
-				lock=self._lock,
-				limiter=self._capacity_limiter
-		)
-	
-	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List[WebElement]:
-		await self._ensure_driver()
-		els = await self._wrap_to_trio(self.driver.find_elements, by=by, value=value)
-		
-		return [
-			WebElement(
-					selenium_web_element=el,
-					lock=self._lock,
-					limiter=self._capacity_limiter
-			) for el in els
-		]
-	
-	async def forward(self) -> None:
-		await self._ensure_driver()
-		
-		await self._wrap_to_trio(self.driver.forward)
-	
-	async def fullscreen_window(self) -> None:
-		await self._ensure_driver()
-		
-		await self._wrap_to_trio(self.driver.fullscreen_window)
-	
-	async def get_cookie(self, name: str) -> Optional[Dict[str, Any]]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_cookie, name=name)
-	
-	async def get_cookies(self) -> List[Dict[str, Any]]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_cookies)
-	
-	async def get_credentials(self) -> List[Credential]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_credentials)
-	
-	async def get_downloadable_files(self) -> List[str]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_downloadable_files)
-	
-	async def get_pinned_scripts(self) -> List[str]:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_pinned_scripts)
-	
-	async def get_screenshot_as_base64(self) -> str:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_screenshot_as_base64)
-	
-	async def get_screenshot_as_file(self, filename: str) -> bool:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_screenshot_as_file, filename=filename)
-	
-	async def get_screenshot_as_png(self) -> bytes:
-		await self._ensure_driver()
-		
-		return await self._wrap_to_trio(self.driver.get_screenshot_as_png)
-	
-	async def get_window_position(self, windowHandle: str = "current",) -> Position:
-		await self._ensure_driver()
-		pos = await self._wrap_to_trio(self.driver.get_window_position, windowHandle=windowHandle)
-		
-		return Position(x=pos["x"], y=pos["y"])
-	
-	async def get_window_rect(self) -> Rectangle:
-		await self._ensure_driver()
-		rect = await self._wrap_to_trio(self.driver.get_window_rect)
-		
-		return Rectangle(x=rect["x"], y=rect["y"], width=rect["width"], height=rect["height"])
-	
-	async def get_window_size(self, windowHandle: str = "current",) -> Size:
-		await self._ensure_driver()
-		size = await self._wrap_to_trio(self.driver.get_window_size, windowHandle=windowHandle)
-		
-		return Size(width=size["width"], height=size["height"])
-	
-	async def hm_action_chain(
-			self,
-			duration: int = 250,
-			devices: Optional[List[DEVICES_TYPEHINT]] = None
-	) -> HumanLikeActionChains:
-		await self._ensure_driver()
-		
-		return HumanLikeActionChains(
-				driver=self.driver,
-				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices,),
+				selenium_web_element=element,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
 	
-	async def implicitly_wait(self, time_to_wait: float) -> None:
-		await self._ensure_driver()
+	@requires_driver
+	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List[WebElement]:
+		elements = await self._wrap_to_trio(self.driver.find_elements, by=by, value=value)
 		
+		return [
+			WebElement(
+					selenium_web_element=element,
+					lock=self._lock,
+					limiter=self._capacity_limiter,
+			) for element in elements
+		]
+	
+	@requires_driver
+	async def forward(self) -> None:
+		await self._wrap_to_trio(self.driver.forward)
+	
+	@requires_driver
+	async def fullscreen_window(self) -> None:
+		await self._wrap_to_trio(self.driver.fullscreen_window)
+	
+	@requires_driver
+	async def get_cookie(self, name: str) -> Optional[Dict[str, Any]]:
+		return await self._wrap_to_trio(self.driver.get_cookie, name=name)
+	
+	@requires_driver
+	async def get_cookies(self) -> List[Dict[str, Any]]:
+		return await self._wrap_to_trio(self.driver.get_cookies)
+	
+	@requires_driver
+	async def get_credentials(self) -> List[Credential]:
+		return await self._wrap_to_trio(self.driver.get_credentials)
+	
+	@requires_driver
+	async def get_downloadable_files(self) -> List[str]:
+		return await self._wrap_to_trio(self.driver.get_downloadable_files)
+	
+	@requires_driver
+	async def get_pinned_scripts(self) -> List[str]:
+		return await self._wrap_to_trio(self.driver.get_pinned_scripts)
+	
+	@requires_driver
+	async def get_screenshot_as_base64(self) -> str:
+		return await self._wrap_to_trio(self.driver.get_screenshot_as_base64)
+	
+	@requires_driver
+	async def get_screenshot_as_file(self, filename: str) -> bool:
+		return await self._wrap_to_trio(self.driver.get_screenshot_as_file, filename=filename)
+	
+	@requires_driver
+	async def get_screenshot_as_png(self) -> bytes:
+		return await self._wrap_to_trio(self.driver.get_screenshot_as_png)
+	
+	@requires_driver
+	async def get_window_position(self, windowHandle: str = "current") -> Position:
+		pos = await self._wrap_to_trio(self.driver.get_window_position, windowHandle=windowHandle)
+		
+		return Position(x=pos["x"], y=pos["y"])
+	
+	@requires_driver
+	async def get_window_rect(self) -> Rectangle:
+		rect = await self._wrap_to_trio(self.driver.get_window_rect)
+		
+		return Rectangle(x=rect["x"], y=rect["y"], width=rect["width"], height=rect["height"])
+	
+	@requires_driver
+	async def get_window_size(self, windowHandle: str = "current") -> Size:
+		size = await self._wrap_to_trio(self.driver.get_window_size, windowHandle=windowHandle)
+		
+		return Size(width=size["width"], height=size["height"])
+	
+	@requires_driver
+	async def hm_action_chain(
+			self,
+			duration: int = 250,
+			devices: Optional[List[DEVICES_TYPEHINT]] = None,
+	) -> HumanLikeActionChains:
+		return HumanLikeActionChains(
+				driver=self.driver,
+				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
+	
+	@requires_driver
+	async def implicitly_wait(self, time_to_wait: float) -> None:
 		await self._wrap_to_trio(self.driver.implicitly_wait, time_to_wait=time_to_wait)
 	
 	@property
 	def javascript(self) -> JSExecutor:
 		return self._js_executor
 	
+	@requires_driver
 	async def maximize_window(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.maximize_window)
 	
+	@requires_driver
 	async def minimize_window(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.minimize_window)
 	
+	@requires_driver
 	async def mobile(self) -> Mobile:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.mobile)
 		
 		return Mobile(
 				selenium_mobile=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def name(self) -> str:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.name)
 	
+	@requires_driver
 	async def network(self) -> Network:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.network)
 		
 		return Network(
 				selenium_network=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.orientation)
 	
+	@requires_driver
 	async def page_source(self) -> str:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.page_source)
 	
+	@requires_driver
 	async def permissions(self) -> Permissions:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.permissions)
 		
 		return Permissions(
 				selenium_permissions=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def pin_script(self, script: str, script_key: Optional[Any] = None) -> Any:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.pin_script, script=script, script_key=script_key)
 	
+	@requires_driver
 	async def print_page(self, print_options: Optional[Any] = None) -> str:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.print_page, print_options=print_options)
 	
+	@requires_driver
 	async def refresh(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.refresh)
 	
+	@requires_driver
 	async def set_driver_timeouts(
 			self,
 			page_load_timeout: float,
@@ -457,8 +442,6 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			self.driver.set_page_load_timeout(page_load_timeout)
 			self.driver.implicitly_wait(implicit_wait_timeout)
 			self.driver.set_script_timeout(script_timeout)
-		
-		await self._ensure_driver()
 		
 		await self._wrap_to_trio(_set)
 	
@@ -479,19 +462,16 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		
 		self._is_active = True
 	
+	@requires_driver
 	async def remove_all_credentials(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.remove_all_credentials)
 	
+	@requires_driver
 	async def remove_credential(self, credential_id: Union[str, bytearray]) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.remove_credential, credential_id=credential_id)
 	
+	@requires_driver
 	async def remove_virtual_authenticator(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.remove_virtual_authenticator)
 	
 	@property
@@ -508,7 +488,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 				window_rect = await self._wrap_to_trio(WindowRect)
 		
 			if flags is not None:
-				await self._wrap_to_trio(self._webdriver_flags_manager.set_flags, flags)
+				await self._wrap_to_trio(self._webdriver_flags_manager.set_flags, flags=flags)
 			else:
 				await self._wrap_to_trio(self._webdriver_flags_manager.clear_flags)
 		
@@ -516,7 +496,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		else:
 			warnings.warn("Browser is already running.")
 	
-	def _create_driver(self):
+	async def _create_driver(self):
 		"""
 		Abstract method to create a WebDriver instance. Must be implemented in child classes.
 
@@ -535,7 +515,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
 		if flags is not None:
-			await self._wrap_to_trio(self._webdriver_flags_manager.update_flags, flags)
+			await self._wrap_to_trio(self._webdriver_flags_manager.update_flags, flags=flags)
 		
 		if window_rect is not None:
 			self._window_rect = window_rect
@@ -546,7 +526,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
 		if self.driver is None:
-			await self.update_settings(flags=flags, window_rect=window_rect,)
+			await self.update_settings(flags=flags, window_rect=window_rect)
 		
 			await self._create_driver()
 	
@@ -558,57 +538,51 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		await self.close_webdriver()
 		await self.start_webdriver(flags=flags, window_rect=window_rect)
 	
+	@requires_driver
 	async def save_screenshot(self, filename: str) -> bool:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.save_screenshot, filename=filename)
 	
+	@requires_driver
 	async def script(self) -> Script:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.script)
 		
 		return Script(
 				selenium_script=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def set_file_detector(self, detector: Any) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(lambda: setattr(self.driver, "file_detector", detector))
 	
+	@requires_driver
 	async def set_orientation(self, value: Literal["LANDSCAPE", "PORTRAIT"]) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(lambda: setattr(self.driver, "orientation", value))
 	
+	@requires_driver
 	async def set_page_load_timeout(self, time_to_wait: float) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.set_page_load_timeout, time_to_wait=time_to_wait)
 	
+	@requires_driver
 	async def set_script_timeout(self, time_to_wait: float) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.set_script_timeout, time_to_wait=time_to_wait)
 	
+	@requires_driver
 	async def set_timeouts(self, timeouts: Any) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(lambda: setattr(self.driver, "timeouts", timeouts))
 	
+	@requires_driver
 	async def set_user_verified(self, verified: bool) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.set_user_verified, verified=verified)
 	
-	async def set_window_position(self, x: int, y: int, windowHandle: str = "current",) -> Position:
-		await self._ensure_driver()
+	@requires_driver
+	async def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Position:
 		pos = await self._wrap_to_trio(self.driver.set_window_position, x=x, y=y, windowHandle=windowHandle)
 		
 		return Position(x=pos["x"], y=pos["y"])
 	
+	@requires_driver
 	async def set_window_rect(
 			self,
 			x: Optional[int] = None,
@@ -616,69 +590,59 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			width: Optional[int] = None,
 			height: Optional[int] = None,
 	) -> Rectangle:
-		await self._ensure_driver()
 		rect = await self._wrap_to_trio(self.driver.set_window_rect, x=x, y=y, width=width, height=height)
 		
 		return Rectangle(x=rect["x"], y=rect["y"], width=rect["width"], height=rect["height"])
 	
-	async def set_window_size(self, width: int, height: int, windowHandle: str = "current",) -> None:
-		await self._ensure_driver()
-		
+	@requires_driver
+	async def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:
 		await self._wrap_to_trio(
 				self.driver.set_window_size,
 				width=width,
 				height=height,
-				windowHandle=windowHandle
+				windowHandle=windowHandle,
 		)
 	
+	@requires_driver
 	async def start_client(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.start_client)
 	
+	@requires_driver
 	async def start_devtools(self) -> Tuple[Any, WebSocketConnection]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(self.driver.start_devtools)
 	
+	@requires_driver
 	async def start_session(self, capabilities: Dict[str, Any]) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.start_session, capabilities=capabilities)
 	
+	@requires_driver
 	async def stop_client(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.stop_client)
 	
+	@requires_driver
 	async def storage(self) -> Storage:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.storage)
 		
 		return Storage(
 				selenium_storage=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def supports_fedcm(self) -> bool:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.supports_fedcm)
 	
+	@requires_driver
 	async def timeouts(self) -> Any:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.timeouts)
 	
+	@requires_driver
 	async def title(self) -> str:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.title)
 	
+	@requires_driver
 	async def unpin(self, script_key: Any) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.unpin, script_key=script_key)
 	
 	async def update_times(
@@ -697,88 +661,78 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 				script_timeout=script_timeout,
 		)
 	
+	@requires_driver
 	async def virtual_authenticator_id(self) -> Optional[str]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.virtual_authenticator_id)
 	
+	@requires_driver
 	async def webextension(self) -> WebExtension:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.webextension)
 		
 		return WebExtension(
 				selenium_web_extension=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
+	
+	@requires_driver
+	async def quit(self) -> None:
+		await self._wrap_to_trio(self.driver.quit)
 	
 	@property
 	def driver(self) -> Optional[legacyWebDriver]:
 		return self._driver
 	
-	async def _ensure_driver(self) -> None:
-		if self.driver is None:
-			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
-	
-	async def quit(self) -> None:
-		await self._ensure_driver()
-		await self._wrap_to_trio(self.driver.quit)
-	
+	@requires_driver
 	async def close_webdriver(self) -> None:
 		if self.driver is not None:
 			await self.quit()
 			self._driver = None
 	
+	@requires_driver
 	async def switch_to(self) -> SwitchTo:
-		await self._ensure_driver()
 		legacy = await self._wrap_to_trio(lambda: self.driver.switch_to)
 		
 		return SwitchTo(
 				selenium_switch_to=legacy,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
+	@requires_driver
 	async def window_handles(self) -> List[str]:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.window_handles)
 	
+	@requires_driver
 	async def close(self) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.close)
 	
+	@requires_driver
 	async def get(self, url: str) -> None:
-		await self._ensure_driver()
-		
 		await self._wrap_to_trio(self.driver.get, url=url)
 	
+	@requires_driver
 	async def current_window_handle(self) -> str:
-		await self._ensure_driver()
-		
 		return await self._wrap_to_trio(lambda: self.driver.current_window_handle)
 	
 	async def close_window(self, window: Optional[Union[str, int]] = None) -> None:
 		current = await self.current_window_handle()
 		target = await self.get_window_handle(window)
+		switch_to = await self.switch_to()
 		
 		if target == current:
 			await self.close()
 			remaining = await self.window_handles()
 		
 			if remaining:
-				await (await self.switch_to()).window(remaining[-1])
+				await switch_to.window(remaining[-1])
 		else:
-			switch_to = await self.switch_to()
-		
 			await switch_to.window(target)
 			await self.close()
 			await switch_to.window(current)
 	
+	@requires_driver
 	async def execute_script(self, script: str, *args: Any) -> Any:
-		await self._ensure_driver()
-		
 		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
 		
 		return await self._wrap_to_trio(self.driver.execute_script, script, *args)
