@@ -37,11 +37,11 @@ from osn_selenium.types import (
 from typing import (
 	Any,
 	AsyncGenerator,
-	Literal,
+	Dict, List, Literal,
 	Mapping,
 	Optional,
 	Sequence,
-	Tuple,
+	Set, Tuple,
 	Union
 )
 from selenium.webdriver.common.virtual_authenticator import (
@@ -1262,4 +1262,17 @@ class AbstractWebDriver(ABC):
 			Sequence[str]: A sequence of window handles.
 		"""
 		
+		...
+
+	def _wrap_result(self, result: Any) -> Union[
+		AbstractWebElement,
+		List[AbstractWebElement],
+		Dict[Any, AbstractWebElement],
+		Set[AbstractWebElement],
+		Tuple[AbstractWebElement, ...],
+		Any,
+	]:
+		...
+
+	def _unwrap_args(self, arg: Any) -> Any:
 		...

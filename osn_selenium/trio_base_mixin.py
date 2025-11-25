@@ -8,26 +8,26 @@ from typing import (
 )
 
 
-_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
-_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
+METHOD_INPUT = ParamSpec("METHOD_INPUT")
+METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
 
 
-def requires_driver(fn: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, _METHOD_OUTPUT]:
+def requires_driver(fn: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
 	@functools.wraps(fn)
 	def sync_wrapper(
 			self: object,
-			*args: _METHOD_INPUT.args,
-			**kwargs: _METHOD_INPUT.kwargs
-	) -> _METHOD_OUTPUT:
+			*args: METHOD_INPUT.args,
+			**kwargs: METHOD_INPUT.kwargs
+	) -> METHOD_OUTPUT:
 		getattr(self, "_ensure_driver")()
 		return fn(self, *args, **kwargs)
 	
 	@functools.wraps(fn)
 	async def async_wrapper(
 			self: object,
-			*args: _METHOD_INPUT.args,
-			**kwargs: _METHOD_INPUT.kwargs
-	) -> _METHOD_OUTPUT:
+			*args: METHOD_INPUT.args,
+			**kwargs: METHOD_INPUT.kwargs
+	) -> METHOD_OUTPUT:
 		getattr(self, "_ensure_driver")()
 		return await fn(self, *args, **kwargs)
 	
@@ -43,12 +43,12 @@ class _TrioThreadMixin:
 	
 	async def _wrap_to_trio(
 			self,
-			fn: Callable[_METHOD_INPUT, _METHOD_OUTPUT],
-			*args: _METHOD_INPUT.args,
-			**kwargs: _METHOD_INPUT.kwargs,
-	) -> _METHOD_OUTPUT:
-		def placeholder(*args_):
-			return fn(*args_, **kwargs)
+			fn: Callable[METHOD_INPUT, METHOD_OUTPUT],
+			*args: METHOD_INPUT.args,
+			**kwargs: METHOD_INPUT.kwargs,
+	) -> METHOD_OUTPUT:
+		if kwargs:
+			fn = functools.partial(fn, **kwargs)
 		
 		async with self._lock:
-			return await trio.to_thread.run_sync(placeholder, *args, limiter=self._capacity_limiter)
+			return await trio.to_thread.run_sync(fn, *args, limiter=self._capacity_limiter)

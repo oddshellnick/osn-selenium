@@ -1,8 +1,7 @@
 from typing import Any, Callable, Dict, Optional
 
-from selenium.webdriver.remote.webelement import WebElement
-
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
+from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.types import Position, Rectangle, Size
 from osn_selenium.webdrivers.types import Point
 

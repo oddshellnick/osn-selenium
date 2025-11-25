@@ -38,23 +38,15 @@ from osn_selenium.instances.trio_threads.browsing_context import BrowsingContext
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
+from selenium.webdriver.remote.webelement import (
+	WebElement as legacyWebElement
+)
 from osn_selenium.types import (
 	DEVICES_TYPEHINT,
 	Position,
 	Rectangle,
 	Size,
 	WindowRect
-)
-from typing import (
-	Any,
-	AsyncGenerator,
-	Dict,
-	List,
-	Literal,
-	Optional,
-	Tuple,
-	Type,
-	Union
 )
 from osn_selenium.instances.trio_threads.action_chains import (
 	ActionChains,
@@ -63,6 +55,18 @@ from osn_selenium.instances.trio_threads.action_chains import (
 from selenium.webdriver.common.virtual_authenticator import (
 	Credential,
 	VirtualAuthenticatorOptions
+)
+from typing import (
+	Any,
+	AsyncGenerator,
+	Dict,
+	List,
+	Literal,
+	Optional,
+	Set,
+	Tuple,
+	Type,
+	Union
 )
 
 
@@ -126,7 +130,6 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
 		return ActionChains(
-				self.driver,
 				legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -234,9 +237,11 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 	
 	@requires_driver
 	async def execute_async_script(self, script: str, *args: Any) -> Any:
-		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
+		args = self._unwrap_args(args)
 		
-		return await self._wrap_to_trio(self.driver.execute_async_script, script, *args)
+		return self._wrap_result(
+				result=await self._wrap_to_trio(self.driver.execute_async_script, script, *args)
+		)
 	
 	@requires_driver
 	async def fedcm(self) -> FedCM:
@@ -355,7 +360,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> HumanLikeActionChains:
 		return HumanLikeActionChains(
-				driver=self.driver,
+				driver=self,
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -690,6 +695,14 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			self._driver = None
 	
 	@requires_driver
+	async def window_handles(self) -> List[str]:
+		return await self._wrap_to_trio(lambda: self.driver.window_handles)
+	
+	@requires_driver
+	async def close(self) -> None:
+		await self._wrap_to_trio(self.driver.close)
+	
+	@requires_driver
 	async def switch_to(self) -> SwitchTo:
 		legacy = await self._wrap_to_trio(lambda: self.driver.switch_to)
 		
@@ -698,14 +711,6 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
-	
-	@requires_driver
-	async def window_handles(self) -> List[str]:
-		return await self._wrap_to_trio(lambda: self.driver.window_handles)
-	
-	@requires_driver
-	async def close(self) -> None:
-		await self._wrap_to_trio(self.driver.close)
 	
 	@requires_driver
 	async def get(self, url: str) -> None:
@@ -731,11 +736,60 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			await self.close()
 			await switch_to.window(current)
 	
+	def _wrap_result(self, result: Any) -> Union[
+		WebElement,
+		List[legacyWebElement],
+		Dict[Any, legacyWebElement],
+		Set[legacyWebElement],
+		Tuple[legacyWebElement, ...],
+		Any,
+	]:
+		if isinstance(result, legacyWebElement):
+			return WebElement.from_legacy(
+					selenium_web_element=result,
+					lock=self._lock,
+					limiter=self._capacity_limiter
+			)
+		
+		if isinstance(result, list):
+			return [self._wrap_result(item) for item in result]
+		
+		if isinstance(result, dict):
+			return {k: self._wrap_result(v) for k, v in result.items()}
+		
+		if isinstance(result, tuple):
+			return tuple(self._wrap_result(item) for item in result)
+		
+		if isinstance(result, set):
+			return {self._wrap_result(item) for item in result}
+		
+		return result
+	
+	def _unwrap_args(self, arg: Any) -> Any:
+		if isinstance(arg, WebElement):
+			return arg.legacy
+		
+		if isinstance(arg, list):
+			return [self._unwrap_args(item) for item in arg]
+		
+		if isinstance(arg, dict):
+			return {k: self._unwrap_args(v) for k, v in arg.items()}
+		
+		if isinstance(arg, tuple):
+			return tuple(self._unwrap_args(item) for item in arg)
+		
+		if isinstance(arg, set):
+			return {self._unwrap_args(item) for item in arg}
+		
+		return arg
+	
 	@requires_driver
 	async def execute_script(self, script: str, *args: Any) -> Any:
-		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
+		args = self._unwrap_args(args)
 		
-		return await self._wrap_to_trio(self.driver.execute_script, script, *args)
+		return self._wrap_result(
+				result=await self._wrap_to_trio(self.driver.execute_script, script, *args)
+		)
 	
 	async def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		if isinstance(window, str):

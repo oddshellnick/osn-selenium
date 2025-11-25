@@ -94,7 +94,7 @@ class Point:
 		return self.__str__()
 	
 	def __str__(self) -> str:
-		return f"ActionPoint(x={self.x}, y={self.y})"
+		return f"Point(x={self.x}, y={self.y})"
 	
 	def __eq__(self, other: "Point") -> bool:
 		return self.x == other.x and self.y == other.y

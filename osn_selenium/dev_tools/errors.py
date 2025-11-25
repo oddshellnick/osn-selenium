@@ -1,7 +1,9 @@
-from typing import Dict, List
-
 import trio
-from selenium.webdriver.common.bidi.cdp import CdpConnectionClosed
+from typing import Dict, List
+from selenium.webdriver.common.bidi.cdp import (
+	BrowserError,
+	CdpConnectionClosed
+)
 
 
 class WrongHandlerSettingsTypeError(Exception):
@@ -87,5 +89,6 @@ cdp_end_exceptions = (
 		trio.Cancelled,
 		trio.EndOfChannel,
 		trio.ClosedResourceError,
-		CdpConnectionClosed
+		CdpConnectionClosed,
+		BrowserError
 )

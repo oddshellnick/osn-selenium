@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import trio
 from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.utils import (
-	log_exception
-)
+from osn_selenium.dev_tools.utils import log_exception
 from typing import (
 	Any,
-	Dict, Literal,
+	Dict,
+	Literal,
 	Sequence,
 	TYPE_CHECKING,
 	Union

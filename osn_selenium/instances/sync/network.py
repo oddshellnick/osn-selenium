@@ -4,6 +4,8 @@ from typing import (
 	Optional,
 	Self
 )
+from osn_selenium.instances.types import NETWORK_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.network import AbstractNetwork
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
@@ -11,10 +13,13 @@ from selenium.webdriver.common.bidi.network import (
 
 
 class Network(AbstractNetwork):
-	def __init__(self, selenium_network: legacyNetwork,) -> None:
+	def __init__(self, selenium_network: legacyNetwork) -> None:
+		if not isinstance(selenium_network, legacyNetwork):
+			raise TypeError(f"Expected {type(legacyNetwork)}, got {type(selenium_network)}")
+		
 		self._selenium_network = selenium_network
 	
-	def add_auth_handler(self, username: str, password: str,) -> int:
+	def add_auth_handler(self, username: str, password: str) -> int:
 		return self.legacy.add_auth_handler(username=username, password=password)
 	
 	def add_request_handler(
@@ -35,21 +40,15 @@ class Network(AbstractNetwork):
 		self.legacy.clear_request_handlers()
 	
 	@classmethod
-	def from_legacy(cls, selenium_network: legacyNetwork,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium Network object.
-
-		This factory method is used to wrap an existing Selenium Network
-		instance into the new interface.
-
-		Args:
-			selenium_network (legacyNetwork): The legacy Selenium Network instance.
-
-		Returns:
-			Self: A new instance of a class implementing Network.
-		"""
+	def from_legacy(cls, selenium_network: NETWORK_TYPEHINT) -> Self:
+		legacy_network_obj = get_legacy_instance(selenium_network)
 		
-		return cls(selenium_network=selenium_network)
+		if not isinstance(legacy_network_obj, legacyNetwork):
+			raise TypeError(
+					f"Could not convert input to {type(legacyNetwork)}: {type(selenium_network)}"
+			)
+		
+		return cls(selenium_network=legacy_network_obj)
 	
 	@property
 	def legacy(self) -> legacyNetwork:
@@ -58,5 +57,5 @@ class Network(AbstractNetwork):
 	def remove_auth_handler(self, callback_id: int) -> None:
 		self.legacy.remove_auth_handler(callback_id=callback_id)
 	
-	def remove_request_handler(self, event: str, callback_id: int,) -> None:
+	def remove_request_handler(self, event: str, callback_id: int) -> None:
 		self.legacy.remove_request_handler(event=event, callback_id=callback_id)

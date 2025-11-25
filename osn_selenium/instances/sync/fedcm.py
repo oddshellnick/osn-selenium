@@ -4,12 +4,17 @@ from typing import (
 	Optional,
 	Self
 )
+from osn_selenium.instances.types import FEDCM_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
 
 
 class FedCM(AbstractFedCM):
-	def __init__(self, selenium_fedcm: legacyFedCM,) -> None:
+	def __init__(self, selenium_fedcm: legacyFedCM) -> None:
+		if not isinstance(selenium_fedcm, legacyFedCM):
+			raise TypeError(f"Expected {type(legacyFedCM)}, got {type(selenium_fedcm)}")
+		
 		self._selenium_fedcm = selenium_fedcm
 	
 	def accept(self) -> None:
@@ -31,21 +36,15 @@ class FedCM(AbstractFedCM):
 		self.legacy.enable_delay()
 	
 	@classmethod
-	def from_legacy(cls, selenium_fedcm: legacyFedCM,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium FedCM object.
-
-		This factory method is used to wrap an existing Selenium FedCM
-		instance into the new interface.
-
-		Args:
-			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance.
-
-		Returns:
-			Self: A new instance of a class implementing FedCM.
-		"""
+	def from_legacy(cls, selenium_fedcm: FEDCM_TYPEHINT) -> Self:
+		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
-		return cls(selenium_fedcm=selenium_fedcm)
+		if not isinstance(legacy_fedcm_obj, legacyFedCM):
+			raise TypeError(
+					f"Could not convert input to {type(legacyFedCM)}: {type(selenium_fedcm)}"
+			)
+		
+		return cls(selenium_fedcm=legacy_fedcm_obj)
 	
 	@property
 	def legacy(self) -> legacyFedCM:

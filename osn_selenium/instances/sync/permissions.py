@@ -5,6 +5,8 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
@@ -13,25 +15,24 @@ from selenium.webdriver.common.bidi.permissions import (
 
 
 class Permissions(AbstractPermissions):
-	def __init__(self, selenium_permissions: legacyPermissions,) -> None:
+	def __init__(self, selenium_permissions: legacyPermissions) -> None:
+		if not isinstance(selenium_permissions, legacyPermissions):
+			raise TypeError(
+					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
+			)
+		
 		self._selenium_permissions = selenium_permissions
 	
 	@classmethod
-	def from_legacy(cls, selenium_permissions: legacyPermissions,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium Permissions object.
-
-		This factory method is used to wrap an existing Selenium Permissions
-		instance into the new interface.
-
-		Args:
-			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance.
-
-		Returns:
-			Self: A new instance of a class implementing Permissions.
-		"""
+	def from_legacy(cls, selenium_permissions: PERMISSIONS_TYPEHINT) -> Self:
+		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
-		return cls(selenium_permissions=selenium_permissions)
+		if not isinstance(legacy_permissions_obj, legacyPermissions):
+			raise TypeError(
+					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
+			)
+		
+		return cls(selenium_permissions=legacy_permissions_obj)
 	
 	@property
 	def legacy(self) -> legacyPermissions:

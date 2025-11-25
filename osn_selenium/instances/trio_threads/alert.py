@@ -1,8 +1,10 @@
 import trio
 from typing import Optional, Self
+from osn_selenium.instances.types import ALERT_TYPEHINT
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
 
 
 class Alert(_TrioThreadMixin, AbstractAlert):
@@ -13,6 +15,9 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 			limiter: Optional[trio.CapacityLimiter] = None,
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
+		
+		if not isinstance(selenium_alert, legacyAlert):
+			raise TypeError(f"Expected {type(legacyAlert)}, got {type(selenium_alert)}")
 		
 		self._selenium_alert = selenium_alert
 	
@@ -25,7 +30,7 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_alert: legacyAlert,
+			selenium_alert: ALERT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -36,7 +41,7 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 		instance into the new interface.
 
 		Args:
-			selenium_alert (legacyAlert): The legacy Selenium Alert instance.
+			selenium_alert (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -44,13 +49,20 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 			Self: A new instance of a class implementing Alert.
 		"""
 		
-		return cls(selenium_alert=selenium_alert, lock=lock, limiter=limiter)
+		legacy_alert_obj = get_legacy_instance(selenium_alert)
+		
+		if not isinstance(legacy_alert_obj, legacyAlert):
+			raise TypeError(
+					f"Could not convert input to {type(legacyAlert)}: {type(selenium_alert)}"
+			)
+		
+		return cls(selenium_alert=legacy_alert_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyAlert:
 		return self._selenium_alert
 	
-	async def send_keys(self, keysToSend: str,) -> None:
+	async def send_keys(self, keysToSend: str) -> None:
 		await self._wrap_to_trio(self._selenium_alert.send_keys, keysToSend=keysToSend)
 	
 	async def text(self) -> str:

@@ -1,5 +1,7 @@
 from typing import List, Optional, Self
+from osn_selenium.instances.types import DIALOG_TYPEHINT
 from selenium.webdriver.common.fedcm.account import Account
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
@@ -7,7 +9,10 @@ from selenium.webdriver.common.fedcm.dialog import (
 
 
 class Dialog(AbstractDialog):
-	def __init__(self, selenium_dialog: legacyDialog,) -> None:
+	def __init__(self, selenium_dialog: legacyDialog) -> None:
+		if not isinstance(selenium_dialog, legacyDialog):
+			raise TypeError(f"Expected {type(legacyDialog)}, got {type(selenium_dialog)}")
+		
 		self._selenium_dialog = selenium_dialog
 	
 	def accept(self) -> None:
@@ -17,21 +22,15 @@ class Dialog(AbstractDialog):
 		self.legacy.dismiss()
 	
 	@classmethod
-	def from_legacy(cls, selenium_dialog: legacyDialog,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium Dialog object.
-
-		This factory method is used to wrap an existing Selenium Dialog
-		instance into the new interface.
-
-		Args:
-			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance.
-
-		Returns:
-			Self: A new instance of a class implementing Dialog.
-		"""
+	def from_legacy(cls, selenium_dialog: DIALOG_TYPEHINT) -> Self:
+		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
-		return cls(selenium_dialog=selenium_dialog)
+		if not isinstance(legacy_dialog_obj, legacyDialog):
+			raise TypeError(
+					f"Could not convert input to {type(legacyDialog)}: {type(selenium_dialog)}"
+			)
+		
+		return cls(selenium_dialog=legacy_dialog_obj)
 	
 	def get_accounts(self) -> List[Account]:
 		return self.legacy.get_accounts()

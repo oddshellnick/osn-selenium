@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
@@ -6,8 +7,9 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
@@ -23,12 +25,17 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
+		if not isinstance(selenium_permissions, legacyPermissions):
+			raise TypeError(
+					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
+			)
+		
 		self._selenium_permissions = selenium_permissions
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_permissions: legacyPermissions,
+			selenium_permissions: PERMISSIONS_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -39,7 +46,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 		instance into the new interface.
 
 		Args:
-			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance.
+			selenium_permissions (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -47,7 +54,18 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 			Self: A new instance of a class implementing Permissions.
 		"""
 		
-		return cls(selenium_permissions=selenium_permissions, lock=lock, limiter=limiter)
+		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
+		
+		if not isinstance(legacy_permissions_obj, legacyPermissions):
+			raise TypeError(
+					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
+			)
+		
+		return cls(
+				selenium_permissions=legacy_permissions_obj,
+				lock=lock,
+				limiter=limiter
+		)
 	
 	@property
 	def legacy(self) -> legacyPermissions:
