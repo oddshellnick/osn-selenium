@@ -4,8 +4,10 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.abstract.instances.storage import AbstractStorage
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import STORAGE_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.abstract.instances.storage import AbstractStorage
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -27,6 +29,9 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
+		if not isinstance(selenium_storage, legacyStorage):
+			raise TypeError(f"Expected {type(legacyStorage)}, got {type(selenium_storage)}")
+		
 		self._selenium_storage = selenium_storage
 	
 	async def delete_cookies(
@@ -39,7 +44,7 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_storage: legacyStorage,
+			selenium_storage: STORAGE_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -50,7 +55,7 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 		instance into the new interface.
 
 		Args:
-			selenium_storage (legacyStorage): The legacy Selenium Storage instance.
+			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -58,7 +63,14 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 			Self: A new instance of a class implementing Storage.
 		"""
 		
-		return cls(selenium_storage=selenium_storage, lock=lock, limiter=limiter)
+		legacy_storage_obj = get_legacy_instance(selenium_storage)
+		
+		if not isinstance(legacy_storage_obj, legacyStorage):
+			raise TypeError(
+					f"Could not convert input to {type(legacyStorage)}: {type(selenium_storage)}"
+			)
+		
+		return cls(selenium_storage=legacy_storage_obj, lock=lock, limiter=limiter)
 	
 	async def get_cookies(
 			self,

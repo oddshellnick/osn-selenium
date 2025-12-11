@@ -3,6 +3,8 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.types import STORAGE_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
@@ -17,7 +19,10 @@ from selenium.webdriver.common.bidi.storage import (
 
 
 class Storage(AbstractStorage):
-	def __init__(self, selenium_storage: legacyStorage,) -> None:
+	def __init__(self, selenium_storage: legacyStorage) -> None:
+		if not isinstance(selenium_storage, legacyStorage):
+			raise TypeError(f"Expected {type(legacyStorage)}, got {type(selenium_storage)}")
+		
 		self._selenium_storage = selenium_storage
 	
 	def delete_cookies(
@@ -28,21 +33,15 @@ class Storage(AbstractStorage):
 		return self.legacy.delete_cookies(filter=filter, partition=partition)
 	
 	@classmethod
-	def from_legacy(cls, selenium_storage: legacyStorage,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium Storage object.
-
-		This factory method is used to wrap an existing Selenium Storage
-		instance into the new interface.
-
-		Args:
-			selenium_storage (legacyStorage): The legacy Selenium Storage instance.
-
-		Returns:
-			Self: A new instance of a class implementing Storage.
-		"""
+	def from_legacy(cls, selenium_storage: STORAGE_TYPEHINT) -> Self:
+		legacy_storage_obj = get_legacy_instance(selenium_storage)
 		
-		return cls(selenium_storage=selenium_storage)
+		if not isinstance(legacy_storage_obj, legacyStorage):
+			raise TypeError(
+					f"Could not convert input to {type(legacyStorage)}: {type(selenium_storage)}"
+			)
+		
+		return cls(selenium_storage=legacy_storage_obj)
 	
 	def get_cookies(
 			self,

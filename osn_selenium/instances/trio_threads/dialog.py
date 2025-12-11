@@ -1,8 +1,10 @@
 import trio
 from typing import List, Optional, Self
-from selenium.webdriver.common.fedcm.account import Account
-from osn_selenium.abstract.instances.dialog import AbstractDialog
+from osn_selenium.instances.types import DIALOG_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from selenium.webdriver.common.fedcm.account import Account
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
@@ -17,6 +19,9 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
+		if not isinstance(selenium_dialog, legacyDialog):
+			raise TypeError(f"Expected {type(legacyDialog)}, got {type(selenium_dialog)}")
+		
 		self._selenium_dialog = selenium_dialog
 	
 	async def accept(self) -> None:
@@ -28,7 +33,7 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_dialog: legacyDialog,
+			selenium_dialog: DIALOG_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -39,7 +44,7 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		instance into the new interface.
 
 		Args:
-			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance.
+			selenium_dialog (DIALOG_TYPEHINT): The legacy Selenium Dialog instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -47,7 +52,14 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 			Self: A new instance of a class implementing Dialog.
 		"""
 		
-		return cls(selenium_dialog=selenium_dialog, lock=lock, limiter=limiter)
+		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
+		
+		if not isinstance(legacy_dialog_obj, legacyDialog):
+			raise TypeError(
+					f"Could not convert input to {type(legacyDialog)}: {type(selenium_dialog)}"
+			)
+		
+		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	
 	async def get_accounts(self) -> List[Account]:
 		return await self._wrap_to_trio(self.legacy.get_accounts)

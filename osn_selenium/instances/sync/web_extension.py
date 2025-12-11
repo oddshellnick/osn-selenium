@@ -4,6 +4,10 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.types import (
+	WEB_EXTENSION_TYPEHINT
+)
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
@@ -11,25 +15,24 @@ from selenium.webdriver.common.bidi.webextension import (
 
 
 class WebExtension(AbstractWebExtension):
-	def __init__(self, selenium_web_extension: legacyWebExtension,) -> None:
+	def __init__(self, selenium_web_extension: legacyWebExtension) -> None:
+		if not isinstance(selenium_web_extension, legacyWebExtension):
+			raise TypeError(
+					f"Expected {type(legacyWebExtension)}, got {type(selenium_web_extension)}"
+			)
+		
 		self._selenium_web_extension = selenium_web_extension
 	
 	@classmethod
-	def from_legacy(cls, selenium_web_extension: legacyWebExtension,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium WebExtension object.
-
-		This factory method is used to wrap an existing Selenium WebExtension
-		instance into the new interface.
-
-		Args:
-			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance.
-
-		Returns:
-			Self: A new instance of a class implementing WebExtension.
-		"""
+	def from_legacy(cls, selenium_web_extension: WEB_EXTENSION_TYPEHINT) -> Self:
+		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
 		
-		return cls(selenium_web_extension=selenium_web_extension)
+		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
+			raise TypeError(
+					f"Could not convert input to {type(legacyWebExtension)}: {type(selenium_web_extension)}"
+			)
+		
+		return cls(selenium_web_extension=legacy_web_extension_obj)
 	
 	def install(
 			self,

@@ -5,8 +5,10 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.abstract.instances.network import AbstractNetwork
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import NETWORK_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.abstract.instances.network import AbstractNetwork
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
 )
@@ -21,9 +23,12 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
+		if not isinstance(selenium_network, legacyNetwork):
+			raise TypeError(f"Expected {type(legacyNetwork)}, got {type(selenium_network)}")
+		
 		self._selenium_network = selenium_network
 	
-	async def add_auth_handler(self, username: str, password: str,) -> int:
+	async def add_auth_handler(self, username: str, password: str) -> int:
 		return await self._wrap_to_trio(self.legacy.add_auth_handler, username=username, password=password)
 	
 	async def add_request_handler(
@@ -47,7 +52,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_network: legacyNetwork,
+			selenium_network: NETWORK_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -58,7 +63,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		instance into the new interface.
 
 		Args:
-			selenium_network (legacyNetwork): The legacy Selenium Network instance.
+			selenium_network (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -66,7 +71,14 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 			Self: A new instance of a class implementing Network.
 		"""
 		
-		return cls(selenium_network=selenium_network, lock=lock, limiter=limiter)
+		legacy_network_obj = get_legacy_instance(selenium_network)
+		
+		if not isinstance(legacy_network_obj, legacyNetwork):
+			raise TypeError(
+					f"Could not convert input to {type(legacyNetwork)}: {type(selenium_network)}"
+			)
+		
+		return cls(selenium_network=legacy_network_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyNetwork:
@@ -75,7 +87,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 	async def remove_auth_handler(self, callback_id: int) -> None:
 		await self._wrap_to_trio(self.legacy.remove_auth_handler, callback_id=callback_id)
 	
-	async def remove_request_handler(self, event: str, callback_id: int,) -> None:
+	async def remove_request_handler(self, event: str, callback_id: int) -> None:
 		await self._wrap_to_trio(
 				self.legacy.remove_request_handler,
 				event=event,

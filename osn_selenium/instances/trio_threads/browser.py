@@ -1,7 +1,9 @@
 import trio
 from typing import List, Self
-from osn_selenium.abstract.instances.browser import AbstractBrowser
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import BROWSER_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.abstract.instances.browser import AbstractBrowser
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo
@@ -17,6 +19,9 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
+		if not isinstance(selenium_browser, legacyBrowser):
+			raise TypeError(f"Expected {type(legacyBrowser)}, got {type(selenium_browser)}")
+		
 		self._selenium_browser = selenium_browser
 	
 	async def create_user_context(self) -> str:
@@ -25,7 +30,7 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_browser: legacyBrowser,
+			selenium_browser: BROWSER_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -36,7 +41,7 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 		instance into the new interface.
 
 		Args:
-			selenium_browser (legacyBrowser): The legacy Selenium Browser instance.
+			selenium_browser (BROWSER_TYPEHINT): The legacy Selenium Browser instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -44,7 +49,14 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 			Self: A new instance of a class implementing Browser.
 		"""
 		
-		return cls(selenium_browser=selenium_browser, limiter=limiter, lock=lock)
+		legacy_browser_obj = get_legacy_instance(selenium_browser)
+		
+		if not isinstance(legacy_browser_obj, legacyBrowser):
+			raise TypeError(
+					f"Could not convert input to {type(legacyBrowser)}: {type(selenium_browser)}"
+			)
+		
+		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	
 	async def get_client_windows(self) -> List[ClientWindowInfo]:
 		return await self._wrap_to_trio(self._selenium_browser.get_client_windows)

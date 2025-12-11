@@ -1,15 +1,19 @@
 import trio
 from osn_selenium.webdrivers.types import Point
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.executors.trio_threads.javascript import JSExecutor
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
+from osn_selenium.instances.convert import (
+	get_legacy_web_element
+)
 from typing import (
 	Optional,
+	Self,
+	TYPE_CHECKING,
 	Tuple,
 	Union
 )
-from selenium.webdriver.remote.webdriver import WebDriver
-from osn_selenium.executors.trio_threads.javascript import JSExecutor
-from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from osn_selenium.instances.trio_threads.web_element import WebElement
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
 )
@@ -24,99 +28,91 @@ from osn_selenium.abstract.instances.action_chains import (
 )
 
 
+if TYPE_CHECKING:
+	from osn_selenium.webdrivers.trio_threads.base import WebDriver
+
+
 class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	def __init__(
 			self,
-			driver: WebDriver,
 			selenium_action_chains: legacyActionChains,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
 		
-		self._driver = driver
+		if not isinstance(selenium_action_chains, legacyActionChains):
+			raise TypeError(
+					f"Expected {type(legacyActionChains)}, got {type(selenium_action_chains)}"
+			)
+		
 		self._selenium_action_chains = selenium_action_chains
 	
-	async def click(self, on_element: Optional[WebElement] = None,) -> "ActionChains":
+	async def click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.click,
-				on_element=on_element.legacy if on_element is not None else None
+				on_element=get_legacy_web_element(on_element)
 		)
 		
 		return self
 	
-	async def click_and_hold(self, on_element: Optional[WebElement] = None,) -> "ActionChains":
+	async def click_and_hold(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.click_and_hold,
-				on_element=on_element.legacy if on_element is not None else None
+				on_element=get_legacy_web_element(on_element)
 		)
 		
 		return self
 	
-	async def context_click(self, on_element: Optional[WebElement] = None,) -> "ActionChains":
+	async def context_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.context_click,
-				on_element=on_element.legacy if on_element is not None else None
+				on_element=get_legacy_web_element(on_element)
 		)
 		
 		return self
 	
-	async def double_click(self, on_element: Optional[WebElement] = None,) -> "ActionChains":
+	async def double_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.double_click,
-				on_element=on_element.legacy if on_element is not None else None
+				on_element=get_legacy_web_element(on_element)
 		)
 		
 		return self
 	
-	async def drag_and_drop(self, source: WebElement, target: WebElement,) -> "ActionChains":
+	async def drag_and_drop(self, source: WEB_ELEMENT_TYPEHINT, target: WEB_ELEMENT_TYPEHINT) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.drag_and_drop,
-				source=source.legacy,
-				target=target.legacy
+				source=get_legacy_web_element(source),
+				target=get_legacy_web_element(target)
 		)
 		
 		return self
 	
-	async def drag_and_drop_by_offset(self, source: WebElement, xoffset: int, yoffset: int,) -> "ActionChains":
+	async def drag_and_drop_by_offset(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.drag_and_drop_by_offset,
-				source=source.legacy,
+				source=get_legacy_web_element(source),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
 		
 		return self
 	
-	@classmethod
-	def from_legacy(
-			cls,
-			driver: WebDriver,
-			selenium_action_chains: legacyActionChains,
-			lock: trio.Lock,
-			limiter: trio.CapacityLimiter,
-	) -> "ActionChains":
-		return cls(
-				driver=driver,
-				selenium_action_chains=selenium_action_chains,
-				lock=lock,
-				limiter=limiter
-		)
-	
-	async def key_down(self, value: str, element: Optional[WebElement] = None,) -> "ActionChains":
+	async def key_down(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.key_down,
 				value=value,
-				element=element.legacy if element is not None else None
+				element=get_legacy_web_element(element)
 		)
 		
 		return self
 	
-	async def key_up(self, value: str, element: Optional[WebElement] = None,) -> "ActionChains":
+	async def key_up(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.key_up,
 				value=value,
-				element=element.legacy if element is not None else None
+				element=get_legacy_web_element(element)
 		)
 		
 		return self
@@ -125,7 +121,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	def legacy(self) -> legacyActionChains:
 		return self._selenium_action_chains
 	
-	async def move_by_offset(self, xoffset: int, yoffset: int,) -> "ActionChains":
+	async def move_by_offset(self, xoffset: int, yoffset: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.move_by_offset,
 				xoffset=xoffset,
@@ -134,25 +130,25 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		
 		return self
 	
-	async def move_to_element(self, to_element: WebElement,) -> "ActionChains":
+	async def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.move_to_element,
-				to_element=to_element.legacy
+				to_element=get_legacy_web_element(to_element)
 		)
 		
 		return self
 	
-	async def move_to_element_with_offset(self, to_element: WebElement, xoffset: int, yoffset: int,) -> "ActionChains":
+	async def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.move_to_element_with_offset,
-				to_element=to_element.legacy,
+				to_element=get_legacy_web_element(to_element),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
 		
 		return self
 	
-	async def pause(self, seconds: Union[float, int],) -> "ActionChains":
+	async def pause(self, seconds: Union[float, int]) -> Self:
 		await self._wrap_to_trio(self._selenium_action_chains.pause, seconds=seconds)
 		
 		return self
@@ -160,15 +156,15 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def perform(self) -> None:
 		await self._wrap_to_trio(self._selenium_action_chains.perform)
 	
-	async def release(self, on_element: Optional[WebElement] = None,) -> "ActionChains":
+	async def release(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.release,
-				on_element=on_element.legacy if on_element is not None else None
+				on_element=get_legacy_web_element(on_element)
 		)
 		
 		return self
 	
-	async def scroll_by_amount(self, delta_x: int, delta_y: int,) -> "ActionChains":
+	async def scroll_by_amount(self, delta_x: int, delta_y: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.scroll_by_amount,
 				delta_x=delta_x,
@@ -177,7 +173,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		
 		return self
 	
-	async def scroll_from_origin(self, scroll_origin: ScrollOrigin, delta_x: int, delta_y: int,) -> "ActionChains":
+	async def scroll_from_origin(self, scroll_origin: ScrollOrigin, delta_x: int, delta_y: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.scroll_from_origin,
 				scroll_origin=scroll_origin,
@@ -187,21 +183,24 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		
 		return self
 	
-	async def scroll_to_element(self, element: WebElement,) -> "ActionChains":
-		await self._wrap_to_trio(self._selenium_action_chains.scroll_to_element, element=element.legacy)
+	async def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> Self:
+		await self._wrap_to_trio(
+				self._selenium_action_chains.scroll_to_element,
+				element=get_legacy_web_element(element)
+		)
 		
 		return self
 	
-	async def send_keys(self, *keys_to_send: str,) -> "ActionChains":
-		await self._wrap_to_trio(self._selenium_action_chains.send_keys, keys_to_send)
+	async def send_keys(self, *keys_to_send: str) -> Self:
+		await self._wrap_to_trio(self._selenium_action_chains.send_keys, *keys_to_send)
 		
 		return self
 	
-	async def send_keys_to_element(self, element: WebElement, *keys_to_send: str,) -> "ActionChains":
+	async def send_keys_to_element(self, element: WEB_ELEMENT_TYPEHINT, *keys_to_send: str) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.send_keys_to_element,
-				element.legacy,
-				keys_to_send
+				get_legacy_web_element(element),
+				*keys_to_send
 		)
 		
 		return self
@@ -210,36 +209,20 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 	def __init__(
 			self,
-			driver: WebDriver,
+			driver: "WebDriver",
 			selenium_action_chains: legacyActionChains,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
 		super().__init__(
-				driver=driver,
 				selenium_action_chains=selenium_action_chains,
 				lock=lock,
 				limiter=limiter
 		)
 		
-		self._js_executor = JSExecutor(execute_function=self._driver.execute_script)
+		self._js_executor = JSExecutor(execute_function=driver.execute_script)
 	
-	@classmethod
-	def from_legacy(
-			cls,
-			driver: WebDriver,
-			selenium_action_chains: legacyActionChains,
-			lock: trio.Lock,
-			limiter: trio.CapacityLimiter,
-	) -> "HumanLikeActionChains":
-		return cls(
-				driver=driver,
-				selenium_action_chains=selenium_action_chains,
-				lock=lock,
-				limiter=limiter
-		)
-	
-	async def hm_move(self, start_position: Point, end_position: Point,) -> "HumanLikeActionChains":
+	async def hm_move(self, start_position: Point, end_position: Point) -> Self:
 		parts = await self._wrap_to_trio(
 				move_to_parts,
 				start_position=start_position,
@@ -252,12 +235,12 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		
 		return self
 	
-	async def hm_move_to_element(self, start_position: Point, element: WebElement,) -> Tuple["HumanLikeActionChains", Point]:
-		end_position = await self._js_executor.get_random_element_point(element=element.legacy)
+	async def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
+		end_position = await self._js_executor.get_random_element_point(element=get_legacy_web_element(element))
 		
 		return await self.hm_move(start_position=start_position, end_position=end_position), end_position
 	
-	async def hm_scroll(self, delta_x: int, delta_y: int, origin: Optional[ScrollOrigin] = None,) -> "HumanLikeActionChains":
+	async def hm_scroll(self, delta_x: int, delta_y: int, origin: Optional[ScrollOrigin] = None) -> Self:
 		if origin is None:
 			viewport_size = await self._js_executor.get_viewport_size()
 		
@@ -279,15 +262,15 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 	
 	async def hm_scroll_to_element(
 			self,
-			element: WebElement,
+			element: WEB_ELEMENT_TYPEHINT,
 			additional_lower_y_offset: int = 0,
 			additional_upper_y_offset: int = 0,
 			additional_right_x_offset: int = 0,
 			additional_left_x_offset: int = 0,
 			origin: Optional[ScrollOrigin] = None,
-	) -> "HumanLikeActionChains":
+	) -> Self:
 		viewport_rect = await self._js_executor.get_viewport_rect()
-		element_rect = await self._js_executor.get_element_rect_in_viewport(element.legacy)
+		element_rect = await self._js_executor.get_element_rect_in_viewport(get_legacy_web_element(element))
 		
 		if element_rect.x < additional_left_x_offset:
 			delta_x = int(element_rect.x - additional_left_x_offset)
@@ -309,7 +292,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		
 		return await self.hm_scroll(delta_x=delta_x, delta_y=delta_y, origin=origin)
 	
-	async def hm_text_input(self, text: str,) -> "HumanLikeActionChains":
+	async def hm_text_input(self, text: str) -> Self:
 		parts = await self._wrap_to_trio(text_input_to_parts, text=text)
 		
 		for part in parts:

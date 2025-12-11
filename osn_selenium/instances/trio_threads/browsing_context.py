@@ -1,5 +1,9 @@
 import trio
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.types import (
+	BROWSING_CONTEXT_TYPEHINT
+)
 from typing import (
 	Any,
 	Callable,
@@ -26,6 +30,11 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			limiter: trio.CapacityLimiter,
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
+		
+		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
+			raise TypeError(
+					f"Expected {type(legacyBrowsingContext)}, got {type(selenium_browsing_context)}"
+			)
 		
 		self._selenium_browsing_context = selenium_browsing_context
 	
@@ -63,7 +72,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 	async def clear_event_handlers(self) -> None:
 		await self._wrap_to_trio(self.legacy.clear_event_handlers)
 	
-	async def close(self, context: str, prompt_unload: bool = False,) -> None:
+	async def close(self, context: str, prompt_unload: bool = False) -> None:
 		await self._wrap_to_trio(self.legacy.close, context=context, prompt_unload=prompt_unload)
 	
 	async def create(
@@ -84,7 +93,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_browsing_context: legacyBrowsingContext,
+			selenium_browsing_context: BROWSING_CONTEXT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -95,7 +104,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		instance into the new interface.
 
 		Args:
-			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium BrowsingContext instance.
+			selenium_browsing_context (BROWSING_CONTEXT_TYPEHINT): The legacy Selenium BrowsingContext instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -103,13 +112,20 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			Self: A new instance of a class implementing BrowsingContext.
 		"""
 		
+		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
+		
+		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
+			raise TypeError(
+					f"Could not convert input to {type(legacyBrowsingContext)}: {type(selenium_browsing_context)}"
+			)
+		
 		return cls(
-				selenium_browsing_context=selenium_browsing_context,
+				selenium_browsing_context=legacy_browsing_context_obj,
 				lock=lock,
 				limiter=limiter
 		)
 	
-	async def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None,) -> List[BrowsingContextInfo]:
+	async def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None) -> List[BrowsingContextInfo]:
 		return await self._wrap_to_trio(self.legacy.get_tree, max_depth=max_depth, root=root)
 	
 	async def handle_user_prompt(
@@ -146,7 +162,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 				start_nodes=start_nodes
 		)
 	
-	async def navigate(self, context: str, url: str, wait: Optional[str] = None,) -> Dict:
+	async def navigate(self, context: str, url: str, wait: Optional[str] = None) -> Dict:
 		return await self._wrap_to_trio(self.legacy.navigate, context=context, url=url, wait=wait)
 	
 	async def print(
@@ -185,7 +201,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 				wait=wait
 		)
 	
-	async def remove_event_handler(self, event: str, callback_id: int,) -> None:
+	async def remove_event_handler(self, event: str, callback_id: int) -> None:
 		await self._wrap_to_trio(self.legacy.remove_event_handler, event=event, callback_id=callback_id)
 	
 	async def set_viewport(
@@ -203,5 +219,5 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 				user_contexts=user_contexts
 		)
 	
-	async def traverse_history(self, context: str, delta: int,) -> Dict:
+	async def traverse_history(self, context: str, delta: int) -> Dict:
 		return await self._wrap_to_trio(self.legacy.traverse_history, context=context, delta=delta)

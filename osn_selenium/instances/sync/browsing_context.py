@@ -1,3 +1,7 @@
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.types import (
+	BROWSING_CONTEXT_TYPEHINT
+)
 from typing import (
 	Any,
 	Callable,
@@ -17,7 +21,12 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 class BrowsingContext(AbstractBrowsingContext):
-	def __init__(self, selenium_browsing_context: legacyBrowsingContext,) -> None:
+	def __init__(self, selenium_browsing_context: legacyBrowsingContext) -> None:
+		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
+			raise TypeError(
+					f"Expected {type(legacyBrowsingContext)}, got {type(selenium_browsing_context)}"
+			)
+		
 		self._selenium_browsing_context = selenium_browsing_context
 	
 	def activate(self, context: str) -> Any:
@@ -43,7 +52,7 @@ class BrowsingContext(AbstractBrowsingContext):
 	def clear_event_handlers(self) -> None:
 		self.legacy.clear_event_handlers()
 	
-	def close(self, context: str, prompt_unload: bool = False,) -> None:
+	def close(self, context: str, prompt_unload: bool = False) -> None:
 		self.legacy.close(context=context, prompt_unload=prompt_unload)
 	
 	def create(
@@ -61,23 +70,16 @@ class BrowsingContext(AbstractBrowsingContext):
 		)
 	
 	@classmethod
-	def from_legacy(cls, selenium_browsing_context: legacyBrowsingContext,) -> Self:
-		"""
-		Creates an instance from a legacy Selenium BrowsingContext object.
-
-		This factory method is used to wrap an existing Selenium BrowsingContext
-		instance into the new interface.
-
-		Args:
-			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium BrowsingContext instance.
-
-		Returns:
-			Self: A new instance of a class implementing BrowsingContext.
-		"""
+	def from_legacy(cls, selenium_browsing_context: BROWSING_CONTEXT_TYPEHINT) -> Self:
+		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
+		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
+			raise TypeError(
+					f"Could not convert input to {type(legacyBrowsingContext)}: {type(selenium_browsing_context)}"
+			)
 		
-		return cls(selenium_browsing_context=selenium_browsing_context)
+		return cls(selenium_browsing_context=legacy_browsing_context_obj)
 	
-	def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None,) -> List[BrowsingContextInfo]:
+	def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None) -> List[BrowsingContextInfo]:
 		return self.legacy.get_tree(max_depth=max_depth, root=root)
 	
 	def handle_user_prompt(
@@ -108,7 +110,7 @@ class BrowsingContext(AbstractBrowsingContext):
 				start_nodes=start_nodes
 		)
 	
-	def navigate(self, context: str, url: str, wait: Optional[str] = None,) -> Dict:
+	def navigate(self, context: str, url: str, wait: Optional[str] = None) -> Dict:
 		return self.legacy.navigate(context=context, url=url, wait=wait)
 	
 	def print(
@@ -141,7 +143,7 @@ class BrowsingContext(AbstractBrowsingContext):
 	) -> Dict:
 		return self.legacy.reload(context=context, ignore_cache=ignore_cache, wait=wait)
 	
-	def remove_event_handler(self, event: str, callback_id: int,) -> None:
+	def remove_event_handler(self, event: str, callback_id: int) -> None:
 		self.legacy.remove_event_handler(event=event, callback_id=callback_id)
 	
 	def set_viewport(
@@ -158,5 +160,5 @@ class BrowsingContext(AbstractBrowsingContext):
 				user_contexts=user_contexts
 		)
 	
-	def traverse_history(self, context: str, delta: int,) -> Dict:
+	def traverse_history(self, context: str, delta: int) -> Dict:
 		return self.legacy.traverse_history(context=context, delta=delta)

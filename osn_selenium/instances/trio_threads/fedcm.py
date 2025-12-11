@@ -5,9 +5,11 @@ from typing import (
 	Optional,
 	Self
 )
+from osn_selenium.instances.types import FEDCM_TYPEHINT
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
 
 
 class FedCM(_TrioThreadMixin, AbstractFedCM):
@@ -18,6 +20,9 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 			limiter: trio.CapacityLimiter,
 	) -> None:
 		super().__init__(lock=lock, limiter=limiter)
+		
+		if not isinstance(selenium_fedcm, legacyFedCM):
+			raise TypeError(f"Expected {type(legacyFedCM)}, got {type(selenium_fedcm)}")
 		
 		self._selenium_fedcm = selenium_fedcm
 	
@@ -42,7 +47,7 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_fedcm: legacyFedCM,
+			selenium_fedcm: FEDCM_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -53,7 +58,7 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		instance into the new interface.
 
 		Args:
-			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance.
+			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -61,7 +66,14 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 			Self: A new instance of a class implementing FedCM.
 		"""
 		
-		return cls(selenium_fedcm=selenium_fedcm, lock=lock, limiter=limiter)
+		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
+		
+		if not isinstance(legacy_fedcm_obj, legacyFedCM):
+			raise TypeError(
+					f"Could not convert input to {type(legacyFedCM)}: {type(selenium_fedcm)}"
+			)
+		
+		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyFedCM:
