@@ -4,19 +4,21 @@ import trio
 from pathlib import Path
 from datetime import datetime
 from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.utils import TargetData
 from osn_selenium.dev_tools._types import LogLevelsType
 from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.utils import (
-	_validate_log_filter,
-	log_exception
-)
 from typing import (
 	Any,
-	Dict, Literal,
+	Dict,
+	Literal,
 	Optional,
 	Sequence,
-	Tuple, Union
+	Tuple,
+	Union
+)
+from osn_selenium.dev_tools.utils import (
+	TargetData,
+	_validate_log_filter,
+	log_exception
 )
 
 
@@ -193,7 +195,7 @@ class TargetLogger:
 		try:
 			if not self._is_active:
 				self._file_writing_stopped = trio.Event()
-
+		
 				if self._file_path is not None:
 					self._nursery_object.start_soon(self._write_file,)
 		

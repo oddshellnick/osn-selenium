@@ -2,24 +2,26 @@ from __future__ import annotations
 
 import trio
 from pydantic import Field
-
+from osn_selenium.types import DictModel
 from osn_selenium.dev_tools.target import DevToolsTarget
-from osn_selenium.dev_tools.utils import (
-	cdp_end_exceptions,
-	ExceptionThrown, execute_cdp_command
-)
-from osn_selenium.dev_tools.domains_default.fetch import (
-	auth_required_choose_func,
-	request_paused_choose_func
-)
 from typing import (
 	Any,
 	Awaitable,
 	Callable,
-	List, Literal,
+	List,
+	Literal,
 	Mapping,
 	Optional,
-	Sequence,
+	Sequence
+)
+from osn_selenium.dev_tools.utils import (
+	ExceptionThrown,
+	cdp_end_exceptions,
+	execute_cdp_command
+)
+from osn_selenium.dev_tools.domains_default.fetch import (
+	auth_required_choose_func,
+	request_paused_choose_func
 )
 from osn_selenium.dev_tools.domains.abstract import (
 	AbstractActionParametersHandlersSettings,
@@ -36,7 +38,6 @@ from osn_selenium.dev_tools.domains.abstract import (
 	on_error_func_type,
 	response_handle_func_type
 )
-from osn_selenium.types import DictModel
 
 
 class ContinueWithAuthParameterHandlersSettings(AbstractActionParametersHandlersSettings):
@@ -54,11 +55,7 @@ class ContinueWithAuthParameterHandlersSettings(AbstractActionParametersHandlers
 	password: Optional[ParameterHandler] = None
 
 
-async def _build_kwargs_from_handlers_func(
-		self: DevToolsTarget,
-		handlers: DictModel,
-		event: Any
-) -> kwargs_type:
+async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictModel, event: Any) -> kwargs_type:
 	"""
 	Asynchronously builds keyword arguments for a CDP command by executing parameter handlers.
 
@@ -119,7 +116,7 @@ class ContinueWithAuthSettings(AbstractActionSettings):
 		parameters_handlers (ContinueWithAuthParameterHandlersSettings): Settings for the handlers that provide authentication credentials.
 		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.continueWithAuth` CDP command. Defaults to None.
 	"""
-
+	
 	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
 	parameters_handlers: ContinueWithAuthParameterHandlersSettings
 	response_handle_func: response_handle_func_type = None
@@ -144,13 +141,17 @@ class AuthRequiredActionsHandlerSettings(AbstractEventActionsHandlerSettings):
 		choose_action_func (auth_required_choose_action_func_type): A function that takes the DevTools instance and the event object and returns a List of action names (Literals) to execute. Defaults to `auth_required_choose_func`.
 		actions (Optional[AuthRequiredActionsSettings]): Container for the configuration of the available actions. Defaults to None.
 	"""
-
+	
 	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
 	choose_action_func: "auth_required_choose_action_func_type" = auth_required_choose_func
 	actions: Optional[AuthRequiredActionsSettings] = None
 
 
-async def _handle_auth_required(self: DevToolsTarget, handler_settings: "AuthRequiredSettings", event: Any):
+async def _handle_auth_required(
+		self: DevToolsTarget,
+		handler_settings: "AuthRequiredSettings",
+		event: Any
+):
 	"""
 	Handles the 'fetch.AuthRequired' CDP event.
 
@@ -177,7 +178,7 @@ async def _handle_auth_required(self: DevToolsTarget, handler_settings: "AuthReq
 		for action_func_name in chosen_actions_func_names:
 			chosen_func = getattr(handler_settings.actions_handler.actions, action_func_name)
 			kwargs = await chosen_func.kwargs_func(self, chosen_func.parameters_handlers, event)
-
+	
 			await self.log(level="INFO", message=f"Kwargs for '{action_func_name}': '{kwargs}'")
 			response_handle_func = chosen_func.response_handle_func
 	
@@ -199,7 +200,7 @@ async def _handle_auth_required(self: DevToolsTarget, handler_settings: "AuthReq
 				pass
 			except* BaseException as error:
 				await self.log_error(error=error)
-
+	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
 	except* cdp_end_exceptions as error:
@@ -221,7 +222,7 @@ class AuthRequiredSettings(AbstractEventSettings):
 		listen_buffer_size (int): The buffer size for the event listener channel. Defaults to 10.
 		on_error_func (on_error_func_type): An optional function to call if an error occurs during event handling. Defaults to None.
 	"""
-
+	
 	class_to_use_path: str = "fetch.AuthRequired"
 	handle_function: "handle_auth_required_func_type" = _handle_auth_required
 	actions_handler: AuthRequiredActionsHandlerSettings
@@ -229,7 +230,179 @@ class AuthRequiredSettings(AbstractEventSettings):
 	on_error_func: on_error_func_type = None
 
 
-async def _handle_request_paused(self: DevToolsTarget, handler_settings: "RequestPausedSettings", event: Any):
+class ContinueResponseHandlersSettings(AbstractActionParametersHandlersSettings):
+	"""
+	Configuration for handlers that modify a response before it continues using `fetch.continueResponse`.
+
+	These handlers provide parameter values for the `fetch.continueResponse` CDP command.
+
+	Attributes:
+		response_code (Optional[ParameterHandler]): Handler for the HTTP response code. Defaults to None.
+		response_phrase (Optional[ParameterHandler]): Handler for the HTTP response phrase. Defaults to None.
+		response_headers (Optional[ParameterHandler]): Handler for the response headers. Defaults to None.
+		binary_response_headers (Optional[ParameterHandler]): Handler for binary response headers (base64 encoded). Defaults to None.
+	"""
+	
+	response_code: Optional[ParameterHandler] = None
+	response_phrase: Optional[ParameterHandler] = None
+	response_headers: Optional[ParameterHandler] = None
+	binary_response_headers: Optional[ParameterHandler] = None
+
+
+class ContinueResponseSettings(AbstractActionSettings):
+	"""
+	Settings for the 'continueResponse' action for a paused request (from RequestPaused event).
+
+	This action is used to modify and continue a request *after* the response has been received but before it is processed by the browser.
+
+	Attributes:
+		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.continueResponse` CDP command. Defaults to None.
+		parameters_handlers (Optional[ContinueResponseHandlersSettings]): Configuration for the response parameter handlers that provide modified response details. Defaults to None.
+	"""
+	
+	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
+	response_handle_func: response_handle_func_type = None
+	parameters_handlers: Optional[ContinueResponseHandlersSettings] = None
+
+
+class FulfillRequestHandlersSettings(AbstractActionParametersHandlersSettings):
+	"""
+	Configuration for handlers that provide a mock response to a request using `fetch.fulfillRequest`.
+
+	These handlers provide parameter values for the `fetch.fulfillRequest` CDP command.
+
+	Attributes:
+		response_code (ParameterHandler): Required handler for the HTTP response code (e.g., 200).
+		response_headers (Optional[ParameterHandler]): Handler for the response headers. Defaults to None.
+		binary_response_headers (Optional[ParameterHandler]): Handler for binary response headers (base64 encoded). Defaults to None.
+		body (Optional[ParameterHandler]): Handler for the response body (base64 encoded string). Defaults to None.
+		response_phrase (Optional[ParameterHandler]): Handler for the HTTP response phrase (e.g., "OK"). Defaults to None.
+	"""
+	
+	response_code: ParameterHandler
+	response_headers: Optional[ParameterHandler] = None
+	binary_response_headers: Optional[ParameterHandler] = None
+	body: Optional[ParameterHandler] = None
+	response_phrase: Optional[ParameterHandler] = None
+
+
+class FulfillRequestSettings(AbstractActionSettings):
+	"""
+	Settings for the 'fulfillRequest' action for a paused request (from RequestPaused event).
+
+	This action is used to provide a completely mock response for a request, preventing the browser from sending it to the network.
+
+	Attributes:
+		parameters_handlers (FulfillRequestHandlersSettings): Configuration for the mock response parameter handlers.
+		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.fulfillRequest` CDP command. Defaults to None.
+	"""
+	
+	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
+	parameters_handlers: FulfillRequestHandlersSettings
+	response_handle_func: response_handle_func_type = None
+
+
+class FailRequestHandlersSettings(AbstractActionParametersHandlersSettings):
+	"""
+	Configuration for handlers that specify the reason for failing a request using `fetch.failRequest`.
+
+	These handlers provide parameter values for the `fetch.failRequest` CDP command.
+
+	Attributes:
+		error_reason (ParameterHandler): Required handler for providing the network error reason (a string from Network.ErrorReason enum, e.g., "Aborted", "AccessDenied").
+	"""
+	
+	error_reason: ParameterHandler
+
+
+class FailRequestSettings(AbstractActionSettings):
+	"""
+	Settings for the 'failRequest' action for a paused request (from RequestPaused event).
+
+	This action is used to cause the request to fail with a specific network error reason.
+
+	Attributes:
+		parameters_handlers (FailRequestHandlersSettings): Configuration for the error reason handler.
+		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.failRequest` CDP command. Defaults to None.
+	"""
+	
+	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
+	parameters_handlers: FailRequestHandlersSettings
+	response_handle_func: response_handle_func_type = None
+
+
+class ContinueRequestHandlersSettings(AbstractActionParametersHandlersSettings):
+	"""
+	Configuration for handlers that modify a request before it continues using `fetch.continueRequest`.
+
+	These handlers provide parameter values for the `fetch.continueRequest` CDP command.
+
+	Attributes:
+		url (Optional[ParameterHandler]): Handler for modifying the request URL. Defaults to None.
+		method (Optional[ParameterHandler]): Handler for modifying the HTTP method. Defaults to None.
+		post_data (Optional[ParameterHandler]): Handler for modifying the request's post data (base64 encoded string). Defaults to None.
+		headers (Optional[ParameterHandler]): Handler for modifying the request headers. Defaults to None.
+		intercept_response (Optional[ParameterHandler]): Handler for setting response interception behavior for this request. Defaults to None.
+	"""
+	
+	url: Optional[ParameterHandler] = None
+	method: Optional[ParameterHandler] = None
+	post_data: Optional[ParameterHandler] = None
+	headers: Optional[ParameterHandler] = None
+	intercept_response: Optional[ParameterHandler] = None
+
+
+class ContinueRequestSettings(AbstractActionSettings):
+	"""
+	Settings for the 'continueRequest' action for a paused request (from RequestPaused event).
+
+	This action is used to allow the request to proceed, optionally after modifying it.
+
+	Attributes:
+		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.continueRequest` CDP command. Defaults to None.
+		parameters_handlers (Optional[ContinueRequestHandlersSettings]): Configuration for the request parameter handlers that provide modified request details. Defaults to None.
+	"""
+	
+	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
+	response_handle_func: response_handle_func_type = None
+	parameters_handlers: Optional[ContinueRequestHandlersSettings] = None
+
+
+class RequestPausedActionsSettings(AbstractEventActionsSettings):
+	"""
+	Container for configurations of possible actions to take when a request is paused.
+
+	Attributes:
+		continue_request (Optional[ContinueRequestSettings]): Settings for handling the paused request using `fetch.continueRequest`. Defaults to None.
+		fail_request (Optional[FailRequestSettings]): Settings for handling the paused request using `fetch.failRequest`. Defaults to None.
+		fulfill_request (Optional[FulfillRequestSettings]): Settings for handling the paused request using `fetch.fulfillRequest`. Defaults to None.
+		continue_response (Optional[ContinueResponseSettings]): Settings for handling the paused request using `fetch.continueResponse`. Defaults to None.
+	"""
+	
+	continue_request: Optional[ContinueRequestSettings] = None
+	fail_request: Optional[FailRequestSettings] = None
+	fulfill_request: Optional[FulfillRequestSettings] = None
+	continue_response: Optional[ContinueResponseSettings] = None
+
+
+class RequestPausedActionsHandlerSettings(AbstractEventActionsHandlerSettings):
+	"""
+	Settings for handling the 'fetch.RequestPaused' event by choosing and executing specific actions.
+
+	Attributes:
+		choose_action_func (request_paused_choose_action_func_type): A function that takes the DevTools instance and the event object and returns a List of action names (Literals) to execute. Defaults to `request_paused_choose_func`.
+		actions (Optional[RequestPausedActionsSettings]): Container for the configuration of the available actions. Defaults to None.
+	"""
+	
+	choose_action_func: "request_paused_choose_action_func_type" = request_paused_choose_func
+	actions: Optional[RequestPausedActionsSettings] = None
+
+
+async def _handle_request_paused(
+		self: DevToolsTarget,
+		handler_settings: "RequestPausedSettings",
+		event: Any
+):
 	"""
 	Handles the 'fetch.RequestPaused' CDP event.
 
@@ -268,10 +441,10 @@ async def _handle_request_paused(self: DevToolsTarget, handler_settings: "Reques
 						function=getattr(self.devtools_package, f"fetch.{action_func_name}"),
 						**kwargs
 				)
-
+	
 				if isinstance(response, ExceptionThrown):
 					raise response.exception
-
+	
 				await self.log(
 						level="RequestPaused",
 						message=f"Function '{action_func_name}' response: '{response}'"
@@ -283,7 +456,7 @@ async def _handle_request_paused(self: DevToolsTarget, handler_settings: "Reques
 				pass
 			except* BaseException as error:
 				await self.log_error(error=error)
-
+	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
 	except* cdp_end_exceptions as error:
@@ -291,174 +464,6 @@ async def _handle_request_paused(self: DevToolsTarget, handler_settings: "Reques
 	except* BaseException as error:
 		await self.log_error(error=error)
 		raise error
-
-
-class ContinueResponseHandlersSettings(AbstractActionParametersHandlersSettings):
-	"""
-	Configuration for handlers that modify a response before it continues using `fetch.continueResponse`.
-
-	These handlers provide parameter values for the `fetch.continueResponse` CDP command.
-
-	Attributes:
-		response_code (Optional[ParameterHandler]): Handler for the HTTP response code. Defaults to None.
-		response_phrase (Optional[ParameterHandler]): Handler for the HTTP response phrase. Defaults to None.
-		response_headers (Optional[ParameterHandler]): Handler for the response headers. Defaults to None.
-		binary_response_headers (Optional[ParameterHandler]): Handler for binary response headers (base64 encoded). Defaults to None.
-	"""
-	
-	response_code: Optional[ParameterHandler] = None
-	response_phrase: Optional[ParameterHandler] = None
-	response_headers: Optional[ParameterHandler] = None
-	binary_response_headers: Optional[ParameterHandler] = None
-
-
-class ContinueResponseSettings(AbstractActionSettings):
-	"""
-	Settings for the 'continueResponse' action for a paused request (from RequestPaused event).
-
-	This action is used to modify and continue a request *after* the response has been received but before it is processed by the browser.
-
-	Attributes:
-		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.continueResponse` CDP command. Defaults to None.
-		parameters_handlers (Optional[ContinueResponseHandlersSettings]): Configuration for the response parameter handlers that provide modified response details. Defaults to None.
-	"""
-
-	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
-	response_handle_func: response_handle_func_type = None
-	parameters_handlers: Optional[ContinueResponseHandlersSettings] = None
-
-
-class FulfillRequestHandlersSettings(AbstractActionParametersHandlersSettings):
-	"""
-	Configuration for handlers that provide a mock response to a request using `fetch.fulfillRequest`.
-
-	These handlers provide parameter values for the `fetch.fulfillRequest` CDP command.
-
-	Attributes:
-		response_code (ParameterHandler): Required handler for the HTTP response code (e.g., 200).
-		response_headers (Optional[ParameterHandler]): Handler for the response headers. Defaults to None.
-		binary_response_headers (Optional[ParameterHandler]): Handler for binary response headers (base64 encoded). Defaults to None.
-		body (Optional[ParameterHandler]): Handler for the response body (base64 encoded string). Defaults to None.
-		response_phrase (Optional[ParameterHandler]): Handler for the HTTP response phrase (e.g., "OK"). Defaults to None.
-	"""
-	
-	response_code: ParameterHandler
-	response_headers: Optional[ParameterHandler] = None
-	binary_response_headers: Optional[ParameterHandler] = None
-	body: Optional[ParameterHandler] = None
-	response_phrase: Optional[ParameterHandler] = None
-
-
-class FulfillRequestSettings(AbstractActionSettings):
-	"""
-	Settings for the 'fulfillRequest' action for a paused request (from RequestPaused event).
-
-	This action is used to provide a completely mock response for a request, preventing the browser from sending it to the network.
-
-	Attributes:
-		parameters_handlers (FulfillRequestHandlersSettings): Configuration for the mock response parameter handlers.
-		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.fulfillRequest` CDP command. Defaults to None.
-	"""
-
-	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
-	parameters_handlers: FulfillRequestHandlersSettings
-	response_handle_func: response_handle_func_type = None
-
-
-class FailRequestHandlersSettings(AbstractActionParametersHandlersSettings):
-	"""
-	Configuration for handlers that specify the reason for failing a request using `fetch.failRequest`.
-
-	These handlers provide parameter values for the `fetch.failRequest` CDP command.
-
-	Attributes:
-		error_reason (ParameterHandler): Required handler for providing the network error reason (a string from Network.ErrorReason enum, e.g., "Aborted", "AccessDenied").
-	"""
-	
-	error_reason: ParameterHandler
-
-
-class FailRequestSettings(AbstractActionSettings):
-	"""
-	Settings for the 'failRequest' action for a paused request (from RequestPaused event).
-
-	This action is used to cause the request to fail with a specific network error reason.
-
-	Attributes:
-		parameters_handlers (FailRequestHandlersSettings): Configuration for the error reason handler.
-		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.failRequest` CDP command. Defaults to None.
-	"""
-
-	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
-	parameters_handlers: FailRequestHandlersSettings
-	response_handle_func: response_handle_func_type = None
-
-
-class ContinueRequestHandlersSettings(AbstractActionParametersHandlersSettings):
-	"""
-	Configuration for handlers that modify a request before it continues using `fetch.continueRequest`.
-
-	These handlers provide parameter values for the `fetch.continueRequest` CDP command.
-
-	Attributes:
-		url (Optional[ParameterHandler]): Handler for modifying the request URL. Defaults to None.
-		method (Optional[ParameterHandler]): Handler for modifying the HTTP method. Defaults to None.
-		post_data (Optional[ParameterHandler]): Handler for modifying the request's post data (base64 encoded string). Defaults to None.
-		headers (Optional[ParameterHandler]): Handler for modifying the request headers. Defaults to None.
-		intercept_response (Optional[ParameterHandler]): Handler for setting response interception behavior for this request. Defaults to None.
-	"""
-	
-	url: Optional[ParameterHandler] = None
-	method: Optional[ParameterHandler] = None
-	post_data: Optional[ParameterHandler] = None
-	headers: Optional[ParameterHandler] = None
-	intercept_response: Optional[ParameterHandler] = None
-
-
-class ContinueRequestSettings(AbstractActionSettings):
-	"""
-	Settings for the 'continueRequest' action for a paused request (from RequestPaused event).
-
-	This action is used to allow the request to proceed, optionally after modifying it.
-
-	Attributes:
-		response_handle_func (response_handle_func_type): An optional awaitable function to process the response from the `fetch.continueRequest` CDP command. Defaults to None.
-		parameters_handlers (Optional[ContinueRequestHandlersSettings]): Configuration for the request parameter handlers that provide modified request details. Defaults to None.
-	"""
-
-	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
-	response_handle_func: response_handle_func_type = None
-	parameters_handlers: Optional[ContinueRequestHandlersSettings] = None
-
-
-class RequestPausedActionsSettings(AbstractEventActionsSettings):
-	"""
-	Container for configurations of possible actions to take when a request is paused.
-
-	Attributes:
-		continue_request (Optional[ContinueRequestSettings]): Settings for handling the paused request using `fetch.continueRequest`. Defaults to None.
-		fail_request (Optional[FailRequestSettings]): Settings for handling the paused request using `fetch.failRequest`. Defaults to None.
-		fulfill_request (Optional[FulfillRequestSettings]): Settings for handling the paused request using `fetch.fulfillRequest`. Defaults to None.
-		continue_response (Optional[ContinueResponseSettings]): Settings for handling the paused request using `fetch.continueResponse`. Defaults to None.
-	"""
-	
-	continue_request: Optional[ContinueRequestSettings] = None
-	fail_request: Optional[FailRequestSettings] = None
-	fulfill_request: Optional[FulfillRequestSettings] = None
-	continue_response: Optional[ContinueResponseSettings] = None
-
-
-class RequestPausedActionsHandlerSettings(AbstractEventActionsHandlerSettings):
-	"""
-	Settings for handling the 'fetch.RequestPaused' event by choosing and executing specific actions.
-
-	Attributes:
-		choose_action_func (request_paused_choose_action_func_type): A function that takes the DevTools instance and the event object and returns a List of action names (Literals) to execute. Defaults to `request_paused_choose_func`.
-		actions (Optional[RequestPausedActionsSettings]): Container for the configuration of the available actions. Defaults to None.
-	"""
-	
-	choose_action_func: "request_paused_choose_action_func_type" = request_paused_choose_func
-	actions: Optional[RequestPausedActionsSettings] = None
 
 
 class RequestPausedSettings(AbstractEventSettings):
@@ -473,7 +478,7 @@ class RequestPausedSettings(AbstractEventSettings):
 		actions_handler (Optional[RequestPausedActionsHandlerSettings]): Configuration for the event's actions handler, determining which action(s) to take (e.g., continueRequest, fulfillRequest) and how to build their parameters. Defaults to None.
 		on_error_func (on_error_func_type): An optional function to call if an error occurs during event handling. Defaults to None.
 	"""
-
+	
 	handle_function: "handle_request_paused_func_type" = _handle_request_paused
 	class_to_use_path: str = "fetch.RequestPaused"
 	listen_buffer_size: int = 100
@@ -520,7 +525,7 @@ class FetchSettings(AbstractDomainSettings):
 		enable_func_kwargs (Optional[FetchEnableKwargsSettings]): Keyword arguments for enabling the Fetch domain using `fetch.enable`. Defaults to None.
 		handlers (FetchHandlersSettings): Container for all handler settings within the Fetch domain (e.g., RequestPaused, AuthRequired). Defaults to None.
 	"""
-
+	
 	name: str = "fetch"
 	disable_func_path: str = "fetch.disable"
 	enable_func_path: str = "fetch.enable"
@@ -541,7 +546,6 @@ request_paused_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequenc
 auth_required_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequence[auth_required_actions_literal]]
 handle_request_paused_func_type = Callable[[DevToolsTarget, RequestPausedSettings, Any], Awaitable[None]]
 handle_auth_required_func_type = Callable[[DevToolsTarget, AuthRequiredSettings, Any], Awaitable[None]]
-
 
 ContinueWithAuthParameterHandlersSettings.model_rebuild()
 ContinueWithAuthParameterHandlersSettings.model_rebuild()

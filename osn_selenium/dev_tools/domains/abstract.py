@@ -5,7 +5,8 @@ from typing import (
 	Any,
 	Awaitable,
 	Callable,
-	Dict, Mapping,
+	Dict,
+	Mapping,
 	Optional,
 	Sequence
 )
@@ -34,7 +35,7 @@ class AbstractEventActionsSettings(DictModel):
 	Subclasses should define attributes corresponding to the possible actions
 	for the event and implement the `to_dict` method.
 	"""
-
+	
 	pass
 
 
@@ -66,7 +67,7 @@ class AbstractEventSettings(DictModel):
 		actions_handler (AbstractEventActionsHandlerSettings): Configuration for the event's actions handler.
 		on_error_func (on_error_func_type): An optional function to call if an error occurs during event handling.
 	"""
-
+	
 	handle_function: "handle_function"
 	class_to_use_path: str
 	listen_buffer_size: int
@@ -107,7 +108,7 @@ class AbstractDomainSettings(DictModel):
 		enable_func_kwargs (Optional[AbstractDomainEnableKwargsSettings]): Keyword arguments for enabling the domain.
 		handlers (AbstractDomainHandlersSettings): Container for all handler settings within the domain.
 	"""
-
+	
 	name: str
 	disable_func_path: str
 	enable_func_path: str
@@ -139,7 +140,7 @@ class AbstractActionSettings(DictModel):
 		response_handle_func (response_handle_func_type): An optional function to process the response from the CDP command.
 		parameters_handlers (AbstractActionParametersHandlersSettings): Settings for the action's parameter handlers.
 	"""
-
+	
 	kwargs_func: "build_kwargs_from_handlers_func_type"
 	response_handle_func: "response_handle_func_type"
 	parameters_handlers: AbstractActionParametersHandlersSettings
@@ -164,7 +165,6 @@ AbstractDomainHandlers = Mapping[str, AbstractEventSettings]
 AbstractDomainEnableKwargs = Mapping[str, Any]
 AbstractEventActions = Mapping[str, AbstractActionSettings]
 AbstractActionParametersHandlers = Mapping[str, ParameterHandler]
-
 
 AbstractActionParametersHandlersSettings.model_rebuild()
 AbstractActionSettings.model_rebuild()

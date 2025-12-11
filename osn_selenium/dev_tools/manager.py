@@ -4,20 +4,23 @@ import trio
 from pydantic import Field
 from types import TracebackType
 from collections.abc import Sequence
-from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.types import DictModel
 from contextlib import (
 	AbstractAsyncContextManager
 )
+from osn_selenium.dev_tools.target import DevToolsTarget
 from selenium.webdriver.remote.bidi_connection import BidiConnection
-from typing import (
-	Any,
-	Dict, List, Optional,
-	Type, TYPE_CHECKING,
-	Union
-)
 from osn_selenium.dev_tools._types import (
 	devtools_background_func_type
+)
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional,
+	TYPE_CHECKING,
+	Type,
+	Union
 )
 from osn_selenium.dev_tools.domains import (
 	DomainsSettings,
@@ -36,9 +39,10 @@ from osn_selenium.dev_tools.logger import (
 	MainLogEntry,
 	MainLogger,
 	TargetTypeStats,
-	build_main_logger,
+	build_main_logger
 )
 from osn_selenium.dev_tools.utils import (
+	DevToolsPackage,
 	TargetData,
 	TargetFilter,
 	_prepare_log_dir,
@@ -115,14 +119,14 @@ class DevTools:
 	... from osn_selenium.dev_tools.domains import DomainsSettings
 	...
 	... async def main():
-	...     driver = ChromeWebDriver("path/to/chromedriver")
-	...     driver.dev_tools.set_domains_handlers(DomainsSettings(...))
+	...	 driver = ChromeWebDriver("path/to/chromedriver")
+	...	 driver.dev_tools.set_domains_handlers(DomainsSettings(...))
 	...
-	...	    # Configure domain handlers here.
-	...	    async with driver.dev_tools:
-	...	        # DevTools event handling is active within this block.
-	...	        await driver.get("https://example.com")
-	...	        # DevTools event handling is deactivated after exiting the block.
+	...		# Configure domain handlers here.
+	...		async with driver.dev_tools:
+	...			# DevTools event handling is active within this block.
+	...			await driver.get("https://example.com")
+	...			# DevTools event handling is deactivated after exiting the block.
 	"""
 	
 	def __init__(
@@ -144,8 +148,11 @@ class DevTools:
 		
 		self._webdriver = parent_webdriver
 		
-		self._new_targets_filter = [filter_.model_dump(exclude_none=True, by_alias=True) for filter_ in devtools_settings.new_targets_filter] if devtools_settings.new_targets_filter is not None else None
-
+		self._new_targets_filter = [
+			filter_.model_dump(exclude_none=True, by_alias=True)
+			for filter_ in devtools_settings.new_targets_filter
+		] if devtools_settings.new_targets_filter is not None else None
+		
 		self._new_targets_buffer_size = devtools_settings.new_targets_buffer_size
 		self._target_background_task = devtools_settings.target_background_task
 		self._logger_settings = devtools_settings.logger_settings
@@ -268,12 +275,12 @@ class DevTools:
 			log_exception(error)
 	
 	@property
-	def _devtools_package(self) -> Any:
+	def _devtools_package(self) -> DevToolsPackage:
 		"""
 		Retrieves the DevTools protocol package from the active BiDi connection.
 
 		Returns:
-			Any: The DevTools protocol package object, providing access to CDP domains and commands.
+			DevToolsPackage: The DevTools protocol package object, providing access to CDP domains and commands.
 
 		Raises:
 			BidiConnectionNotEstablishedError: If the BiDi connection is not active.
@@ -281,7 +288,7 @@ class DevTools:
 		
 		try:
 			if self._bidi_connection_object is not None:
-				return self._bidi_connection_object.devtools
+				return DevToolsPackage(package=self._bidi_connection_object.devtools)
 			else:
 				raise BidiConnectionNotEstablishedError()
 		except cdp_end_exceptions as error:
@@ -392,7 +399,7 @@ class DevTools:
 		
 		try:
 			if self._bidi_connection_object is not None:
-				targets_filter = self._devtools_package.target.TargetFilter(
+				targets_filter = self._devtools_package.get("target.TargetFilter")(
 						[
 							{"exclude": False, "type": "page"},
 							{"exclude": False, "type": "tab"},
@@ -400,7 +407,7 @@ class DevTools:
 						]
 				)
 		
-				return await self._bidi_connection_object.session.execute(self._devtools_package.target.get_targets(targets_filter))
+				return await self._bidi_connection_object.session.execute(self._devtools_package.get("target.get_targets")(targets_filter))
 			else:
 				raise BidiConnectionNotEstablishedError()
 		except cdp_end_exceptions as error:
@@ -614,7 +621,7 @@ class DevTools:
 			domain (domains_type): The name of the domain to configure.
 			settings (domains_classes_type): The configuration settings for the domain.
 		"""
-
+		
 		setattr(self._domains_settings, domain, settings)
 	
 	def set_domains_handlers(self, settings: DomainsSettings):

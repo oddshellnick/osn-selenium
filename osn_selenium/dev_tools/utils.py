@@ -1,27 +1,27 @@
 import json
+import trio
 import shutil
 import logging
 import warnings
 import traceback
 import functools
 from pathlib import Path
-from typing import (
-	Any,
-	Callable,
-	Dict, Iterable,
-	List, Literal,
-	Optional,
-	TYPE_CHECKING,
-	Union
-)
-
-import trio
 from pydantic import Field
-
 from osn_selenium.types import DictModel
 from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools._types import (
 	devtools_background_func_type
+)
+from typing import (
+	Any,
+	Callable,
+	Dict,
+	Iterable,
+	List,
+	Literal,
+	Optional,
+	TYPE_CHECKING,
+	Union
 )
 
 
@@ -98,6 +98,115 @@ def log_on_error(func: Callable) -> Callable:
 	Returns:
 		Callable: The wrapped asynchronous function.
 	"""
+	
+	def extract_exception_trace(exception: BaseException) -> str:
+		"""
+	Extracts a comprehensive traceback string for an exception, including handling for `ExceptionGroup`s.
+
+	This function recursively flattens `ExceptionGroup`s to ensure all nested exceptions
+	have their tracebacks included in the final output string.
+
+	Args:
+		exception (BaseException): The exception object to extract the trace from.
+
+	Returns:
+		str: A multi-line string containing the formatted traceback(s) for the given exception
+			 and any nested exceptions within an `ExceptionGroup`.
+
+	EXAMPLES
+	________
+	>>> try:
+	...	 raise ValueError("Simple error occurred")
+	... except ValueError as e:
+	...	 trace = extract_exception_trace(e)
+	...	 # The first line typically indicates the start of a traceback
+	...	 print(trace.splitlines()[0].strip())
+	...
+	>>> try:
+	...	 raise ExceptionGroup(
+	...		 "Multiple issues",
+	...		 [
+	...			 TypeError("Invalid type provided"),
+	...			 ValueError("Value out of range")
+	...		 ]
+	...	 )
+	... except ExceptionGroup as eg:
+	...	 trace = extract_exception_trace(eg)
+	...	 # Check if tracebacks for both nested exceptions are present
+	...	 print("TypeError" in trace and "ValueError" in trace)
+	...
+	"""
+		
+		def flatten_exceptions(exception_: BaseException) -> List[BaseException]:
+			"""Recursively flattens an ExceptionGroup into a List of individual exceptions."""
+			
+			if isinstance(exception_, ExceptionGroup):
+				inner_exceptions = exception_.exceptions
+			else:
+				return [exception_]
+			
+			result = []
+			for exception__ in inner_exceptions:
+				result.extend(flatten_exceptions(exception__))
+			
+			return result
+		
+		def format_exception(exception_: BaseException) -> str:
+			"""Formats a single exception's traceback into a string."""
+			
+			return "".join(
+					traceback.format_exception(exception_.__class__, exception_, exception_.__traceback__)
+			)
+		
+		return "\n".join(format_exception(exc) for exc in flatten_exceptions(exception))
+	
+	class ExceptionThrown:
+		"""
+	A wrapper class to indicate that an exception was thrown during an operation.
+
+	This is used in `execute_cdp_command` when `error_mode` is "log" or "pass"
+	to return an object indicating an error occurred without re-raising it immediately.
+
+	Attributes:
+		exception (BaseException): The exception that was caught.
+		traceback (str): The formatted traceback string of the exception.
+	"""
+		
+		def __init__(self, exception: BaseException):
+			"""
+		Initializes the ExceptionThrown wrapper.
+
+		Args:
+			exception (BaseException): The exception to wrap.
+		"""
+			
+			self.exception = exception
+			self.traceback = extract_exception_trace(exception)
+	
+	def log_exception(exception: BaseException, extra_data: Optional[Dict[str, Any]] = None):
+		"""
+	Logs the full traceback of an exception at the ERROR level.
+
+	This function uses `extract_exception_trace` to get a comprehensive traceback string
+	and then logs it using the standard logging module.
+
+	Args:
+		exception (BaseException): The exception object to log.
+	"""
+		
+		if extra_data is None:
+			exception_data = extract_exception_trace(exception)
+		else:
+			trace = extract_exception_trace(exception)
+			max_len = max(len(line) for line in trace.splitlines())
+		
+			exception_data = "{bound}\n{exception}\nWith extra data:\n{extra_data}\n{bound}".format(
+					bound="=" * max_len,
+					exception=trace,
+					extra_data=json.dumps(extra_data, indent=4, ensure_ascii=False)
+			)
+		
+		logging.log(logging.ERROR, exception_data)
 	
 	@functools.wraps(func)
 	async def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -182,13 +291,13 @@ def log_exception(exception: BaseException, extra_data: Optional[Dict[str, Any]]
 	Args:
 		exception (BaseException): The exception object to log.
 	"""
-
+	
 	if extra_data is None:
 		exception_data = extract_exception_trace(exception)
 	else:
 		trace = extract_exception_trace(exception)
 		max_len = max(len(line) for line in trace.splitlines())
-
+	
 		exception_data = "{bound}\n{exception}\nWith extra data:\n{extra_data}\n{bound}".format(
 				bound="=" * max_len,
 				exception=trace,
@@ -268,13 +377,9 @@ async def execute_cdp_command(
 		elif error_mode == "log":
 			await self.log_error(
 					error=error,
-					extra_data={
-						"cdp_command": function.__name__,
-						"args": args,
-						"kwargs": kwargs
-					}
+					extra_data={"cdp_command": function.__name__, "args": args, "kwargs": kwargs}
 			)
-
+	
 			return ExceptionThrown(exception=error)
 		elif error_mode == "pass":
 			return ExceptionThrown(exception=error)
@@ -475,6 +580,19 @@ class TargetData(DictModel):
 	opener_frame_id: Optional[str] = None
 	browser_context_id: Optional[str] = None
 	subtype: Optional[str] = None
+
+
+class DevToolsPackage:
+	def __init__(self, package: Any):
+		self._package = package
+	
+	def get(self, name: str) -> Any:
+		object_ = self._package
+		
+		for part in name.split("."):
+			object_ = getattr(object_, part)
+		
+		return object_
 
 
 TargetFilter.model_rebuild()
