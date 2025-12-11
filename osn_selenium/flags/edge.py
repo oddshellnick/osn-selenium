@@ -1,6 +1,6 @@
 import pathlib
 from typing import (
-	Optional,
+	Dict, Optional,
 	Union
 )
 from selenium.webdriver.chrome.options import Options
