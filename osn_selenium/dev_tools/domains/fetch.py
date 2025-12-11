@@ -529,8 +529,8 @@ class FetchSettings(AbstractDomainSettings):
 	name: str = "fetch"
 	disable_func_path: str = "fetch.disable"
 	enable_func_path: str = "fetch.enable"
-	exclude_target_types: Sequence[str] = Field(default_factory=List)
-	include_target_types: Sequence[str] = Field(default_factory=List)
+	exclude_target_types: Sequence[str] = Field(default_factory=list)
+	include_target_types: Sequence[str] = Field(default_factory=list)
 	enable_func_kwargs: Optional[FetchEnableKwargsSettings] = None
 	handlers: Optional[FetchHandlersSettings] = None
 
