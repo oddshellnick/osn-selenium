@@ -26,6 +26,9 @@ from osn_selenium.instances.sync.web_extension import WebExtension
 from osn_selenium.abstract.webdriver.base import AbstractWebDriver
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from selenium.webdriver.common.print_page_options import PrintOptions
+from selenium.webdriver import (
+	ActionChains as legacyActionChains
+)
 from osn_selenium.instances.sync.browsing_context import BrowsingContext
 from contextlib import (
 	AbstractAsyncContextManager,
@@ -35,6 +38,9 @@ from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
+)
+from selenium.webdriver.remote.webelement import (
+	WebElement as legacyWebElement
 )
 from osn_selenium.instances.sync.action_chains import (
 	ActionChains,
@@ -59,6 +65,7 @@ from typing import (
 	List,
 	Literal,
 	Optional,
+	Set,
 	Tuple,
 	Type,
 	Union
@@ -100,7 +107,7 @@ class WebDriver(AbstractWebDriver):
 	def _ensure_driver(self) -> None:
 		if self.driver is None:
 			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
-
+	
 	@requires_driver
 	def _session(self):
 		return self.driver._session
@@ -111,7 +118,9 @@ class WebDriver(AbstractWebDriver):
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None
 	) -> ActionChains:
-		return ActionChains(driver=self.driver, duration=duration, devices=devices)
+		return ActionChains(
+				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices)
+		)
 	
 	@requires_driver
 	def add_cookie(self, cookie_dict: Dict[str, Any]):
@@ -132,15 +141,15 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def bidi_connection(self) -> AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]:
 		return self.driver.bidi_connection()
-
+	
 	@requires_driver
 	def browser(self) -> Browser:
 		return Browser(selenium_browser=self.driver.browser)
-
+	
 	@requires_driver
 	def browsing_context(self) -> BrowsingContext:
 		return BrowsingContext(selenium_browsing_context=self.driver.browsing_context)
-
+	
 	@requires_driver
 	def capabilities(self) -> Dict[str, Any]:
 		return self.driver.capabilities
@@ -152,7 +161,7 @@ class WebDriver(AbstractWebDriver):
 	def close_all_windows(self) -> None:
 		for window_handle in self.window_handles():
 			self.close_window(window_handle)
-
+	
 	@requires_driver
 	def command_executor(self) -> RemoteConnection:
 		return self.driver.command_executor
@@ -162,7 +171,7 @@ class WebDriver(AbstractWebDriver):
 		legacy = self.driver.create_web_element(element_id=element_id)
 		
 		return WebElement(selenium_web_element=legacy)
-
+	
 	@requires_driver
 	def current_url(self) -> str:
 		return self.driver.current_url
@@ -178,7 +187,7 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def delete_downloadable_files(self):
 		self.driver.delete_downloadable_files()
-
+	
 	@requires_driver
 	def dialog(self) -> Dialog:
 		return Dialog(selenium_dialog=self.driver.dialog)
@@ -189,10 +198,10 @@ class WebDriver(AbstractWebDriver):
 	
 	@requires_driver
 	def execute_async_script(self, script: str, *args) -> Any:
-		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
+		args = self._unwrap_args(args)
 		
-		self.driver.execute_async_script(script, *args)
-
+		return self._wrap_result(self.driver.execute_async_script(script, *args))
+	
 	@requires_driver
 	def fedcm(self) -> FedCM:
 		return FedCM(selenium_fedcm=self.driver.fedcm)
@@ -211,11 +220,11 @@ class WebDriver(AbstractWebDriver):
 		)
 		
 		return Dialog(selenium_dialog=legacy)
-
+	
 	@requires_driver
 	def file_detector(self) -> FileDetector:
 		return self.driver.file_detector
-
+	
 	@contextmanager
 	@requires_driver
 	def file_detector_context(self, capabilities: Dict[str, Any]) -> Generator[None, Any, None]:
@@ -223,13 +232,13 @@ class WebDriver(AbstractWebDriver):
 			yield
 	
 	@requires_driver
-	def find_element(self, by: str = By.ID, value: Optional[str] = None,) -> WebElement:
+	def find_element(self, by: str = By.ID, value: Optional[str] = None) -> WebElement:
 		element = self.driver.find_element(by=by, value=value)
 		
 		return WebElement(selenium_web_element=element)
 	
 	@requires_driver
-	def find_elements(self, by: str = By.ID, value: Optional[str] = None,) -> List[WebElement]:
+	def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List[WebElement]:
 		elements = self.driver.find_elements(by=by, value=value)
 		
 		return [WebElement(selenium_web_element=element) for element in elements]
@@ -303,12 +312,15 @@ class WebDriver(AbstractWebDriver):
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None
 	) -> HumanLikeActionChains:
-		return HumanLikeActionChains(driver=self.driver, duration=duration, devices=devices)
+		return HumanLikeActionChains(
+				driver=self,
+				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices)
+		)
 	
 	@requires_driver
 	def implicitly_wait(self, time_to_wait: float):
 		self.driver.implicitly_wait(time_to_wait=time_to_wait)
-
+	
 	@property
 	def javascript(self) -> JSExecutor:
 		return self._js_executor
@@ -320,27 +332,27 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def minimize_window(self):
 		self.driver.minimize_window()
-
+	
 	@requires_driver
 	def mobile(self) -> Mobile:
 		return Mobile(selenium_mobile=self.driver.mobile)
-
+	
 	@requires_driver
 	def name(self) -> str:
 		return self.driver.name
-
+	
 	@requires_driver
 	def network(self) -> Network:
 		return Network(selenium_network=self.driver.network)
-
+	
 	@requires_driver
 	def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
 		return self.driver.orientation
-
+	
 	@requires_driver
 	def page_source(self) -> str:
 		return self.driver.page_source
-
+	
 	@requires_driver
 	def permissions(self) -> Permissions:
 		return Permissions(selenium_permissions=self.driver.permissions)
@@ -356,11 +368,11 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def refresh(self) -> None:
 		self.driver.refresh()
-
+	
 	@requires_driver
-	def timeouts(self) -> Timeouts:
-		return self.driver.timeouts
-
+	def set_timeouts(self, timeouts: Any) -> None:
+		self.driver.timeouts = timeouts
+	
 	@requires_driver
 	def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]):
 		self._driver = webdriver.Remote(
@@ -445,7 +457,7 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def save_screenshot(self, filename: Union[str, PathLike[str]]) -> bool:
 		return self.driver.save_screenshot(filename=filename)
-
+	
 	@requires_driver
 	def script(self) -> Script:
 		return Script(selenium_script=self.driver.script)
@@ -465,10 +477,6 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def set_script_timeout(self, time_to_wait: float):
 		self.driver.set_script_timeout(time_to_wait=time_to_wait)
-	
-	@requires_driver
-	def set_timeouts(self, timeouts: Any) -> None:
-		self.driver.timeouts = timeouts
 	
 	@requires_driver
 	def set_user_verified(self, verified: bool):
@@ -514,15 +522,19 @@ class WebDriver(AbstractWebDriver):
 	@requires_driver
 	def stop_client(self):
 		self.driver.stop_client()
-
+	
 	@requires_driver
 	def storage(self) -> Storage:
 		return Storage(selenium_storage=self.driver.storage)
-
+	
 	@requires_driver
 	def supports_fedcm(self) -> bool:
 		return self.driver.supports_fedcm
-
+	
+	@requires_driver
+	def timeouts(self) -> Timeouts:
+		return self.driver.timeouts
+	
 	@requires_driver
 	def title(self) -> str:
 		return self.driver.title
@@ -557,11 +569,11 @@ class WebDriver(AbstractWebDriver):
 				implicit_wait_timeout=implicitly_wait,
 				script_timeout=script_timeout,
 		)
-
+	
 	@requires_driver
 	def virtual_authenticator_id(self) -> Optional[str]:
 		return self.driver.virtual_authenticator_id
-
+	
 	@requires_driver
 	def webextension(self) -> WebExtension:
 		return WebExtension(selenium_web_extension=self.driver.webextension)
@@ -578,11 +590,7 @@ class WebDriver(AbstractWebDriver):
 		if self.driver is not None:
 			self.quit()
 			self._driver = None
-
-	@requires_driver
-	def switch_to(self) -> SwitchTo:
-		return SwitchTo(selenium_switch_to=self.driver.switch_to)
-
+	
 	@requires_driver
 	def window_handles(self) -> List[str]:
 		return self.driver.window_handles
@@ -592,9 +600,13 @@ class WebDriver(AbstractWebDriver):
 		self.driver.close()
 	
 	@requires_driver
+	def switch_to(self) -> SwitchTo:
+		return SwitchTo(selenium_switch_to=self.driver.switch_to)
+	
+	@requires_driver
 	def get(self, url: str):
 		self.driver.get(url=url)
-
+	
 	@requires_driver
 	def current_window_handle(self) -> str:
 		return self.driver.current_window_handle
@@ -615,11 +627,54 @@ class WebDriver(AbstractWebDriver):
 			self.close()
 			switch_to.window(current)
 	
+	def _wrap_result(self, result: Any) -> Union[
+		WebElement,
+		List[legacyWebElement],
+		Dict[Any, legacyWebElement],
+		Set[legacyWebElement],
+		Tuple[legacyWebElement, ...],
+		Any,
+	]:
+		if isinstance(result, legacyWebElement):
+			return WebElement.from_legacy(selenium_web_element=result)
+		
+		if isinstance(result, list):
+			return [self._wrap_result(item) for item in result]
+		
+		if isinstance(result, dict):
+			return {k: self._wrap_result(v) for k, v in result.items()}
+		
+		if isinstance(result, tuple):
+			return tuple(self._wrap_result(item) for item in result)
+		
+		if isinstance(result, set):
+			return {self._wrap_result(item) for item in result}
+		
+		return result
+	
+	def _unwrap_args(self, arg: Any) -> Any:
+		if isinstance(arg, WebElement):
+			return arg.legacy
+		
+		if isinstance(arg, list):
+			return [self._unwrap_args(item) for item in arg]
+		
+		if isinstance(arg, dict):
+			return {k: self._unwrap_args(v) for k, v in arg.items()}
+		
+		if isinstance(arg, tuple):
+			return tuple(self._unwrap_args(item) for item in arg)
+		
+		if isinstance(arg, set):
+			return {self._unwrap_args(item) for item in arg}
+		
+		return arg
+	
 	@requires_driver
 	def execute_script(self, script: str, *args) -> Any:
-		args = [arg if not isinstance(arg, WebElement) else arg.legacy for arg in args]
+		args = self._unwrap_args(args)
 		
-		return self.driver.execute_script(script, *args)
+		return self._wrap_result(self.driver.execute_script(script, *args))
 	
 	def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		if isinstance(window, str):
