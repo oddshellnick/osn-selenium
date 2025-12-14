@@ -381,8 +381,10 @@ class MainLogger:
 		try:
 			async with await trio.open_file(self._file_path, "w+", encoding="utf-8") as file:
 				async for log_entry in self._receive_channel:
-					await file.write(log_entry.model_dump_json(indent=4))
 					await file.seek(0)
+					await file.write(log_entry.model_dump_json(indent=4))
+					await file.truncate()
+					await file.flush()
 		except* trio_end_exceptions:
 			pass
 		except* BaseException as error:
