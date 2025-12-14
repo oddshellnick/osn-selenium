@@ -34,11 +34,15 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		self._selenium_shadow_root = selenium_shadow_root
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
+		from osn_selenium.instances.trio_threads.web_element import WebElement
+
 		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
 		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
+		from osn_selenium.instances.trio_threads.web_element import WebElement
+
 		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
 		
 		return [

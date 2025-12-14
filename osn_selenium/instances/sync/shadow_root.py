@@ -26,11 +26,15 @@ class ShadowRoot(AbstractShadowRoot):
 		self._selenium_shadow_root = selenium_shadow_root
 	
 	def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
+		from osn_selenium.instances.sync.web_element import WebElement
+
 		impl_el = self.legacy.find_element(by=by, value=value)
 		
 		return WebElement.from_legacy(selenium_web_element=impl_el)
 	
 	def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
+		from osn_selenium.instances.sync.web_element import WebElement
+
 		impl_list = self.legacy.find_elements(by=by, value=value)
 		
 		return [WebElement.from_legacy(selenium_web_element=e) for e in impl_list]
