@@ -26,8 +26,8 @@ def get_installed_browsers() -> List[Browser]:
 	
 	if sys.platform == "win32":
 		return get_installed_browsers_win32()
-	else:
-		raise PlatformNotSupportedError(sys.platform)
+
+	raise PlatformNotSupportedError(sys.platform)
 
 
 def get_version_of_browser(browser_name: str) -> Optional[str]:

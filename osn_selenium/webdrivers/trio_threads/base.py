@@ -1,19 +1,22 @@
 import trio
 import warnings
 from selenium.webdriver.common.by import By
-from osn_selenium.flags.utils.base import BrowserFlags
+from osn_selenium.flags.models.base import BrowserFlags
 from contextlib import (
 	AbstractAsyncContextManager
 )
 from osn_selenium.flags.base import BrowserFlagsManager
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.instances.trio_threads.mobile import Mobile
 from osn_selenium.instances.trio_threads.script import Script
+from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.trio_threads.browser import Browser
 from osn_selenium.instances.trio_threads.network import Network
 from osn_selenium.instances.trio_threads.storage import Storage
 from osn_selenium.executors.trio_threads.cdp import CDPExecutor
+from osn_selenium.webdrivers._functions import build_cdp_kwargs
 from osn_selenium.abstract.webdriver.base import AbstractWebDriver
 from osn_selenium.instances.trio_threads.switch_to import SwitchTo
 from selenium.webdriver.remote.bidi_connection import BidiConnection
@@ -30,10 +33,6 @@ from osn_selenium.dev_tools.manager import (
 	DevToolsSettings
 )
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
-from osn_selenium.trio_base_mixin import (
-	_TrioThreadMixin,
-	requires_driver
-)
 from osn_selenium.instances.trio_threads.browsing_context import BrowsingContext
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
@@ -109,7 +108,11 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 	
 	@requires_driver
 	async def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Dict[str, Any]:
-		return await self._wrap_to_trio(self.driver.execute_cdp_cmd, cmd=cmd, cmd_args=cmd_args)
+		return await self._wrap_to_trio(
+				self.driver.execute_cdp_cmd,
+				cmd=cmd,
+				cmd_args=build_cdp_kwargs(**cmd_args)
+		)
 	
 	@requires_driver
 	async def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -337,21 +340,21 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 	
 	@requires_driver
 	async def get_window_position(self, windowHandle: str = "current") -> Position:
-		pos = await self._wrap_to_trio(self.driver.get_window_position, windowHandle=windowHandle)
+		position = await self._wrap_to_trio(self.driver.get_window_position, windowHandle=windowHandle)
 		
-		return Position(x=pos["x"], y=pos["y"])
+		return Position.model_validate(position)
 	
 	@requires_driver
 	async def get_window_rect(self) -> Rectangle:
-		rect = await self._wrap_to_trio(self.driver.get_window_rect)
+		rectangle = await self._wrap_to_trio(self.driver.get_window_rect)
 		
-		return Rectangle(x=rect["x"], y=rect["y"], width=rect["width"], height=rect["height"])
+		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	async def get_window_size(self, windowHandle: str = "current") -> Size:
 		size = await self._wrap_to_trio(self.driver.get_window_size, windowHandle=windowHandle)
 		
-		return Size(width=size["width"], height=size["height"])
+		return Size.model_validate(size)
 	
 	@requires_driver
 	async def hm_action_chain(
@@ -583,9 +586,9 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 	
 	@requires_driver
 	async def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Position:
-		pos = await self._wrap_to_trio(self.driver.set_window_position, x=x, y=y, windowHandle=windowHandle)
+		position = await self._wrap_to_trio(self.driver.set_window_position, x=x, y=y, windowHandle=windowHandle)
 		
-		return Position(x=pos["x"], y=pos["y"])
+		return Position.model_validate(position)
 	
 	@requires_driver
 	async def set_window_rect(
@@ -595,9 +598,9 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 			width: Optional[int] = None,
 			height: Optional[int] = None,
 	) -> Rectangle:
-		rect = await self._wrap_to_trio(self.driver.set_window_rect, x=x, y=y, width=width, height=height)
+		rectangle = await self._wrap_to_trio(self.driver.set_window_rect, x=x, y=y, width=width, height=height)
 		
-		return Rectangle(x=rect["x"], y=rect["y"], width=rect["width"], height=rect["height"])
+		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	async def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:

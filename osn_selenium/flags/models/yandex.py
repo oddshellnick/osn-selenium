@@ -1,22 +1,18 @@
 import pathlib
-from typing import (
-	Optional,
-	Union
-)
-
 from pydantic import Field
-from osn_selenium.flags.blink import (
-	BlinkArguments,
-	BlinkAttributes,
-	BlinkExperimentalOptions,
-	BlinkFeatures,
-	BlinkFlags,
+from typing import Optional, Union
+from osn_selenium.flags.models.blink import BlinkFeatures
+from osn_selenium.flags.models.chrome import (
+	ChromeArguments,
+	ChromeAttributes,
+	ChromeExperimentalOptions,
+	ChromeFlags
 )
 
 
-class ChromeAttributes(BlinkAttributes):
+class YandexAttributes(ChromeAttributes):
 	"""
-	Typed dictionary for WebDriver attributes specific to Chrome browsers.
+	Typed dictionary for WebDriver attributes specific to Yandex browsers.
 
 	Attributes:
 		enable_bidi (Optional[bool]): Enables/disables BiDi (Bidirectional) protocol mapper.
@@ -25,9 +21,9 @@ class ChromeAttributes(BlinkAttributes):
 	pass
 
 
-class ChromeExperimentalOptions(BlinkExperimentalOptions):
+class YandexExperimentalOptions(ChromeExperimentalOptions):
 	"""
-	Typed dictionary for experimental options specific to Chrome browsers.
+	Typed dictionary for experimental options specific to Yandex browsers.
 
 	Attributes:
 		debugger_address (Optional[str]): The address (IP:port) of the remote debugger.
@@ -36,9 +32,9 @@ class ChromeExperimentalOptions(BlinkExperimentalOptions):
 	pass
 
 
-class ChromeArguments(BlinkArguments):
+class YandexArguments(ChromeArguments):
 	"""
-	Typed dictionary for command-line arguments specific to Chrome browsers.
+	Typed dictionary for command-line arguments specific to Yandex browsers.
 
 	Attributes:
 		se_downloads_enabled (bool): Enables/disables Selenium downloads.
@@ -113,27 +109,27 @@ class ChromeArguments(BlinkArguments):
 	pass
 
 
-class ChromeFlags(BlinkFlags):
+class YandexFlags(ChromeFlags):
 	"""
-	Typed dictionary representing a collection of all flag types for Chrome browsers.
+	Typed dictionary representing a collection of all flag types for Yandex browsers.
 
 	This combines arguments, experimental options, attributes, and Blink features
-	that are specific to Chrome browsers.
+	that are specific to Yandex browsers.
 
 	Attributes:
-		argument (ChromeArguments): Command-line arguments for the Chrome browser.
-		experimental_option (ChromeExperimentalOptions): Experimental options for WebDriver specific to Chrome.
-		attribute (ChromeAttributes): WebDriver attributes specific to Chrome.
+		argument (YandexArguments): Command-line arguments for the Yandex browser.
+		experimental_option (YandexExperimentalOptions): Experimental options for WebDriver specific to Yandex.
+		attribute (YandexAttributes): WebDriver attributes specific to Yandex.
 		blink_feature (BlinkFeatures): Blink-specific feature flags.
 	"""
 	
-	argument: ChromeArguments = Field(default_factory=ChromeArguments)
-	experimental_option: ChromeExperimentalOptions = Field(default_factory=ChromeExperimentalOptions)
-	attribute: ChromeAttributes = Field(default_factory=ChromeAttributes)
+	argument: YandexArguments = Field(default_factory=YandexArguments)
+	experimental_option: YandexExperimentalOptions = Field(default_factory=YandexExperimentalOptions)
+	attribute: YandexAttributes = Field(default_factory=YandexAttributes)
 	blink_feature: BlinkFeatures = Field(default_factory=BlinkFeatures)
 
 
-ChromeArguments.model_rebuild()
-ChromeExperimentalOptions.model_rebuild()
-ChromeAttributes.model_rebuild()
-ChromeFlags.model_rebuild()
+YandexArguments.model_rebuild()
+YandexExperimentalOptions.model_rebuild()
+YandexAttributes.model_rebuild()
+YandexFlags.model_rebuild()

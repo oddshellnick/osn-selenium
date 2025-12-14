@@ -1,12 +1,11 @@
 import trio
-from osn_selenium.webdrivers.types import Point
+from osn_selenium.instances.types import Point
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
+from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from osn_selenium.instances.convert import (
-	get_legacy_instance
-)
 from typing import (
 	Optional,
 	Self,
@@ -17,7 +16,7 @@ from typing import (
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.instances._functions import (
 	move_to_parts,
 	scroll_to_parts,
 	text_input_to_parts
@@ -235,7 +234,45 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		
 		return self
 	
+	async def hm_move_by_offset(self, start_position: Point, xoffset: int, yoffset: int) -> Tuple[Self, Point]:
+		end_position = Point(x=start_position.x + xoffset, y=start_position.y + yoffset)
+		
+		return await self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
 	async def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
+		element_rect = await WebElement.from_legacy(
+				selenium_web_element=get_legacy_instance(element),
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		).rect()
+		end_position = Point(
+				x=element_rect["x"] +
+				element_rect["width"] //
+				2,
+				y=element_rect["y"] +
+				element_rect["height"] //
+				2
+		)
+		
+		return await self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	async def hm_move_to_element_with_offset(
+			self,
+			start_position: Point,
+			element: WEB_ELEMENT_TYPEHINT,
+			xoffset: int,
+			yoffset: int
+	) -> Tuple[Self, Point]:
+		element_rect = await WebElement.from_legacy(
+				selenium_web_element=get_legacy_instance(element),
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		).rect()
+		end_position = Point(x=element_rect["x"] + xoffset, y=element_rect["y"] + yoffset)
+		
+		return await self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	async def hm_move_to_element_with_random_offset(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
 		end_position = await self._js_executor.get_random_element_point(element=get_legacy_instance(element))
 		
 		return await self.hm_move(start_position=start_position, end_position=end_position), end_position

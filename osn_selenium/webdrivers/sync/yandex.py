@@ -5,7 +5,7 @@ from typing import (
 	Type,
 	Union
 )
-from osn_selenium.flags.utils.yandex import YandexFlags
+from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver

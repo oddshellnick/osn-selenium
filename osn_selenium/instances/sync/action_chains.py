@@ -1,13 +1,11 @@
-from osn_selenium.webdrivers.types import Point
+from osn_selenium.instances.types import Point
 from osn_selenium.executors.sync.javascript import JSExecutor
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.webdrivers.trio_threads.base import WebDriver
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.sync.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
-)
-from osn_selenium.instances.convert import (
-	get_legacy_instance
 )
 from typing import (
 	Optional,
@@ -16,7 +14,7 @@ from typing import (
 	Tuple,
 	Union
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.instances._functions import (
 	move_to_parts,
 	scroll_to_parts,
 	text_input_to_parts
@@ -28,7 +26,7 @@ from osn_selenium.abstract.instances.action_chains import (
 
 
 if TYPE_CHECKING:
-	from osn_selenium.instances.sync.web_element import WebElement
+	from osn_selenium.webdrivers.sync.base import WebDriver
 
 
 class ActionChains(AbstractActionChains):
@@ -156,7 +154,7 @@ class ActionChains(AbstractActionChains):
 
 
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
-	def __init__(self, driver: WebDriver, selenium_action_chains: legacyActionChains,) -> None:
+	def __init__(self, driver: "WebDriver", selenium_action_chains: legacyActionChains,) -> None:
 		super().__init__(selenium_action_chains=selenium_action_chains)
 		
 		self._js_executor = JSExecutor(execute_function=driver.execute_script)
@@ -170,7 +168,37 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		
 		return self
 	
+	def hm_move_by_offset(self, start_position: Point, xoffset: int, yoffset: int) -> Tuple[Self, Point]:
+		end_position = Point(x=start_position.x + xoffset, y=start_position.y + yoffset)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
 	def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
+		element_rect = WebElement.from_legacy(selenium_web_element=get_legacy_instance(element)).rect()
+		end_position = Point(
+				x=element_rect["x"] +
+				element_rect["width"] //
+				2,
+				y=element_rect["y"] +
+				element_rect["height"] //
+				2
+		)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	def hm_move_to_element_with_offset(
+			self,
+			start_position: Point,
+			element: WEB_ELEMENT_TYPEHINT,
+			xoffset: int,
+			yoffset: int
+	) -> Tuple[Self, Point]:
+		element_rect = WebElement.from_legacy(selenium_web_element=get_legacy_instance(element)).rect()
+		end_position = Point(x=element_rect["x"] + xoffset, y=element_rect["y"] + yoffset)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	def hm_move_to_element_with_random_offset(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
 		end_position = self._js_executor.get_random_element_point(element=get_legacy_instance(element))
 		
 		return self.hm_move(start_position=start_position, end_position=end_position), end_position

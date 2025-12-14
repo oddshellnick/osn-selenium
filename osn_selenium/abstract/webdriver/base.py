@@ -2,7 +2,7 @@ from selenium import webdriver
 from abc import ABC, abstractmethod
 from selenium.webdriver.common.by import By
 from trio_websocket import WebSocketConnection
-from osn_selenium.flags.utils.base import BrowserFlags
+from osn_selenium.flags.models.base import BrowserFlags
 from contextlib import (
 	AbstractAsyncContextManager
 )
@@ -34,16 +34,6 @@ from osn_selenium.types import (
 	Size,
 	WindowRect
 )
-from typing import (
-	Any,
-	AsyncGenerator,
-	Dict, List, Literal,
-	Mapping,
-	Optional,
-	Sequence,
-	Set, Tuple,
-	Union
-)
 from selenium.webdriver.common.virtual_authenticator import (
 	Credential,
 	VirtualAuthenticatorOptions
@@ -51,6 +41,19 @@ from selenium.webdriver.common.virtual_authenticator import (
 from osn_selenium.abstract.instances.action_chains import (
 	AbstractActionChains,
 	AbstractHumanLikeActionChains
+)
+from typing import (
+	Any,
+	AsyncGenerator,
+	Dict,
+	List,
+	Literal,
+	Mapping,
+	Optional,
+	Sequence,
+	Set,
+	Tuple,
+	Union
 )
 
 
@@ -94,6 +97,19 @@ class AbstractWebDriver(ABC):
 			Any: The session object.
 		"""
 		
+		...
+	
+	def _unwrap_args(self, arg: Any) -> Any:
+		...
+	
+	def _wrap_result(self, result: Any) -> Union[
+		AbstractWebElement,
+		List[AbstractWebElement],
+		Dict[Any, AbstractWebElement],
+		Set[AbstractWebElement],
+		Tuple[AbstractWebElement, ...],
+		Any,
+	]:
 		...
 	
 	@abstractmethod
@@ -1262,17 +1278,4 @@ class AbstractWebDriver(ABC):
 			Sequence[str]: A sequence of window handles.
 		"""
 		
-		...
-
-	def _wrap_result(self, result: Any) -> Union[
-		AbstractWebElement,
-		List[AbstractWebElement],
-		Dict[Any, AbstractWebElement],
-		Set[AbstractWebElement],
-		Tuple[AbstractWebElement, ...],
-		Any,
-	]:
-		...
-
-	def _unwrap_args(self, arg: Any) -> Any:
 		...

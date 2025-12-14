@@ -7,7 +7,7 @@ from typing import (
 	Union
 )
 from selenium.webdriver.chrome.service import Service
-from osn_selenium.flags.utils.chrome import ChromeFlags
+from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.flags.chrome import ChromeFlagsManager
 from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.blink import BlinkWebDriver

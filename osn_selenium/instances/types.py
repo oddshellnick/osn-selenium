@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Self, Union
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.common.alert import Alert as legacyAlert
@@ -57,6 +57,32 @@ from selenium.webdriver.common.bidi.webextension import (
 from selenium.webdriver.common.bidi.browsing_context import (
 	BrowsingContext as legacyBrowsingContext
 )
+
+
+class Point:
+	"""
+	Represents a 2D point with integer coordinates (x, y).
+
+	Attributes:
+		x (int): The horizontal coordinate.
+		y (int): The vertical coordinate.
+	"""
+
+	def __init__(self, x: int, y: int):
+		self.x: int = x
+		self.y: int = y
+
+	def __repr__(self) -> str:
+		return self.__str__()
+
+	def __str__(self) -> str:
+		return f"Point(x={self.x}, y={self.y})"
+
+	def __eq__(self, other: Self) -> bool:
+		return self.x == other.x and self.y == other.y
+
+	def __ne__(self, other: Self) -> bool:
+		return not self.__eq__(other)
 
 
 WEB_ELEMENT_TYPEHINT = Union[AbstractWebElement, legacyWebElement]

@@ -7,19 +7,19 @@ from osn_selenium.instances.sync.fedcm import FedCM
 from osn_selenium.instances.sync.dialog import Dialog
 from osn_selenium.instances.sync.mobile import Mobile
 from osn_selenium.instances.sync.script import Script
-from osn_selenium.flags.utils.base import BrowserFlags
+from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.timeouts import Timeouts
 from osn_selenium.executors.sync.cdp import CDPExecutor
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.instances.sync.browser import Browser
 from osn_selenium.instances.sync.network import Network
 from osn_selenium.instances.sync.storage import Storage
-from osn_selenium.trio_base_mixin import requires_driver
 from selenium.webdriver.remote.script_key import ScriptKey
 from osn_selenium.instances.sync.switch_to import SwitchTo
-from osn_selenium.webdrivers._utils import build_cdp_kwargs
 from osn_selenium.executors.sync.javascript import JSExecutor
+from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.sync.web_element import WebElement
+from osn_selenium.webdrivers._functions import build_cdp_kwargs
 from osn_selenium.instances.sync.permissions import Permissions
 from selenium.webdriver.remote.file_detector import FileDetector
 from osn_selenium.instances.sync.web_extension import WebExtension
@@ -287,24 +287,19 @@ class WebDriver(AbstractWebDriver):
 	def get_window_position(self, windowHandle: str = "current") -> Position:
 		position = self.driver.get_window_position(windowHandle=windowHandle)
 		
-		return Position(x=position["x"], y=position["y"])
+		return Position.model_validate(position)
 	
 	@requires_driver
 	def get_window_rect(self) -> Rectangle:
 		rectangle = self.driver.get_window_rect()
 		
-		return Rectangle(
-				x=rectangle["x"],
-				y=rectangle["y"],
-				width=rectangle["width"],
-				height=rectangle["height"],
-		)
+		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	def get_window_size(self, windowHandle: str = "current") -> Size:
 		size = self.driver.get_window_size(windowHandle=windowHandle)
 		
-		return Size(width=size["width"], height=size["height"])
+		return Size.model_validate(size)
 	
 	@requires_driver
 	def hm_action_chain(
@@ -483,15 +478,10 @@ class WebDriver(AbstractWebDriver):
 		self.driver.set_user_verified(verified=verified)
 	
 	@requires_driver
-	def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Rectangle:
-		rectangle = self.driver.set_window_position(x=x, y=y, windowHandle=windowHandle)
+	def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Position:
+		position = self.driver.set_window_position(x=x, y=y, windowHandle=windowHandle)
 		
-		return Rectangle(
-				x=rectangle["x"],
-				y=rectangle["y"],
-				width=rectangle["width"],
-				height=rectangle["height"],
-		)
+		return Position.model_validate(position)
 	
 	@requires_driver
 	def set_window_rect(
@@ -500,8 +490,10 @@ class WebDriver(AbstractWebDriver):
 			y: Optional[int] = None,
 			width: Optional[int] = None,
 			height: Optional[int] = None,
-	):
-		self.driver.set_window_rect(x=x, y=y, width=width, height=height)
+	) -> Rectangle:
+		rectangle = self.driver.set_window_rect(x=x, y=y, width=width, height=height)
+
+		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:

@@ -6,7 +6,7 @@ from typing import (
 	Type,
 	Union
 )
-from osn_selenium.flags.utils.edge import EdgeFlags
+from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.flags.edge import EdgeFlagsManager
 from selenium.webdriver.chrome.service import Service
 from osn_selenium.dev_tools.manager import DevToolsSettings

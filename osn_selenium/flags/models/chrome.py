@@ -1,21 +1,18 @@
 import pathlib
-from typing import (
-	Optional,
-	Union
-)
 from pydantic import Field
-from osn_selenium.flags.blink import (
+from typing import Optional, Union
+from osn_selenium.flags.models.blink import (
 	BlinkArguments,
 	BlinkAttributes,
 	BlinkExperimentalOptions,
 	BlinkFeatures,
-	BlinkFlags,
+	BlinkFlags
 )
 
 
-class EdgeAttributes(BlinkAttributes):
+class ChromeAttributes(BlinkAttributes):
 	"""
-	Typed dictionary for WebDriver attributes specific to Edge browsers.
+	Typed dictionary for WebDriver attributes specific to Chrome browsers.
 
 	Attributes:
 		enable_bidi (Optional[bool]): Enables/disables BiDi (Bidirectional) protocol mapper.
@@ -24,9 +21,9 @@ class EdgeAttributes(BlinkAttributes):
 	pass
 
 
-class EdgeExperimentalOptions(BlinkExperimentalOptions):
+class ChromeExperimentalOptions(BlinkExperimentalOptions):
 	"""
-	Typed dictionary for experimental options specific to Edge browsers.
+	Typed dictionary for experimental options specific to Chrome browsers.
 
 	Attributes:
 		debugger_address (Optional[str]): The address (IP:port) of the remote debugger.
@@ -35,9 +32,9 @@ class EdgeExperimentalOptions(BlinkExperimentalOptions):
 	pass
 
 
-class EdgeArguments(BlinkArguments):
+class ChromeArguments(BlinkArguments):
 	"""
-	Typed dictionary for command-line arguments specific to Edge browsers.
+	Typed dictionary for command-line arguments specific to Chrome browsers.
 
 	Attributes:
 		se_downloads_enabled (bool): Enables/disables Selenium downloads.
@@ -112,27 +109,27 @@ class EdgeArguments(BlinkArguments):
 	pass
 
 
-class EdgeFlags(BlinkFlags):
+class ChromeFlags(BlinkFlags):
 	"""
-	Typed dictionary representing a collection of all flag types for Edge browsers.
+	Typed dictionary representing a collection of all flag types for Chrome browsers.
 
 	This combines arguments, experimental options, attributes, and Blink features
-	that are specific to Edge browsers.
+	that are specific to Chrome browsers.
 
 	Attributes:
-		argument (EdgeArguments): Command-line arguments for the Edge browser.
-		experimental_option (EdgeExperimentalOptions): Experimental options for WebDriver specific to Edge.
-		attribute (EdgeAttributes): WebDriver attributes specific to Edge.
+		argument (ChromeArguments): Command-line arguments for the Chrome browser.
+		experimental_option (ChromeExperimentalOptions): Experimental options for WebDriver specific to Chrome.
+		attribute (ChromeAttributes): WebDriver attributes specific to Chrome.
 		blink_feature (BlinkFeatures): Blink-specific feature flags.
 	"""
 	
-	argument: EdgeArguments = Field(default_factory=EdgeArguments)
-	experimental_option: EdgeExperimentalOptions = Field(default_factory=EdgeExperimentalOptions)
-	attribute: EdgeAttributes = Field(default_factory=EdgeAttributes)
+	argument: ChromeArguments = Field(default_factory=ChromeArguments)
+	experimental_option: ChromeExperimentalOptions = Field(default_factory=ChromeExperimentalOptions)
+	attribute: ChromeAttributes = Field(default_factory=ChromeAttributes)
 	blink_feature: BlinkFeatures = Field(default_factory=BlinkFeatures)
 
 
-EdgeArguments.model_rebuild()
-EdgeExperimentalOptions.model_rebuild()
-EdgeAttributes.model_rebuild()
-EdgeFlags.model_rebuild()
+ChromeArguments.model_rebuild()
+ChromeExperimentalOptions.model_rebuild()
+ChromeAttributes.model_rebuild()
+ChromeFlags.model_rebuild()

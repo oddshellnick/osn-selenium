@@ -7,9 +7,9 @@ from subprocess import Popen
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
 from osn_selenium.flags.blink import BlinkFlagsManager
-from osn_selenium.trio_base_mixin import requires_driver
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
 from osn_selenium.browsers_handler import get_path_to_browser
+from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.trio_threads.base import WebDriver
 from typing import (
 	Any,
@@ -32,7 +32,7 @@ from osn_selenium.webdrivers._functions import (
 from selenium.webdriver.chromium.webdriver import (
 	ChromiumDriver as legacyWebDriver
 )
-from osn_selenium.flags.utils.blink import (
+from osn_selenium.flags.models.blink import (
 	BlinkArguments,
 	BlinkExperimentalOptions,
 	BlinkFlags

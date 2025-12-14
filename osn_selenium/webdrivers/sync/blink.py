@@ -8,9 +8,9 @@ from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.webdrivers.sync.base import WebDriver
-from osn_selenium.trio_base_mixin import requires_driver
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
+from osn_selenium.webdrivers.decorators import requires_driver
 from osn_windows_cmd.taskkill import (
 	ProcessID,
 	taskkill_windows
@@ -29,7 +29,7 @@ from osn_selenium.abstract.webdriver.blink import (
 from osn_selenium.webdrivers._functions import (
 	find_browser_previous_session
 )
-from osn_selenium.flags.utils.blink import (
+from osn_selenium.flags.models.blink import (
 	BlinkArguments,
 	BlinkExperimentalOptions,
 	BlinkFlags

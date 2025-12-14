@@ -1,34 +1,18 @@
 import pathlib
-from typing import (
-	Optional,
-	Union
-)
-
 from pydantic import Field
-
+from typing import Optional, Union
 from osn_selenium.types import ExtraDictModel
-from osn_selenium.flags.base import (
+from osn_selenium.flags._types import (
+	AutoplayPolicyType,
+	LogLevelType,
+	UseGLType
+)
+from osn_selenium.flags.models.base import (
 	BrowserArguments,
 	BrowserAttributes,
 	BrowserExperimentalOptions,
-	BrowserFlags,
+	BrowserFlags
 )
-from osn_selenium.webdrivers.types import (
-	AutoplayPolicyType,
-	LogLevelType,
-	UseGLType,
-)
-
-
-class BlinkExperimentalOptions(BrowserExperimentalOptions):
-	"""
-	Typed dictionary for experimental options specific to Blink-based browsers.
-
-	Attributes:
-		debugger_address (Optional[str]): The address (IP:port) of the remote debugger.
-	"""
-	
-	debugger_address: Optional[str] = None
 
 
 class BlinkFeatures(ExtraDictModel):
@@ -91,6 +75,17 @@ class BlinkAttributes(BrowserAttributes):
 	"""
 	
 	pass
+
+
+class BlinkExperimentalOptions(BrowserExperimentalOptions):
+	"""
+	Typed dictionary for experimental options specific to Blink-based browsers.
+
+	Attributes:
+		debugger_address (Optional[str]): The address (IP:port) of the remote debugger.
+	"""
+	
+	debugger_address: Optional[str] = None
 
 
 class BlinkArguments(BrowserArguments):

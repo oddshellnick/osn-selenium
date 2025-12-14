@@ -1,22 +1,18 @@
 import pathlib
-from typing import (
-	Optional,
-	Union
-)
-
 from pydantic import Field
-from osn_selenium.flags.blink import BlinkFeatures
-from osn_selenium.flags.chrome import (
-	ChromeArguments,
-	ChromeAttributes,
-	ChromeExperimentalOptions,
-	ChromeFlags,
+from typing import Optional, Union
+from osn_selenium.flags.models.blink import (
+	BlinkArguments,
+	BlinkAttributes,
+	BlinkExperimentalOptions,
+	BlinkFeatures,
+	BlinkFlags
 )
 
 
-class YandexAttributes(ChromeAttributes):
+class EdgeAttributes(BlinkAttributes):
 	"""
-	Typed dictionary for WebDriver attributes specific to Yandex browsers.
+	Typed dictionary for WebDriver attributes specific to Edge browsers.
 
 	Attributes:
 		enable_bidi (Optional[bool]): Enables/disables BiDi (Bidirectional) protocol mapper.
@@ -25,9 +21,9 @@ class YandexAttributes(ChromeAttributes):
 	pass
 
 
-class YandexExperimentalOptions(ChromeExperimentalOptions):
+class EdgeExperimentalOptions(BlinkExperimentalOptions):
 	"""
-	Typed dictionary for experimental options specific to Yandex browsers.
+	Typed dictionary for experimental options specific to Edge browsers.
 
 	Attributes:
 		debugger_address (Optional[str]): The address (IP:port) of the remote debugger.
@@ -36,9 +32,9 @@ class YandexExperimentalOptions(ChromeExperimentalOptions):
 	pass
 
 
-class YandexArguments(ChromeArguments):
+class EdgeArguments(BlinkArguments):
 	"""
-	Typed dictionary for command-line arguments specific to Yandex browsers.
+	Typed dictionary for command-line arguments specific to Edge browsers.
 
 	Attributes:
 		se_downloads_enabled (bool): Enables/disables Selenium downloads.
@@ -113,27 +109,27 @@ class YandexArguments(ChromeArguments):
 	pass
 
 
-class YandexFlags(ChromeFlags):
+class EdgeFlags(BlinkFlags):
 	"""
-	Typed dictionary representing a collection of all flag types for Yandex browsers.
+	Typed dictionary representing a collection of all flag types for Edge browsers.
 
 	This combines arguments, experimental options, attributes, and Blink features
-	that are specific to Yandex browsers.
+	that are specific to Edge browsers.
 
 	Attributes:
-		argument (YandexArguments): Command-line arguments for the Yandex browser.
-		experimental_option (YandexExperimentalOptions): Experimental options for WebDriver specific to Yandex.
-		attribute (YandexAttributes): WebDriver attributes specific to Yandex.
+		argument (EdgeArguments): Command-line arguments for the Edge browser.
+		experimental_option (EdgeExperimentalOptions): Experimental options for WebDriver specific to Edge.
+		attribute (EdgeAttributes): WebDriver attributes specific to Edge.
 		blink_feature (BlinkFeatures): Blink-specific feature flags.
 	"""
 	
-	argument: YandexArguments = Field(default_factory=YandexArguments)
-	experimental_option: YandexExperimentalOptions = Field(default_factory=YandexExperimentalOptions)
-	attribute: YandexAttributes = Field(default_factory=YandexAttributes)
+	argument: EdgeArguments = Field(default_factory=EdgeArguments)
+	experimental_option: EdgeExperimentalOptions = Field(default_factory=EdgeExperimentalOptions)
+	attribute: EdgeAttributes = Field(default_factory=EdgeAttributes)
 	blink_feature: BlinkFeatures = Field(default_factory=BlinkFeatures)
 
 
-YandexArguments.model_rebuild()
-YandexExperimentalOptions.model_rebuild()
-YandexAttributes.model_rebuild()
-YandexFlags.model_rebuild()
+EdgeArguments.model_rebuild()
+EdgeExperimentalOptions.model_rebuild()
+EdgeAttributes.model_rebuild()
+EdgeFlags.model_rebuild()

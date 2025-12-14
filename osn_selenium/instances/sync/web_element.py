@@ -1,18 +1,15 @@
 from selenium.webdriver.common.by import By
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.instances.sync.shadow_root import ShadowRoot
-from osn_selenium.instances.convert import (
-	get_legacy_instance
-)
-from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from typing import (
 	Any,
 	Dict,
 	List,
 	Optional,
-	Self,
-	TYPE_CHECKING
+	Self
 )
+from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.sync.shadow_root import ShadowRoot
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )

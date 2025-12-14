@@ -7,7 +7,7 @@ from typing import (
 	Union
 )
 from selenium.webdriver.edge.service import Service
-from osn_selenium.flags.utils.edge import EdgeFlags
+from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.flags.edge import EdgeFlagsManager
 from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.blink import BlinkWebDriver

@@ -4,7 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from osn_selenium.types import Position, Rectangle, Size
-from osn_selenium.webdrivers.types import Point
+from osn_selenium.instances.types import Point
 
 
 class JSExecutor(AbstractJSExecutor):
@@ -25,7 +25,7 @@ class JSExecutor(AbstractJSExecutor):
     async def get_document_scroll_size(self) -> Size:
         size = await self.execute(self._scripts.get_document_scroll_size)
 
-        return Size(width=int(size["width"]), height=int(size["height"]))
+        return Size.model_validate(size)
 
     async def get_element_css_style(
         self,
@@ -37,20 +37,15 @@ class JSExecutor(AbstractJSExecutor):
         self,
         element: WebElement
     ) -> Optional[Rectangle]:
-        rect = await self.execute(
+        rectangle = await self.execute(
             self._scripts.get_element_rect_in_viewport,
             element
         )
 
-        if rect is not None:
-            return Rectangle(
-                x=int(rect["x"]),
-                y=int(rect["y"]),
-                width=int(rect["width"]),
-                height=int(rect["height"]),
-            )
+        if rectangle is not None:
+            return Rectangle.model_validate(rectangle)
 
-        return rect
+        return rectangle
 
     async def get_random_element_point_in_viewport(
         self,
@@ -64,7 +59,7 @@ class JSExecutor(AbstractJSExecutor):
         )
 
         if position is not None:
-            return Position(x=int(position["x"]), y=int(position["y"]))
+            return Position.model_validate(position)
 
         return None
 
@@ -93,22 +88,17 @@ class JSExecutor(AbstractJSExecutor):
     async def get_viewport_position(self) -> Position:
         position = await self.execute(self._scripts.get_viewport_position)
 
-        return Position(x=int(position["x"]), y=int(position["y"]))
+        return Position.model_validate(position)
 
     async def get_viewport_rect(self) -> Rectangle:
-        rect = await self.execute(self._scripts.get_viewport_rect)
+        rectangle = await self.execute(self._scripts.get_viewport_rect)
 
-        return Rectangle(
-            x=int(rect["x"]),
-            y=int(rect["y"]),
-            width=int(rect["width"]),
-            height=int(rect["height"]),
-        )
+        return Rectangle.model_validate(rectangle)
 
     async def get_viewport_size(self) -> Size:
         size = await self.execute(self._scripts.get_viewport_size)
 
-        return Size(width=int(size["width"]), height=int(size["height"]))
+        return Size.model_validate(size)
 
     async def open_new_tab(self, link: str = "") -> None:
         await self.execute(self._scripts.open_new_tab, link)
