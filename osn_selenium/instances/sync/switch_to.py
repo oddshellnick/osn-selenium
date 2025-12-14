@@ -9,6 +9,10 @@ from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from osn_selenium.instances.types import (
 	SWITCH_TO_TYPEHINT,
 	WEB_ELEMENT_TYPEHINT
@@ -20,9 +24,23 @@ from osn_selenium.instances.convert import (
 
 
 class SwitchTo(AbstractSwitchTo):
+	"""
+	Wrapper for the legacy Selenium SwitchTo instance.
+
+	Provides mechanisms to change the driver's focus to different frames,
+	windows, or alerts.
+	"""
+	
 	def __init__(self, selenium_switch_to: legacySwitchTo) -> None:
+		"""
+		Initializes the SwitchTo wrapper.
+
+		Args:
+			selenium_switch_to (legacySwitchTo): The legacy Selenium SwitchTo instance to wrap.
+		"""
+		
 		if not isinstance(selenium_switch_to, legacySwitchTo):
-			raise TypeError(f"Expected {type(legacySwitchTo)}, got {type(selenium_switch_to)}")
+			raise ExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
 		
 		self._selenium_switch_to = selenium_switch_to
 	
@@ -40,12 +58,23 @@ class SwitchTo(AbstractSwitchTo):
 	
 	@classmethod
 	def from_legacy(cls, selenium_switch_to: SWITCH_TO_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium SwitchTo object.
+
+		This factory method is used to wrap an existing Selenium SwitchTo
+		instance into the new interface.
+
+		Args:
+			selenium_switch_to (SWITCH_TO_TYPEHINT): The legacy Selenium SwitchTo instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing SwitchTo.
+		"""
+		
 		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
 		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
-			raise TypeError(
-					f"Could not convert input to {type(legacySwitchTo)}: {type(selenium_switch_to)}"
-			)
+			raise TypesConvertError(from_=legacySwitchTo, to_=selenium_switch_to)
 		
 		return cls(selenium_switch_to=legacy_switch_to_obj)
 	

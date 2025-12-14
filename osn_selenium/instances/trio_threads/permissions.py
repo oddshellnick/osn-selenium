@@ -10,6 +10,10 @@ from typing import (
 from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
@@ -17,17 +21,34 @@ from selenium.webdriver.common.bidi.permissions import (
 
 
 class Permissions(_TrioThreadMixin, AbstractPermissions):
+	"""
+	Wrapper for the legacy Selenium Permissions instance.
+
+	Provides methods to set and modify browser permissions (e.g., camera, microphone, geolocation)
+	via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_permissions: legacyPermissions,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Permissions wrapper.
+
+		Args:
+			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_permissions, legacyPermissions):
-			raise TypeError(
-					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
+			raise ExpectedTypeError(
+					expected_class=legacyPermissions,
+					received_instance=selenium_permissions
 			)
 		
 		self._selenium_permissions = selenium_permissions
@@ -57,9 +78,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypeError(
-					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
-			)
+			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
 		
 		return cls(
 				selenium_permissions=legacy_permissions_obj,

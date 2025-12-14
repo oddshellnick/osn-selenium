@@ -1,0 +1,77 @@
+from abc import ABC, abstractmethod
+from osn_selenium.types import DEVICES_TYPEHINT
+from typing import (
+	Iterable,
+	List,
+	Optional
+)
+from osn_selenium.abstract.instances.web_driver_wait import (
+	AbstractWebDriverWait
+)
+from osn_selenium.abstract.instances.action_chains import (
+	AbstractActionChains,
+	AbstractHumanLikeActionChains
+)
+
+
+class AbstractCoreActionsMixin(ABC):
+	"""Mixin responsible for user actions chains."""
+	
+	@abstractmethod
+	def action_chain(
+			self,
+			duration: int = 250,
+			devices: Optional[List[DEVICES_TYPEHINT]] = None
+	) -> AbstractActionChains:
+		"""
+		Creates a new ActionChains instance for building complex user interactions.
+
+		Args:
+			duration (int): The default duration for pointer actions in milliseconds.
+			devices (Optional[List[DEVICES_TYPEHINT]]): A list of input devices to use.
+
+		Returns:
+			AbstractActionChains: A new ActionChains instance.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def hm_action_chain(
+			self,
+			duration: int = 250,
+			devices: Optional[List[DEVICES_TYPEHINT]] = None,
+	) -> AbstractHumanLikeActionChains:
+		"""
+		Creates a new HumanLikeActionChains instance for building complex user interactions.
+
+		Args:
+			duration (int): The default duration for pointer actions in milliseconds.
+			devices (Optional[List[DEVICES_TYPEHINT]]): A list of input devices to use.
+
+		Returns:
+			AbstractHumanLikeActionChains: A new HumanLikeActionChains instance.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> AbstractWebDriverWait:
+		"""
+		Creates a new WebDriverWait instance.
+
+		Args:
+			timeout (float): How long to wait for the condition to be true.
+			poll_frequency (float): How often to check the condition. Defaults to 0.5.
+			ignored_exceptions (Optional[Iterable[BaseException]]): Exceptions to ignore while waiting.
+
+		Returns:
+			AbstractWebDriverWait: A new WebDriverWait instance.
+		"""
+		
+		...

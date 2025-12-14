@@ -8,19 +8,39 @@ from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Dialog(_TrioThreadMixin, AbstractDialog):
+	"""
+	Wrapper for the legacy Selenium FedCM Dialog instance.
+
+	Handles Federated Credential Management dialogs, including account selection
+	and dismissal.
+	"""
+	
 	def __init__(
 			self,
 			selenium_dialog: legacyDialog,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Dialog wrapper.
+
+		Args:
+			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_dialog, legacyDialog):
-			raise TypeError(f"Expected {type(legacyDialog)}, got {type(selenium_dialog)}")
+			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
 		
 		self._selenium_dialog = selenium_dialog
 	
@@ -55,9 +75,7 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):
-			raise TypeError(
-					f"Could not convert input to {type(legacyDialog)}: {type(selenium_dialog)}"
-			)
+			raise TypesConvertError(from_=legacyDialog, to_=selenium_dialog)
 		
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	

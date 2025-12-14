@@ -1,18 +1,22 @@
 import pathlib
 from typing import (
-	Dict, Optional,
+	Dict,
+	Optional,
 	Union
 )
-
 from selenium.webdriver.chrome.options import Options
-
-from osn_selenium.flags.utils.blink import BlinkFeatures
-from osn_selenium.flags.utils.chrome import ChromeArguments, ChromeAttributes, ChromeExperimentalOptions, ChromeFlags
-from osn_selenium.webdrivers.types import (
+from osn_selenium.flags.blink import BlinkFlagsManager
+from osn_selenium.flags.models.blink import BlinkFeatures
+from osn_selenium.flags.models.base import (
 	FlagDefinition,
 	FlagType
 )
-from osn_selenium.flags.blink import BlinkFlagsManager
+from osn_selenium.flags.models.chrome import (
+	ChromeArguments,
+	ChromeAttributes,
+	ChromeExperimentalOptions,
+	ChromeFlags
+)
 
 
 class ChromeFlagsManager(BlinkFlagsManager):
@@ -69,62 +73,57 @@ class ChromeFlagsManager(BlinkFlagsManager):
 		
 		return Options()
 	
-	def update_arguments(self, arguments: ChromeArguments):
+	def build_options_arguments(self, options: Options) -> Options:
 		"""
-		Updates command-line arguments from a dictionary without clearing existing ones.
+		Adds configured command-line arguments to the WebDriver options.
 
 		Args:
-			arguments (ChromeArguments): A dictionary of arguments to set or update.
+			options (Options): The WebDriver options object.
 
-		Raises:
-			ValueError: If an unknown argument key is provided.
+		Returns:
+			Options: The modified WebDriver options object.
 		"""
 		
-		super().update_arguments(arguments)
+		return super().build_options_arguments(options)
 	
-	def update_attributes(self, attributes: ChromeAttributes):
+	def build_options_attributes(self, options: Options) -> Options:
 		"""
-		Updates browser attributes from a dictionary without clearing existing ones.
+		Applies configured attributes to the WebDriver options.
 
 		Args:
-			attributes (ChromeAttributes): A dictionary of attributes to set or update.
+			options (Options): The WebDriver options object.
 
-		Raises:
-			ValueError: If an unknown attribute key is provided.
+		Returns:
+			Options: The modified WebDriver options object.
 		"""
 		
-		super().update_attributes(attributes)
+		return super().build_options_attributes(options)
 	
-	def update_experimental_options(
-			self,
-			experimental_options: ChromeExperimentalOptions
-	):
+	def build_options_blink_features(self, options: Options) -> Options:
 		"""
-		Updates experimental options from a dictionary without clearing existing ones.
+		Adds configured Chrome features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
 
 		Args:
-			experimental_options (ChromeExperimentalOptions): A dictionary of experimental options to set or update.
+			options (Options): The WebDriver options object to modify.
 
-		Raises:
-			ValueError: If an unknown experimental option key is provided.
+		Returns:
+			Options: The modified WebDriver options object.
 		"""
 		
-		super().update_experimental_options(experimental_options)
+		return super().build_options_blink_features(options)
 	
-	def update_flags(self, flags: ChromeFlags):
+	def build_options_experimental_options(self, options: Options) -> Options:
 		"""
-		Updates all flags, including Chrome features, without clearing existing ones.
-
-		This method delegates to the parent `update_flags` method, allowing it to handle
-		all flag types defined in this manager, including 'arguments', 'experimental_options',
-		'attributes', and 'blink_features'.
+		Adds experimental options to the WebDriver options.
 
 		Args:
-			flags (ChromeFlags): A dictionary where keys are flag types
-				and values are dictionaries of flags to update for that type.
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
 		"""
 		
-		super().update_flags(flags)
+		return super().build_options_experimental_options(options)
 	
 	def set_arguments(self, arguments: ChromeArguments):
 		"""
@@ -152,10 +151,20 @@ class ChromeFlagsManager(BlinkFlagsManager):
 		
 		super().set_attributes(attributes)
 	
-	def set_experimental_options(
-			self,
-			experimental_options: ChromeExperimentalOptions
-	):
+	def set_blink_features(self, blink_features: BlinkFeatures):
+		"""
+		Clears existing and sets new Chrome features from a dictionary.
+
+		Args:
+			blink_features (BlinkFeatures): A dictionary of Chrome features to set.
+
+		Raises:
+			ValueError: If an unknown Chrome feature key is provided.
+		"""
+		
+		super().set_blink_features(blink_features)
+	
+	def set_experimental_options(self, experimental_options: ChromeExperimentalOptions):
 		"""
 		Clears existing and sets new experimental options from a dictionary.
 
@@ -183,44 +192,31 @@ class ChromeFlagsManager(BlinkFlagsManager):
 		
 		super().set_flags(flags)
 	
-	def build_options_arguments(self, options: Options) -> Options:
+	def update_arguments(self, arguments: ChromeArguments):
 		"""
-		Adds configured command-line arguments to the WebDriver options.
+		Updates command-line arguments from a dictionary without clearing existing ones.
 
 		Args:
-			options (Options): The WebDriver options object.
+			arguments (ChromeArguments): A dictionary of arguments to set or update.
 
-		Returns:
-			Options: The modified WebDriver options object.
+		Raises:
+			ValueError: If an unknown argument key is provided.
 		"""
 		
-		return super().build_options_arguments(options)
+		super().update_arguments(arguments)
 	
-	def build_options_attributes(self, options: Options) -> Options:
+	def update_attributes(self, attributes: ChromeAttributes):
 		"""
-		Applies configured attributes to the WebDriver options.
+		Updates browser attributes from a dictionary without clearing existing ones.
 
 		Args:
-			options (Options): The WebDriver options object.
+			attributes (ChromeAttributes): A dictionary of attributes to set or update.
 
-		Returns:
-			Options: The modified WebDriver options object.
+		Raises:
+			ValueError: If an unknown attribute key is provided.
 		"""
 		
-		return super().build_options_attributes(options)
-	
-	def build_options_experimental_options(self, options: Options) -> Options:
-		"""
-		Adds experimental options to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_experimental_options(options)
+		super().update_attributes(attributes)
 	
 	def update_blink_features(self, blink_features: BlinkFeatures):
 		"""
@@ -235,28 +231,30 @@ class ChromeFlagsManager(BlinkFlagsManager):
 		
 		super().update_blink_features(blink_features)
 	
-	def set_blink_features(self, blink_features: BlinkFeatures):
+	def update_experimental_options(self, experimental_options: ChromeExperimentalOptions):
 		"""
-		Clears existing and sets new Chrome features from a dictionary.
+		Updates experimental options from a dictionary without clearing existing ones.
 
 		Args:
-			blink_features (BlinkFeatures): A dictionary of Chrome features to set.
+			experimental_options (ChromeExperimentalOptions): A dictionary of experimental options to set or update.
 
 		Raises:
-			ValueError: If an unknown Chrome feature key is provided.
+			ValueError: If an unknown experimental option key is provided.
 		"""
 		
-		super().set_blink_features(blink_features)
+		super().update_experimental_options(experimental_options)
 	
-	def build_options_blink_features(self, options: Options) -> Options:
+	def update_flags(self, flags: ChromeFlags):
 		"""
-		Adds configured Chrome features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
+		Updates all flags, including Chrome features, without clearing existing ones.
+
+		This method delegates to the parent `update_flags` method, allowing it to handle
+		all flag types defined in this manager, including 'arguments', 'experimental_options',
+		'attributes', and 'blink_features'.
 
 		Args:
-			options (Options): The WebDriver options object to modify.
-
-		Returns:
-			Options: The modified WebDriver options object.
+			flags (ChromeFlags): A dictionary where keys are flag types
+				and values are dictionaries of flags to update for that type.
 		"""
 		
-		return super().build_options_blink_features(options)
+		super().update_flags(flags)

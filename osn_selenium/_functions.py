@@ -1,7 +1,9 @@
-import re
 import pathlib
+from typing import Optional
+from osn_selenium.types import JS_Scripts
 
-from osn_selenium.utils import JS_Scripts
+
+_CACHED_JS_SCRIPTS: Optional[JS_Scripts] = None
 
 
 def read_js_scripts() -> JS_Scripts:
@@ -15,21 +17,16 @@ def read_js_scripts() -> JS_Scripts:
 	Returns:
 		JS_Scripts: An object of type _JS_Scripts, containing the content of each JavaScript file as attributes.
 	"""
-
-	scripts = {}
-
-	for script_file in (pathlib.Path(__file__).parent / "js_scripts").iterdir():
-		scripts[re.sub(r"\.js$", "", script_file.name)] = open(script_file, "r", encoding="utf-8").read()
-
-	return JS_Scripts(
-			check_element_in_viewport=scripts["check_element_in_viewport"],
-			get_document_scroll_size=scripts["get_document_scroll_size"],
-			get_element_css=scripts["get_element_css"],
-			get_element_rect_in_viewport=scripts["get_element_rect_in_viewport"],
-			get_random_element_point_in_viewport=scripts["get_random_element_point_in_viewport"],
-			get_viewport_position=scripts["get_viewport_position"],
-			get_viewport_rect=scripts["get_viewport_rect"],
-			get_viewport_size=scripts["get_viewport_size"],
-			open_new_tab=scripts["open_new_tab"],
-			stop_window_loading=scripts["stop_window_loading"],
-	)
+	
+	global _CACHED_JS_SCRIPTS
+	
+	if _CACHED_JS_SCRIPTS is None:
+		scripts = {}
+		path_to_js_scripts = pathlib.Path(__file__).parent / "js_scripts"
+	
+		for script_file in path_to_js_scripts.iterdir():
+			scripts[script_file.stem] = script_file.read_text(encoding="utf-8")
+	
+		_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
+	
+	return _CACHED_JS_SCRIPTS

@@ -13,6 +13,10 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from osn_selenium.abstract.instances.browsing_context import (
 	AbstractBrowsingContext
 )
@@ -23,17 +27,34 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
+	"""
+	Wrapper for the legacy Selenium BiDi BrowsingContext instance.
+
+	Controls browser tabs and windows (contexts), allowing navigation,
+	reloading, closing, screenshotting, and DOM tree inspection.
+	"""
+	
 	def __init__(
 			self,
 			selenium_browsing_context: legacyBrowsingContext,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the BrowsingContext wrapper.
+
+		Args:
+			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
-			raise TypeError(
-					f"Expected {type(legacyBrowsingContext)}, got {type(selenium_browsing_context)}"
+			raise ExpectedTypeError(
+					expected_class=legacyBrowsingContext,
+					received_instance=selenium_browsing_context
 			)
 		
 		self._selenium_browsing_context = selenium_browsing_context
@@ -115,9 +136,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
 		
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
-			raise TypeError(
-					f"Could not convert input to {type(legacyBrowsingContext)}: {type(selenium_browsing_context)}"
-			)
+			raise TypesConvertError(from_=legacyBrowsingContext, to_=selenium_browsing_context)
 		
 		return cls(
 				selenium_browsing_context=legacy_browsing_context_obj,

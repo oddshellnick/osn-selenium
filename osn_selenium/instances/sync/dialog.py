@@ -6,12 +6,30 @@ from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Dialog(AbstractDialog):
+	"""
+	Wrapper for the legacy Selenium FedCM Dialog instance.
+
+	Handles Federated Credential Management dialogs, including account selection
+	and dismissal.
+	"""
+	
 	def __init__(self, selenium_dialog: legacyDialog) -> None:
+		"""
+		Initializes the Dialog wrapper.
+
+		Args:
+			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance to wrap.
+		"""
+		
 		if not isinstance(selenium_dialog, legacyDialog):
-			raise TypeError(f"Expected {type(legacyDialog)}, got {type(selenium_dialog)}")
+			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
 		
 		self._selenium_dialog = selenium_dialog
 	
@@ -23,12 +41,23 @@ class Dialog(AbstractDialog):
 	
 	@classmethod
 	def from_legacy(cls, selenium_dialog: DIALOG_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Dialog object.
+
+		This factory method is used to wrap an existing Selenium Dialog
+		instance into the new interface.
+
+		Args:
+			selenium_dialog (DIALOG_TYPEHINT): The legacy Selenium Dialog instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Dialog.
+		"""
+		
 		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):
-			raise TypeError(
-					f"Could not convert input to {type(legacyDialog)}: {type(selenium_dialog)}"
-			)
+			raise TypesConvertError(from_=legacyDialog, to_=selenium_dialog)
 		
 		return cls(selenium_dialog=legacy_dialog_obj)
 	

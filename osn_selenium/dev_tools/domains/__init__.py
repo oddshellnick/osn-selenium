@@ -1,4 +1,3 @@
-from __future__ import annotations
 from osn_selenium.types import DictModel
 from typing import (
 	Literal,

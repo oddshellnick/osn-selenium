@@ -4,6 +4,10 @@ from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.browser import AbstractBrowser
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo
@@ -11,16 +15,32 @@ from selenium.webdriver.common.bidi.browser import (
 
 
 class Browser(_TrioThreadMixin, AbstractBrowser):
+	"""
+	Wrapper for the legacy Selenium BiDi Browser instance.
+
+	Provides methods to manage user contexts (profiles) and inspect client
+	window information via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_browser: legacyBrowser,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Browser wrapper.
+
+		Args:
+			selenium_browser (legacyBrowser): The legacy Selenium Browser instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_browser, legacyBrowser):
-			raise TypeError(f"Expected {type(legacyBrowser)}, got {type(selenium_browser)}")
+			raise ExpectedTypeError(expected_class=legacyBrowser, received_instance=selenium_browser)
 		
 		self._selenium_browser = selenium_browser
 	
@@ -52,9 +72,7 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 		legacy_browser_obj = get_legacy_instance(selenium_browser)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):
-			raise TypeError(
-					f"Could not convert input to {type(legacyBrowser)}: {type(selenium_browser)}"
-			)
+			raise TypesConvertError(from_=legacyBrowser, to_=selenium_browser)
 		
 		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	

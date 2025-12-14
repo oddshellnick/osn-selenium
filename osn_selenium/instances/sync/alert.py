@@ -3,12 +3,30 @@ from osn_selenium.instances.types import ALERT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Alert(AbstractAlert):
+	"""
+	Wrapper for the legacy Selenium Alert instance.
+
+	Manages browser alerts, prompts, and confirmation dialogs, allowing
+	acceptance, dismissal, text retrieval, and input.
+	"""
+	
 	def __init__(self, selenium_alert: legacyAlert) -> None:
+		"""
+		Initializes the Alert wrapper.
+
+		Args:
+			selenium_alert (legacyAlert): The legacy Selenium Alert instance to wrap.
+		"""
+		
 		if not isinstance(selenium_alert, legacyAlert):
-			raise TypeError(f"Expected {type(legacyAlert)}, got {type(selenium_alert)}")
+			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
 		
 		self._selenium_alert = selenium_alert
 	
@@ -20,12 +38,23 @@ class Alert(AbstractAlert):
 	
 	@classmethod
 	def from_legacy(cls, selenium_alert: ALERT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Alert object.
+
+		This factory method is used to wrap an existing Selenium Alert
+		instance into the new interface.
+
+		Args:
+			selenium_alert (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Alert.
+		"""
+		
 		legacy_alert_obj = get_legacy_instance(selenium_alert)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):
-			raise TypeError(
-					f"Could not convert input to {type(legacyAlert)}: {type(selenium_alert)}"
-			)
+			raise TypesConvertError(from_=legacyAlert, to_=selenium_alert)
 		
 		return cls(selenium_alert=legacy_alert_obj)
 	

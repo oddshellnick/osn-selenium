@@ -1,0 +1,86 @@
+import pathlib
+from typing import Optional, Union
+from osn_selenium.types import WindowRect
+from selenium.webdriver.chrome.service import Service
+from osn_selenium.flags.models.chrome import ChromeFlags
+from selenium.webdriver.chrome.webdriver import (
+	WebDriver as legacyWebDriver
+)
+from osn_selenium.webdrivers.trio_threads.chrome.settings import ChromeSettingsMixin
+from osn_selenium.abstract.webdriver.chrome.lifecycle import (
+	AbstractChromeLifecycleMixin
+)
+
+
+class ChromeLifecycleMixin(ChromeSettingsMixin, AbstractChromeLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Chrome WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
+	async def _create_driver(self) -> None:
+		def _create() -> legacyWebDriver:
+			webdriver_options = self._webdriver_flags_manager.options
+			webdriver_service = Service(
+					executable_path=self._webdriver_path,
+					port=self.debugging_port if self.browser_exe is None else 0,
+					service_args=self._webdriver_flags_manager.start_args
+					if self.browser_exe is None
+					else None,
+			)
+			
+			return legacyWebDriver(options=webdriver_options, service=webdriver_service)
+		
+		self._driver = await self._wrap_to_trio(_create)
+		
+		if self._window_rect is not None:
+			await self.set_window_rect(
+					x=self._window_rect.x,
+					y=self._window_rect.y,
+					width=self._window_rect.width,
+					height=self._window_rect.height,
+			)
+		
+		await self.set_driver_timeouts(
+				page_load_timeout=self._base_page_load_timeout,
+				implicit_wait_timeout=self._base_implicitly_wait,
+				script_timeout=self._base_script_timeout,
+		)
+	
+	async def restart_webdriver(
+			self,
+			flags: Optional[ChromeFlags] = None,
+			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_name_in_system: Optional[str] = None,
+			use_browser_exe: Optional[bool] = None,
+			start_page_url: Optional[str] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		await super().restart_webdriver(
+				flags=flags,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				use_browser_exe=use_browser_exe,
+				start_page_url=start_page_url,
+				window_rect=window_rect,
+		)
+	
+	async def start_webdriver(
+			self,
+			flags: Optional[ChromeFlags] = None,
+			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_name_in_system: Optional[str] = None,
+			use_browser_exe: Optional[bool] = None,
+			start_page_url: Optional[str] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		await super().start_webdriver(
+				flags=flags,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				use_browser_exe=use_browser_exe,
+				start_page_url=start_page_url,
+				window_rect=window_rect,
+		)

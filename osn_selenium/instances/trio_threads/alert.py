@@ -5,19 +5,39 @@ from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Alert(_TrioThreadMixin, AbstractAlert):
+	"""
+	Wrapper for the legacy Selenium Alert instance.
+
+	Manages browser alerts, prompts, and confirmation dialogs, allowing
+	acceptance, dismissal, text retrieval, and input.
+	"""
+	
 	def __init__(
 			self,
 			selenium_alert: legacyAlert,
 			lock: trio.Lock,
 			limiter: Optional[trio.CapacityLimiter] = None,
 	) -> None:
+		"""
+		Initializes the Alert wrapper.
+
+		Args:
+			selenium_alert (legacyAlert): The legacy Selenium Alert instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_alert, legacyAlert):
-			raise TypeError(f"Expected {type(legacyAlert)}, got {type(selenium_alert)}")
+			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
 		
 		self._selenium_alert = selenium_alert
 	
@@ -52,9 +72,7 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 		legacy_alert_obj = get_legacy_instance(selenium_alert)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):
-			raise TypeError(
-					f"Could not convert input to {type(legacyAlert)}: {type(selenium_alert)}"
-			)
+			raise TypesConvertError(from_=legacyAlert, to_=selenium_alert)
 		
 		return cls(selenium_alert=legacy_alert_obj, lock=lock, limiter=limiter)
 	

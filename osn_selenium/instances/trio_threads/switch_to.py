@@ -11,6 +11,10 @@ from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from osn_selenium.instances.types import (
 	SWITCH_TO_TYPEHINT,
 	WEB_ELEMENT_TYPEHINT
@@ -22,16 +26,32 @@ from osn_selenium.instances.convert import (
 
 
 class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
+	"""
+	Wrapper for the legacy Selenium SwitchTo instance.
+
+	Provides mechanisms to change the driver's focus to different frames,
+	windows, or alerts.
+	"""
+	
 	def __init__(
 			self,
 			selenium_switch_to: legacySwitchTo,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the SwitchTo wrapper.
+
+		Args:
+			selenium_switch_to (legacySwitchTo): The legacy Selenium SwitchTo instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_switch_to, legacySwitchTo):
-			raise TypeError(f"Expected {type(legacySwitchTo)}, got {type(selenium_switch_to)}")
+			raise ExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
 		
 		self._selenium_switch_to = selenium_switch_to
 	
@@ -84,9 +104,7 @@ class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
 		
 		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
-			raise TypeError(
-					f"Could not convert input to {type(legacySwitchTo)}: {type(selenium_switch_to)}"
-			)
+			raise TypesConvertError(from_=legacySwitchTo, to_=selenium_switch_to)
 		
 		return cls(selenium_switch_to=legacy_switch_to_obj, lock=lock, limiter=limiter)
 	

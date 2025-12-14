@@ -1,27 +1,50 @@
 from selenium.webdriver.common.by import By
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.shadow_root import ShadowRoot
-from osn_selenium.instances.convert import (
-	get_legacy_web_element
-)
-from osn_selenium.abstract.instances.web_element import AbstractWebElement
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from typing import (
 	Any,
 	Dict,
+	Iterable,
 	List,
 	Optional,
-	Self,
-	TYPE_CHECKING
+	Self
+)
+from osn_selenium.abstract.instances.web_element import AbstractWebElement
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
+)
 
 
 class WebElement(AbstractWebElement):
+	"""
+	Wrapper for the legacy Selenium WebElement instance.
+
+	Represents an HTML element in the DOM, offering methods for interaction (click, type),
+	property retrieval, and finding child elements.
+	"""
+	
 	def __init__(self, selenium_web_element: legacyWebElement) -> None:
+		"""
+		Initializes the WebElement wrapper.
+
+		Args:
+			selenium_web_element (legacyWebElement): The legacy Selenium WebElement instance to wrap.
+		"""
+		
 		if not isinstance(selenium_web_element, legacyWebElement):
-			raise TypeError(f"Expected {type(legacyWebElement)}, got {type(selenium_web_element)}")
+			raise ExpectedTypeError(
+					expected_class=legacyWebElement,
+					received_instance=selenium_web_element
+			)
 		
 		self._selenium_web_element = selenium_web_element
 	
@@ -33,13 +56,13 @@ class WebElement(AbstractWebElement):
 		return self._selenium_web_element
 	
 	def __eq__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy == get_legacy_web_element(other)
+		return self.legacy == get_legacy_instance(other)
 	
 	def __hash__(self) -> int:
 		return self.legacy.__hash__()
 	
 	def __ne__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy != get_legacy_web_element(other)
+		return self.legacy != get_legacy_instance(other)
 	
 	def accessible_name(self) -> str:
 		return self.legacy.accessible_name
@@ -55,12 +78,23 @@ class WebElement(AbstractWebElement):
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_element: WEB_ELEMENT_TYPEHINT) -> Self:
-		legacy_element_obj = get_legacy_web_element(selenium_web_element)
+		"""
+		Creates an instance from a legacy Selenium WebElement object.
+
+		This factory method is used to wrap an existing Selenium WebElement
+		instance into the new interface.
+
+		Args:
+			selenium_web_element (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing WebElement.
+		"""
+		
+		legacy_element_obj = get_legacy_instance(selenium_web_element)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypeError(
-					f"Could not convert input to {type(legacyWebElement)}: {type(selenium_web_element)}"
-			)
+			raise TypesConvertError(from_=legacyWebElement, to_=selenium_web_element)
 		
 		return cls(selenium_web_element=legacy_element_obj)
 	
@@ -138,3 +172,18 @@ class WebElement(AbstractWebElement):
 	
 	def value_of_css_property(self, property_name: str) -> str:
 		return self.legacy.value_of_css_property(property_name=property_name)
+	
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> WebDriverWait:
+		return WebDriverWait(
+				selenium_webdriver_wait=legacyWebDriverWait(
+						driver=self.legacy,
+						timeout=timeout,
+						poll_frequency=poll_frequency,
+						ignored_exceptions=ignored_exceptions,
+				),
+		)

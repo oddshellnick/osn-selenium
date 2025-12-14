@@ -8,6 +8,10 @@ from typing import (
 from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
@@ -15,22 +19,48 @@ from selenium.webdriver.common.bidi.permissions import (
 
 
 class Permissions(AbstractPermissions):
+	"""
+	Wrapper for the legacy Selenium Permissions instance.
+
+	Provides methods to set and modify browser permissions (e.g., camera, microphone, geolocation)
+	via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(self, selenium_permissions: legacyPermissions) -> None:
+		"""
+		Initializes the Permissions wrapper.
+
+		Args:
+			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
+		"""
+		
 		if not isinstance(selenium_permissions, legacyPermissions):
-			raise TypeError(
-					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
+			raise ExpectedTypeError(
+					expected_class=legacyPermissions,
+					received_instance=selenium_permissions
 			)
 		
 		self._selenium_permissions = selenium_permissions
 	
 	@classmethod
 	def from_legacy(cls, selenium_permissions: PERMISSIONS_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Permissions object.
+
+		This factory method is used to wrap an existing Selenium Permissions
+		instance into the new interface.
+
+		Args:
+			selenium_permissions (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Permissions.
+		"""
+		
 		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypeError(
-					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
-			)
+			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
 		
 		return cls(selenium_permissions=legacy_permissions_obj)
 	

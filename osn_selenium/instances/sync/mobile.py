@@ -2,6 +2,10 @@ from typing import List, Self, Union
 from osn_selenium.instances.types import MOBILE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.mobile import AbstractMobile
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
@@ -9,9 +13,23 @@ from selenium.webdriver.remote.mobile import (
 
 
 class Mobile(AbstractMobile):
+	"""
+	Wrapper for the legacy Selenium Mobile instance.
+
+	Manages network connection types and context settings (e.g., native app vs web view)
+	for mobile emulation.
+	"""
+	
 	def __init__(self, selenium_mobile: legacyMobile) -> None:
+		"""
+		Initializes the Mobile wrapper.
+
+		Args:
+			selenium_mobile (legacyMobile): The legacy Selenium Mobile instance to wrap.
+		"""
+		
 		if not isinstance(selenium_mobile, legacyMobile):
-			raise TypeError(f"Expected {type(legacyMobile)}, got {type(selenium_mobile)}")
+			raise ExpectedTypeError(expected_class=legacyMobile, received_instance=selenium_mobile)
 		
 		self._selenium_mobile = selenium_mobile
 	
@@ -23,12 +41,23 @@ class Mobile(AbstractMobile):
 	
 	@classmethod
 	def from_legacy(cls, selenium_mobile: MOBILE_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Mobile object.
+
+		This factory method is used to wrap an existing Selenium Mobile
+		instance into the new interface.
+
+		Args:
+			selenium_mobile (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Mobile.
+		"""
+		
 		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypeError(
-					f"Could not convert input to {type(legacyMobile)}: {type(selenium_mobile)}"
-			)
+			raise TypesConvertError(from_=legacyMobile, to_=selenium_mobile)
 		
 		return cls(selenium_mobile=legacy_mobile_obj)
 	

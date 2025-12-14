@@ -9,28 +9,58 @@ from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
 
 
 class WebExtension(AbstractWebExtension):
+	"""
+	Wrapper for the legacy Selenium WebExtension instance.
+
+	Manages the installation and uninstallation of browser extensions via the
+	WebDriver BiDi protocol.
+	"""
+	
 	def __init__(self, selenium_web_extension: legacyWebExtension) -> None:
+		"""
+		Initializes the WebExtension wrapper.
+
+		Args:
+			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance to wrap.
+		"""
+		
 		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise TypeError(
-					f"Expected {type(legacyWebExtension)}, got {type(selenium_web_extension)}"
+			raise ExpectedTypeError(
+					expected_class=legacyWebExtension,
+					received_instance=selenium_web_extension
 			)
 		
 		self._selenium_web_extension = selenium_web_extension
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_extension: WEB_EXTENSION_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium WebExtension object.
+
+		This factory method is used to wrap an existing Selenium WebExtension
+		instance into the new interface.
+
+		Args:
+			selenium_web_extension (WEB_EXTENSION_TYPEHINT): The legacy Selenium WebExtension instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing WebExtension.
+		"""
+		
 		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
-			raise TypeError(
-					f"Could not convert input to {type(legacyWebExtension)}: {type(selenium_web_extension)}"
-			)
+			raise TypesConvertError(from_=legacyWebExtension, to_=selenium_web_extension)
 		
 		return cls(selenium_web_extension=legacy_web_extension_obj)
 	

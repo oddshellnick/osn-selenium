@@ -8,12 +8,30 @@ from osn_selenium.instances.types import FEDCM_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class FedCM(AbstractFedCM):
+	"""
+	Wrapper for the legacy Selenium FedCM instance.
+
+	Provides an interface for controlling the Federated Credential Management API,
+	including dialog delays and cooldown resets.
+	"""
+	
 	def __init__(self, selenium_fedcm: legacyFedCM) -> None:
+		"""
+		Initializes the FedCM wrapper.
+
+		Args:
+			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance to wrap.
+		"""
+		
 		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise TypeError(f"Expected {type(legacyFedCM)}, got {type(selenium_fedcm)}")
+			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
 		
 		self._selenium_fedcm = selenium_fedcm
 	
@@ -37,12 +55,23 @@ class FedCM(AbstractFedCM):
 	
 	@classmethod
 	def from_legacy(cls, selenium_fedcm: FEDCM_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium FedCM object.
+
+		This factory method is used to wrap an existing Selenium FedCM
+		instance into the new interface.
+
+		Args:
+			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing FedCM.
+		"""
+		
 		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypeError(
-					f"Could not convert input to {type(legacyFedCM)}: {type(selenium_fedcm)}"
-			)
+			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj)
 	

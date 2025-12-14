@@ -5,12 +5,30 @@ from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Script(AbstractScript):
+	"""
+	Wrapper for the legacy Selenium BiDi Script instance.
+
+	Facilitates execution of JavaScript within specific contexts, adding preload scripts,
+	and handling console messages or JS errors.
+	"""
+	
 	def __init__(self, selenium_script: legacyScript) -> None:
+		"""
+		Initializes the Script wrapper.
+
+		Args:
+			selenium_script (legacyScript): The legacy Selenium Script instance to wrap.
+		"""
+		
 		if not isinstance(selenium_script, legacyScript):
-			raise TypeError(f"Expected {type(legacyScript)}, got {type(selenium_script)}")
+			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
 		
 		self._selenium_script = selenium_script
 	
@@ -25,12 +43,23 @@ class Script(AbstractScript):
 	
 	@classmethod
 	def from_legacy(cls, selenium_script: SCRIPT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Script object.
+
+		This factory method is used to wrap an existing Selenium Script
+		instance into the new interface.
+
+		Args:
+			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Script.
+		"""
+		
 		legacy_script_obj = get_legacy_instance(selenium_script)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypeError(
-					f"Could not convert input to {type(legacyScript)}: {type(selenium_script)}"
-			)
+			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
 		
 		return cls(selenium_script=legacy_script_obj)
 	

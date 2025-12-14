@@ -6,6 +6,10 @@ from typing import (
 from osn_selenium.instances.types import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -19,9 +23,23 @@ from selenium.webdriver.common.bidi.storage import (
 
 
 class Storage(AbstractStorage):
+	"""
+	Wrapper for the legacy Selenium BiDi Storage instance.
+
+	Manages browser storage mechanisms, primarily focusing on getting, setting,
+	and deleting cookies with specific filters and partition descriptors.
+	"""
+	
 	def __init__(self, selenium_storage: legacyStorage) -> None:
+		"""
+		Initializes the Storage wrapper.
+
+		Args:
+			selenium_storage (legacyStorage): The legacy Selenium Storage instance to wrap.
+		"""
+		
 		if not isinstance(selenium_storage, legacyStorage):
-			raise TypeError(f"Expected {type(legacyStorage)}, got {type(selenium_storage)}")
+			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
 		
 		self._selenium_storage = selenium_storage
 	
@@ -34,12 +52,23 @@ class Storage(AbstractStorage):
 	
 	@classmethod
 	def from_legacy(cls, selenium_storage: STORAGE_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Storage object.
+
+		This factory method is used to wrap an existing Selenium Storage
+		instance into the new interface.
+
+		Args:
+			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Storage.
+		"""
+		
 		legacy_storage_obj = get_legacy_instance(selenium_storage)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypeError(
-					f"Could not convert input to {type(legacyStorage)}: {type(selenium_storage)}"
-			)
+			raise TypesConvertError(from_=legacyStorage, to_=selenium_storage)
 		
 		return cls(selenium_storage=legacy_storage_obj)
 	

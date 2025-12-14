@@ -4,6 +4,10 @@ from osn_selenium.instances.types import MOBILE_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.mobile import AbstractMobile
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
@@ -11,16 +15,32 @@ from selenium.webdriver.remote.mobile import (
 
 
 class Mobile(_TrioThreadMixin, AbstractMobile):
+	"""
+	Wrapper for the legacy Selenium Mobile instance.
+
+	Manages network connection types and context settings (e.g., native app vs web view)
+	for mobile emulation.
+	"""
+	
 	def __init__(
 			self,
 			selenium_mobile: legacyMobile,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Mobile wrapper.
+
+		Args:
+			selenium_mobile (legacyMobile): The legacy Selenium Mobile instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_mobile, legacyMobile):
-			raise TypeError(f"Expected {type(legacyMobile)}, got {type(selenium_mobile)}")
+			raise ExpectedTypeError(expected_class=legacyMobile, received_instance=selenium_mobile)
 		
 		self._selenium_mobile = selenium_mobile
 	
@@ -55,9 +75,7 @@ class Mobile(_TrioThreadMixin, AbstractMobile):
 		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypeError(
-					f"Could not convert input to {type(legacyMobile)}: {type(selenium_mobile)}"
-			)
+			raise TypesConvertError(from_=legacyMobile, to_=selenium_mobile)
 		
 		return cls(selenium_mobile=legacy_mobile_obj, lock=lock, limiter=limiter)
 	

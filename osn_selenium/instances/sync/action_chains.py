@@ -1,22 +1,21 @@
-from osn_selenium.webdrivers.types import Point
-from osn_selenium.executors.sync.javascript import JSExecutor
+from osn_selenium.types import Point
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.webdrivers.trio_threads.base import WebDriver
+from osn_selenium.executors.sync.javascript import JSExecutor
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.sync.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
-from osn_selenium.instances.convert import (
-	get_legacy_web_element
-)
 from typing import (
+	Any,
+	Callable,
 	Optional,
 	Self,
-	TYPE_CHECKING,
 	Tuple,
 	Union
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.instances._functions import (
 	move_to_parts,
 	scroll_to_parts,
 	text_input_to_parts
@@ -27,36 +26,47 @@ from osn_selenium.abstract.instances.action_chains import (
 )
 
 
-if TYPE_CHECKING:
-	from osn_selenium.instances.sync.web_element import WebElement
-
-
 class ActionChains(AbstractActionChains):
-	def __init__(self, selenium_action_chains: legacyActionChains,):
+	"""
+	Wrapper for the legacy Selenium ActionChains instance.
+
+	Provides low-level interactions such as mouse movements, mouse button actions,
+	key presses, and context menu interactions.
+	"""
+	
+	def __init__(self, selenium_action_chains: legacyActionChains) -> None:
+		"""
+		Initializes the ActionChains wrapper.
+
+		Args:
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance to wrap.
+		"""
+		
 		if not isinstance(selenium_action_chains, legacyActionChains):
-			raise TypeError(
-					f"Expected {type(legacyActionChains)}, got {type(selenium_action_chains)}"
+			raise ExpectedTypeError(
+					expected_class=legacyActionChains,
+					received_instance=selenium_action_chains
 			)
 		
 		self._selenium_action_chains = selenium_action_chains
 	
 	def click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.click(on_element=get_legacy_web_element(on_element))
+		self._selenium_action_chains.click(on_element=get_legacy_instance(on_element))
 		
 		return self
 	
 	def click_and_hold(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.click_and_hold(on_element=get_legacy_web_element(on_element))
+		self._selenium_action_chains.click_and_hold(on_element=get_legacy_instance(on_element))
 		
 		return self
 	
 	def context_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.context_click(on_element=get_legacy_web_element(on_element))
+		self._selenium_action_chains.context_click(on_element=get_legacy_instance(on_element))
 		
 		return self
 	
 	def double_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.double_click(on_element=get_legacy_web_element(on_element))
+		self._selenium_action_chains.double_click(on_element=get_legacy_instance(on_element))
 		
 		return self
 	
@@ -66,15 +76,15 @@ class ActionChains(AbstractActionChains):
 			target_element: WEB_ELEMENT_TYPEHINT
 	) -> Self:
 		self._selenium_action_chains.drag_and_drop(
-				source=get_legacy_web_element(source_element),
-				target=get_legacy_web_element(target_element)
+				source=get_legacy_instance(source_element),
+				target=get_legacy_instance(target_element)
 		)
 		
 		return self
 	
 	def drag_and_drop_by_offset(self, source_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		self._selenium_action_chains.drag_and_drop_by_offset(
-				source=get_legacy_web_element(source_element),
+				source=get_legacy_instance(source_element),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
@@ -82,12 +92,12 @@ class ActionChains(AbstractActionChains):
 		return self
 	
 	def key_down(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.key_down(value=value, element=get_legacy_web_element(element))
+		self._selenium_action_chains.key_down(value=value, element=get_legacy_instance(element))
 		
 		return self
 	
 	def key_up(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.key_up(value=value, element=get_legacy_web_element(element))
+		self._selenium_action_chains.key_up(value=value, element=get_legacy_instance(element))
 		
 		return self
 	
@@ -96,18 +106,18 @@ class ActionChains(AbstractActionChains):
 		return self._selenium_action_chains
 	
 	def move_by_offset(self, xoffset: int, yoffset: int) -> Self:
-		self._selenium_action_chains.move_by_offset(xoffset=xoffset, yoffset=yoffset,)
+		self._selenium_action_chains.move_by_offset(xoffset=xoffset, yoffset=yoffset)
 		
 		return self
 	
 	def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> Self:
-		self._selenium_action_chains.move_to_element(to_element=get_legacy_web_element(to_element))
+		self._selenium_action_chains.move_to_element(to_element=get_legacy_instance(to_element))
 		
 		return self
 	
 	def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		self._selenium_action_chains.move_to_element_with_offset(
-				to_element=get_legacy_web_element(to_element),
+				to_element=get_legacy_instance(to_element),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
@@ -125,7 +135,7 @@ class ActionChains(AbstractActionChains):
 		return self
 	
 	def release(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		self._selenium_action_chains.release(on_element=get_legacy_web_element(on_element))
+		self._selenium_action_chains.release(on_element=get_legacy_instance(on_element))
 		
 		return self
 	
@@ -140,7 +150,7 @@ class ActionChains(AbstractActionChains):
 		return self
 	
 	def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> Self:
-		self._selenium_action_chains.scroll_to_element(element=get_legacy_web_element(element))
+		self._selenium_action_chains.scroll_to_element(element=get_legacy_instance(element))
 		
 		return self
 	
@@ -150,16 +160,35 @@ class ActionChains(AbstractActionChains):
 		return self
 	
 	def send_keys_to_element(self, element: WEB_ELEMENT_TYPEHINT, *keys_to_send: str) -> Self:
-		self._selenium_action_chains.send_keys_to_element(get_legacy_web_element(element), *keys_to_send)
+		self._selenium_action_chains.send_keys_to_element(get_legacy_instance(element), *keys_to_send)
 		
 		return self
 
 
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
-	def __init__(self, driver: WebDriver, selenium_action_chains: legacyActionChains,) -> None:
+	"""
+	Extended ActionChains class simulating human-like behavior.
+
+	Implements natural mouse movements (using Bezier curves or deviations),
+	human-like typing with variable delays, and smooth scrolling.
+	"""
+	
+	def __init__(
+			self,
+			execute_script_function: Callable[[str, Any], Any],
+			selenium_action_chains: legacyActionChains
+	) -> None:
+		"""
+		Initializes the HumanLikeActionChains wrapper.
+
+		Args:
+			execute_script_function (Callable[[str, Any], Any]): Function to execute JavaScript in the browser.
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance.
+		"""
+		
 		super().__init__(selenium_action_chains=selenium_action_chains)
 		
-		self._js_executor = JSExecutor(execute_function=driver.execute_script)
+		self._js_executor = JSExecutor(execute_function=execute_script_function)
 	
 	def hm_move(self, start_position: Point, end_position: Point) -> Self:
 		parts = move_to_parts(start_position=start_position, end_position=end_position)
@@ -170,8 +199,38 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		
 		return self
 	
+	def hm_move_by_offset(self, start_position: Point, xoffset: int, yoffset: int) -> Tuple[Self, Point]:
+		end_position = Point(x=start_position.x + xoffset, y=start_position.y + yoffset)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
 	def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
-		end_position = self._js_executor.get_random_element_point(element=get_legacy_web_element(element))
+		element_rect = WebElement.from_legacy(selenium_web_element=get_legacy_instance(element)).rect()
+		end_position = Point(
+				x=element_rect["x"] +
+				element_rect["width"] //
+				2,
+				y=element_rect["y"] +
+				element_rect["height"] //
+				2
+		)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	def hm_move_to_element_with_offset(
+			self,
+			start_position: Point,
+			element: WEB_ELEMENT_TYPEHINT,
+			xoffset: int,
+			yoffset: int
+	) -> Tuple[Self, Point]:
+		element_rect = WebElement.from_legacy(selenium_web_element=get_legacy_instance(element)).rect()
+		end_position = Point(x=element_rect["x"] + xoffset, y=element_rect["y"] + yoffset)
+		
+		return self.hm_move(start_position=start_position, end_position=end_position), end_position
+	
+	def hm_move_to_element_with_random_offset(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
+		end_position = self._js_executor.get_random_element_point(element=get_legacy_instance(element))
 		
 		return self.hm_move(start_position=start_position, end_position=end_position), end_position
 	
@@ -205,7 +264,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 			origin: Optional[ScrollOrigin] = None,
 	) -> Self:
 		viewport_rect = self._js_executor.get_viewport_rect()
-		element_rect = self._js_executor.get_element_rect_in_viewport(element=get_legacy_web_element(element))
+		element_rect = self._js_executor.get_element_rect_in_viewport(element=get_legacy_instance(element))
 		
 		if element_rect.x < additional_left_x_offset:
 			delta_x = int(element_rect.x - additional_left_x_offset)

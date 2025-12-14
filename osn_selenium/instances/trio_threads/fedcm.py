@@ -10,19 +10,39 @@ from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class FedCM(_TrioThreadMixin, AbstractFedCM):
+	"""
+	Wrapper for the legacy Selenium FedCM instance.
+
+	Provides an interface for controlling the Federated Credential Management API,
+	including dialog delays and cooldown resets.
+	"""
+	
 	def __init__(
 			self,
 			selenium_fedcm: legacyFedCM,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the FedCM wrapper.
+
+		Args:
+			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise TypeError(f"Expected {type(legacyFedCM)}, got {type(selenium_fedcm)}")
+			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
 		
 		self._selenium_fedcm = selenium_fedcm
 	
@@ -69,9 +89,7 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypeError(
-					f"Could not convert input to {type(legacyFedCM)}: {type(selenium_fedcm)}"
-			)
+			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	

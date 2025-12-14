@@ -1,9 +1,58 @@
-from typing import Any, Optional, Union
-from selenium.webdriver.remote.webelement import WebElement
-from osn_selenium.abstract.instances.web_element import AbstractWebElement
+from typing import (
+	Optional,
+	Union,
+	overload
+)
+from osn_selenium.instances.errors import ExpectedTypeError
+from selenium.webdriver.common.alert import Alert as legacyAlert
+from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from selenium.webdriver.remote.mobile import (
+	Mobile as legacyMobile
+)
+from selenium.webdriver.common.bidi.script import (
+	Script as legacyScript
+)
+from selenium.webdriver.common.fedcm.dialog import (
+	Dialog as legacyDialog
+)
+from selenium.webdriver.remote.switch_to import (
+	SwitchTo as legacySwitchTo
+)
+from selenium.webdriver.common.bidi.browser import (
+	Browser as legacyBrowser
+)
+from selenium.webdriver.common.bidi.network import (
+	Network as legacyNetwork
+)
+from selenium.webdriver.common.bidi.storage import (
+	Storage as legacyStorage
+)
+from selenium.webdriver.remote.webelement import (
+	WebElement as legacyWebElement
+)
+from selenium.webdriver.remote.shadowroot import (
+	ShadowRoot as legacyShadowRoot
+)
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
+)
+from selenium.webdriver.common.action_chains import (
+	ActionChains as legacyActionChains
+)
+from selenium.webdriver.common.bidi.permissions import (
+	Permissions as legacyPermissions
+)
+from selenium.webdriver.common.bidi.webextension import (
+	WebExtension as legacyWebExtension
+)
+from selenium.webdriver.common.bidi.browsing_context import (
+	BrowsingContext as legacyBrowsingContext
+)
 from osn_selenium.instances.types import (
 	ACTION_CHAINS_TYPEHINT,
 	ALERT_TYPEHINT,
+	ANY_ABSTRACT_TYPE,
+	ANY_LEGACY_TYPE,
 	BROWSER_TYPEHINT,
 	BROWSING_CONTEXT_TYPEHINT,
 	DIALOG_TYPEHINT,
@@ -15,54 +64,151 @@ from osn_selenium.instances.types import (
 	SHADOW_ROOT_TYPEHINT,
 	STORAGE_TYPEHINT,
 	SWITCH_TO_TYPEHINT,
+	WEB_DRIVER_WAIT_TYPEHINT,
 	WEB_ELEMENT_TYPEHINT,
 	WEB_EXTENSION_TYPEHINT
 )
 
 
-def get_legacy_instance(instance: Optional[Any]) -> Optional[Any]:
+@overload
+def get_legacy_instance(instance: None) -> None:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[ALERT_TYPEHINT]) -> Optional[legacyAlert]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[FEDCM_TYPEHINT]) -> Optional[legacyFedCM]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[DIALOG_TYPEHINT]) -> Optional[legacyDialog]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[MOBILE_TYPEHINT]) -> Optional[legacyMobile]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[SCRIPT_TYPEHINT]) -> Optional[legacyScript]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[BROWSER_TYPEHINT]) -> Optional[legacyBrowser]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[NETWORK_TYPEHINT]) -> Optional[legacyNetwork]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[STORAGE_TYPEHINT]) -> Optional[legacyStorage]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[SWITCH_TO_TYPEHINT]) -> Optional[legacySwitchTo]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[SHADOW_ROOT_TYPEHINT]) -> Optional[legacyShadowRoot]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[WEB_ELEMENT_TYPEHINT]) -> Optional[legacyWebElement]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[PERMISSIONS_TYPEHINT]) -> Optional[legacyPermissions]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[ACTION_CHAINS_TYPEHINT]) -> Optional[legacyActionChains]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[WEB_EXTENSION_TYPEHINT]) -> Optional[legacyWebExtension]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[WEB_DRIVER_WAIT_TYPEHINT]) -> Optional[legacyWebDriverWait]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[BROWSING_CONTEXT_TYPEHINT]) -> Optional[legacyBrowsingContext]:
+	...
+
+
+def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_TYPE]]) -> Optional[ANY_LEGACY_TYPE]:
+	"""
+	Converts an abstract Selenium instance to its corresponding legacy Selenium instance.
+
+	This function handles various types of Selenium objects, including browser contexts,
+	web elements, alerts, and more. It returns the legacy object if the input is an
+	abstract instance, or the input itself if it's already a legacy instance or None.
+
+	Args:
+		instance (Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_TYPE]]): The instance to convert.
+																	   Can be an abstract instance,
+																	   a legacy instance, or None.
+
+	Returns:
+		Optional[ANY_LEGACY_TYPE]: The converted legacy instance,
+															 or None if the input was None.
+
+	Raises:
+		ExpectedTypeError: If the input instance is of an unsupported type.
+	"""
+	
 	if instance is None:
 		return None
 	
-	if isinstance(
-			instance,
-			(
-					WEB_ELEMENT_TYPEHINT,
-					ACTION_CHAINS_TYPEHINT,
-					ALERT_TYPEHINT,
-					BROWSER_TYPEHINT,
-					BROWSING_CONTEXT_TYPEHINT,
-					DIALOG_TYPEHINT,
-					FEDCM_TYPEHINT,
-					MOBILE_TYPEHINT,
-					NETWORK_TYPEHINT,
-					PERMISSIONS_TYPEHINT,
-					SCRIPT_TYPEHINT,
-					SHADOW_ROOT_TYPEHINT,
-					STORAGE_TYPEHINT,
-					SWITCH_TO_TYPEHINT,
-					WEB_EXTENSION_TYPEHINT,
-			)
-	):
+	if isinstance(instance, ANY_ABSTRACT_TYPE):
 		return instance.legacy
 	
-	return instance
-
-
-def get_legacy_web_element(element: Optional[WEB_ELEMENT_TYPEHINT]) -> Optional[WebElement]:
-	if element is None:
-		return None
+	if isinstance(instance, ANY_LEGACY_TYPE):
+		return instance
 	
-	if isinstance(element, AbstractWebElement):
-		return element.legacy
-	elif isinstance(element, WebElement):
-		return element
+	raise ExpectedTypeError(
+			expected_class=(ANY_ABSTRACT_TYPE, ANY_LEGACY_TYPE, None),
+			received_instance=instance
+	)
+
+
+def get_legacy_frame_reference(frame_reference: Optional[Union[str, int, WEB_ELEMENT_TYPEHINT]]) -> Optional[Union[str, int, legacyWebElement]]:
+	"""
+	Converts a frame reference to its legacy Selenium equivalent.
+
+	The frame reference can be a string (frame name), an integer (frame index),
+	an AbstractWebElement, or a legacy WebElement. If it's a web element,
+	it is converted to its legacy WebElement form using `get_legacy_instance`.
+
+	Args:
+		frame_reference (Optional[Union[str, int, WEB_ELEMENT_TYPEHINT]]): The reference to the frame.
+
+	Returns:
+		Optional[Union[str, int, legacyWebElement]]: The legacy frame reference,
+													which can be a string, integer,
+													or a legacy WebElement, or None.
+	"""
 	
-	raise ValueError(f"Invalid WebElement type {type(element)}")
-
-
-def get_legacy_frame_reference(frame_reference: Union[str, int, Optional[WEB_ELEMENT_TYPEHINT]]) -> Union[str, int, Optional[WebElement]]:
 	if isinstance(frame_reference, (str, int)):
 		return frame_reference
 	
-	return get_legacy_web_element(frame_reference)
+	return get_legacy_instance(frame_reference)

@@ -1,22 +1,31 @@
 import pathlib
 from typing import (
-	Dict, List, Optional,
+	Dict,
+	List,
+	Optional,
 	Union
 )
-
-from osn_selenium.flags.base import (
-	BrowserFlagsManager
+from osn_selenium.flags.base import BrowserFlagsManager
+from osn_selenium.flags._types import (
+	blink_webdriver_option_type
 )
-from osn_selenium.flags.utils.blink import BlinkArguments, BlinkAttributes, BlinkExperimentalOptions, BlinkFeatures, BlinkFlags
-from osn_selenium.webdrivers.types import (
+from osn_selenium.flags._functions import (
+	build_first_start_argument
+)
+from osn_selenium.flags.models.base import (
 	FlagDefinition,
 	FlagNotDefined,
-	FlagType,
-	_blink_webdriver_option_type
+	FlagType
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.flags.models.blink import (
+	BlinkArguments,
+	BlinkAttributes,
+	BlinkExperimentalOptions,
+	BlinkFeatures,
+	BlinkFlags
+)
+from osn_selenium.flags._validating import (
 	bool_adding_validation_function,
-	build_first_start_argument,
 	int_adding_validation_function,
 	optional_bool_adding_validation_function,
 	path_adding_validation_function,
@@ -727,15 +736,15 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		
 		return start_args
 	
-	def build_options_blink_features(self, options: _blink_webdriver_option_type) -> _blink_webdriver_option_type:
+	def build_options_blink_features(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
 		"""
 		Adds configured Blink features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
 
 		Args:
-			options (_blink_webdriver_option_type): The WebDriver options object to modify.
+			options (blink_webdriver_option_type): The WebDriver options object to modify.
 
 		Returns:
-			_blink_webdriver_option_type: The modified WebDriver options object.
+			blink_webdriver_option_type: The modified WebDriver options object.
 		"""
 		
 		enable_blink_features = dict(
@@ -832,7 +841,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		self.clear_blink_features()
 		self.update_blink_features(blink_features)
 	
-	def _renew_webdriver_options(self) -> _blink_webdriver_option_type:
+	def _renew_webdriver_options(self) -> blink_webdriver_option_type:
 		"""
 		Abstract method to renew WebDriver options. Must be implemented in child classes.
 
@@ -840,7 +849,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		browser-specific WebDriver options instances (e.g., ChromeOptions, EdgeOptions).
 
 		Returns:
-			_blink_webdriver_option_type: A new instance of WebDriver options (e.g., ChromeOptions, EdgeOptions).
+			blink_webdriver_option_type: A new instance of WebDriver options (e.g., ChromeOptions, EdgeOptions).
 
 		Raises:
 			NotImplementedError: If the method is not implemented in a subclass.
@@ -872,41 +881,41 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		
 		self._browser_exe = value
 	
-	def build_options_arguments(self, options: _blink_webdriver_option_type) -> _blink_webdriver_option_type:
+	def build_options_arguments(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
 		"""
 		Adds configured command-line arguments to the WebDriver options.
 
 		Args:
-			options (_blink_webdriver_option_type): The WebDriver options object.
+			options (blink_webdriver_option_type): The WebDriver options object.
 
 		Returns:
-			_blink_webdriver_option_type: The modified WebDriver options object.
+			blink_webdriver_option_type: The modified WebDriver options object.
 		"""
 		
 		return super().build_options_arguments(options)
 	
-	def build_options_attributes(self, options: _blink_webdriver_option_type) -> _blink_webdriver_option_type:
+	def build_options_attributes(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
 		"""
 		Applies configured attributes to the WebDriver options.
 
 		Args:
-			options (_blink_webdriver_option_type): The WebDriver options object.
+			options (blink_webdriver_option_type): The WebDriver options object.
 
 		Returns:
-			_blink_webdriver_option_type: The modified WebDriver options object.
+			blink_webdriver_option_type: The modified WebDriver options object.
 		"""
 		
 		return super().build_options_attributes(options)
 	
-	def build_options_experimental_options(self, options: _blink_webdriver_option_type) -> _blink_webdriver_option_type:
+	def build_options_experimental_options(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
 		"""
 		Adds experimental options to the WebDriver options.
 
 		Args:
-			options (_blink_webdriver_option_type): The WebDriver options object.
+			options (blink_webdriver_option_type): The WebDriver options object.
 
 		Returns:
-			_blink_webdriver_option_type: The modified WebDriver options object.
+			blink_webdriver_option_type: The modified WebDriver options object.
 		"""
 		
 		return super().build_options_experimental_options(options)
@@ -928,12 +937,12 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		self._start_page_url = None
 	
 	@property
-	def options(self) -> _blink_webdriver_option_type:
+	def options(self) -> blink_webdriver_option_type:
 		"""
 		Builds and returns a Blink-specific WebDriver options object.
 
 		Returns:
-			_blink_webdriver_option_type: A configured Blink-based WebDriver options object.
+			blink_webdriver_option_type: A configured Blink-based WebDriver options object.
 		"""
 		
 		return super().options
@@ -964,10 +973,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		
 		super().set_attributes(attributes)
 	
-	def set_experimental_options(
-			self,
-			experimental_options: BlinkExperimentalOptions
-	):
+	def set_experimental_options(self, experimental_options: BlinkExperimentalOptions):
 		"""
 		Clears existing and sets new experimental options from a dictionary.
 
@@ -1052,7 +1058,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		"""
 		
 		self._start_page_url = value
-
+	
 	def update_arguments(self, arguments: BlinkArguments):
 		"""
 		Updates command-line arguments from a dictionary without clearing existing ones.
@@ -1063,9 +1069,9 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		Raises:
 			ValueError: If an unknown argument key is provided.
 		"""
-
+		
 		super().update_arguments(arguments)
-
+	
 	def update_attributes(self, attributes: BlinkAttributes):
 		"""
 		Updates browser attributes from a dictionary without clearing existing ones.
@@ -1076,13 +1082,10 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		Raises:
 			ValueError: If an unknown attribute key is provided.
 		"""
-
+		
 		super().update_attributes(attributes)
-
-	def update_experimental_options(
-			self,
-			experimental_options: BlinkExperimentalOptions
-	):
+	
+	def update_experimental_options(self, experimental_options: BlinkExperimentalOptions):
 		"""
 		Updates experimental options from a dictionary without clearing existing ones.
 
@@ -1092,9 +1095,9 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		Raises:
 			ValueError: If an unknown experimental option key is provided.
 		"""
-
+		
 		super().update_experimental_options(experimental_options)
-
+	
 	def update_flags(self, flags: BlinkFlags):
 		"""
 		Updates all flags, including Blink features, without clearing existing ones.
@@ -1107,7 +1110,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 			flags (BlinkFlags): A dictionary where keys are flag types
 				and values are dictionaries of flags to update for that type.
 		"""
-
+		
 		super().update_flags(flags)
 
 

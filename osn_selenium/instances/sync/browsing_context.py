@@ -11,6 +11,10 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from osn_selenium.abstract.instances.browsing_context import (
 	AbstractBrowsingContext
 )
@@ -21,10 +25,25 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 class BrowsingContext(AbstractBrowsingContext):
+	"""
+	Wrapper for the legacy Selenium BiDi BrowsingContext instance.
+
+	Controls browser tabs and windows (contexts), allowing navigation,
+	reloading, closing, screenshotting, and DOM tree inspection.
+	"""
+	
 	def __init__(self, selenium_browsing_context: legacyBrowsingContext) -> None:
+		"""
+		Initializes the BrowsingContext wrapper.
+
+		Args:
+			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium instance to wrap.
+		"""
+		
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
-			raise TypeError(
-					f"Expected {type(legacyBrowsingContext)}, got {type(selenium_browsing_context)}"
+			raise ExpectedTypeError(
+					expected_class=legacyBrowsingContext,
+					received_instance=selenium_browsing_context
 			)
 		
 		self._selenium_browsing_context = selenium_browsing_context
@@ -71,11 +90,22 @@ class BrowsingContext(AbstractBrowsingContext):
 	
 	@classmethod
 	def from_legacy(cls, selenium_browsing_context: BROWSING_CONTEXT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium BrowsingContext object.
+
+		This factory method is used to wrap an existing Selenium BrowsingContext
+		instance into the new interface.
+
+		Args:
+			selenium_browsing_context (BROWSING_CONTEXT_TYPEHINT): The legacy Selenium BrowsingContext instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing BrowsingContext.
+		"""
+		
 		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
-			raise TypeError(
-					f"Could not convert input to {type(legacyBrowsingContext)}: {type(selenium_browsing_context)}"
-			)
+			raise TypesConvertError(from_=legacyBrowsingContext, to_=selenium_browsing_context)
 		
 		return cls(selenium_browsing_context=legacy_browsing_context_obj)
 	

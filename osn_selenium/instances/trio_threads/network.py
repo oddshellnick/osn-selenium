@@ -12,19 +12,39 @@ from osn_selenium.abstract.instances.network import AbstractNetwork
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Network(_TrioThreadMixin, AbstractNetwork):
+	"""
+	Wrapper for the legacy Selenium BiDi Network instance.
+
+	Allows interception of network requests, adding authentication handlers,
+	and managing request callbacks.
+	"""
+	
 	def __init__(
 			self,
 			selenium_network: legacyNetwork,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Network wrapper.
+
+		Args:
+			selenium_network (legacyNetwork): The legacy Selenium Network instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_network, legacyNetwork):
-			raise TypeError(f"Expected {type(legacyNetwork)}, got {type(selenium_network)}")
+			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
 		
 		self._selenium_network = selenium_network
 	
@@ -74,9 +94,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		legacy_network_obj = get_legacy_instance(selenium_network)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypeError(
-					f"Could not convert input to {type(legacyNetwork)}: {type(selenium_network)}"
-			)
+			raise TypesConvertError(from_=legacyNetwork, to_=selenium_network)
 		
 		return cls(selenium_network=legacy_network_obj, lock=lock, limiter=limiter)
 	
