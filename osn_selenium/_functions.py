@@ -1,4 +1,3 @@
-import re
 import pathlib
 
 from osn_selenium.utils import JS_Scripts
@@ -19,7 +18,7 @@ def read_js_scripts() -> JS_Scripts:
 	scripts = {}
 
 	for script_file in (pathlib.Path(__file__).parent / "js_scripts").iterdir():
-		scripts[re.sub(r"\.js$", "", script_file.name)] = open(script_file, "r", encoding="utf-8").read()
+		scripts[script_file.stem] = open(script_file, "r", encoding="utf-8").read()
 
 	return JS_Scripts(
 			check_element_in_viewport=scripts["check_element_in_viewport"],
