@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.shadow_root import ShadowRoot
 from osn_selenium.instances.convert import (
-	get_legacy_web_element
+	get_legacy_instance
 )
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from typing import (
@@ -33,13 +33,13 @@ class WebElement(AbstractWebElement):
 		return self._selenium_web_element
 	
 	def __eq__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy == get_legacy_web_element(other)
+		return self.legacy == get_legacy_instance(other)
 	
 	def __hash__(self) -> int:
 		return self.legacy.__hash__()
 	
 	def __ne__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy != get_legacy_web_element(other)
+		return self.legacy != get_legacy_instance(other)
 	
 	def accessible_name(self) -> str:
 		return self.legacy.accessible_name
@@ -55,7 +55,7 @@ class WebElement(AbstractWebElement):
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_element: WEB_ELEMENT_TYPEHINT) -> Self:
-		legacy_element_obj = get_legacy_web_element(selenium_web_element)
+		legacy_element_obj = get_legacy_instance(selenium_web_element)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
 			raise TypeError(

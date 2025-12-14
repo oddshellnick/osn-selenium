@@ -5,7 +5,7 @@ from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from osn_selenium.instances.convert import (
-	get_legacy_web_element
+	get_legacy_instance
 )
 from typing import (
 	Optional,
@@ -51,7 +51,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.click,
-				on_element=get_legacy_web_element(on_element)
+				on_element=get_legacy_instance(on_element)
 		)
 		
 		return self
@@ -59,7 +59,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def click_and_hold(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.click_and_hold,
-				on_element=get_legacy_web_element(on_element)
+				on_element=get_legacy_instance(on_element)
 		)
 		
 		return self
@@ -67,7 +67,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def context_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.context_click,
-				on_element=get_legacy_web_element(on_element)
+				on_element=get_legacy_instance(on_element)
 		)
 		
 		return self
@@ -75,7 +75,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def double_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.double_click,
-				on_element=get_legacy_web_element(on_element)
+				on_element=get_legacy_instance(on_element)
 		)
 		
 		return self
@@ -83,8 +83,8 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def drag_and_drop(self, source: WEB_ELEMENT_TYPEHINT, target: WEB_ELEMENT_TYPEHINT) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.drag_and_drop,
-				source=get_legacy_web_element(source),
-				target=get_legacy_web_element(target)
+				source=get_legacy_instance(source),
+				target=get_legacy_instance(target)
 		)
 		
 		return self
@@ -92,7 +92,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def drag_and_drop_by_offset(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.drag_and_drop_by_offset,
-				source=get_legacy_web_element(source),
+				source=get_legacy_instance(source),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
@@ -103,7 +103,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		await self._wrap_to_trio(
 				self._selenium_action_chains.key_down,
 				value=value,
-				element=get_legacy_web_element(element)
+				element=get_legacy_instance(element)
 		)
 		
 		return self
@@ -112,7 +112,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		await self._wrap_to_trio(
 				self._selenium_action_chains.key_up,
 				value=value,
-				element=get_legacy_web_element(element)
+				element=get_legacy_instance(element)
 		)
 		
 		return self
@@ -133,7 +133,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.move_to_element,
-				to_element=get_legacy_web_element(to_element)
+				to_element=get_legacy_instance(to_element)
 		)
 		
 		return self
@@ -141,7 +141,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.move_to_element_with_offset,
-				to_element=get_legacy_web_element(to_element),
+				to_element=get_legacy_instance(to_element),
 				xoffset=xoffset,
 				yoffset=yoffset
 		)
@@ -159,7 +159,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def release(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.release,
-				on_element=get_legacy_web_element(on_element)
+				on_element=get_legacy_instance(on_element)
 		)
 		
 		return self
@@ -186,7 +186,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.scroll_to_element,
-				element=get_legacy_web_element(element)
+				element=get_legacy_instance(element)
 		)
 		
 		return self
@@ -199,7 +199,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	async def send_keys_to_element(self, element: WEB_ELEMENT_TYPEHINT, *keys_to_send: str) -> Self:
 		await self._wrap_to_trio(
 				self._selenium_action_chains.send_keys_to_element,
-				get_legacy_web_element(element),
+				get_legacy_instance(element),
 				*keys_to_send
 		)
 		
@@ -236,7 +236,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		return self
 	
 	async def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[Self, Point]:
-		end_position = await self._js_executor.get_random_element_point(element=get_legacy_web_element(element))
+		end_position = await self._js_executor.get_random_element_point(element=get_legacy_instance(element))
 		
 		return await self.hm_move(start_position=start_position, end_position=end_position), end_position
 	
@@ -270,7 +270,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 			origin: Optional[ScrollOrigin] = None,
 	) -> Self:
 		viewport_rect = await self._js_executor.get_viewport_rect()
-		element_rect = await self._js_executor.get_element_rect_in_viewport(get_legacy_web_element(element))
+		element_rect = await self._js_executor.get_element_rect_in_viewport(get_legacy_instance(element))
 		
 		if element_rect.x < additional_left_x_offset:
 			delta_x = int(element_rect.x - additional_left_x_offset)

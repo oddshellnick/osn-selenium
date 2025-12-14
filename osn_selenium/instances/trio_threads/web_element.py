@@ -11,7 +11,7 @@ from typing import (
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
 from osn_selenium.instances.convert import (
-	get_legacy_web_element
+	get_legacy_instance
 )
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from selenium.webdriver.remote.webelement import (
@@ -41,13 +41,13 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		return self._selenium_web_element
 	
 	def __eq__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy == get_legacy_web_element(other)
+		return self.legacy == get_legacy_instance(other)
 	
 	def __hash__(self) -> int:
 		return self.legacy.__hash__()
 	
 	def __ne__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy != get_legacy_web_element(other)
+		return self.legacy != get_legacy_instance(other)
 	
 	async def accessible_name(self) -> str:
 		return await self._wrap_to_trio(lambda: self.legacy.accessible_name)
@@ -83,7 +83,7 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 			Self: A new instance of a class implementing WebElement.
 		"""
 		
-		legacy_element_obj = get_legacy_web_element(selenium_web_element)
+		legacy_element_obj = get_legacy_instance(selenium_web_element)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
 			raise TypeError(
