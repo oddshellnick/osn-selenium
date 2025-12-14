@@ -37,6 +37,19 @@ class FedCM(AbstractFedCM):
 	
 	@classmethod
 	def from_legacy(cls, selenium_fedcm: FEDCM_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium FedCM object.
+
+		This factory method is used to wrap an existing Selenium FedCM
+		instance into the new interface.
+
+		Args:
+			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing FedCM.
+		"""
+
 		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):

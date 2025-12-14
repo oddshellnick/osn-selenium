@@ -25,6 +25,19 @@ class Permissions(AbstractPermissions):
 	
 	@classmethod
 	def from_legacy(cls, selenium_permissions: PERMISSIONS_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Permissions object.
+
+		This factory method is used to wrap an existing Selenium Permissions
+		instance into the new interface.
+
+		Args:
+			selenium_permissions (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Permissions.
+		"""
+
 		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):

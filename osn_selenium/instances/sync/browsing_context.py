@@ -71,6 +71,19 @@ class BrowsingContext(AbstractBrowsingContext):
 	
 	@classmethod
 	def from_legacy(cls, selenium_browsing_context: BROWSING_CONTEXT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium BrowsingContext object.
+
+		This factory method is used to wrap an existing Selenium BrowsingContext
+		instance into the new interface.
+
+		Args:
+			selenium_browsing_context (BROWSING_CONTEXT_TYPEHINT): The legacy Selenium BrowsingContext instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing BrowsingContext.
+		"""
+
 		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
 			raise TypeError(

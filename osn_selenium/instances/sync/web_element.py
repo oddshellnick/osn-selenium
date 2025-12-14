@@ -52,6 +52,19 @@ class WebElement(AbstractWebElement):
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_element: WEB_ELEMENT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium WebElement object.
+
+		This factory method is used to wrap an existing Selenium WebElement
+		instance into the new interface.
+
+		Args:
+			selenium_web_element (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing WebElement.
+		"""
+
 		legacy_element_obj = get_legacy_instance(selenium_web_element)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):

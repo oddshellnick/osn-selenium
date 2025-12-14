@@ -25,6 +25,19 @@ class WebExtension(AbstractWebExtension):
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_extension: WEB_EXTENSION_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium WebExtension object.
+
+		This factory method is used to wrap an existing Selenium WebExtension
+		instance into the new interface.
+
+		Args:
+			selenium_web_extension (WEB_EXTENSION_TYPEHINT): The legacy Selenium WebExtension instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing WebExtension.
+		"""
+
 		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):

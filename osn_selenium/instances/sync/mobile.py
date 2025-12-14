@@ -23,6 +23,19 @@ class Mobile(AbstractMobile):
 	
 	@classmethod
 	def from_legacy(cls, selenium_mobile: MOBILE_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Mobile object.
+
+		This factory method is used to wrap an existing Selenium Mobile
+		instance into the new interface.
+
+		Args:
+			selenium_mobile (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Mobile.
+		"""
+
 		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):

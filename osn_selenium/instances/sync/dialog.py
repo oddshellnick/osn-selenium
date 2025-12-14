@@ -23,6 +23,19 @@ class Dialog(AbstractDialog):
 	
 	@classmethod
 	def from_legacy(cls, selenium_dialog: DIALOG_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Dialog object.
+
+		This factory method is used to wrap an existing Selenium Dialog
+		instance into the new interface.
+
+		Args:
+			selenium_dialog (DIALOG_TYPEHINT): The legacy Selenium Dialog instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Dialog.
+		"""
+
 		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):

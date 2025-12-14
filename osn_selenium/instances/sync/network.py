@@ -41,6 +41,19 @@ class Network(AbstractNetwork):
 	
 	@classmethod
 	def from_legacy(cls, selenium_network: NETWORK_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Network object.
+
+		This factory method is used to wrap an existing Selenium Network
+		instance into the new interface.
+
+		Args:
+			selenium_network (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Network.
+		"""
+
 		legacy_network_obj = get_legacy_instance(selenium_network)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):

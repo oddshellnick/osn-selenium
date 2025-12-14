@@ -20,6 +20,19 @@ class Browser(AbstractBrowser):
 	
 	@classmethod
 	def from_legacy(cls, selenium_browser: BROWSER_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Browser object.
+
+		This factory method is used to wrap an existing Selenium Browser
+		instance into the new interface.
+
+		Args:
+			selenium_browser (BROWSER_TYPEHINT): The legacy Selenium Browser instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Browser.
+		"""
+
 		legacy_browser_obj = get_legacy_instance(selenium_browser)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):

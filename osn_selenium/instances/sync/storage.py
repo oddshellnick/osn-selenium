@@ -34,6 +34,19 @@ class Storage(AbstractStorage):
 	
 	@classmethod
 	def from_legacy(cls, selenium_storage: STORAGE_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Storage object.
+
+		This factory method is used to wrap an existing Selenium Storage
+		instance into the new interface.
+
+		Args:
+			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Storage.
+		"""
+
 		legacy_storage_obj = get_legacy_instance(selenium_storage)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):

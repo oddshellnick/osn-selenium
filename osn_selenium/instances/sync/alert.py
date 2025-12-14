@@ -20,6 +20,19 @@ class Alert(AbstractAlert):
 	
 	@classmethod
 	def from_legacy(cls, selenium_alert: ALERT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Alert object.
+
+		This factory method is used to wrap an existing Selenium Alert
+		instance into the new interface.
+
+		Args:
+			selenium_alert (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Alert.
+		"""
+
 		legacy_alert_obj = get_legacy_instance(selenium_alert)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):

@@ -25,6 +25,19 @@ class Script(AbstractScript):
 	
 	@classmethod
 	def from_legacy(cls, selenium_script: SCRIPT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium Script object.
+
+		This factory method is used to wrap an existing Selenium Script
+		instance into the new interface.
+
+		Args:
+			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing Script.
+		"""
+
 		legacy_script_obj = get_legacy_instance(selenium_script)
 		
 		if not isinstance(legacy_script_obj, legacyScript):

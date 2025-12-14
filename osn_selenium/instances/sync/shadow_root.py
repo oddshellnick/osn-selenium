@@ -41,6 +41,19 @@ class ShadowRoot(AbstractShadowRoot):
 	
 	@classmethod
 	def from_legacy(cls, selenium_shadow_root: SHADOW_ROOT_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium ShadowRoot object.
+
+		This factory method is used to wrap an existing Selenium ShadowRoot
+		instance into the new interface.
+
+		Args:
+			selenium_shadow_root (SHADOW_ROOT_TYPEHINT): The legacy Selenium ShadowRoot instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing ShadowRoot.
+		"""
+
 		legacy_shadow_root_obj = get_legacy_instance(selenium_shadow_root)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):

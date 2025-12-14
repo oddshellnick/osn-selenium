@@ -40,6 +40,19 @@ class SwitchTo(AbstractSwitchTo):
 	
 	@classmethod
 	def from_legacy(cls, selenium_switch_to: SWITCH_TO_TYPEHINT) -> Self:
+		"""
+		Creates an instance from a legacy Selenium SwitchTo object.
+
+		This factory method is used to wrap an existing Selenium SwitchTo
+		instance into the new interface.
+
+		Args:
+			selenium_switch_to (SWITCH_TO_TYPEHINT): The legacy Selenium SwitchTo instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing SwitchTo.
+		"""
+
 		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
 		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
