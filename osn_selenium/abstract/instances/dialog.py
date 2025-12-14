@@ -13,6 +13,7 @@ class AbstractDialog(ABC):
     retrieving accounts, selecting an account, and dismissing or accepting the dialog.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyDialog:
         """

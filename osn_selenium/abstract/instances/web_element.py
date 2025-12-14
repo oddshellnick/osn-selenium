@@ -15,6 +15,7 @@ class AbstractWebElement(ABC):
     such as clicking, sending keys, and retrieving attributes.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyWebElement:
         """

@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 
 from selenium.webdriver.common.alert import Alert as legacyAlert
 
@@ -11,6 +11,7 @@ class AbstractAlert(ABC):
     prompts, and confirmation dialogs.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyAlert:
         """

@@ -13,6 +13,7 @@ class AbstractWebExtension(ABC):
     Defines the interface for installing and uninstalling web extensions.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyWebExtension:
         """

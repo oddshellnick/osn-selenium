@@ -12,6 +12,7 @@ class AbstractBrowser(ABC):
     Defines the interface for managing user contexts and client windows.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyBrowser:
         """

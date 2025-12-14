@@ -12,6 +12,7 @@ class AbstractMobile(ABC):
     in a mobile environment.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyMobile:
         """

@@ -14,6 +14,7 @@ class AbstractPermissions(ABC):
     Defines the interface for setting permission states for various APIs.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyPermissions:
         """

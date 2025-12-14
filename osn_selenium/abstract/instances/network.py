@@ -12,6 +12,7 @@ class AbstractNetwork(ABC):
     and authentication challenges.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyNetwork:
         """

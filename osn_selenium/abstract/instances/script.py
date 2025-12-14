@@ -12,6 +12,7 @@ class AbstractScript(ABC):
     and managing pinned scripts.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyScript:
         """

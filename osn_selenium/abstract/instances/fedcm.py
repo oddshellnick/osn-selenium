@@ -12,6 +12,7 @@ class AbstractFedCM(ABC):
     and controlling cooldown periods.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyFedCM:
         """

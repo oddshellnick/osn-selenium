@@ -15,6 +15,7 @@ class AbstractBrowsingContext(ABC):
     with browsing contexts (e.g., tabs, windows).
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyBrowsingContext:
         """

@@ -20,6 +20,7 @@ class AbstractStorage(ABC):
     Defines the interface for managing cookies within different browsing contexts.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyStorage:
         """

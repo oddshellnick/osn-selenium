@@ -14,6 +14,7 @@ class AbstractSwitchTo(ABC):
     Defines the interface for switching between frames, windows, and alerts.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacySwitchTo:
         """

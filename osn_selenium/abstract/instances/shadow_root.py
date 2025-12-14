@@ -16,6 +16,7 @@ class AbstractShadowRoot(ABC):
     Defines the interface for finding elements within a shadow DOM.
     """
 
+    @property
     @abstractmethod
     def legacy(self) -> legacyShadowRoot:
         """
