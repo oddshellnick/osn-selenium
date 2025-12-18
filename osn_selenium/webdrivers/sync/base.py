@@ -2,6 +2,7 @@ import pathlib
 import warnings
 from os import PathLike
 from selenium import webdriver
+from selenium.common import InvalidSessionIdException
 from selenium.webdriver.common.by import By
 from osn_selenium.instances.sync.fedcm import FedCM
 from osn_selenium.instances.sync.dialog import Dialog
@@ -159,7 +160,7 @@ class WebDriver(AbstractWebDriver):
 		return self._cdp_executor
 	
 	def close_all_windows(self) -> None:
-		for window_handle in self.window_handles():
+		for window_handle in reversed(self.window_handles()):
 			self.close_window(window_handle)
 	
 	@requires_driver
@@ -610,10 +611,14 @@ class WebDriver(AbstractWebDriver):
 		
 		if target == current:
 			self.close()
-			remaining = self.window_handles()
-		
-			if remaining:
-				switch_to.window(remaining[-1])
+
+			try:
+				remaining = self.window_handles()
+
+				if remaining:
+					switch_to.window(remaining[-1])
+			except InvalidSessionIdException:
+				pass
 		else:
 			switch_to.window(target)
 			self.close()

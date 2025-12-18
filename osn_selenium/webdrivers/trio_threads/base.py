@@ -1,5 +1,7 @@
 import trio
 import warnings
+
+from selenium.common import InvalidSessionIdException
 from selenium.webdriver.common.by import By
 from osn_selenium.flags.models.base import BrowserFlags
 from contextlib import (
@@ -187,7 +189,7 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		return self._cdp_executor
 	
 	async def close_all_windows(self) -> None:
-		for window_handle in await self.window_handles():
+		for window_handle in reversed(await self.window_handles()):
 			await self.close_window(window_handle)
 	
 	@requires_driver
@@ -730,10 +732,14 @@ class WebDriver(_TrioThreadMixin, AbstractWebDriver):
 		
 		if target == current:
 			await self.close()
-			remaining = await self.window_handles()
-		
-			if remaining:
-				await switch_to.window(remaining[-1])
+
+			try:
+				remaining = await self.window_handles()
+
+				if remaining:
+					await switch_to.window(remaining[-1])
+			except InvalidSessionIdException:
+				pass
 		else:
 			await switch_to.window(target)
 			await self.close()
