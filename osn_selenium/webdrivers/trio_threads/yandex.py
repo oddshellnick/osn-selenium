@@ -8,7 +8,7 @@ from typing import (
 )
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
-from osn_selenium.dev_tools.manager import DevToolsSettings
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.chrome import ChromeWebDriver
 from osn_selenium.abstract.webdriver.yandex import (
 	AbstractYandexWebDriver

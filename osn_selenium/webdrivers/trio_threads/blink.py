@@ -4,6 +4,8 @@ import trio
 import pathlib
 import warnings
 from subprocess import Popen
+
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
 from osn_selenium.flags.blink import BlinkFlagsManager
@@ -58,7 +60,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
-			devtools_settings: Optional[Any] = None,
+			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
 	) -> None:
 		self._console_encoding = sys.stdout.encoding

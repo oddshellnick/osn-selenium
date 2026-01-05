@@ -3,6 +3,8 @@ import warnings
 
 from selenium.common import InvalidSessionIdException
 from selenium.webdriver.common.by import By
+
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.flags.models.base import BrowserFlags
 from contextlib import (
 	AbstractAsyncContextManager
@@ -30,10 +32,7 @@ from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.instances.trio_threads.permissions import Permissions
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.instances.trio_threads.web_extension import WebExtension
-from osn_selenium.dev_tools.manager import (
-	DevTools,
-	DevToolsSettings
-)
+from osn_selenium.dev_tools.manager import DevTools
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 from osn_selenium.instances.trio_threads.browsing_context import BrowsingContext
 from selenium.webdriver.remote.webdriver import (

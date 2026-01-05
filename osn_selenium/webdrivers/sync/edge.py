@@ -9,7 +9,6 @@ from typing import (
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.flags.edge import EdgeFlagsManager
 from selenium.webdriver.chrome.service import Service
-from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.sync.blink import BlinkWebDriver
 from osn_selenium.abstract.webdriver.edge import (
 	AbstractEdgeWebDriver
@@ -30,7 +29,6 @@ class EdgeWebDriver(BlinkWebDriver, AbstractEdgeWebDriver):
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
-			devtools_settings: Optional[DevToolsSettings] = None,
 	):
 		"""
 		Initializes a EdgeWebDriver instance.
@@ -68,8 +66,6 @@ class EdgeWebDriver(BlinkWebDriver, AbstractEdgeWebDriver):
 				Defaults to 5 seconds.
 			window_rect (Optional[WindowRect]): An object specifying the initial window
 				position and size.
-			devtools_settings (Optional[DevToolsSettings]): Settings for configuring the
-				Edge DevTools Protocol (CDP) interface.
 		"""
 		
 		super().__init__(
@@ -84,7 +80,6 @@ class EdgeWebDriver(BlinkWebDriver, AbstractEdgeWebDriver):
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
-				devtools_settings=devtools_settings,
 		)
 	
 	def _create_driver(self):

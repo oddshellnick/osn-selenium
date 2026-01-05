@@ -7,7 +7,6 @@ from typing import (
 )
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
-from osn_selenium.dev_tools.manager import DevToolsSettings
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
 from osn_selenium.abstract.webdriver.yandex import (
 	AbstractYandexWebDriver
@@ -28,7 +27,6 @@ class YandexWebDriver(ChromeWebDriver, AbstractYandexWebDriver):
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
-			devtools_settings: Optional[DevToolsSettings] = None,
 	):
 		"""
 		Initializes a YandexWebDriver instance.
@@ -66,8 +64,6 @@ class YandexWebDriver(ChromeWebDriver, AbstractYandexWebDriver):
 				Defaults to 5 seconds.
 			window_rect (Optional[WindowRect]): An object specifying the initial window
 				position and size.
-			devtools_settings (Optional[DevToolsSettings]): Settings for configuring the
-				Chrome DevTools Protocol (CDP) interface.
 		"""
 		
 		super().__init__(
@@ -82,7 +78,6 @@ class YandexWebDriver(ChromeWebDriver, AbstractYandexWebDriver):
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
-				devtools_settings=devtools_settings,
 		)
 	
 	def reset_settings(
