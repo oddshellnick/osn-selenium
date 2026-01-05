@@ -206,12 +206,12 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 			if flags is not None:
 				await self._wrap_to_trio(self._webdriver_flags_manager.set_flags, flags)
 			else:
-				await self._wrap_to_trio(self._webdriver_flags_manager.clear_flags)
+				self._webdriver_flags_manager.clear_flags()
 		
 			self._webdriver_flags_manager.browser_exe = browser_exe
-		
-			await self._wrap_to_trio(self.set_start_page_url, start_page_url)
 			self._window_rect = window_rect
+
+			self.set_start_page_url(start_page_url=start_page_url)
 		
 			if use_browser_exe is not None and browser_name_in_system is not None:
 				await self._wrap_to_trio(
@@ -262,7 +262,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 			self._webdriver_flags_manager.browser_exe = browser_exe
 		
 		if start_page_url is not None:
-			await self._wrap_to_trio(self.set_start_page_url, start_page_url)
+			self.set_start_page_url(start_page_url)
 		
 		if window_rect is not None:
 			self._window_rect = window_rect
