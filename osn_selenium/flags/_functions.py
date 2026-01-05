@@ -26,7 +26,7 @@ def build_first_start_argument(browser_exe: Union[str, Path]) -> str:
 	if isinstance(browser_exe, Path):
 		return f"\"{str(browser_exe.resolve())}\""
 	
-	raise TypeError(f"browser_exe must be str or Path, not {type(browser_exe)}.")
+	raise TypeError(f"browser_exe must be str or Path, not {type(browser_exe).__name__}.")
 
 
 def argument_to_flag(argument: ArgumentValue) -> str:
