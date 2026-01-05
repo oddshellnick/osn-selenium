@@ -6,7 +6,7 @@ from typing import (
 import trio
 
 from osn_selenium.dev_tools.errors import cdp_end_exceptions
-from osn_selenium.dev_tools.target.base import BaseMixin
+from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     )
 
 
-class EventHandlersMixin(BaseMixin):
+class EventHandlersMixin(LoggingMixin):
     """
     Mixin for handling generic DevTools domain events.
     """

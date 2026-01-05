@@ -1,10 +1,10 @@
 import trio
 
 from osn_selenium.dev_tools.errors import cdp_end_exceptions
-from osn_selenium.dev_tools.target.base import BaseMixin
+from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
-class DetachMixin(BaseMixin):
+class DetachMixin(LoggingMixin):
     """
     Mixin for monitoring target detach, crash, or destruction events.
     """
