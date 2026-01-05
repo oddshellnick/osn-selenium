@@ -1,4 +1,6 @@
 import trio
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from typing import (
 	Any,
@@ -26,9 +28,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_permissions, legacyPermissions):
-			raise TypeError(
-					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
-			)
+			raise ExpectedTypeError(expected_class=legacyPermissions, received_instance=selenium_permissions)
 		
 		self._selenium_permissions = selenium_permissions
 	
@@ -57,9 +57,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypeError(
-					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
-			)
+			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
 		
 		return cls(
 				selenium_permissions=legacy_permissions_obj,

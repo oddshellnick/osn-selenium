@@ -5,6 +5,8 @@ from typing import (
 	Self,
 	Union
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
@@ -17,9 +19,7 @@ from selenium.webdriver.common.bidi.permissions import (
 class Permissions(AbstractPermissions):
 	def __init__(self, selenium_permissions: legacyPermissions) -> None:
 		if not isinstance(selenium_permissions, legacyPermissions):
-			raise TypeError(
-					f"Expected {type(legacyPermissions)}, got {type(selenium_permissions)}"
-			)
+			raise ExpectedTypeError(expected_class=legacyPermissions, received_instance=selenium_permissions)
 		
 		self._selenium_permissions = selenium_permissions
 	
@@ -41,9 +41,7 @@ class Permissions(AbstractPermissions):
 		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypeError(
-					f"Could not convert input to {type(legacyPermissions)}: {type(selenium_permissions)}"
-			)
+			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
 		
 		return cls(selenium_permissions=legacy_permissions_obj)
 	

@@ -1,5 +1,7 @@
 import trio
 from typing import List, Optional, Self
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import DIALOG_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.fedcm.account import Account
@@ -20,7 +22,7 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_dialog, legacyDialog):
-			raise TypeError(f"Expected {type(legacyDialog)}, got {type(selenium_dialog)}")
+			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
 		
 		self._selenium_dialog = selenium_dialog
 	
@@ -55,9 +57,7 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):
-			raise TypeError(
-					f"Could not convert input to {type(legacyDialog)}: {type(selenium_dialog)}"
-			)
+			raise TypesConvertError(from_=legacyDialog, to_=selenium_dialog)
 		
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	

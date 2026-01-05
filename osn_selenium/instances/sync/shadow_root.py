@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
 	List,
@@ -7,7 +9,6 @@ from typing import (
 	TYPE_CHECKING
 )
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
 class ShadowRoot(AbstractShadowRoot):
 	def __init__(self, selenium_shadow_root: legacyShadowRoot) -> None:
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise TypeError(f"Expected {type(legacyShadowRoot)}, got {type(selenium_shadow_root)}")
+			raise ExpectedTypeError(expected_class=legacyShadowRoot, received_instance=selenium_shadow_root)
 		
 		self._selenium_shadow_root = selenium_shadow_root
 	
@@ -57,9 +58,7 @@ class ShadowRoot(AbstractShadowRoot):
 		legacy_shadow_root_obj = get_legacy_instance(selenium_shadow_root)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):
-			raise TypeError(
-					f"Could not convert input to {type(legacyShadowRoot)}: {type(selenium_shadow_root)}"
-			)
+			raise TypesConvertError(from_=legacyShadowRoot, to_=selenium_shadow_root)
 		
 		return cls(selenium_shadow_root=legacy_shadow_root_obj)
 	

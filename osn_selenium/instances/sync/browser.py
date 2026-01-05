@@ -1,4 +1,6 @@
 from typing import List, Self
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.browser import AbstractBrowser
@@ -11,7 +13,7 @@ from selenium.webdriver.common.bidi.browser import (
 class Browser(AbstractBrowser):
 	def __init__(self, selenium_browser: legacyBrowser) -> None:
 		if not isinstance(selenium_browser, legacyBrowser):
-			raise TypeError(f"Expected {type(legacyBrowser)}, got {type(selenium_browser)}")
+			raise ExpectedTypeError(expected_class=legacyBrowser, received_instance=selenium_browser)
 		
 		self._selenium_browser = selenium_browser
 	
@@ -36,9 +38,7 @@ class Browser(AbstractBrowser):
 		legacy_browser_obj = get_legacy_instance(selenium_browser)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):
-			raise TypeError(
-					f"Could not convert input to {type(legacyBrowser)}: {type(selenium_browser)}"
-			)
+			raise TypesConvertError(from_=legacyBrowser, to_=selenium_browser)
 		
 		return cls(selenium_browser=legacy_browser_obj)
 	

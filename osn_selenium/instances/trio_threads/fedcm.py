@@ -5,6 +5,8 @@ from typing import (
 	Optional,
 	Self
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import FEDCM_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
@@ -22,7 +24,7 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise TypeError(f"Expected {type(legacyFedCM)}, got {type(selenium_fedcm)}")
+			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
 		
 		self._selenium_fedcm = selenium_fedcm
 	
@@ -69,9 +71,7 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypeError(
-					f"Could not convert input to {type(legacyFedCM)}: {type(selenium_fedcm)}"
-			)
+			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	

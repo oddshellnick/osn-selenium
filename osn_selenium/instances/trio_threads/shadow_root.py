@@ -1,5 +1,7 @@
 import trio
 from selenium.webdriver.common.by import By
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
@@ -29,7 +31,7 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise TypeError(f"Expected {type(legacyShadowRoot)}, got {type(selenium_shadow_root)}")
+			raise ExpectedTypeError(expected_class=legacyShadowRoot, received_instance=selenium_shadow_root)
 		
 		self._selenium_shadow_root = selenium_shadow_root
 	
@@ -74,9 +76,7 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		legacy_shadow_root_obj = get_legacy_instance(selenium_shadow_root)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):
-			raise TypeError(
-					f"Could not convert input to {type(legacyShadowRoot)}: {type(selenium_shadow_root)}"
-			)
+			raise TypesConvertError(from_=legacyShadowRoot, to_=selenium_shadow_root)
 		
 		return cls(
 				selenium_shadow_root=legacy_shadow_root_obj,

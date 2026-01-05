@@ -41,9 +41,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_action_chains, legacyActionChains):
-			raise TypeError(
-					f"Expected {type(legacyActionChains)}, got {type(selenium_action_chains)}"
-			)
+			raise ExpectedTypeError(expected_class=legacyActionChains, received_instance=selenium_action_chains)
 		
 		self._selenium_action_chains = selenium_action_chains
 	

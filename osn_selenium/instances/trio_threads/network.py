@@ -5,6 +5,8 @@ from typing import (
 	Optional,
 	Self
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
@@ -24,7 +26,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_network, legacyNetwork):
-			raise TypeError(f"Expected {type(legacyNetwork)}, got {type(selenium_network)}")
+			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
 		
 		self._selenium_network = selenium_network
 	
@@ -74,9 +76,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		legacy_network_obj = get_legacy_instance(selenium_network)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypeError(
-					f"Could not convert input to {type(legacyNetwork)}: {type(selenium_network)}"
-			)
+			raise TypesConvertError(from_=legacyNetwork, to_=selenium_network)
 		
 		return cls(selenium_network=legacy_network_obj, lock=lock, limiter=limiter)
 	

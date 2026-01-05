@@ -3,6 +3,8 @@ from typing import (
 	Self,
 	Union
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
@@ -21,7 +23,7 @@ from selenium.webdriver.common.bidi.storage import (
 class Storage(AbstractStorage):
 	def __init__(self, selenium_storage: legacyStorage) -> None:
 		if not isinstance(selenium_storage, legacyStorage):
-			raise TypeError(f"Expected {type(legacyStorage)}, got {type(selenium_storage)}")
+			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
 		
 		self._selenium_storage = selenium_storage
 	
@@ -50,9 +52,7 @@ class Storage(AbstractStorage):
 		legacy_storage_obj = get_legacy_instance(selenium_storage)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypeError(
-					f"Could not convert input to {type(legacyStorage)}: {type(selenium_storage)}"
-			)
+			raise TypesConvertError(from_=legacyStorage, to_=selenium_storage)
 		
 		return cls(selenium_storage=legacy_storage_obj)
 	

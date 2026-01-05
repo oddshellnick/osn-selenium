@@ -3,6 +3,8 @@ from typing import (
 	Self,
 	Union
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.sync.alert import Alert
 from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
@@ -22,7 +24,7 @@ from osn_selenium.instances.convert import (
 class SwitchTo(AbstractSwitchTo):
 	def __init__(self, selenium_switch_to: legacySwitchTo) -> None:
 		if not isinstance(selenium_switch_to, legacySwitchTo):
-			raise TypeError(f"Expected {type(legacySwitchTo)}, got {type(selenium_switch_to)}")
+			raise ExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
 		
 		self._selenium_switch_to = selenium_switch_to
 	
@@ -56,9 +58,7 @@ class SwitchTo(AbstractSwitchTo):
 		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
 		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
-			raise TypeError(
-					f"Could not convert input to {type(legacySwitchTo)}: {type(selenium_switch_to)}"
-			)
+			raise TypesConvertError(from_=legacySwitchTo, to_=selenium_switch_to)
 		
 		return cls(selenium_switch_to=legacy_switch_to_obj)
 	

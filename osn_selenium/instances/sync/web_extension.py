@@ -5,6 +5,7 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
@@ -17,9 +18,7 @@ from selenium.webdriver.common.bidi.webextension import (
 class WebExtension(AbstractWebExtension):
 	def __init__(self, selenium_web_extension: legacyWebExtension) -> None:
 		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise TypeError(
-					f"Expected {type(legacyWebExtension)}, got {type(selenium_web_extension)}"
-			)
+			raise ExpectedTypeError(expected_class=legacyWebExtension, received_instance=selenium_web_extension)
 		
 		self._selenium_web_extension = selenium_web_extension
 	
@@ -41,9 +40,7 @@ class WebExtension(AbstractWebExtension):
 		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
-			raise TypeError(
-					f"Could not convert input to {type(legacyWebExtension)}: {type(selenium_web_extension)}"
-			)
+			raise TypesConvertError(from_=legacyWebExtension, to_=selenium_web_extension)
 		
 		return cls(selenium_web_extension=legacy_web_extension_obj)
 	

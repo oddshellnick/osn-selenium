@@ -179,7 +179,7 @@ def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_T
 		return instance
 	
 	raise ValueError(
-			f"Invalid instance type {type(instance)}. Valid types are " f"{ANY_ABSTRACT_TYPE} and {ANY_LEGACY_TYPE} or None."
+			f"Invalid instance type {type(instance).__name__}. Valid types are " f"{ANY_ABSTRACT_TYPE} and {ANY_LEGACY_TYPE} or None."
 	)
 
 

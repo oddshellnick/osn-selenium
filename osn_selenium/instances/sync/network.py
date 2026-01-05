@@ -4,6 +4,8 @@ from typing import (
 	Optional,
 	Self
 )
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.network import AbstractNetwork
@@ -15,7 +17,7 @@ from selenium.webdriver.common.bidi.network import (
 class Network(AbstractNetwork):
 	def __init__(self, selenium_network: legacyNetwork) -> None:
 		if not isinstance(selenium_network, legacyNetwork):
-			raise TypeError(f"Expected {type(legacyNetwork)}, got {type(selenium_network)}")
+			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
 		
 		self._selenium_network = selenium_network
 	
@@ -57,9 +59,7 @@ class Network(AbstractNetwork):
 		legacy_network_obj = get_legacy_instance(selenium_network)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypeError(
-					f"Could not convert input to {type(legacyNetwork)}: {type(selenium_network)}"
-			)
+			raise TypesConvertError(from_=legacyNetwork, to_=selenium_network)
 		
 		return cls(selenium_network=legacy_network_obj)
 	

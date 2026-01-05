@@ -1,4 +1,6 @@
 from typing import Self
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import ALERT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
@@ -8,7 +10,7 @@ from selenium.webdriver.common.alert import Alert as legacyAlert
 class Alert(AbstractAlert):
 	def __init__(self, selenium_alert: legacyAlert) -> None:
 		if not isinstance(selenium_alert, legacyAlert):
-			raise TypeError(f"Expected {type(legacyAlert)}, got {type(selenium_alert)}")
+			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
 		
 		self._selenium_alert = selenium_alert
 	
@@ -36,9 +38,7 @@ class Alert(AbstractAlert):
 		legacy_alert_obj = get_legacy_instance(selenium_alert)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):
-			raise TypeError(
-					f"Could not convert input to {type(legacyAlert)}: {type(selenium_alert)}"
-			)
+			raise TypesConvertError(from_=legacyAlert, to_=selenium_alert)
 		
 		return cls(selenium_alert=legacy_alert_obj)
 	

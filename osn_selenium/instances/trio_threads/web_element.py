@@ -1,5 +1,7 @@
 import trio
 from selenium.webdriver.common.by import By
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from typing import (
 	Any,
@@ -27,7 +29,7 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_web_element, legacyWebElement):
-			raise TypeError(f"Expected {type(legacyWebElement)}, got {type(selenium_web_element)}")
+			raise ExpectedTypeError(expected_class=legacyWebElement, received_instance=selenium_web_element)
 		
 		self._selenium_web_element = selenium_web_element
 	
@@ -84,9 +86,7 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		legacy_element_obj = get_legacy_instance(selenium_web_element)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypeError(
-					f"Could not convert input to {type(legacyWebElement)}: {type(selenium_web_element)}"
-			)
+			raise TypesConvertError(from_=legacyWebElement, to_=selenium_web_element)
 		
 		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
 	

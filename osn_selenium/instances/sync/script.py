@@ -1,4 +1,6 @@
 from typing import Any, Callable, Self
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.script import AbstractScript
@@ -10,7 +12,7 @@ from selenium.webdriver.common.bidi.script import (
 class Script(AbstractScript):
 	def __init__(self, selenium_script: legacyScript) -> None:
 		if not isinstance(selenium_script, legacyScript):
-			raise TypeError(f"Expected {type(legacyScript)}, got {type(selenium_script)}")
+			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
 		
 		self._selenium_script = selenium_script
 	
@@ -41,9 +43,7 @@ class Script(AbstractScript):
 		legacy_script_obj = get_legacy_instance(selenium_script)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypeError(
-					f"Could not convert input to {type(legacyScript)}: {type(selenium_script)}"
-			)
+			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
 		
 		return cls(selenium_script=legacy_script_obj)
 	

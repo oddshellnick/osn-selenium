@@ -1,5 +1,7 @@
 import trio
 from typing import Any, Callable, Self
+
+from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
@@ -19,7 +21,7 @@ class Script(_TrioThreadMixin, AbstractScript):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_script, legacyScript):
-			raise TypeError(f"Expected {type(legacyScript)}, got {type(selenium_script)}")
+			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
 		
 		self._selenium_script = selenium_script
 	
@@ -57,9 +59,7 @@ class Script(_TrioThreadMixin, AbstractScript):
 		legacy_script_obj = get_legacy_instance(selenium_script)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypeError(
-					f"Could not convert input to {type(legacyScript)}: {type(selenium_script)}"
-			)
+			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
 		
 		return cls(selenium_script=legacy_script_obj, lock=lock, limiter=limiter)
 	
