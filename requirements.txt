@@ -1,5 +1,5 @@
 trio~=0.32.0
-selenium~=4.38.0
+selenium~=4.39.0
 setuptools~=80.9.0
 pydantic~=2.12.4
 trio-websocket~=0.12.2
