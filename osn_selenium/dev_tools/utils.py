@@ -1,133 +1,130 @@
 import inspect
-from types import ModuleType
-from typing import (
-    Any,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    Union
-)
-
 from pydantic import Field
-
+from types import ModuleType
 from osn_selenium.types import DictModel
-from osn_selenium.dev_tools._functions import yield_package_item_way
+from typing import (
+	Any,
+	List,
+	Optional,
+	Set,
+	Tuple,
+	Union
+)
+from osn_selenium.dev_tools._functions import (
+	yield_package_item_way
+)
 
 
 class TargetsFilters(DictModel):
-    """
-    Configuration model for filtering target types (inclusion/exclusion).
+	"""
+	Configuration model for filtering target types (inclusion/exclusion).
 
-    Attributes:
-        excluded (List[str]): List of target types to exclude.
-        included (List[str]): List of target types to include.
-        entire (bool): Default behavior if a type is not explicitly listed.
-    """
-
-    excluded: List[str] = Field(default_factory=list)
-    included: List[str] = Field(default_factory=list)
-
-    entire: bool = False
+	Attributes:
+		excluded (List[str]): List of target types to exclude.
+		included (List[str]): List of target types to include.
+		entire (bool): Default behavior if a type is not explicitly listed.
+	"""
+	
+	excluded: List[str] = Field(default_factory=list)
+	included: List[str] = Field(default_factory=list)
+	
+	entire: bool = False
 
 
 class TargetFilter(DictModel):
-    """
-    Dataclass to define a filter for discovering new browser targets.
+	"""
+	Dataclass to define a filter for discovering new browser targets.
 
-    Used in `DevToolsSettings` to specify which types of targets (e.g., "page", "iframe")
-    should be automatically attached to or excluded.
+	Used in `DevToolsSettings` to specify which types of targets (e.g., "page", "iframe")
+	should be automatically attached to or excluded.
 
-    Attributes:
-        type_ (Optional[str]): The type of target to filter by (e.g., "page", "iframe").
-            If None, this filter applies regardless of type.
-        exclude (Optional[bool]): If True, targets matching `type_` will be excluded.
-            If False or None, targets matching `type_` will be included.
-    """
-
-    type_: Optional[str] = Field(
-        default=None,
-        alias="type"
-    )
-    exclude: Optional[bool] = None
+	Attributes:
+		type_ (Optional[str]): The type of target to filter by (e.g., "page", "iframe").
+			If None, this filter applies regardless of type.
+		exclude (Optional[bool]): If True, targets matching `type_` will be excluded.
+			If False or None, targets matching `type_` will be included.
+	"""
+	
+	type_: Optional[str] = Field(default=None, alias="type")
+	exclude: Optional[bool] = None
 
 
 class TargetData(DictModel):
-    """
-    Dataclass to hold essential information about a browser target.
+	"""
+	Dataclass to hold essential information about a browser target.
 
-    Attributes:
-        target_id (Optional[str]): The unique identifier for the target.
-        type_ (Optional[str]): The type of the target (e.g., "page", "iframe", "worker").
-        title (Optional[str]): The title of the target (e.g., the page title).
-        url (Optional[str]): The URL of the target.
-        attached (Optional[bool]): Indicates if the DevTools session is currently attached to this target.
-        can_access_opener (Optional[bool]): Whether the target can access its opener.
-        opener_id (Optional[str]): The ID of the opener target.
-        opener_frame_id (Optional[str]): The ID of the opener frame.
-        browser_context_id (Optional[str]): The browser context ID associated with the target.
-        subtype (Optional[str]): Subtype of the target.
-    """
-
-    target_id: Optional[str] = None
-    type_: Optional[str] = None
-    title: Optional[str] = None
-    url: Optional[str] = None
-    attached: Optional[bool] = None
-    can_access_opener: Optional[bool] = None
-    opener_id: Optional[str] = None
-    opener_frame_id: Optional[str] = None
-    browser_context_id: Optional[str] = None
-    subtype: Optional[str] = None
+	Attributes:
+		target_id (Optional[str]): The unique identifier for the target.
+		type_ (Optional[str]): The type of the target (e.g., "page", "iframe", "worker").
+		title (Optional[str]): The title of the target (e.g., the page title).
+		url (Optional[str]): The URL of the target.
+		attached (Optional[bool]): Indicates if the DevTools session is currently attached to this target.
+		can_access_opener (Optional[bool]): Whether the target can access its opener.
+		opener_id (Optional[str]): The ID of the opener target.
+		opener_frame_id (Optional[str]): The ID of the opener frame.
+		browser_context_id (Optional[str]): The browser context ID associated with the target.
+		subtype (Optional[str]): Subtype of the target.
+	"""
+	
+	target_id: Optional[str] = None
+	type_: Optional[str] = None
+	title: Optional[str] = None
+	url: Optional[str] = None
+	attached: Optional[bool] = None
+	can_access_opener: Optional[bool] = None
+	opener_id: Optional[str] = None
+	opener_frame_id: Optional[str] = None
+	browser_context_id: Optional[str] = None
+	subtype: Optional[str] = None
 
 
 class DevToolsPackage:
-    """
-    Wrapper around the DevTools module to safely retrieve nested attributes/classes.
+	"""
+	Wrapper around the DevTools module to safely retrieve nested attributes/classes.
 
-    Attributes:
-        _package (ModuleType): The root DevTools module package.
-    """
+	Attributes:
+		_package (ModuleType): The root DevTools module package.
+	"""
+	
+	def __init__(self, package: ModuleType):
+		"""
+		Initializes the DevToolsPackage wrapper.
 
-    def __init__(self, package: ModuleType):
-        """
-        Initializes the DevToolsPackage wrapper.
+		Args:
+			package (ModuleType): The root module to wrap.
 
-        Args:
-            package (ModuleType): The root module to wrap.
+		Raises:
+			TypeError: If the provided package is not a module.
+		"""
+		
+		if not inspect.ismodule(package):
+			raise TypeError(f"Expected a module, got {type(package).__name__}.")
+		
+		self._package = package
+	
+	def get(self, name: Union[str, List[str], Set[str], Tuple[str, ...]]) -> Any:
+		"""
+		Retrieves a nested attribute or class from the package by dot-separated path.
 
-        Raises:
-            TypeError: If the provided package is not a module.
-        """
+		Args:
+			name (Union[str, List[str], Set[str], Tuple[str, ...]]): The dot-separated path string or iterable of strings
+				representing the path to the desired object.
 
-        if not inspect.ismodule(package):
-            raise TypeError(f"Expected a module, got {type(package).__name__}.")
+		Returns:
+			Any: The retrieved object (module, class, or function).
 
-        self._package = package
-
-    def get(self, name: Union[str, List[str], Set[str], Tuple[str, ...]]) -> Any:
-        """
-        Retrieves a nested attribute or class from the package by dot-separated path.
-
-        Args:
-            name (Union[str, List[str], Set[str], Tuple[str, ...]]): The dot-separated path string or iterable of strings
-                representing the path to the desired object.
-
-        Returns:
-            Any: The retrieved object (module, class, or function).
-
-        Raises:
-            AttributeError: If any part of the path is not found in the package structure.
-        """
-
-        object_ = self._package
-        used_parts = [object_.__name__]
-
-        for part in yield_package_item_way(name=name):
-            if not hasattr(object_, part):
-                raise AttributeError(f"Attribute '{part}' not found in '{'.'.join(used_parts)}'")
-
-            object_ = getattr(object_, part)
-            used_parts.append(part)
-
-        return object_
+		Raises:
+			AttributeError: If any part of the path is not found in the package structure.
+		"""
+		
+		object_ = self._package
+		used_parts = [object_.__name__]
+		
+		for part in yield_package_item_way(name=name):
+			if not hasattr(object_, part):
+				raise AttributeError(f"Attribute '{part}' not found in '{'.'.join(used_parts)}'")
+		
+			object_ = getattr(object_, part)
+			used_parts.append(part)
+		
+		return object_

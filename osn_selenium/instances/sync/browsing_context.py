@@ -1,5 +1,4 @@
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import (
 	BROWSING_CONTEXT_TYPEHINT
 )
@@ -11,6 +10,10 @@ from typing import (
 	Optional,
 	Self,
 	Union
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 from osn_selenium.abstract.instances.browsing_context import (
 	AbstractBrowsingContext
@@ -24,7 +27,10 @@ from selenium.webdriver.common.bidi.browsing_context import (
 class BrowsingContext(AbstractBrowsingContext):
 	def __init__(self, selenium_browsing_context: legacyBrowsingContext) -> None:
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
-			raise ExpectedTypeError(expected_class=legacyBrowsingContext, received_instance=selenium_browsing_context)
+			raise ExpectedTypeError(
+					expected_class=legacyBrowsingContext,
+					received_instance=selenium_browsing_context
+			)
 		
 		self._selenium_browsing_context = selenium_browsing_context
 	
@@ -82,7 +88,7 @@ class BrowsingContext(AbstractBrowsingContext):
 		Returns:
 			Self: A new instance of a class implementing BrowsingContext.
 		"""
-
+		
 		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
 			raise TypesConvertError(from_=legacyBrowsingContext, to_=selenium_browsing_context)

@@ -5,14 +5,16 @@ from typing import (
 	Optional,
 	Self
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.network import AbstractNetwork
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 
 

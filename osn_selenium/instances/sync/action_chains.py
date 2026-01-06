@@ -1,6 +1,6 @@
-from osn_selenium.instances.types import Point
-from osn_selenium.executors.sync.javascript import JSExecutor
+from osn_selenium.types import Point
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.executors.sync.javascript import JSExecutor
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.sync.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
@@ -8,6 +8,8 @@ from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
 from typing import (
+	Any,
+	Callable,
 	Optional,
 	Self,
 	TYPE_CHECKING,
@@ -32,7 +34,10 @@ if TYPE_CHECKING:
 class ActionChains(AbstractActionChains):
 	def __init__(self, selenium_action_chains: legacyActionChains,):
 		if not isinstance(selenium_action_chains, legacyActionChains):
-			raise ExpectedTypeError(expected_class=legacyActionChains, received_instance=selenium_action_chains)
+			raise ExpectedTypeError(
+					expected_class=legacyActionChains,
+					received_instance=selenium_action_chains
+			)
 		
 		self._selenium_action_chains = selenium_action_chains
 	
@@ -152,10 +157,14 @@ class ActionChains(AbstractActionChains):
 
 
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
-	def __init__(self, driver: "WebDriver", selenium_action_chains: legacyActionChains,) -> None:
+	def __init__(
+			self,
+			execute_script_function: Callable[[str, Any], Any],
+			selenium_action_chains: legacyActionChains
+	) -> None:
 		super().__init__(selenium_action_chains=selenium_action_chains)
 		
-		self._js_executor = JSExecutor(execute_function=driver.execute_script)
+		self._js_executor = JSExecutor(execute_function=execute_script_function)
 	
 	def hm_move(self, start_position: Point, end_position: Point) -> Self:
 		parts = move_to_parts(start_position=start_position, end_position=end_position)

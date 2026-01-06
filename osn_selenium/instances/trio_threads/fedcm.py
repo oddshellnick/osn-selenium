@@ -5,13 +5,15 @@ from typing import (
 	Optional,
 	Self
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import FEDCM_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class FedCM(_TrioThreadMixin, AbstractFedCM):

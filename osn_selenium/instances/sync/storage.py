@@ -3,11 +3,13 @@ from typing import (
 	Self,
 	Union
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -48,7 +50,7 @@ class Storage(AbstractStorage):
 		Returns:
 			Self: A new instance of a class implementing Storage.
 		"""
-
+		
 		legacy_storage_obj = get_legacy_instance(selenium_storage)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):

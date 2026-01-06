@@ -1,4 +1,4 @@
-from osn_selenium.instances.types import Point
+from osn_selenium.types import Point
 
 
 class TextInputPart:

@@ -1,6 +1,4 @@
 import trio
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
@@ -14,6 +12,10 @@ from typing import (
 	Optional,
 	Self,
 	Union
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 from osn_selenium.abstract.instances.browsing_context import (
 	AbstractBrowsingContext
@@ -34,7 +36,10 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
-			raise ExpectedTypeError(expected_class=legacyBrowsingContext, received_instance=selenium_browsing_context)
+			raise ExpectedTypeError(
+					expected_class=legacyBrowsingContext,
+					received_instance=selenium_browsing_context
+			)
 		
 		self._selenium_browsing_context = selenium_browsing_context
 	

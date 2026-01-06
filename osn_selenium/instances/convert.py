@@ -69,72 +69,7 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 @overload
-def get_legacy_instance(instance: Optional[AbstractAlert]) -> Optional[legacyAlert]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractFedCM]) -> Optional[legacyFedCM]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractDialog]) -> Optional[legacyDialog]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractMobile]) -> Optional[legacyMobile]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractScript]) -> Optional[legacyScript]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractBrowser]) -> Optional[legacyBrowser]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractNetwork]) -> Optional[legacyNetwork]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractStorage]) -> Optional[legacyStorage]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractSwitchTo]) -> Optional[legacySwitchTo]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractShadowRoot]) -> Optional[legacyShadowRoot]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractWebElement]) -> Optional[legacyWebElement]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractPermissions]) -> Optional[legacyPermissions]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractActionChains]) -> Optional[legacyActionChains]:
-	...
-
-
-@overload
-def get_legacy_instance(instance: Optional[AbstractWebExtension]) -> Optional[legacyWebExtension]:
+def get_legacy_instance(instance: None) -> None:
 	...
 
 
@@ -144,7 +79,72 @@ def get_legacy_instance(instance: Optional[AbstractBrowsingContext]) -> Optional
 
 
 @overload
-def get_legacy_instance(instance: None) -> None:
+def get_legacy_instance(instance: Optional[AbstractWebExtension]) -> Optional[legacyWebExtension]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractActionChains]) -> Optional[legacyActionChains]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractPermissions]) -> Optional[legacyPermissions]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractWebElement]) -> Optional[legacyWebElement]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractShadowRoot]) -> Optional[legacyShadowRoot]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractSwitchTo]) -> Optional[legacySwitchTo]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractStorage]) -> Optional[legacyStorage]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractNetwork]) -> Optional[legacyNetwork]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractBrowser]) -> Optional[legacyBrowser]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractScript]) -> Optional[legacyScript]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractMobile]) -> Optional[legacyMobile]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractDialog]) -> Optional[legacyDialog]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractFedCM]) -> Optional[legacyFedCM]:
+	...
+
+
+@overload
+def get_legacy_instance(instance: Optional[AbstractAlert]) -> Optional[legacyAlert]:
 	...
 
 
@@ -168,16 +168,16 @@ def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_T
 	Raises:
 		ValueError: If the input instance is of an unsupported type.
 	"""
-	
+
 	if instance is None:
 		return None
-	
+
 	if isinstance(instance, ANY_ABSTRACT_TYPE):
 		return instance.legacy
-	
+
 	if isinstance(instance, ANY_LEGACY_TYPE):
 		return instance
-	
+
 	raise ValueError(
 			f"Invalid instance type {type(instance).__name__}. Valid types are " f"{ANY_ABSTRACT_TYPE} and {ANY_LEGACY_TYPE} or None."
 	)

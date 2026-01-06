@@ -1,9 +1,7 @@
-from datetime import datetime
-
 import trio
-
-from osn_selenium.dev_tools.exception_utils import log_exception
+from datetime import datetime
 from osn_selenium.types import DictModel
+from osn_selenium.dev_tools.exception_utils import log_exception
 from typing import (
 	Any,
 	Dict,
@@ -51,7 +49,14 @@ def on_error_func(self: "DevToolsTarget", event: Any, error: BaseException):
 		error (BaseException): The exception that was raised.
 	"""
 	
-	log_exception(exception=error, extra_data={"datetime": datetime.now(), "target object data": self.target_data.model_dump(), "event": event})
+	log_exception(
+			exception=error,
+			extra_data={
+				"datetime": datetime.now(),
+				"target object data": self.target_data.model_dump(),
+				"event": event
+			}
+	)
 
 
 class HeaderInstance(DictModel):

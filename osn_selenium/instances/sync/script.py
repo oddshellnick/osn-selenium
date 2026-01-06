@@ -1,11 +1,13 @@
 from typing import Any, Callable, Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 
 
@@ -39,7 +41,7 @@ class Script(AbstractScript):
 		Returns:
 			Self: A new instance of a class implementing Script.
 		"""
-
+		
 		legacy_script_obj = get_legacy_instance(selenium_script)
 		
 		if not isinstance(legacy_script_obj, legacyScript):

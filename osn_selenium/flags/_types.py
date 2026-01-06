@@ -19,9 +19,6 @@ ValidUseGLs = ["desktop", "egl", "swiftshader"]
 
 any_flags_mapping = Mapping[str, Any]
 
-any_webdriver_option_type = Union[
-	webdriver.ChromeOptions,
-	webdriver.EdgeOptions
-]
+any_webdriver_option_type = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]
 
 blink_webdriver_option_type = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]

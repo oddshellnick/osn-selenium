@@ -5,11 +5,14 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
@@ -18,7 +21,10 @@ from selenium.webdriver.common.bidi.webextension import (
 class WebExtension(AbstractWebExtension):
 	def __init__(self, selenium_web_extension: legacyWebExtension) -> None:
 		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise ExpectedTypeError(expected_class=legacyWebExtension, received_instance=selenium_web_extension)
+			raise ExpectedTypeError(
+					expected_class=legacyWebExtension,
+					received_instance=selenium_web_extension
+			)
 		
 		self._selenium_web_extension = selenium_web_extension
 	
@@ -36,7 +42,7 @@ class WebExtension(AbstractWebExtension):
 		Returns:
 			Self: A new instance of a class implementing WebExtension.
 		"""
-
+		
 		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):

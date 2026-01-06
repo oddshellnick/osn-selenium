@@ -1,38 +1,20 @@
 from abc import ABC, abstractmethod
-from osn_selenium.types import JS_Scripts
-from osn_selenium.instances.types import Point
-from osn_selenium._functions import read_js_scripts
+from osn_selenium.types import Point
 from selenium.webdriver.remote.webelement import WebElement
 from osn_selenium.types import (
+	JS_Scripts,
 	Position,
 	Rectangle,
 	Size
 )
 from typing import (
 	Any,
-	Awaitable,
-	Callable,
 	Dict,
 	Optional,
-	ParamSpec,
-	TypeVar,
-	Union
 )
 
 
-FUNCTION_INPUT = ParamSpec("FUNCTION_INPUT")
-FUNCTION_OUTPUT = TypeVar("FUNCTION_OUTPUT")
-EXECUTE_FUNCTION = Union[
-	Callable[FUNCTION_INPUT, FUNCTION_OUTPUT],
-	Callable[FUNCTION_INPUT, Awaitable[FUNCTION_OUTPUT]]
-]
-
-
 class AbstractJSExecutor(ABC):
-	def __init__(self, execute_function: EXECUTE_FUNCTION) -> None:
-		self._execute_function = execute_function
-		self._scripts: JS_Scripts = read_js_scripts()
-	
 	@abstractmethod
 	def check_element_in_viewport(self, element: WebElement) -> bool:
 		"""
@@ -191,7 +173,7 @@ class AbstractJSExecutor(ABC):
 			JS_Scripts: An object holding the predefined JS scripts.
 		"""
 		
-		return self._scripts
+		...
 	
 	@abstractmethod
 	def stop_window_loading(self) -> None:

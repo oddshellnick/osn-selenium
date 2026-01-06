@@ -2,7 +2,7 @@ import math
 from typing import List
 from copy import deepcopy
 from random import randint
-from osn_selenium.instances.types import Point
+from osn_selenium.types import Point
 from osn_selenium.instances._utils import (
 	MoveOffset,
 	MovePart,

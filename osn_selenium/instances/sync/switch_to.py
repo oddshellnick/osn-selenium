@@ -3,13 +3,15 @@ from typing import (
 	Self,
 	Union
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.sync.alert import Alert
 from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 from osn_selenium.instances.types import (
 	SWITCH_TO_TYPEHINT,
@@ -54,7 +56,7 @@ class SwitchTo(AbstractSwitchTo):
 		Returns:
 			Self: A new instance of a class implementing SwitchTo.
 		"""
-
+		
 		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
 		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):

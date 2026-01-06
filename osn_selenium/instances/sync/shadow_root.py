@@ -1,6 +1,4 @@
 from selenium.webdriver.common.by import By
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
 	List,
@@ -10,6 +8,10 @@ from typing import (
 )
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
@@ -22,22 +24,25 @@ if TYPE_CHECKING:
 class ShadowRoot(AbstractShadowRoot):
 	def __init__(self, selenium_shadow_root: legacyShadowRoot) -> None:
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise ExpectedTypeError(expected_class=legacyShadowRoot, received_instance=selenium_shadow_root)
+			raise ExpectedTypeError(
+					expected_class=legacyShadowRoot,
+					received_instance=selenium_shadow_root
+			)
 		
 		self._selenium_shadow_root = selenium_shadow_root
 	
 	def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
+		impl_el = self.legacy.find_element(by=by, value=value)
+
 		from osn_selenium.instances.sync.web_element import WebElement
 
-		impl_el = self.legacy.find_element(by=by, value=value)
-		
 		return WebElement.from_legacy(selenium_web_element=impl_el)
 	
 	def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
+		impl_list = self.legacy.find_elements(by=by, value=value)
+
 		from osn_selenium.instances.sync.web_element import WebElement
 
-		impl_list = self.legacy.find_elements(by=by, value=value)
-		
 		return [WebElement.from_legacy(selenium_web_element=e) for e in impl_list]
 	
 	@classmethod
@@ -54,7 +59,7 @@ class ShadowRoot(AbstractShadowRoot):
 		Returns:
 			Self: A new instance of a class implementing ShadowRoot.
 		"""
-
+		
 		legacy_shadow_root_obj = get_legacy_instance(selenium_shadow_root)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):

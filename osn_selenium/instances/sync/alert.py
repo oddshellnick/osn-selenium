@@ -1,10 +1,12 @@
 from typing import Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import ALERT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class Alert(AbstractAlert):
@@ -34,7 +36,7 @@ class Alert(AbstractAlert):
 		Returns:
 			Self: A new instance of a class implementing Alert.
 		"""
-
+		
 		legacy_alert_obj = get_legacy_instance(selenium_alert)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):

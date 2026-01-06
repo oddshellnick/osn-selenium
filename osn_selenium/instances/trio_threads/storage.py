@@ -4,12 +4,14 @@ from typing import (
 	Self,
 	Union
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,

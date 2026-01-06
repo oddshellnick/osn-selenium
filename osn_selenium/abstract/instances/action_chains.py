@@ -1,15 +1,18 @@
 from abc import ABC, abstractmethod
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from typing import (
 	Optional,
 	Self,
+	TYPE_CHECKING,
 	Tuple,
-	TYPE_CHECKING, Union
+	Union
 )
-from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
+from osn_selenium.types import Point
 
 
 if TYPE_CHECKING:
-	from osn_selenium.instances.types import Point, WEB_ELEMENT_TYPEHINT
+	from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+
 
 class AbstractActionChains(ABC):
 	"""
@@ -236,10 +239,10 @@ class AbstractActionChains(ABC):
 	@abstractmethod
 	def scroll_from_origin(self, origin: ScrollOrigin, delta_x: int, delta_y: int,) -> Self:
 		"""
-		Scrolls from a specific origin "Point" by a given offset.
+		Scrolls from a specific origin Point by a given offset.
 
 		Args:
-			origin (ScrollOrigin): The origin "Point" to start scrolling from.
+			origin (ScrollOrigin): The origin Point to start scrolling from.
 			delta_x (int): The horizontal scroll amount.
 			delta_y (int): The vertical scroll amount.
 
@@ -302,13 +305,13 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 	"""
 	
 	@abstractmethod
-	def hm_move(self, start_position: "Point", end_position: "Point",) -> Self:
+	def hm_move(self, start_position: Point, end_position: Point,) -> Self:
 		"""
 		Moves the mouse cursor from a start to an end position in a human-like curve.
 
 		Args:
-			start_position ("Point"): The starting coordinates.
-			end_position ("Point"): The ending coordinates.
+			start_position (Point): The starting coordinates.
+			end_position (Point): The ending coordinates.
 
 		Returns:
 			AbstractHumanLikeActionChains: The instance for method chaining.
@@ -317,34 +320,34 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 		...
 	
 	@abstractmethod
-	def hm_move_by_offset(self, start_position: "Point", xoffset: int, yoffset: int) -> Tuple[Self, "Point"]:
+	def hm_move_by_offset(self, start_position: Point, xoffset: int, yoffset: int) -> Tuple[Self, Point]:
 		"""
-		Moves the mouse cursor by a given offset from a starting "Point" in a human-like way.
+		Moves the mouse cursor by a given offset from a starting Point in a human-like way.
 
 		Args:
-			start_position ("Point"): The starting coordinates of the mouse.
+			start_position (Point): The starting coordinates of the mouse.
 			xoffset (int): The horizontal offset to move by.
 			yoffset (int): The vertical offset to move by.
 
 		Returns:
-			Tuple[Self, "Point"]: A tuple containing the instance for
-			method chaining and the final "Point" coordinates of the cursor.
+			Tuple[Self, Point]: A tuple containing the instance for
+			method chaining and the final Point coordinates of the cursor.
 		"""
 		
 		...
 	
 	@abstractmethod
-	def hm_move_to_element(self, start_position: "Point", element: "WEB_ELEMENT_TYPEHINT") -> Tuple[Self, "Point"]:
+	def hm_move_to_element(self, start_position: Point, element: "WEB_ELEMENT_TYPEHINT") -> Tuple[Self, Point]:
 		"""
 		Moves the mouse cursor to the center of an element in a human-like way.
 
 		Args:
-			start_position ("Point"): The starting coordinates of the mouse.
+			start_position (Point): The starting coordinates of the mouse.
 			element ("WEB_ELEMENT_TYPEHINT"): The target element to move to.
 
 		Returns:
-			Tuple[Self, "Point"]: A tuple containing the instance for
-			method chaining and the final "Point" coordinates of the cursor.
+			Tuple[Self, Point]: A tuple containing the instance for
+			method chaining and the final Point coordinates of the cursor.
 		"""
 		
 		...
@@ -352,39 +355,39 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 	@abstractmethod
 	def hm_move_to_element_with_offset(
 			self,
-			start_position: "Point",
+			start_position: Point,
 			element: "WEB_ELEMENT_TYPEHINT",
 			xoffset: int,
 			yoffset: int
-	) -> Tuple[Self, "Point"]:
+	) -> Tuple[Self, Point]:
 		"""
 		Moves the mouse cursor to a specific offset within an element in a human-like way.
 
 		Args:
-			start_position ("Point"): The starting coordinates of the mouse.
+			start_position (Point): The starting coordinates of the mouse.
 			element ("WEB_ELEMENT_TYPEHINT"): The target element.
 			xoffset (int): The horizontal offset from the element's top-left corner.
 			yoffset (int): The vertical offset from the element's top-left corner.
 
 		Returns:
-			Tuple[Self, "Point"]: A tuple containing the instance for
-			method chaining and the final "Point" coordinates of the cursor.
+			Tuple[Self, Point]: A tuple containing the instance for
+			method chaining and the final Point coordinates of the cursor.
 		"""
 		
 		...
 	
 	@abstractmethod
-	def hm_move_to_element_with_random_offset(self, start_position: "Point", element: "WEB_ELEMENT_TYPEHINT",) -> Tuple[Self, "Point"]:
+	def hm_move_to_element_with_random_offset(self, start_position: Point, element: "WEB_ELEMENT_TYPEHINT",) -> Tuple[Self, Point]:
 		"""
-		Moves the mouse cursor to a random "Point" within an element in a human-like way.
+		Moves the mouse cursor to a random Point within an element in a human-like way.
 
 		Args:
-			start_position ("Point"): The starting coordinates of the mouse.
+			start_position (Point): The starting coordinates of the mouse.
 			element ("WEB_ELEMENT_TYPEHINT"): The target element to move to.
 
 		Returns:
-			Tuple[Self, "Point"]: A tuple containing the instance for
-			method chaining and the final "Point" coordinates of the cursor.
+			Tuple[Self, Point]: A tuple containing the instance for
+			method chaining and the final Point coordinates of the cursor.
 		"""
 		
 		...
@@ -397,7 +400,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 		Args:
 			delta_x (int): The horizontal distance to scroll.
 			delta_y (int): The vertical distance to scroll.
-			origin (Optional[ScrollOrigin]): The origin "Point" for scrolling. If None, it's determined automatically.
+			origin (Optional[ScrollOrigin]): The origin Point for scrolling. If None, it's determined automatically.
 
 		Returns:
 			AbstractHumanLikeActionains: The instance for method chaining.
@@ -424,7 +427,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 			additional_upper_y_offset (int): Additional offset from the top edge of the viewport.
 			additional_right_x_offset (int): Additional offset from the right edge of the viewport.
 			additional_left_x_offset (int): Additional offset from the left edge of the viewport.
-			origin (Optional[ScrollOrigin]): The origin "Point" for scrolling. If None, it's determined automatically.
+			origin (Optional[ScrollOrigin]): The origin Point for scrolling. If None, it's determined automatically.
 
 		Returns:
 			AbstractHumanLikeActionChains: The instance for method chaining.

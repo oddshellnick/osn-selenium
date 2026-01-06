@@ -1,7 +1,5 @@
 import trio
 from typing import List, Optional, Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import DIALOG_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.fedcm.account import Account
@@ -9,6 +7,10 @@ from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 
 

@@ -1,11 +1,10 @@
+from osn_selenium.types import DictModel
 from typing import (
 	Literal,
 	Optional,
 	Union
 )
-
 from osn_selenium.dev_tools.domains.fetch import FetchSettings
-from osn_selenium.types import DictModel
 
 
 class DomainsSettings(DictModel):

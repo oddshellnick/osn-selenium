@@ -4,12 +4,14 @@ from typing import (
 	Optional,
 	Self
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import FEDCM_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 
 
 class FedCM(AbstractFedCM):
@@ -51,7 +53,7 @@ class FedCM(AbstractFedCM):
 		Returns:
 			Self: A new instance of a class implementing FedCM.
 		"""
-
+		
 		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):

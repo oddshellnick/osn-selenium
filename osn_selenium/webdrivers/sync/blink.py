@@ -1,7 +1,7 @@
 import re
 import sys
-import pathlib
 import time
+import pathlib
 import warnings
 from subprocess import Popen
 from selenium import webdriver
@@ -320,7 +320,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 						is_active = self._check_browser_exe_active()
 		
 			self._create_driver()
-
+		
 			self._is_active = True
 	
 	def close_webdriver(self):
@@ -336,14 +336,14 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 		
 					while is_active:
 						is_active = self._check_browser_exe_active()
-
+		
 						if is_active:
 							time.sleep(0.05)
-
+		
 		if self.driver is not None:
 			self.driver.quit()
 			self._driver = None
-
+		
 		self._is_active = False
 	
 	def restart_webdriver(

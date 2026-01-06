@@ -1,9 +1,11 @@
 from typing import List, Self, Union
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import MOBILE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.mobile import AbstractMobile
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
@@ -37,7 +39,7 @@ class Mobile(AbstractMobile):
 		Returns:
 			Self: A new instance of a class implementing Mobile.
 		"""
-
+		
 		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):

@@ -1,7 +1,5 @@
 import trio
 from selenium.webdriver.common.by import By
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
@@ -12,6 +10,10 @@ from typing import (
 )
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
@@ -31,22 +33,25 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise ExpectedTypeError(expected_class=legacyShadowRoot, received_instance=selenium_shadow_root)
+			raise ExpectedTypeError(
+					expected_class=legacyShadowRoot,
+					received_instance=selenium_shadow_root
+			)
 		
 		self._selenium_shadow_root = selenium_shadow_root
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
+		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
+
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 
-		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
-		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
+		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
+
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 
-		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
-		
 		return [
 			WebElement.from_legacy(e, lock=self._lock, limiter=self._capacity_limiter) for e in impl_list
 		]

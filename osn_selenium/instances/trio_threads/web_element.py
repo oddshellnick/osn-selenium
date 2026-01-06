@@ -1,7 +1,5 @@
 import trio
 from selenium.webdriver.common.by import By
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from typing import (
 	Any,
@@ -14,6 +12,10 @@ from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
@@ -29,7 +31,10 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_web_element, legacyWebElement):
-			raise ExpectedTypeError(expected_class=legacyWebElement, received_instance=selenium_web_element)
+			raise ExpectedTypeError(
+					expected_class=legacyWebElement,
+					received_instance=selenium_web_element
+			)
 		
 		self._selenium_web_element = selenium_web_element
 	

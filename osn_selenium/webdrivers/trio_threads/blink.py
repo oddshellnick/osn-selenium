@@ -4,11 +4,10 @@ import trio
 import pathlib
 import warnings
 from subprocess import Popen
-
-from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import ArgumentValue
 from osn_selenium.flags.blink import BlinkFlagsManager
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_selenium.webdrivers.decorators import requires_driver
@@ -210,7 +209,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 		
 			self._webdriver_flags_manager.browser_exe = browser_exe
 			self._window_rect = window_rect
-
+		
 			self.set_start_page_url(start_page_url=start_page_url)
 		
 			if use_browser_exe is not None and browser_name_in_system is not None:
@@ -311,7 +310,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 							await trio.sleep(0.05)
 		
 			await self._create_driver()
-
+		
 			self._is_active = True
 	
 	async def close_webdriver(self) -> None:
@@ -341,7 +340,7 @@ class BlinkWebDriver(WebDriver, AbstractBlinkWebDriver):
 		if self.driver is not None:
 			await self.quit()
 			self._driver = None
-
+		
 		self._is_active = False
 	
 	async def restart_webdriver(

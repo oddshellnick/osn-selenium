@@ -1,20 +1,22 @@
 import trio
-from osn_selenium.instances.types import Point
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.types import Point
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from typing import (
-	Optional,
-	Self,
-	TYPE_CHECKING,
-	Tuple,
-	Union
-)
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
+)
+from typing import (
+	Any,
+	Callable,
+	Coroutine,
+	Optional,
+	Self,
+	Tuple,
+	Union
 )
 from osn_selenium.instances._functions import (
 	move_to_parts,
@@ -27,10 +29,6 @@ from osn_selenium.abstract.instances.action_chains import (
 )
 
 
-if TYPE_CHECKING:
-	from osn_selenium.webdrivers.trio_threads.base import WebDriver
-
-
 class ActionChains(_TrioThreadMixin, AbstractActionChains):
 	def __init__(
 			self,
@@ -41,7 +39,10 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_action_chains, legacyActionChains):
-			raise ExpectedTypeError(expected_class=legacyActionChains, received_instance=selenium_action_chains)
+			raise ExpectedTypeError(
+					expected_class=legacyActionChains,
+					received_instance=selenium_action_chains
+			)
 		
 		self._selenium_action_chains = selenium_action_chains
 	
@@ -206,7 +207,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 	def __init__(
 			self,
-			driver: "WebDriver",
+			execute_script_function: Callable[[str, Any], Coroutine[Any, Any, Any]],
 			selenium_action_chains: legacyActionChains,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
@@ -217,7 +218,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 				limiter=limiter
 		)
 		
-		self._js_executor = JSExecutor(execute_function=driver.execute_script)
+		self._js_executor = JSExecutor(execute_function=execute_script_function)
 	
 	async def hm_move(self, start_position: Point, end_position: Point) -> Self:
 		parts = await self._wrap_to_trio(

@@ -1,9 +1,11 @@
 from typing import List, Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.browser import AbstractBrowser
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo
@@ -34,7 +36,7 @@ class Browser(AbstractBrowser):
 		Returns:
 			Self: A new instance of a class implementing Browser.
 		"""
-
+		
 		legacy_browser_obj = get_legacy_instance(selenium_browser)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):

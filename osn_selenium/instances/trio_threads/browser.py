@@ -1,11 +1,13 @@
 import trio
 from typing import List, Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.types import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.browser import AbstractBrowser
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo

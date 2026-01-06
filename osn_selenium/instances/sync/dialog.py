@@ -1,12 +1,14 @@
 from typing import List, Optional, Self
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.instances.types import DIALOG_TYPEHINT
 from selenium.webdriver.common.fedcm.account import Account
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 
 
@@ -37,7 +39,7 @@ class Dialog(AbstractDialog):
 		Returns:
 			Self: A new instance of a class implementing Dialog.
 		"""
-
+		
 		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):

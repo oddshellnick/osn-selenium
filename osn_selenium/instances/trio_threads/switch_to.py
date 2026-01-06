@@ -4,14 +4,16 @@ from typing import (
 	Self,
 	Union
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
+)
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
 )
 from osn_selenium.instances.types import (
 	SWITCH_TO_TYPEHINT,

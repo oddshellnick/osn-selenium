@@ -1,7 +1,5 @@
 import trio
 import pathlib
-
-from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.types import WindowRect
 from typing import (
 	Optional,
@@ -11,6 +9,7 @@ from typing import (
 from selenium.webdriver.chrome.service import Service
 from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.flags.chrome import ChromeFlagsManager
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.blink import BlinkWebDriver
 from osn_selenium.abstract.webdriver.chrome import (
 	AbstractChromeWebDriver

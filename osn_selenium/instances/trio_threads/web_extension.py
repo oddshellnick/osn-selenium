@@ -5,14 +5,16 @@ from typing import (
 	Self,
 	Union
 )
-
-from osn_selenium.instances.errors import TypesConvertError, ExpectedTypeError
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypesConvertError
+)
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
@@ -28,7 +30,10 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise ExpectedTypeError(expected_class=legacyWebExtension, received_instance=selenium_web_extension)
+			raise ExpectedTypeError(
+					expected_class=legacyWebExtension,
+					received_instance=selenium_web_extension
+			)
 		
 		self._selenium_web_extension = selenium_web_extension
 	
