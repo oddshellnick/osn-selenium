@@ -13,4 +13,4 @@ class PlatformNotSupportedError(Exception):
 		   platform (str): The name of the unsupported operating system.
 		"""
 		
-		super().__init__(f"Platform not supported: {platform}.")
+		super().__init__(f"Platform not supported: {platform}. Currently only Windows 32-bit is supported.")
