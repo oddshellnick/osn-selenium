@@ -2,7 +2,11 @@ import re
 import winreg
 import pathlib
 import subprocess
-from typing import List, Optional, Union
+from typing import (
+	List,
+	Optional,
+	Union
+)
 from osn_selenium.browsers_handler.types import Browser
 from win32api import (
 	GetFileVersionInfo,
@@ -75,6 +79,7 @@ def get_browser_version(browser_path: Union[pathlib.Path, str]) -> str:
 		return "unknown"
 	
 	info = GetFileVersionInfo(str(browser_path.resolve()), "\\")
+	
 	ms = info["FileVersionMS"]
 	ls = info["FileVersionLS"]
 	
