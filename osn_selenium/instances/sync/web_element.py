@@ -1,14 +1,16 @@
 from selenium.webdriver.common.by import By
+from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.sync.shadow_root import ShadowRoot
+from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from typing import (
 	Any,
 	Dict,
+	Iterable,
 	List,
 	Optional,
 	Self
 )
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.instances.sync.shadow_root import ShadowRoot
-from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from osn_selenium.instances.errors import (
 	ExpectedTypeError,
@@ -16,6 +18,9 @@ from osn_selenium.instances.errors import (
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
+)
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
 )
 
 
@@ -153,3 +158,18 @@ class WebElement(AbstractWebElement):
 	
 	def value_of_css_property(self, property_name: str) -> str:
 		return self.legacy.value_of_css_property(property_name=property_name)
+	
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> WebDriverWait:
+		return WebDriverWait(
+				selenium_webdriver_wait=legacyWebDriverWait(
+						driver=self.legacy,
+						timeout=timeout,
+						poll_frequency=poll_frequency,
+						ignored_exceptions=ignored_exceptions,
+				),
+		)

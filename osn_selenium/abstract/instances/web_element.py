@@ -1,15 +1,19 @@
 from abc import ABC, abstractmethod
 from selenium.webdriver.common.by import By
+from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from typing import (
 	Any,
+	Iterable,
 	Mapping,
 	Optional,
 	Self,
 	Sequence
 )
-from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
+)
+from osn_selenium.abstract.instances.web_driver_wait import (
+	AbstractWebDriverWait
 )
 
 
@@ -362,6 +366,27 @@ class AbstractWebElement(ABC):
 
 		Returns:
 			str: The value of the property.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> AbstractWebDriverWait:
+		"""
+		Creates a wait instance for this element.
+
+		Args:
+			timeout (float): Total time to wait in seconds.
+			poll_frequency (float): Sleep interval between polls. Defaults to 0.5.
+			ignored_exceptions (Optional[Iterable[BaseException]]): Exceptions to ignore during polling.
+
+		Returns:
+			AbstractWebDriverWait: The wait instance.
 		"""
 		
 		...

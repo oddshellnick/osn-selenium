@@ -1,6 +1,13 @@
-from typing import List, Optional
 from abc import ABC, abstractmethod
 from osn_selenium.types import DEVICES_TYPEHINT
+from typing import (
+	Iterable,
+	List,
+	Optional
+)
+from osn_selenium.abstract.instances.web_driver_wait import (
+	AbstractWebDriverWait
+)
 from osn_selenium.abstract.instances.action_chains import (
 	AbstractActionChains,
 	AbstractHumanLikeActionChains
@@ -44,6 +51,27 @@ class AbstractActionsMixin(ABC):
 
 		Returns:
 			AbstractHumanLikeActionChains: A new HumanLikeActionChains instance.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> AbstractWebDriverWait:
+		"""
+		Creates a new WebDriverWait instance.
+
+		Args:
+			timeout (float): How long to wait for the condition to be true.
+			poll_frequency (float): How often to check the condition. Defaults to 0.5.
+			ignored_exceptions (Optional[Iterable[BaseException]]): Exceptions to ignore while waiting.
+
+		Returns:
+			AbstractWebDriverWait: A new WebDriverWait instance.
 		"""
 		
 		...

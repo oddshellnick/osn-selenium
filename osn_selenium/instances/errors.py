@@ -1,4 +1,10 @@
-from typing import Any
+from typing import (
+	Any,
+	List,
+	Set,
+	Tuple,
+	Union
+)
 
 
 class TypesConvertError(Exception):
@@ -7,7 +13,11 @@ class TypesConvertError(Exception):
 
 
 class ExpectedTypeError(Exception):
-	def __init__(self, expected_class: Any, received_instance: Any):
-		super().__init__(
-				f"Expected {type(expected_class).__name__}, got {type(received_instance).__name__}"
-		)
+	def __init__(
+			self,
+			expected_class: Union[Any, List[Any], Set[Any], Tuple[Any, ...]],
+			received_instance: Any
+	):
+		expected_str = " or ".join(x.__name__ for x in expected_class) if isinstance(expected_class, (List, Set, Tuple)) else type(expected_class).__name__
+		
+		super().__init__(f"Expected {expected_str}, got {type(received_instance).__name__}")

@@ -1,23 +1,28 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.convert import get_legacy_instance
 from typing import (
 	Any,
 	Dict,
+	Iterable,
 	List,
 	Optional,
 	Self
 )
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
+from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
 from osn_selenium.instances.errors import (
 	ExpectedTypeError,
 	TypesConvertError
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
+)
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
 )
 
 
@@ -183,3 +188,20 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 	
 	async def value_of_css_property(self, property_name: str) -> str:
 		return await self._wrap_to_trio(self.legacy.value_of_css_property, property_name=property_name)
+	
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> WebDriverWait:
+		return WebDriverWait(
+				selenium_webdriver_wait=legacyWebDriverWait(
+						driver=self.legacy,
+						timeout=timeout,
+						poll_frequency=poll_frequency,
+						ignored_exceptions=ignored_exceptions,
+				),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)

@@ -1,11 +1,19 @@
-from typing import List, Optional
 from osn_selenium.types import DEVICES_TYPEHINT
+from typing import (
+	Iterable,
+	List,
+	Optional
+)
 from osn_selenium.webdrivers.decorators import requires_driver
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
 from osn_selenium.webdrivers.trio_threads.base.script import ScriptMixin
+from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
 from osn_selenium.abstract.webdriver.base.actions import AbstractActionsMixin
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
+)
 from osn_selenium.instances.trio_threads.action_chains import (
 	ActionChains,
 	HumanLikeActionChains
@@ -20,7 +28,7 @@ class ActionsMixin(ScriptMixin, AbstractActionsMixin):
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
 		return ActionChains(
-				legacyActionChains(driver=self.driver, duration=duration, devices=devices),
+				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
@@ -34,6 +42,24 @@ class ActionsMixin(ScriptMixin, AbstractActionsMixin):
 		return HumanLikeActionChains(
 				execute_script_function=self.execute_script,
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
+	
+	@requires_driver
+	def web_driver_wait(
+			self,
+			timeout: float,
+			poll_frequency: float = 0.5,
+			ignored_exceptions: Optional[Iterable[BaseException]] = None,
+	) -> WebDriverWait:
+		return WebDriverWait(
+				selenium_webdriver_wait=legacyWebDriverWait(
+						driver=self.driver,
+						timeout=timeout,
+						poll_frequency=poll_frequency,
+						ignored_exceptions=ignored_exceptions,
+				),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

@@ -1,4 +1,4 @@
-from typing import Self, Union
+from typing import Union
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.common.alert import Alert as legacyAlert
@@ -36,11 +36,20 @@ from selenium.webdriver.common.bidi.network import (
 from selenium.webdriver.common.bidi.storage import (
 	Storage as legacyStorage
 )
+from selenium.webdriver.remote.webdriver import (
+	WebDriver as legacyWebDriver
+)
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
+)
+from selenium.webdriver.support.wait import (
+	WebDriverWait as legacyWebDriverWait
+)
+from osn_selenium.abstract.instances.web_driver_wait import (
+	AbstractWebDriverWait
 )
 from osn_selenium.abstract.instances.browsing_context import (
 	AbstractBrowsingContext
@@ -59,7 +68,6 @@ from selenium.webdriver.common.bidi.browsing_context import (
 )
 
 
-WEB_ELEMENT_TYPEHINT = Union[AbstractWebElement, legacyWebElement]
 ACTION_CHAINS_TYPEHINT = Union[AbstractActionChains, legacyActionChains]
 ALERT_TYPEHINT = Union[AbstractAlert, legacyAlert]
 BROWSER_TYPEHINT = Union[AbstractBrowser, legacyBrowser]
@@ -73,6 +81,8 @@ SCRIPT_TYPEHINT = Union[AbstractScript, legacyScript]
 SHADOW_ROOT_TYPEHINT = Union[AbstractShadowRoot, legacyShadowRoot]
 STORAGE_TYPEHINT = Union[AbstractStorage, legacyStorage]
 SWITCH_TO_TYPEHINT = Union[AbstractSwitchTo, legacySwitchTo]
+WEB_DRIVER_WAIT_TYPEHINT = Union[AbstractWebDriverWait, legacyWebDriverWait]
+WEB_ELEMENT_TYPEHINT = Union[AbstractWebElement, legacyWebElement]
 WEB_EXTENSION_TYPEHINT = Union[AbstractWebExtension, legacyWebExtension]
 
 ANY_ABSTRACT_TYPE = Union[
@@ -91,6 +101,7 @@ ANY_ABSTRACT_TYPE = Union[
 	AbstractShadowRoot,
 	AbstractPermissions,
 	AbstractWebExtension,
+	AbstractWebDriverWait,
 ]
 
 ANY_LEGACY_TYPE = Union[
@@ -109,4 +120,7 @@ ANY_LEGACY_TYPE = Union[
 	legacyShadowRoot,
 	legacyPermissions,
 	legacyWebExtension,
+	legacyWebDriverWait,
 ]
+
+WebDriverWaitInputType = Union[legacyWebElement, legacyWebDriver]
