@@ -183,6 +183,13 @@ Handles low-level execution of commands.
     *   `get_element_rect_in_viewport(element)`: Returns the bounding box relative to the viewport.
 *   `cdp.AbstractCDPExecutor`: Interface for executing raw CDP commands.
 
+## Notes
+
+*   **Concurrency Constraints in `trio_threads`:** 
+    The `trio_threads` implementation is built using a unified `trio.Lock`. This means that every driver function and every associated instance (including `ActionChains`, `WebElement`, `Alert`, etc.) can execute only one operation at a time. Do not attempt to parallelize multiple operations (coroutines) within a single browser instance, as they will be queued sequentially. The primary purpose of this asynchronous implementation is to enable the simultaneous management of **multiple browser instances** within a single event loop, rather than concurrent interactions with one browser.
+*   **CDP Fetch Domain and Background Tasks:** 
+    When configuring the `Fetch` domain for network interception, it is highly recommended to provide a `target_background_task` in your `DevToolsSettings`. This is especially critical for websites that dynamically create numerous targets (such as iframes or workers). Without a proper background task to handle these events, the browser's execution flow might hang or fail to process requests for nested targets properly.
+
 ## Future Notes
 
 *   **Cross-Platform Support:** Currently, the process management logic is heavily tied to Windows (`osn-windows-cmd`). Future updates aim to abstract this for Linux and macOS support.
