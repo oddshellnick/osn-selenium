@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 
 class ActionChains(AbstractActionChains):
-	def __init__(self, selenium_action_chains: legacyActionChains,):
+	def __init__(self, selenium_action_chains: legacyActionChains) -> None:
 		if not isinstance(selenium_action_chains, legacyActionChains):
 			raise ExpectedTypeError(
 					expected_class=legacyActionChains,
@@ -97,7 +97,7 @@ class ActionChains(AbstractActionChains):
 		return self._selenium_action_chains
 	
 	def move_by_offset(self, xoffset: int, yoffset: int) -> Self:
-		self._selenium_action_chains.move_by_offset(xoffset=xoffset, yoffset=yoffset,)
+		self._selenium_action_chains.move_by_offset(xoffset=xoffset, yoffset=yoffset)
 		
 		return self
 	

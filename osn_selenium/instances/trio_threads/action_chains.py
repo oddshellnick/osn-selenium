@@ -1,14 +1,11 @@
 import trio
 from osn_selenium.types import Point
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from selenium.webdriver.common.action_chains import (
-	ActionChains as legacyActionChains
-)
 from typing import (
 	Any,
 	Callable,
@@ -17,6 +14,9 @@ from typing import (
 	Self,
 	Tuple,
 	Union
+)
+from selenium.webdriver.common.action_chains import (
+	ActionChains as legacyActionChains
 )
 from osn_selenium.instances._functions import (
 	move_to_parts,

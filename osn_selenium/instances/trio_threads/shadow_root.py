@@ -44,14 +44,14 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
 
 		from osn_selenium.instances.trio_threads.web_element import WebElement
-
+		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
 		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
 
 		from osn_selenium.instances.trio_threads.web_element import WebElement
-
+		
 		return [
 			WebElement.from_legacy(e, lock=self._lock, limiter=self._capacity_limiter) for e in impl_list
 		]

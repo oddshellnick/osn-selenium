@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+from osn_selenium.types import Point
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
+from selenium.webdriver import (
+	ActionChains as legacyActionChains
+)
 from typing import (
 	Optional,
 	Self,
@@ -7,7 +11,6 @@ from typing import (
 	Tuple,
 	Union
 )
-from osn_selenium.types import Point
 
 
 if TYPE_CHECKING:
@@ -32,7 +35,7 @@ class AbstractActionChains(ABC):
 				If None, clicks at the current mouse position.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -47,7 +50,7 @@ class AbstractActionChains(ABC):
 				If None, clicks at the current mouse position.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -62,7 +65,7 @@ class AbstractActionChains(ABC):
 				If None, right-clicks at the current mouse position.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -77,7 +80,7 @@ class AbstractActionChains(ABC):
 				If None, double-clicks at the current mouse position.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -96,7 +99,7 @@ class AbstractActionChains(ABC):
 			target_element ("WEB_ELEMENT_TYPEHINT"): The element to drop on.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -117,7 +120,7 @@ class AbstractActionChains(ABC):
 			yoffset (int): The vertical offset to drag by.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -133,7 +136,7 @@ class AbstractActionChains(ABC):
 				If None, the key is pressed without focusing on an element.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -149,7 +152,33 @@ class AbstractActionChains(ABC):
 				If None, the key is released without focusing on an element.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def legacy(self) -> legacyActionChains:
+		"""
+		Returns the legacy Selenium ActionChains object.
+
+		Returns:
+			legacyActionChains: The underlying Selenium action chain object.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def move_by_offset(self, xoffset: int, yoffset: int) -> Self:
+		"""
+		Moves the mouse to an offset from the current position.
+
+		Args:
+			xoffset (int): The horizontal offset to move by.
+			yoffset (int): The vertical offset to move by.
+
+		Returns:
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -163,7 +192,7 @@ class AbstractActionChains(ABC):
 			to_element ("WEB_ELEMENT_TYPEHINT"): The element to move to.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -179,7 +208,7 @@ class AbstractActionChains(ABC):
 			yoffset (int): The vertical offset from the element's center.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -193,7 +222,7 @@ class AbstractActionChains(ABC):
 			seconds (Union[float, int]): The duration to pause in seconds.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -216,7 +245,7 @@ class AbstractActionChains(ABC):
 				If None, releases at the current mouse position.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -231,7 +260,7 @@ class AbstractActionChains(ABC):
 			delta_y (int): The vertical scroll amount.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -247,7 +276,7 @@ class AbstractActionChains(ABC):
 			delta_y (int): The vertical scroll amount.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -261,7 +290,7 @@ class AbstractActionChains(ABC):
 			element ("WEB_ELEMENT_TYPEHINT"): The element to scroll to.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -275,7 +304,7 @@ class AbstractActionChains(ABC):
 			keys_to_send (str): The keys to send.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -290,7 +319,7 @@ class AbstractActionChains(ABC):
 			keys_to_send (str): The keys to send.
 
 		Returns:
-			AbstractActionChains: The instance of ActionChains for method chaining.
+			Self: The instance of ActionChains for method chaining.
 		"""
 		
 		...
@@ -300,7 +329,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 	"""
 	Abstract base class for human-like action chains.
 
-	Extends AbstractActionChains with methods that simulate more
+	Extends Self with methods that simulate more
 	natural, less robotic user interactions.
 	"""
 	
@@ -314,7 +343,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 			end_position (Point): The ending coordinates.
 
 		Returns:
-			AbstractHumanLikeActionChains: The instance for method chaining.
+			Self: The instance for method chaining.
 		"""
 		
 		...
@@ -430,7 +459,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 			origin (Optional[ScrollOrigin]): The origin Point for scrolling. If None, it's determined automatically.
 
 		Returns:
-			AbstractHumanLikeActionChains: The instance for method chaining.
+			Self: The instance for method chaining.
 		"""
 		
 		...
@@ -444,7 +473,7 @@ class AbstractHumanLikeActionChains(AbstractActionChains):
 			text (str): The text to be typed.
 
 		Returns:
-			AbstractHumanLikeActionChains: The instance for method chaining.
+			Self: The instance for method chaining.
 		"""
 		
 		...

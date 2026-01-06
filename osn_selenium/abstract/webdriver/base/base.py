@@ -1,8 +1,6 @@
 from selenium import webdriver
 from abc import ABC, abstractmethod
-
 from selenium.webdriver.common.bidi.session import Session
-
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from typing import (

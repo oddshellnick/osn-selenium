@@ -1,16 +1,12 @@
 from abc import ABC, abstractmethod
-from osn_selenium.types import Point
+from typing import Any, Dict, Optional
 from selenium.webdriver.remote.webelement import WebElement
 from osn_selenium.types import (
 	JS_Scripts,
+	Point,
 	Position,
 	Rectangle,
 	Size
-)
-from typing import (
-	Any,
-	Dict,
-	Optional,
 )
 
 
