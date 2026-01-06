@@ -175,7 +175,7 @@ class AbstractWebDriver(ABC):
 	@abstractmethod
 	def bidi_connection(self) -> AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]:
 		"""
-		Returns an async context manager for a BiDi (WebDriver Bi-Directional) connection.
+		Returns an context manager for a BiDi (WebDriver Bi-Directional) connection.
 
 		Returns:
 			AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]: The BiDi connection context manager.
@@ -244,7 +244,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def close_webdriver(self) -> None:
+	def close_webdriver(self) -> None:
 		"""
 		Closes the WebDriver instance and all associated windows.
 		"""
@@ -863,7 +863,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
+	def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
 		"""
 		Connects to a remote WebDriver server.
 
@@ -917,7 +917,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def restart_webdriver(
+	def restart_webdriver(
 			self,
 			flags: Optional[BrowserFlags] = None,
 			window_rect: Optional[WindowRect] = None,
@@ -958,7 +958,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def set_driver_timeouts(
+	def set_driver_timeouts(
 			self,
 			page_load_timeout: float,
 			implicit_wait_timeout: float,
@@ -1124,7 +1124,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def start_webdriver(
+	def start_webdriver(
 			self,
 			flags: Optional[BrowserFlags] = None,
 			window_rect: Optional[WindowRect] = None,
@@ -1230,7 +1230,7 @@ class AbstractWebDriver(ABC):
 		...
 	
 	@abstractmethod
-	async def update_times(
+	def update_times(
 			self,
 			temp_implicitly_wait: Optional[float] = None,
 			temp_page_load_timeout: Optional[float] = None,
