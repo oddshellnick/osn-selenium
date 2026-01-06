@@ -1,13 +1,38 @@
 import sys
 import pathlib
-from typing import List, Optional
+from typing import (
+	List,
+	Optional,
+	Union
+)
 from osn_selenium.browsers_handler.types import Browser
 from osn_selenium.errors import (
 	PlatformNotSupportedError
 )
 from osn_selenium.browsers_handler._windows import (
-	get_installed_browsers_win32
+	get_installed_browsers_win32,
+	get_webdriver_version
 )
+
+
+def get_version_of_driver(driver_path: Union[pathlib.Path, str]) -> Optional[str]:
+	"""
+	Retrieves the version of a given webdriver executable based on the current platform.
+
+	Args:
+		driver_path (Union[pathlib.Path, str]): The path to the webdriver executable.
+
+	Returns:
+		Optional[str]: The version of the webdriver as a string, or None if not determined.
+
+	Raises:
+		PlatformNotSupportedError: If the operating system is not supported.
+	"""
+	
+	if sys.platform == "win32":
+		return get_webdriver_version(driver_path=driver_path)
+	
+	raise PlatformNotSupportedError(sys.platform)
 
 
 def get_installed_browsers() -> List[Browser]:
@@ -26,7 +51,7 @@ def get_installed_browsers() -> List[Browser]:
 	
 	if sys.platform == "win32":
 		return get_installed_browsers_win32()
-
+	
 	raise PlatformNotSupportedError(sys.platform)
 
 
