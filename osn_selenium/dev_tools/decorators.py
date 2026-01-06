@@ -1,3 +1,4 @@
+import inspect
 import warnings
 import functools
 from typing import (
@@ -44,13 +45,26 @@ def warn_if_active(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METH
     """
 
     @functools.wraps(func)
-    def wrapper(self: "DevTools", *args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> Any:
+    async def async_wrapper(self: "DevTools", *args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> Any:
+        if self.is_active:
+            warnings.warn("DevTools is active. Exit dev_tools context before changing settings.")
+
+        return await func(self, *args, **kwargs)
+
+    @functools.wraps(func)
+    def sync_wrapper(self: "DevTools", *args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> Any:
         if self.is_active:
             warnings.warn("DevTools is active. Exit dev_tools context before changing settings.")
 
         return func(self, *args, **kwargs)
 
-    return wrapper
+    if inspect.iscoroutinefunction(func):
+        return async_wrapper
+
+    if inspect.isfunction(func):
+        return sync_wrapper
+
+    raise TypeError(f"Expected a coroutine function or function, got {type(func).__name__}")
 
 
 def log_on_error(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
@@ -68,14 +82,28 @@ def log_on_error(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD
     """
 
     @functools.wraps(func)
-    async def wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+    async def async_wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
         try:
             return await func(*args, **kwargs)
         except BaseException as exception:
             log_exception(exception)
             return ExceptionThrown(exception)
 
-    return wrapper
+    @functools.wraps(func)
+    def sync_wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+        try:
+            return func(*args, **kwargs)
+        except BaseException as exception:
+            log_exception(exception)
+            return ExceptionThrown(exception)
+
+    if inspect.iscoroutinefunction(func):
+        return async_wrapper
+
+    if inspect.isfunction(func):
+        return sync_wrapper
+
+    raise TypeError(f"Expected a coroutine function or function, got {type(func).__name__}")
 
 
 def background_task_decorator(func: "devtools_background_func_type") -> "devtools_background_func_type":
@@ -87,11 +115,11 @@ def background_task_decorator(func: "devtools_background_func_type") -> "devtool
     allowing the `BaseTargetMixin` to track the task's termination.
 
     Args:
-        func (devtools_background_func_type): The asynchronous background task function
+        func ("devtools_background_func_type"): The asynchronous background task function
                                               to be wrapped. It should accept a `BaseTargetMixin` instance.
 
     Returns:
-        devtools_background_func_type: The wrapped function.
+        "devtools_background_func_type": The wrapped function.
     """
 
     @functools.wraps(func)
