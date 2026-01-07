@@ -57,7 +57,7 @@ class WebDriver(
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
 		)
-
+		
 		self._dev_tools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
 		
 		self._js_executor = JSExecutor(execute_function=self.execute_script)

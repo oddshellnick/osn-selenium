@@ -180,6 +180,21 @@ class AbstractBaseMixin(ABC):
 		
 		...
 	
+	@abstractmethod
+	def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+		"""
+		Sends a command to be executed by the remote driver.
+
+		Args:
+			driver_command (str): The name of the command to execute.
+			params (Optional[Dict[str, Any]]): A dictionary of parameters for the command.
+
+		Returns:
+			Dict[str, Any]: The response from the driver.
+		"""
+		
+		...
+	
 	@property
 	@abstractmethod
 	def is_active(self) -> bool:

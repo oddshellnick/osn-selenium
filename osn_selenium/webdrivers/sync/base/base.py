@@ -134,7 +134,7 @@ class BaseMixin(_TrioThreadMixin, AbstractBaseMixin):
 	@requires_driver
 	def command_executor(self) -> RemoteConnection:
 		return self.driver.command_executor
-
+	
 	@command_executor.setter
 	@requires_driver
 	def command_executor(self, value: RemoteConnection) -> None:
@@ -149,6 +149,10 @@ class BaseMixin(_TrioThreadMixin, AbstractBaseMixin):
 	@requires_driver
 	def error_handler(self, value: ErrorHandler) -> None:
 		self.driver.error_handler = value
+	
+	@requires_driver
+	def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+		return self.driver.execute(driver_command=driver_command, params=params)
 	
 	@property
 	def is_active(self) -> bool:

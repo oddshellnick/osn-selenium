@@ -1,31 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import (
-	Any,
-	Dict,
-	List,
-	Optional
-)
+from typing import Any, List, Optional
 from osn_selenium.abstract.instances.script import AbstractScript
-from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 
 
 class AbstractScriptMixin(ABC):
 	"""Mixin responsible for Javascript execution and script management."""
-	
-	@abstractmethod
-	def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		"""
-		Sends a command to be executed by the remote driver.
-
-		Args:
-			driver_command (str): The name of the command to execute.
-			params (Optional[Dict[str, Any]]): A dictionary of parameters for the command.
-
-		Returns:
-			Dict[str, Any]: The response from the driver.
-		"""
-		
-		...
 	
 	@abstractmethod
 	def execute_async_script(self, script: str, *args: Any) -> Any:

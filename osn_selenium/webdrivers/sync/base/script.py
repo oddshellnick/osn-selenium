@@ -12,10 +12,6 @@ from osn_selenium.abstract.webdriver.base.script import AbstractScriptMixin
 
 class ScriptMixin(BaseMixin, AbstractScriptMixin):
 	@requires_driver
-	def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		return self.driver.execute(driver_command=driver_command, params=params)
-	
-	@requires_driver
 	def execute_async_script(self, script: str, *args: Any) -> Any:
 		args = self._unwrap_args(args)
 		
