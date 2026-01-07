@@ -202,7 +202,7 @@ class CDPExecutor(AbstractCDPExecutor):
 		self._web_authn = WebAuthnCDPExecutor(execute_function=self._prepare_and_execute)
 	
 	def execute(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
-		return self._execute_function(cmd, cmd_args)["value"]
+		return self._execute_function(cmd, cmd_args)
 	
 	def _prepare_and_execute(self, command_name: str, locals_: Dict[str, Any]) -> Any:
 		locals_.pop("self")
