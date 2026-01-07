@@ -12,7 +12,7 @@ class AbstractAutofillCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_addresses(self, addresses: List[List[Any]]) -> None:
+	def set_addresses(self, addresses: List[Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -21,6 +21,6 @@ class AbstractAutofillCDPExecutor(ABC):
 			field_id: int,
 			frame_id: Optional[str] = None,
 			card: Optional[Any] = None,
-			address: Optional[List[Any]] = None
+			address: Optional[Any] = None
 	) -> None:
 		...

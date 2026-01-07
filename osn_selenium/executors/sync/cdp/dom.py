@@ -89,7 +89,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	) -> List[List[Any]]:
 		return self._execute_function("DOM.getContentQuads", locals())
 	
-	def get_detached_dom_nodes(self) -> List[List[int]]:
+	def get_detached_dom_nodes(self) -> List[Any]:
 		return self._execute_function("DOM.getDetachedDomNodes", locals())
 	
 	def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Any:
@@ -104,7 +104,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Any]:
 		return self._execute_function("DOM.getFlattenedDocument", locals())
 	
-	def get_frame_owner(self, frame_id: str) -> Tuple[int]:
+	def get_frame_owner(self, frame_id: str) -> Tuple[int, Optional[int]]:
 		return self._execute_function("DOM.getFrameOwner", locals())
 	
 	def get_node_for_location(
@@ -113,10 +113,10 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			y: int,
 			include_user_agent_shadow_dom: Optional[bool] = None,
 			ignore_pointer_events_none: Optional[bool] = None
-	) -> Tuple[int]:
+	) -> Tuple[int, str, Optional[int]]:
 		return self._execute_function("DOM.getNodeForLocation", locals())
 	
-	def get_node_stack_traces(self, node_id: int) -> Optional[List[Any]]:
+	def get_node_stack_traces(self, node_id: int) -> Optional[Any]:
 		return self._execute_function("DOM.getNodeStackTraces", locals())
 	
 	def get_nodes_for_subtree_by_style(
@@ -168,7 +168,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	) -> int:
 		return self._execute_function("DOM.moveTo", locals())
 	
-	def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str]:
+	def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str, int]:
 		return self._execute_function("DOM.performSearch", locals())
 	
 	def push_node_by_path_to_frontend(self, path: str) -> int:

@@ -96,15 +96,15 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_ad_script_ancestry(self, frame_id: str) -> Optional[List[Any]]:
+	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Any]:
 		...
 	
 	@abstractmethod
-	def get_app_id(self) -> Tuple[Optional[str]]:
+	def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
 		...
 	
 	@abstractmethod
-	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str]:
+	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Any], Optional[str], Optional[Any], Any]:
 		...
 	
 	@abstractmethod
@@ -112,11 +112,11 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_installability_errors(self) -> List[List[Any]]:
+	def get_installability_errors(self) -> List[Any]:
 		...
 	
 	@abstractmethod
-	def get_layout_metrics(self) -> Tuple[Any]:
+	def get_layout_metrics(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
 		...
 	
 	@abstractmethod
@@ -124,11 +124,11 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_navigation_history(self) -> Tuple[int]:
+	def get_navigation_history(self) -> Tuple[int, List[Any]]:
 		...
 	
 	@abstractmethod
-	def get_origin_trials(self, frame_id: str) -> List[List[Any]]:
+	def get_origin_trials(self, frame_id: str) -> List[Any]:
 		...
 	
 	@abstractmethod
@@ -136,11 +136,11 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_resource_content(self, frame_id: str, url: str) -> Tuple[str]:
+	def get_resource_content(self, frame_id: str, url: str) -> Tuple[str, bool]:
 		...
 	
 	@abstractmethod
-	def get_resource_tree(self) -> List[Any]:
+	def get_resource_tree(self) -> Any:
 		...
 	
 	@abstractmethod
@@ -155,7 +155,7 @@ class AbstractPageCDPExecutor(ABC):
 			transition_type: Optional[str] = None,
 			frame_id: Optional[str] = None,
 			referrer_policy: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str], Optional[str], Optional[bool]]:
 		...
 	
 	@abstractmethod
@@ -182,7 +182,7 @@ class AbstractPageCDPExecutor(ABC):
 			transfer_mode: Optional[str] = None,
 			generate_tagged_pdf: Optional[bool] = None,
 			generate_document_outline: Optional[bool] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str]]:
 		...
 	
 	@abstractmethod

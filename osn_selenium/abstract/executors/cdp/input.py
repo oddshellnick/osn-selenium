@@ -13,7 +13,7 @@ class AbstractInputCDPExecutor(ABC):
 			type_: str,
 			x: float,
 			y: float,
-			data: List[Any],
+			data: Any,
 			modifiers: Optional[int] = None
 	) -> None:
 		...

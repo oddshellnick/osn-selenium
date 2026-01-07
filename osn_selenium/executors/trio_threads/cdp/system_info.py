@@ -21,7 +21,7 @@ class SystemInfoCDPExecutor(AbstractSystemInfoCDPExecutor):
 	async def get_feature_state(self, feature_state: str) -> bool:
 		return await self._execute_function("SystemInfo.getFeatureState", locals())
 	
-	async def get_info(self) -> Tuple[List[Any]]:
+	async def get_info(self) -> Tuple[Any, str, str, str]:
 		return await self._execute_function("SystemInfo.getInfo", locals())
 	
 	async def get_process_info(self) -> List[Any]:

@@ -107,10 +107,10 @@ class NetworkCDPExecutor(AbstractNetworkCDPExecutor):
 	async def get_request_post_data(self, request_id: str) -> str:
 		return await self._execute_function("Network.getRequestPostData", locals())
 	
-	async def get_response_body(self, request_id: str) -> Tuple[str]:
+	async def get_response_body(self, request_id: str) -> Tuple[str, bool]:
 		return await self._execute_function("Network.getResponseBody", locals())
 	
-	async def get_response_body_for_interception(self, interception_id: str) -> Tuple[str]:
+	async def get_response_body_for_interception(self, interception_id: str) -> Tuple[str, bool]:
 		return await self._execute_function("Network.getResponseBodyForInterception", locals())
 	
 	async def get_security_isolation_status(self, frame_id: Optional[str] = None) -> Any:

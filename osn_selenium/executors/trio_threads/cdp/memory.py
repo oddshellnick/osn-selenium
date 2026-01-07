@@ -22,19 +22,19 @@ class MemoryCDPExecutor(AbstractMemoryCDPExecutor):
 	async def forcibly_purge_java_script_memory(self) -> None:
 		return await self._execute_function("Memory.forciblyPurgeJavaScriptMemory", locals())
 	
-	async def get_all_time_sampling_profile(self) -> List[Any]:
+	async def get_all_time_sampling_profile(self) -> Any:
 		return await self._execute_function("Memory.getAllTimeSamplingProfile", locals())
 	
-	async def get_browser_sampling_profile(self) -> List[Any]:
+	async def get_browser_sampling_profile(self) -> Any:
 		return await self._execute_function("Memory.getBrowserSamplingProfile", locals())
 	
-	async def get_dom_counters(self) -> Tuple[int]:
+	async def get_dom_counters(self) -> Tuple[int, int, int]:
 		return await self._execute_function("Memory.getDOMCounters", locals())
 	
 	async def get_dom_counters_for_leak_detection(self) -> List[Any]:
 		return await self._execute_function("Memory.getDOMCountersForLeakDetection", locals())
 	
-	async def get_sampling_profile(self) -> List[Any]:
+	async def get_sampling_profile(self) -> Any:
 		return await self._execute_function("Memory.getSamplingProfile", locals())
 	
 	async def prepare_for_leak_detection(self) -> None:

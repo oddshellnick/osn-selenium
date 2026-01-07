@@ -93,7 +93,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	) -> List[List[Any]]:
 		return await self._execute_function("DOM.getContentQuads", locals())
 	
-	async def get_detached_dom_nodes(self) -> List[List[int]]:
+	async def get_detached_dom_nodes(self) -> List[Any]:
 		return await self._execute_function("DOM.getDetachedDomNodes", locals())
 	
 	async def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Any:
@@ -108,7 +108,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	async def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Any]:
 		return await self._execute_function("DOM.getFlattenedDocument", locals())
 	
-	async def get_frame_owner(self, frame_id: str) -> Tuple[int]:
+	async def get_frame_owner(self, frame_id: str) -> Tuple[int, Optional[int]]:
 		return await self._execute_function("DOM.getFrameOwner", locals())
 	
 	async def get_node_for_location(
@@ -117,10 +117,10 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			y: int,
 			include_user_agent_shadow_dom: Optional[bool] = None,
 			ignore_pointer_events_none: Optional[bool] = None
-	) -> Tuple[int]:
+	) -> Tuple[int, str, Optional[int]]:
 		return await self._execute_function("DOM.getNodeForLocation", locals())
 	
-	async def get_node_stack_traces(self, node_id: int) -> Optional[List[Any]]:
+	async def get_node_stack_traces(self, node_id: int) -> Optional[Any]:
 		return await self._execute_function("DOM.getNodeStackTraces", locals())
 	
 	async def get_nodes_for_subtree_by_style(
@@ -172,7 +172,7 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 	) -> int:
 		return await self._execute_function("DOM.moveTo", locals())
 	
-	async def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str]:
+	async def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str, int]:
 		return await self._execute_function("DOM.performSearch", locals())
 	
 	async def push_node_by_path_to_frontend(self, path: str) -> int:

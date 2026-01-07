@@ -26,7 +26,7 @@ class IoCDPExecutor(AbstractIoCDPExecutor):
 			handle: str,
 			offset: Optional[int] = None,
 			size: Optional[int] = None
-	) -> Tuple[Optional[bool]]:
+	) -> Tuple[Optional[bool], str, bool]:
 		return await self._execute_function("IO.read", locals())
 	
 	async def resolve_blob(self, object_id: str) -> str:

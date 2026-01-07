@@ -43,15 +43,15 @@ class AbstractCssCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_animated_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	def get_animated_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]], Optional[Any], Optional[List[Any]]]:
 		...
 	
 	@abstractmethod
-	def get_background_colors(self, node_id: int) -> Tuple[Optional[List[str]]]:
+	def get_background_colors(self, node_id: int) -> Tuple[Optional[List[str]], Optional[str], Optional[str]]:
 		...
 	
 	@abstractmethod
-	def get_computed_style_for_node(self, node_id: int) -> Tuple[List[Any]]:
+	def get_computed_style_for_node(self, node_id: int) -> Tuple[List[Any], Any]:
 		...
 	
 	@abstractmethod
@@ -59,7 +59,7 @@ class AbstractCssCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_inline_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	def get_inline_styles_for_node(self, node_id: int) -> Tuple[Optional[Any], Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -75,7 +75,22 @@ class AbstractCssCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_matched_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	def get_matched_styles_for_node(self, node_id: int) -> Tuple[
+		Optional[Any],
+		Optional[Any],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[int],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[Any],
+		Optional[int],
+		Optional[List[Any]]
+	]:
 		...
 	
 	@abstractmethod
@@ -126,7 +141,7 @@ class AbstractCssCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_rule_selector(self, style_sheet_id: str, range_: Any, selector: str) -> List[Any]:
+	def set_rule_selector(self, style_sheet_id: str, range_: Any, selector: str) -> Any:
 		...
 	
 	@abstractmethod
@@ -142,7 +157,7 @@ class AbstractCssCDPExecutor(ABC):
 			self,
 			edits: List[Any],
 			node_for_property_syntax_validation: Optional[int] = None
-	) -> List[List[Any]]:
+	) -> List[Any]:
 		...
 	
 	@abstractmethod
@@ -162,7 +177,7 @@ class AbstractCssCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def take_coverage_delta(self) -> Tuple[List[Any]]:
+	def take_coverage_delta(self) -> Tuple[List[Any], float]:
 		...
 	
 	@abstractmethod

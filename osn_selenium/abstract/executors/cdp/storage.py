@@ -49,7 +49,7 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_related_website_sets(self) -> List[List[str]]:
+	def get_related_website_sets(self) -> List[Any]:
 		...
 	
 	@abstractmethod
@@ -73,7 +73,7 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_usage_and_quota(self, origin: str) -> Tuple[float]:
+	def get_usage_and_quota(self, origin: str) -> Tuple[float, float, bool, List[Any]]:
 		...
 	
 	@abstractmethod

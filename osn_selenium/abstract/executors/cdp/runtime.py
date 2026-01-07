@@ -23,7 +23,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			promise_object_id: str,
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -42,7 +42,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			throw_on_side_effect: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Any] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -52,7 +52,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			source_url: str,
 			persist_script: bool,
 			execution_context_id: Optional[int] = None
-	) -> Tuple[Optional[str]]:
+	) -> Tuple[Optional[str], Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -86,7 +86,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			allow_unsafe_eval_blocked_by_csp: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Any] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -94,7 +94,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_heap_usage(self) -> Tuple[float]:
+	def get_heap_usage(self) -> Tuple[float, float, float, float]:
 		...
 	
 	@abstractmethod
@@ -109,7 +109,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			accessor_properties_only: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			non_indexed_properties_only: Optional[bool] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], Optional[List[Any]], Optional[List[Any]], Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -147,7 +147,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			await_promise: Optional[bool] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		...
 	
 	@abstractmethod

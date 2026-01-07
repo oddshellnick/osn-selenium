@@ -28,7 +28,7 @@ class TracingCDPExecutor(AbstractTracingCDPExecutor):
 			self,
 			deterministic: Optional[bool] = None,
 			level_of_detail: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, bool]:
 		return self._execute_function("Tracing.requestMemoryDump", locals())
 	
 	def start(

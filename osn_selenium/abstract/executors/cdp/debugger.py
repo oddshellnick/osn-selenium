@@ -17,7 +17,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str]]:
+	def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str], int, List[int], Any]:
 		...
 	
 	@abstractmethod
@@ -36,7 +36,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 			generate_preview: Optional[bool] = None,
 			throw_on_side_effect: Optional[bool] = None,
 			timeout: Optional[float] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -49,11 +49,11 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_script_source(self, script_id: str) -> Tuple[str]:
+	def get_script_source(self, script_id: str) -> Tuple[str, Optional[str]]:
 		...
 	
 	@abstractmethod
-	def get_stack_trace(self, stack_trace_id: Any) -> List[Any]:
+	def get_stack_trace(self, stack_trace_id: Any) -> Any:
 		...
 	
 	@abstractmethod
@@ -61,7 +61,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def next_wasm_disassembly_chunk(self, stream_id: str) -> List[Any]:
+	def next_wasm_disassembly_chunk(self, stream_id: str) -> Any:
 		...
 	
 	@abstractmethod
@@ -77,7 +77,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Any]]:
+	def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Any], Optional[Any], Optional[Any]]:
 		...
 	
 	@abstractmethod
@@ -111,7 +111,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_breakpoint(self, location: Any, condition: Optional[str] = None) -> Tuple[str]:
+	def set_breakpoint(self, location: Any, condition: Optional[str] = None) -> Tuple[str, Any]:
 		...
 	
 	@abstractmethod
@@ -123,7 +123,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 			script_hash: Optional[str] = None,
 			column_number: Optional[int] = None,
 			condition: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, List[Any]]:
 		...
 	
 	@abstractmethod
@@ -153,7 +153,14 @@ class AbstractDebuggerCDPExecutor(ABC):
 			script_source: str,
 			dry_run: Optional[bool] = None,
 			allow_top_frame_editing: Optional[bool] = None
-	) -> Tuple[Optional[List[Any]]]:
+	) -> Tuple[
+		Optional[List[Any]],
+		Optional[bool],
+		Optional[Any],
+		Optional[Any],
+		str,
+		Optional[Any]
+	]:
 		...
 	
 	@abstractmethod

@@ -19,7 +19,7 @@ class LayerTreeCDPExecutor(AbstractLayerTreeCDPExecutor):
 	):
 		self._execute_function = execute_function
 	
-	async def compositing_reasons(self, layer_id: str) -> Tuple[List[str]]:
+	async def compositing_reasons(self, layer_id: str) -> Tuple[List[str], List[str]]:
 		return await self._execute_function("LayerTree.compositingReasons", locals())
 	
 	async def disable(self) -> None:

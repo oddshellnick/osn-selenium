@@ -45,7 +45,7 @@ class StorageCDPExecutor(AbstractStorageCDPExecutor):
 	def get_interest_group_details(self, owner_origin: str, name: str) -> dict:
 		return self._execute_function("Storage.getInterestGroupDetails", locals())
 	
-	def get_related_website_sets(self) -> List[List[str]]:
+	def get_related_website_sets(self) -> List[Any]:
 		return self._execute_function("Storage.getRelatedWebsiteSets", locals())
 	
 	def get_shared_storage_entries(self, owner_origin: str) -> List[Any]:
@@ -63,7 +63,7 @@ class StorageCDPExecutor(AbstractStorageCDPExecutor):
 	def get_trust_tokens(self) -> List[Any]:
 		return self._execute_function("Storage.getTrustTokens", locals())
 	
-	def get_usage_and_quota(self, origin: str) -> Tuple[float]:
+	def get_usage_and_quota(self, origin: str) -> Tuple[float, float, bool, List[Any]]:
 		return self._execute_function("Storage.getUsageAndQuota", locals())
 	
 	def override_quota_for_origin(self, origin: str, quota_size: Optional[float] = None) -> None:

@@ -116,11 +116,11 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_response_body(self, request_id: str) -> Tuple[str]:
+	def get_response_body(self, request_id: str) -> Tuple[str, bool]:
 		...
 	
 	@abstractmethod
-	def get_response_body_for_interception(self, interception_id: str) -> Tuple[str]:
+	def get_response_body_for_interception(self, interception_id: str) -> Tuple[str, bool]:
 		...
 	
 	@abstractmethod

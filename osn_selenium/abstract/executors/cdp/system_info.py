@@ -8,7 +8,7 @@ class AbstractSystemInfoCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_info(self) -> Tuple[List[Any]]:
+	def get_info(self) -> Tuple[Any, str, str, str]:
 		...
 	
 	@abstractmethod

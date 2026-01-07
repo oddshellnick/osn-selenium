@@ -67,7 +67,7 @@ class FetchCDPExecutor(AbstractFetchCDPExecutor):
 	) -> None:
 		return await self._execute_function("Fetch.fulfillRequest", locals())
 	
-	async def get_response_body(self, request_id: str) -> Tuple[str]:
+	async def get_response_body(self, request_id: str) -> Tuple[str, bool]:
 		return await self._execute_function("Fetch.getResponseBody", locals())
 	
 	async def take_response_body_as_stream(self, request_id: str) -> str:

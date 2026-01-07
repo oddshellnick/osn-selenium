@@ -17,7 +17,7 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_best_effort_coverage(self) -> List[List[List[Any]]]:
+	def get_best_effort_coverage(self) -> List[Any]:
 		...
 	
 	@abstractmethod
@@ -38,7 +38,7 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def stop(self) -> List[Any]:
+	def stop(self) -> Any:
 		...
 	
 	@abstractmethod
@@ -46,5 +46,5 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def take_precise_coverage(self) -> Tuple[List[List[List[Any]]]]:
+	def take_precise_coverage(self) -> Tuple[List[Any], float]:
 		...

@@ -32,7 +32,7 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			promise_object_id: str,
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		return await self._execute_function("Runtime.awaitPromise", locals())
 	
 	async def call_function_on(
@@ -50,7 +50,7 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			throw_on_side_effect: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Any] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		return await self._execute_function("Runtime.callFunctionOn", locals())
 	
 	async def compile_script(
@@ -59,7 +59,7 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			source_url: str,
 			persist_script: bool,
 			execution_context_id: Optional[int] = None
-	) -> Tuple[Optional[str]]:
+	) -> Tuple[Optional[str], Optional[Any]]:
 		return await self._execute_function("Runtime.compileScript", locals())
 	
 	async def disable(self) -> None:
@@ -89,13 +89,13 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			allow_unsafe_eval_blocked_by_csp: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Any] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		return await self._execute_function("Runtime.evaluate", locals())
 	
 	async def get_exception_details(self, error_object_id: str) -> Optional[Any]:
 		return await self._execute_function("Runtime.getExceptionDetails", locals())
 	
-	async def get_heap_usage(self) -> Tuple[float]:
+	async def get_heap_usage(self) -> Tuple[float, float, float, float]:
 		return await self._execute_function("Runtime.getHeapUsage", locals())
 	
 	async def get_isolate_id(self) -> str:
@@ -108,7 +108,7 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			accessor_properties_only: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			non_indexed_properties_only: Optional[bool] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], Optional[List[Any]], Optional[List[Any]], Optional[Any]]:
 		return await self._execute_function("Runtime.getProperties", locals())
 	
 	async def global_lexical_scope_names(self, execution_context_id: Optional[int] = None) -> List[str]:
@@ -139,7 +139,7 @@ class RuntimeCDPExecutor(AbstractRuntimeCDPExecutor):
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			await_promise: Optional[bool] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		return await self._execute_function("Runtime.runScript", locals())
 	
 	async def set_async_call_stack_depth(self, max_depth: int) -> None:

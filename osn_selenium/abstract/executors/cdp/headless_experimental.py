@@ -10,7 +10,7 @@ class AbstractHeadlessExperimentalCDPExecutor(ABC):
 			interval: Optional[float] = None,
 			no_display_updates: Optional[bool] = None,
 			screenshot: Optional[Any] = None
-	) -> Tuple[bool]:
+	) -> Tuple[bool, Optional[str]]:
 		...
 	
 	@abstractmethod

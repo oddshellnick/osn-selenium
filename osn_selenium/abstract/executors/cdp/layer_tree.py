@@ -9,7 +9,7 @@ from typing import (
 
 class AbstractLayerTreeCDPExecutor(ABC):
 	@abstractmethod
-	def compositing_reasons(self, layer_id: str) -> Tuple[List[str]]:
+	def compositing_reasons(self, layer_id: str) -> Tuple[List[str], List[str]]:
 		...
 	
 	@abstractmethod

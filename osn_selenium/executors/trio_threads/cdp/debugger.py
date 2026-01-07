@@ -25,7 +25,7 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 	async def disable(self) -> None:
 		return await self._execute_function("Debugger.disable", locals())
 	
-	async def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str]]:
+	async def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str], int, List[int], Any]:
 		return await self._execute_function("Debugger.disassembleWasmModule", locals())
 	
 	async def enable(self, max_scripts_cache_size: Optional[float] = None) -> str:
@@ -42,7 +42,7 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 			generate_preview: Optional[bool] = None,
 			throw_on_side_effect: Optional[bool] = None,
 			timeout: Optional[float] = None
-	) -> Tuple[Any]:
+	) -> Tuple[Any, Optional[Any]]:
 		return await self._execute_function("Debugger.evaluateOnCallFrame", locals())
 	
 	async def get_possible_breakpoints(
@@ -53,16 +53,16 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 	) -> List[Any]:
 		return await self._execute_function("Debugger.getPossibleBreakpoints", locals())
 	
-	async def get_script_source(self, script_id: str) -> Tuple[str]:
+	async def get_script_source(self, script_id: str) -> Tuple[str, Optional[str]]:
 		return await self._execute_function("Debugger.getScriptSource", locals())
 	
-	async def get_stack_trace(self, stack_trace_id: Any) -> List[Any]:
+	async def get_stack_trace(self, stack_trace_id: Any) -> Any:
 		return await self._execute_function("Debugger.getStackTrace", locals())
 	
 	async def get_wasm_bytecode(self, script_id: str) -> str:
 		return await self._execute_function("Debugger.getWasmBytecode", locals())
 	
-	async def next_wasm_disassembly_chunk(self, stream_id: str) -> List[Any]:
+	async def next_wasm_disassembly_chunk(self, stream_id: str) -> Any:
 		return await self._execute_function("Debugger.nextWasmDisassemblyChunk", locals())
 	
 	async def pause(self) -> None:
@@ -74,7 +74,7 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 	async def remove_breakpoint(self, breakpoint_id: str) -> None:
 		return await self._execute_function("Debugger.removeBreakpoint", locals())
 	
-	async def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Any]]:
+	async def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Any], Optional[Any], Optional[Any]]:
 		return await self._execute_function("Debugger.restartFrame", locals())
 	
 	async def resume(self, terminate_on_resume: Optional[bool] = None) -> None:
@@ -101,7 +101,7 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 	async def set_blackboxed_ranges(self, script_id: str, positions: List[Any]) -> None:
 		return await self._execute_function("Debugger.setBlackboxedRanges", locals())
 	
-	async def set_breakpoint(self, location: Any, condition: Optional[str] = None) -> Tuple[str]:
+	async def set_breakpoint(self, location: Any, condition: Optional[str] = None) -> Tuple[str, Any]:
 		return await self._execute_function("Debugger.setBreakpoint", locals())
 	
 	async def set_breakpoint_by_url(
@@ -112,7 +112,7 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 			script_hash: Optional[str] = None,
 			column_number: Optional[int] = None,
 			condition: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, List[Any]]:
 		return await self._execute_function("Debugger.setBreakpointByUrl", locals())
 	
 	async def set_breakpoint_on_function_call(self, object_id: str, condition: Optional[str] = None) -> str:
@@ -136,7 +136,14 @@ class DebuggerCDPExecutor(AbstractDebuggerCDPExecutor):
 			script_source: str,
 			dry_run: Optional[bool] = None,
 			allow_top_frame_editing: Optional[bool] = None
-	) -> Tuple[Optional[List[Any]]]:
+	) -> Tuple[
+		Optional[List[Any]],
+		Optional[bool],
+		Optional[Any],
+		Optional[Any],
+		str,
+		Optional[Any]
+	]:
 		return await self._execute_function("Debugger.setScriptSource", locals())
 	
 	async def set_skip_all_pauses(self, skip: bool) -> None:

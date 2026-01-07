@@ -37,5 +37,5 @@ class AuditsCDPExecutor(AbstractAuditsCDPExecutor):
 			encoding: str,
 			quality: Optional[float] = None,
 			size_only: Optional[bool] = None
-	) -> Tuple[Optional[str]]:
+	) -> Tuple[Optional[str], int, int]:
 		return await self._execute_function("Audits.getEncodedResponse", locals())

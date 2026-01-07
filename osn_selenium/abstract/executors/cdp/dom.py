@@ -96,7 +96,7 @@ class AbstractDomCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_detached_dom_nodes(self) -> List[List[int]]:
+	def get_detached_dom_nodes(self) -> List[Any]:
 		...
 	
 	@abstractmethod
@@ -116,7 +116,7 @@ class AbstractDomCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_frame_owner(self, frame_id: str) -> Tuple[int]:
+	def get_frame_owner(self, frame_id: str) -> Tuple[int, Optional[int]]:
 		...
 	
 	@abstractmethod
@@ -126,11 +126,11 @@ class AbstractDomCDPExecutor(ABC):
 			y: int,
 			include_user_agent_shadow_dom: Optional[bool] = None,
 			ignore_pointer_events_none: Optional[bool] = None
-	) -> Tuple[int]:
+	) -> Tuple[int, str, Optional[int]]:
 		...
 	
 	@abstractmethod
-	def get_node_stack_traces(self, node_id: int) -> Optional[List[Any]]:
+	def get_node_stack_traces(self, node_id: int) -> Optional[Any]:
 		...
 	
 	@abstractmethod
@@ -194,7 +194,7 @@ class AbstractDomCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str]:
+	def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str, int]:
 		...
 	
 	@abstractmethod

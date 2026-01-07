@@ -20,7 +20,7 @@ class HeadlessExperimentalCDPExecutor(AbstractHeadlessExperimentalCDPExecutor):
 			interval: Optional[float] = None,
 			no_display_updates: Optional[bool] = None,
 			screenshot: Optional[Any] = None
-	) -> Tuple[bool]:
+	) -> Tuple[bool, Optional[str]]:
 		return self._execute_function("HeadlessExperimental.beginFrame", locals())
 	
 	def disable(self) -> None:

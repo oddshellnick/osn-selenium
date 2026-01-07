@@ -2,7 +2,6 @@ from typing import (
 	Any,
 	Callable,
 	Dict,
-	List,
 	Optional
 )
 from osn_selenium.abstract.executors.cdp.heap_profiler import (
@@ -32,7 +31,7 @@ class HeapProfilerCDPExecutor(AbstractHeapProfilerCDPExecutor):
 	def get_object_by_heap_object_id(self, object_id: str, object_group: Optional[str] = None) -> Any:
 		return self._execute_function("HeapProfiler.getObjectByHeapObjectId", locals())
 	
-	def get_sampling_profile(self) -> List[Any]:
+	def get_sampling_profile(self) -> Any:
 		return self._execute_function("HeapProfiler.getSamplingProfile", locals())
 	
 	def start_sampling(
@@ -47,7 +46,7 @@ class HeapProfilerCDPExecutor(AbstractHeapProfilerCDPExecutor):
 	def start_tracking_heap_objects(self, track_allocations: Optional[bool] = None) -> None:
 		return self._execute_function("HeapProfiler.startTrackingHeapObjects", locals())
 	
-	def stop_sampling(self) -> List[Any]:
+	def stop_sampling(self) -> Any:
 		return self._execute_function("HeapProfiler.stopSampling", locals())
 	
 	def stop_tracking_heap_objects(

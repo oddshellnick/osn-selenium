@@ -36,5 +36,5 @@ class AbstractCacheStorageCDPExecutor(ABC):
 			skip_count: Optional[int] = None,
 			page_size: Optional[int] = None,
 			path_filter: Optional[str] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], float]:
 		...

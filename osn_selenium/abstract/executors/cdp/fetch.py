@@ -64,7 +64,7 @@ class AbstractFetchCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_response_body(self, request_id: str) -> Tuple[str]:
+	def get_response_body(self, request_id: str) -> Tuple[str, bool]:
 		...
 	
 	@abstractmethod

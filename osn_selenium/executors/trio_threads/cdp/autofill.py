@@ -24,7 +24,7 @@ class AutofillCDPExecutor(AbstractAutofillCDPExecutor):
 	async def enable(self) -> None:
 		return await self._execute_function("Autofill.enable", locals())
 	
-	async def set_addresses(self, addresses: List[List[Any]]) -> None:
+	async def set_addresses(self, addresses: List[Any]) -> None:
 		return await self._execute_function("Autofill.setAddresses", locals())
 	
 	async def trigger(
@@ -32,6 +32,6 @@ class AutofillCDPExecutor(AbstractAutofillCDPExecutor):
 			field_id: int,
 			frame_id: Optional[str] = None,
 			card: Optional[Any] = None,
-			address: Optional[List[Any]] = None
+			address: Optional[Any] = None
 	) -> None:
 		return await self._execute_function("Autofill.trigger", locals())

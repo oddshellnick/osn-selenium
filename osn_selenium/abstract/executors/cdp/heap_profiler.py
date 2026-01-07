@@ -1,5 +1,5 @@
+from typing import Any, Optional
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
 
 
 class AbstractHeapProfilerCDPExecutor(ABC):
@@ -28,7 +28,7 @@ class AbstractHeapProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_sampling_profile(self) -> List[Any]:
+	def get_sampling_profile(self) -> Any:
 		...
 	
 	@abstractmethod
@@ -46,7 +46,7 @@ class AbstractHeapProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def stop_sampling(self) -> List[Any]:
+	def stop_sampling(self) -> Any:
 		...
 	
 	@abstractmethod

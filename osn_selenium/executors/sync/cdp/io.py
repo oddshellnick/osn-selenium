@@ -22,7 +22,7 @@ class IoCDPExecutor(AbstractIoCDPExecutor):
 			handle: str,
 			offset: Optional[int] = None,
 			size: Optional[int] = None
-	) -> Tuple[Optional[bool]]:
+	) -> Tuple[Optional[bool], str, bool]:
 		return self._execute_function("IO.read", locals())
 	
 	def resolve_blob(self, object_id: str) -> str:

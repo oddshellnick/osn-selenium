@@ -13,15 +13,15 @@ class AbstractMemoryCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_all_time_sampling_profile(self) -> List[Any]:
+	def get_all_time_sampling_profile(self) -> Any:
 		...
 	
 	@abstractmethod
-	def get_browser_sampling_profile(self) -> List[Any]:
+	def get_browser_sampling_profile(self) -> Any:
 		...
 	
 	@abstractmethod
-	def get_dom_counters(self) -> Tuple[int]:
+	def get_dom_counters(self) -> Tuple[int, int, int]:
 		...
 	
 	@abstractmethod
@@ -29,7 +29,7 @@ class AbstractMemoryCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_sampling_profile(self) -> List[Any]:
+	def get_sampling_profile(self) -> Any:
 		...
 	
 	@abstractmethod

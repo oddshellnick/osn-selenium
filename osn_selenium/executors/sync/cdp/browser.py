@@ -45,19 +45,19 @@ class BrowserCDPExecutor(AbstractBrowserCDPExecutor):
 	def get_browser_command_line(self) -> List[str]:
 		return self._execute_function("Browser.getBrowserCommandLine", locals())
 	
-	def get_histogram(self, name: str, delta: Optional[bool] = None) -> List[Any]:
+	def get_histogram(self, name: str, delta: Optional[bool] = None) -> Any:
 		return self._execute_function("Browser.getHistogram", locals())
 	
-	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[List[Any]]:
+	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[Any]:
 		return self._execute_function("Browser.getHistograms", locals())
 	
-	def get_version(self) -> Tuple[str]:
+	def get_version(self) -> Tuple[str, str, str, str, str]:
 		return self._execute_function("Browser.getVersion", locals())
 	
 	def get_window_bounds(self, window_id: int) -> Any:
 		return self._execute_function("Browser.getWindowBounds", locals())
 	
-	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int]:
+	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int, Any]:
 		return self._execute_function("Browser.getWindowForTarget", locals())
 	
 	def grant_permissions(

@@ -46,19 +46,19 @@ class CssCDPExecutor(AbstractCssCDPExecutor):
 	async def force_starting_style(self, node_id: int, forced: bool) -> None:
 		return await self._execute_function("CSS.forceStartingStyle", locals())
 	
-	async def get_animated_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	async def get_animated_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]], Optional[Any], Optional[List[Any]]]:
 		return await self._execute_function("CSS.getAnimatedStylesForNode", locals())
 	
-	async def get_background_colors(self, node_id: int) -> Tuple[Optional[List[str]]]:
+	async def get_background_colors(self, node_id: int) -> Tuple[Optional[List[str]], Optional[str], Optional[str]]:
 		return await self._execute_function("CSS.getBackgroundColors", locals())
 	
-	async def get_computed_style_for_node(self, node_id: int) -> Tuple[List[Any]]:
+	async def get_computed_style_for_node(self, node_id: int) -> Tuple[List[Any], Any]:
 		return await self._execute_function("CSS.getComputedStyleForNode", locals())
 	
 	async def get_environment_variables(self) -> dict:
 		return await self._execute_function("CSS.getEnvironmentVariables", locals())
 	
-	async def get_inline_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	async def get_inline_styles_for_node(self, node_id: int) -> Tuple[Optional[Any], Optional[Any]]:
 		return await self._execute_function("CSS.getInlineStylesForNode", locals())
 	
 	async def get_layers_for_node(self, node_id: int) -> Any:
@@ -70,7 +70,22 @@ class CssCDPExecutor(AbstractCssCDPExecutor):
 	async def get_longhand_properties(self, shorthand_name: str, value: str) -> List[Any]:
 		return await self._execute_function("CSS.getLonghandProperties", locals())
 	
-	async def get_matched_styles_for_node(self, node_id: int) -> Tuple[Optional[List[Any]]]:
+	async def get_matched_styles_for_node(self, node_id: int) -> Tuple[
+		Optional[Any],
+		Optional[Any],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[int],
+		Optional[List[Any]],
+		Optional[List[Any]],
+		Optional[Any],
+		Optional[int],
+		Optional[List[Any]]
+	]:
 		return await self._execute_function("CSS.getMatchedStylesForNode", locals())
 	
 	async def get_media_queries(self) -> List[Any]:
@@ -110,7 +125,7 @@ class CssCDPExecutor(AbstractCssCDPExecutor):
 	async def set_property_rule_property_name(self, style_sheet_id: str, range_: Any, property_name: str) -> Any:
 		return await self._execute_function("CSS.setPropertyRulePropertyName", locals())
 	
-	async def set_rule_selector(self, style_sheet_id: str, range_: Any, selector: str) -> List[Any]:
+	async def set_rule_selector(self, style_sheet_id: str, range_: Any, selector: str) -> Any:
 		return await self._execute_function("CSS.setRuleSelector", locals())
 	
 	async def set_scope_text(self, style_sheet_id: str, range_: Any, text: str) -> Any:
@@ -123,7 +138,7 @@ class CssCDPExecutor(AbstractCssCDPExecutor):
 			self,
 			edits: List[Any],
 			node_for_property_syntax_validation: Optional[int] = None
-	) -> List[List[Any]]:
+	) -> List[Any]:
 		return await self._execute_function("CSS.setStyleTexts", locals())
 	
 	async def set_supports_text(self, style_sheet_id: str, range_: Any, text: str) -> Any:
@@ -138,7 +153,7 @@ class CssCDPExecutor(AbstractCssCDPExecutor):
 	async def take_computed_style_updates(self) -> List[int]:
 		return await self._execute_function("CSS.takeComputedStyleUpdates", locals())
 	
-	async def take_coverage_delta(self) -> Tuple[List[Any]]:
+	async def take_coverage_delta(self) -> Tuple[List[Any], float]:
 		return await self._execute_function("CSS.takeCoverageDelta", locals())
 	
 	async def track_computed_style_updates(self, properties_to_track: List[Any]) -> None:

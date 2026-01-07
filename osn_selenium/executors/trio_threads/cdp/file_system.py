@@ -2,8 +2,7 @@ from typing import (
 	Any,
 	Callable,
 	Coroutine,
-	Dict,
-	List
+	Dict
 )
 from osn_selenium.abstract.executors.cdp.file_system import (
 	AbstractFileSystemCDPExecutor
@@ -17,5 +16,5 @@ class FileSystemCDPExecutor(AbstractFileSystemCDPExecutor):
 	):
 		self._execute_function = execute_function
 	
-	async def get_directory(self, bucket_file_system_locator: List[str]) -> List[Any]:
+	async def get_directory(self, bucket_file_system_locator: Any) -> Any:
 		return await self._execute_function("FileSystem.getDirectory", locals())

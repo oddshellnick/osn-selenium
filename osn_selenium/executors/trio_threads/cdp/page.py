@@ -89,40 +89,40 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 	async def generate_test_report(self, message: str, group: Optional[str] = None) -> None:
 		return await self._execute_function("Page.generateTestReport", locals())
 	
-	async def get_ad_script_ancestry(self, frame_id: str) -> Optional[List[Any]]:
+	async def get_ad_script_ancestry(self, frame_id: str) -> Optional[Any]:
 		return await self._execute_function("Page.getAdScriptAncestry", locals())
 	
-	async def get_app_id(self) -> Tuple[Optional[str]]:
+	async def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
 		return await self._execute_function("Page.getAppId", locals())
 	
-	async def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str]:
+	async def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Any], Optional[str], Optional[Any], Any]:
 		return await self._execute_function("Page.getAppManifest", locals())
 	
 	async def get_frame_tree(self) -> Any:
 		return await self._execute_function("Page.getFrameTree", locals())
 	
-	async def get_installability_errors(self) -> List[List[Any]]:
+	async def get_installability_errors(self) -> List[Any]:
 		return await self._execute_function("Page.getInstallabilityErrors", locals())
 	
-	async def get_layout_metrics(self) -> Tuple[Any]:
+	async def get_layout_metrics(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
 		return await self._execute_function("Page.getLayoutMetrics", locals())
 	
 	async def get_manifest_icons(self) -> Optional[str]:
 		return await self._execute_function("Page.getManifestIcons", locals())
 	
-	async def get_navigation_history(self) -> Tuple[int]:
+	async def get_navigation_history(self) -> Tuple[int, List[Any]]:
 		return await self._execute_function("Page.getNavigationHistory", locals())
 	
-	async def get_origin_trials(self, frame_id: str) -> List[List[Any]]:
+	async def get_origin_trials(self, frame_id: str) -> List[Any]:
 		return await self._execute_function("Page.getOriginTrials", locals())
 	
 	async def get_permissions_policy_state(self, frame_id: str) -> List[Any]:
 		return await self._execute_function("Page.getPermissionsPolicyState", locals())
 	
-	async def get_resource_content(self, frame_id: str, url: str) -> Tuple[str]:
+	async def get_resource_content(self, frame_id: str, url: str) -> Tuple[str, bool]:
 		return await self._execute_function("Page.getResourceContent", locals())
 	
-	async def get_resource_tree(self) -> List[Any]:
+	async def get_resource_tree(self) -> Any:
 		return await self._execute_function("Page.getResourceTree", locals())
 	
 	async def handle_java_script_dialog(self, accept: bool, prompt_text: Optional[str] = None) -> None:
@@ -135,7 +135,7 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			transition_type: Optional[str] = None,
 			frame_id: Optional[str] = None,
 			referrer_policy: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str], Optional[str], Optional[bool]]:
 		return await self._execute_function("Page.navigate", locals())
 	
 	async def navigate_to_history_entry(self, entry_id: int) -> None:
@@ -160,7 +160,7 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			transfer_mode: Optional[str] = None,
 			generate_tagged_pdf: Optional[bool] = None,
 			generate_document_outline: Optional[bool] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str]]:
 		return await self._execute_function("Page.printToPDF", locals())
 	
 	async def produce_compilation_cache(self, scripts: List[Any]) -> None:

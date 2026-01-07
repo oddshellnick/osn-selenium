@@ -13,7 +13,7 @@ class AbstractIoCDPExecutor(ABC):
 			handle: str,
 			offset: Optional[int] = None,
 			size: Optional[int] = None
-	) -> Tuple[Optional[bool]]:
+	) -> Tuple[Optional[bool], str, bool]:
 		...
 	
 	@abstractmethod

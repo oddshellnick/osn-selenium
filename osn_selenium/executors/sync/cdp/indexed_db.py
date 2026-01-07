@@ -58,7 +58,7 @@ class IndexedDbCDPExecutor(AbstractIndexedDbCDPExecutor):
 			storage_bucket: Optional[Any] = None,
 			database_name: str = None,
 			object_store_name: str = None
-	) -> Tuple[float]:
+	) -> Tuple[float, float]:
 		return self._execute_function("IndexedDB.getMetadata", locals())
 	
 	def request_data(
@@ -72,7 +72,7 @@ class IndexedDbCDPExecutor(AbstractIndexedDbCDPExecutor):
 			skip_count: int = None,
 			page_size: int = None,
 			key_range: Optional[Any] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], bool]:
 		return self._execute_function("IndexedDB.requestData", locals())
 	
 	def request_database(
@@ -81,7 +81,7 @@ class IndexedDbCDPExecutor(AbstractIndexedDbCDPExecutor):
 			storage_key: Optional[str] = None,
 			storage_bucket: Optional[Any] = None,
 			database_name: str = None
-	) -> List[List[Any]]:
+	) -> Any:
 		return self._execute_function("IndexedDB.requestDatabase", locals())
 	
 	def request_database_names(

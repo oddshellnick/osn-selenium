@@ -26,7 +26,7 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_dom_rects: Optional[bool] = None,
 			include_blended_background_colors: Optional[bool] = None,
 			include_text_color_opacities: Optional[bool] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], List[str]]:
 		return await self._execute_function("DOMSnapshot.captureSnapshot", locals())
 	
 	async def disable(self) -> None:
@@ -41,5 +41,5 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_event_listeners: Optional[bool] = None,
 			include_paint_order: Optional[bool] = None,
 			include_user_agent_shadow_tree: Optional[bool] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], List[Any], List[Any]]:
 		return await self._execute_function("DOMSnapshot.getSnapshot", locals())

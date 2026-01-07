@@ -18,7 +18,7 @@ class AbstractPwaCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_os_app_state(self, manifest_id: str) -> Tuple[int]:
+	def get_os_app_state(self, manifest_id: str) -> Tuple[int, List[Any]]:
 		...
 	
 	@abstractmethod

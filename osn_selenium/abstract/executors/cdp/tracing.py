@@ -25,7 +25,7 @@ class AbstractTracingCDPExecutor(ABC):
 			self,
 			deterministic: Optional[bool] = None,
 			level_of_detail: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, bool]:
 		...
 	
 	@abstractmethod

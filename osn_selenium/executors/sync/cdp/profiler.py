@@ -21,7 +21,7 @@ class ProfilerCDPExecutor(AbstractProfilerCDPExecutor):
 	def enable(self) -> None:
 		return self._execute_function("Profiler.enable", locals())
 	
-	def get_best_effort_coverage(self) -> List[List[List[Any]]]:
+	def get_best_effort_coverage(self) -> List[Any]:
 		return self._execute_function("Profiler.getBestEffortCoverage", locals())
 	
 	def set_sampling_interval(self, interval: int) -> None:
@@ -38,11 +38,11 @@ class ProfilerCDPExecutor(AbstractProfilerCDPExecutor):
 	) -> float:
 		return self._execute_function("Profiler.startPreciseCoverage", locals())
 	
-	def stop(self) -> List[Any]:
+	def stop(self) -> Any:
 		return self._execute_function("Profiler.stop", locals())
 	
 	def stop_precise_coverage(self) -> None:
 		return self._execute_function("Profiler.stopPreciseCoverage", locals())
 	
-	def take_precise_coverage(self) -> Tuple[List[List[List[Any]]]]:
+	def take_precise_coverage(self) -> Tuple[List[Any], float]:
 		return self._execute_function("Profiler.takePreciseCoverage", locals())

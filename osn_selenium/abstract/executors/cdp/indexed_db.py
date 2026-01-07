@@ -57,7 +57,7 @@ class AbstractIndexedDbCDPExecutor(ABC):
 			storage_bucket: Optional[Any] = None,
 			database_name: str = None,
 			object_store_name: str = None
-	) -> Tuple[float]:
+	) -> Tuple[float, float]:
 		...
 	
 	@abstractmethod
@@ -72,7 +72,7 @@ class AbstractIndexedDbCDPExecutor(ABC):
 			skip_count: int = None,
 			page_size: int = None,
 			key_range: Optional[Any] = None
-	) -> Tuple[List[Any]]:
+	) -> Tuple[List[Any], bool]:
 		...
 	
 	@abstractmethod
@@ -82,7 +82,7 @@ class AbstractIndexedDbCDPExecutor(ABC):
 			storage_key: Optional[str] = None,
 			storage_bucket: Optional[Any] = None,
 			database_name: str = None
-	) -> List[List[Any]]:
+	) -> Any:
 		...
 	
 	@abstractmethod

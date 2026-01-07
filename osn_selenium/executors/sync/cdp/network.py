@@ -103,10 +103,10 @@ class NetworkCDPExecutor(AbstractNetworkCDPExecutor):
 	def get_request_post_data(self, request_id: str) -> str:
 		return self._execute_function("Network.getRequestPostData", locals())
 	
-	def get_response_body(self, request_id: str) -> Tuple[str]:
+	def get_response_body(self, request_id: str) -> Tuple[str, bool]:
 		return self._execute_function("Network.getResponseBody", locals())
 	
-	def get_response_body_for_interception(self, interception_id: str) -> Tuple[str]:
+	def get_response_body_for_interception(self, interception_id: str) -> Tuple[str, bool]:
 		return self._execute_function("Network.getResponseBodyForInterception", locals())
 	
 	def get_security_isolation_status(self, frame_id: Optional[str] = None) -> Any:

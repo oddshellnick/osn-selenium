@@ -85,40 +85,40 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 	def generate_test_report(self, message: str, group: Optional[str] = None) -> None:
 		return self._execute_function("Page.generateTestReport", locals())
 	
-	def get_ad_script_ancestry(self, frame_id: str) -> Optional[List[Any]]:
+	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Any]:
 		return self._execute_function("Page.getAdScriptAncestry", locals())
 	
-	def get_app_id(self) -> Tuple[Optional[str]]:
+	def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
 		return self._execute_function("Page.getAppId", locals())
 	
-	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str]:
+	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Any], Optional[str], Optional[Any], Any]:
 		return self._execute_function("Page.getAppManifest", locals())
 	
 	def get_frame_tree(self) -> Any:
 		return self._execute_function("Page.getFrameTree", locals())
 	
-	def get_installability_errors(self) -> List[List[Any]]:
+	def get_installability_errors(self) -> List[Any]:
 		return self._execute_function("Page.getInstallabilityErrors", locals())
 	
-	def get_layout_metrics(self) -> Tuple[Any]:
+	def get_layout_metrics(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
 		return self._execute_function("Page.getLayoutMetrics", locals())
 	
 	def get_manifest_icons(self) -> Optional[str]:
 		return self._execute_function("Page.getManifestIcons", locals())
 	
-	def get_navigation_history(self) -> Tuple[int]:
+	def get_navigation_history(self) -> Tuple[int, List[Any]]:
 		return self._execute_function("Page.getNavigationHistory", locals())
 	
-	def get_origin_trials(self, frame_id: str) -> List[List[Any]]:
+	def get_origin_trials(self, frame_id: str) -> List[Any]:
 		return self._execute_function("Page.getOriginTrials", locals())
 	
 	def get_permissions_policy_state(self, frame_id: str) -> List[Any]:
 		return self._execute_function("Page.getPermissionsPolicyState", locals())
 	
-	def get_resource_content(self, frame_id: str, url: str) -> Tuple[str]:
+	def get_resource_content(self, frame_id: str, url: str) -> Tuple[str, bool]:
 		return self._execute_function("Page.getResourceContent", locals())
 	
-	def get_resource_tree(self) -> List[Any]:
+	def get_resource_tree(self) -> Any:
 		return self._execute_function("Page.getResourceTree", locals())
 	
 	def handle_java_script_dialog(self, accept: bool, prompt_text: Optional[str] = None) -> None:
@@ -131,7 +131,7 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			transition_type: Optional[str] = None,
 			frame_id: Optional[str] = None,
 			referrer_policy: Optional[str] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str], Optional[str], Optional[bool]]:
 		return self._execute_function("Page.navigate", locals())
 	
 	def navigate_to_history_entry(self, entry_id: int) -> None:
@@ -156,7 +156,7 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			transfer_mode: Optional[str] = None,
 			generate_tagged_pdf: Optional[bool] = None,
 			generate_document_outline: Optional[bool] = None
-	) -> Tuple[str]:
+	) -> Tuple[str, Optional[str]]:
 		return self._execute_function("Page.printToPDF", locals())
 	
 	def produce_compilation_cache(self, scripts: List[Any]) -> None:

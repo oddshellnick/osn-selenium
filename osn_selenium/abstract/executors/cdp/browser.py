@@ -47,15 +47,15 @@ class AbstractBrowserCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_histogram(self, name: str, delta: Optional[bool] = None) -> List[Any]:
+	def get_histogram(self, name: str, delta: Optional[bool] = None) -> Any:
 		...
 	
 	@abstractmethod
-	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[List[Any]]:
+	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[Any]:
 		...
 	
 	@abstractmethod
-	def get_version(self) -> Tuple[str]:
+	def get_version(self) -> Tuple[str, str, str, str, str]:
 		...
 	
 	@abstractmethod
@@ -63,7 +63,7 @@ class AbstractBrowserCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int]:
+	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int, Any]:
 		...
 	
 	@abstractmethod

@@ -27,7 +27,7 @@ class PwaCDPExecutor(AbstractPwaCDPExecutor):
 	) -> None:
 		return await self._execute_function("PWA.changeAppUserSettings", locals())
 	
-	async def get_os_app_state(self, manifest_id: str) -> Tuple[int]:
+	async def get_os_app_state(self, manifest_id: str) -> Tuple[int, List[Any]]:
 		return await self._execute_function("PWA.getOsAppState", locals())
 	
 	async def install(self, manifest_id: str, install_url_or_bundle_url: Optional[str] = None) -> None:
