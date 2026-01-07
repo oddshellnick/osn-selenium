@@ -6,7 +6,6 @@ from osn_selenium.executors.sync.cdp import CDPExecutor
 from osn_selenium.webdrivers.sync.base.auth import AuthMixin
 from osn_selenium.webdrivers.sync.base.file import FileMixin
 from osn_selenium.executors.sync.javascript import JSExecutor
-from osn_selenium.webdrivers.sync.base.script import ScriptMixin
 from osn_selenium.webdrivers.sync.base.window import WindowMixin
 from osn_selenium.abstract.webdriver.base import AbstractWebDriver
 from osn_selenium.webdrivers.sync.base.actions import ActionsMixin

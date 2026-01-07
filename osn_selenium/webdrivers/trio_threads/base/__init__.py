@@ -10,7 +10,6 @@ from osn_selenium.abstract.webdriver.base import AbstractWebDriver
 from osn_selenium.webdrivers.trio_threads.base.auth import AuthMixin
 from osn_selenium.webdrivers.trio_threads.base.file import FileMixin
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
-from osn_selenium.webdrivers.trio_threads.base.script import ScriptMixin
 from osn_selenium.webdrivers.trio_threads.base.window import WindowMixin
 from osn_selenium.webdrivers.trio_threads.base.actions import ActionsMixin
 from osn_selenium.webdrivers.trio_threads.base.capture import CaptureMixin
@@ -58,7 +57,7 @@ class WebDriver(
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
 		)
-		
+
 		self._dev_tools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
 		
 		self._js_executor = JSExecutor(execute_function=self.execute_script)
