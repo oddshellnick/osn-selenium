@@ -1,14 +1,16 @@
-from typing import Any, List
 from abc import ABC, abstractmethod
+from typing import Any, List, Sequence
 
 
 class AbstractFileMixin(ABC):
-	"""Mixin responsible for file handling and detection."""
+	"""
+	Mixin responsible for browser-level file handling and detection.
+	"""
 	
 	@abstractmethod
 	def delete_downloadable_files(self) -> None:
 		"""
-		Deletes all files currently available for download.
+		Deletes all files currently available for download in the browser session.
 		"""
 		
 		...
@@ -16,19 +18,20 @@ class AbstractFileMixin(ABC):
 	@abstractmethod
 	def download_file(self, file_name: str, target_directory: str) -> None:
 		"""
-		Downloads a specified file to a target directory.
+		Downloads a specified file from the browser to a local target directory.
 
 		Args:
 			file_name (str): The name of the file to download.
-			target_directory (str): The directory to save the file in.
+			target_directory (str): The absolute path to the local directory.
 		"""
 		
 		...
 	
+	@property
 	@abstractmethod
 	def file_detector(self) -> Any:
 		"""
-		Gets the file detector for the current session.
+		Gets the file detector used for uploading files to the remote server.
 
 		Returns:
 			Any: The file detector instance.
@@ -36,24 +39,41 @@ class AbstractFileMixin(ABC):
 		
 		...
 	
+	@file_detector.setter
 	@abstractmethod
-	def get_downloadable_files(self) -> List[str]:
+	def file_detector(self, value: Any) -> None:
 		"""
-		Gets a list of files available for download from the browser.
+		Sets the file detector for the current session.
 
-		Returns:
-			List[str]: A list of downloadable file names.
+		Args:
+			value (Any): The new file detector instance.
 		"""
 		
 		...
 	
 	@abstractmethod
-	def set_file_detector(self, detector: Any) -> None:
+	def file_detector_context(self, file_detector_class: Any, *args: Any, **kwargs: Any) -> Any:
 		"""
-		Sets the file detector for the driver.
+		Context manager to temporarily use a specific file detector.
 
 		Args:
-			detector (Any): The file detector to use.
+			file_detector_class (Any): The class of the file detector to use.
+			*args (Any): Variable positional arguments for the detector.
+			**kwargs (Any): Variable keyword arguments for the detector.
+
+		Returns:
+			Any: The context manager instance.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def get_downloadable_files(self) -> Sequence[str]:
+		"""
+		Gets a list of files available for download from the browser.
+
+		Returns:
+			Sequence[str]: A sequence of downloadable file names.
 		"""
 		
 		...

@@ -6,8 +6,10 @@ from osn_selenium.trio_base_mixin import _TrioThreadMixin
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.webdrivers.decorators import requires_driver
+from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.abstract.webdriver.base.base import AbstractBaseMixin
+from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from typing import (
 	Any,
@@ -117,14 +119,76 @@ class BaseMixin(_TrioThreadMixin, AbstractBaseMixin):
 		
 		return result
 	
+	@property
 	@requires_driver
-	async def command_executor(self) -> RemoteConnection:
-		return await self._wrap_to_trio(lambda: self.driver.command_executor)
+	def capabilities(self) -> Dict[str, Any]:
+		return self.driver.capabilities
+	
+	@property
+	@requires_driver
+	def caps(self) -> Dict[str, Any]:
+		return self.driver.caps
+	
+	@caps.setter
+	@requires_driver
+	def caps(self, value: Dict[str, Any]) -> None:
+		self.driver.caps = value
+	
+	@property
+	@requires_driver
+	def command_executor(self) -> RemoteConnection:
+		return self.driver.command_executor
+
+	@command_executor.setter
+	@requires_driver
+	def command_executor(self, value: RemoteConnection) -> None:
+		self.driver.command_executor = value
+	
+	@property
+	@requires_driver
+	def error_handler(self) -> ErrorHandler:
+		return self.driver.error_handler
+	
+	@error_handler.setter
+	@requires_driver
+	def error_handler(self, value: ErrorHandler) -> None:
+		self.driver.error_handler = value
 	
 	@property
 	def is_active(self) -> bool:
 		return self._is_active
 	
+	@property
 	@requires_driver
-	async def name(self) -> str:
-		return await self._wrap_to_trio(lambda: self.driver.name)
+	def locator_converter(self) -> LocatorConverter:
+		return self.driver.locator_converter
+	
+	@locator_converter.setter
+	@requires_driver
+	def locator_converter(self, value: LocatorConverter) -> None:
+		self.driver.locator_converter = value
+	
+	@property
+	@requires_driver
+	def name(self) -> str:
+		return self.driver.name
+	
+	@property
+	@requires_driver
+	def pinned_scripts(self) -> Dict[str, Any]:
+		return self.driver.pinned_scripts
+	
+	@pinned_scripts.setter
+	@requires_driver
+	def pinned_scripts(self, value: Dict[str, Any]) -> None:
+		self.driver.pinned_scripts = value
+	
+	@property
+	@requires_driver
+	def session_id(self) -> Optional[str]:
+		return self.driver.session_id
+	
+	@session_id.setter
+	@requires_driver
+	def session_id(self, value: Optional[str]) -> None:
+		self.driver.session_id = value

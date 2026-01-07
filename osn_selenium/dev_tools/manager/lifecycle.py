@@ -1,15 +1,11 @@
 import trio
 from types import TracebackType
-from typing import Any, Optional, Type
-from contextlib import (
-	AbstractAsyncContextManager
-)
+from typing import Optional, Type
 from osn_selenium.dev_tools.utils import DevToolsPackage
 from osn_selenium.dev_tools.decorators import log_on_error
 from osn_selenium.dev_tools.manager.targets import TargetsMixin
 from osn_selenium.dev_tools.logger.main import build_main_logger
 from osn_selenium.dev_tools.exception_utils import log_exception
-from selenium.webdriver.remote.bidi_connection import BidiConnection
 from osn_selenium.dev_tools.errors import (
 	BidiConnectionNotEstablishedError,
 	CantEnterDevToolsContextError,
@@ -90,7 +86,7 @@ class LifecycleMixin(TargetsMixin):
 		if self._webdriver.driver is None:
 			raise CantEnterDevToolsContextError("Driver is not initialized")
 		
-		self._bidi_connection: AbstractAsyncContextManager[BidiConnection, Any] = self._webdriver.driver.bidi_connection()
+		self._bidi_connection = self._webdriver.bidi_connection()
 		self._bidi_connection_object = await self._bidi_connection.__aenter__()
 		
 		self._nursery = trio.open_nursery()

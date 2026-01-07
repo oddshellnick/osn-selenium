@@ -1,6 +1,4 @@
-from contextlib import (
-	AbstractAsyncContextManager
-)
+from contextlib import asynccontextmanager
 from typing import (
 	Any,
 	AsyncGenerator,
@@ -19,13 +17,11 @@ from osn_selenium.abstract.webdriver.base.devtools import (
 
 
 class DevToolsMixin(BaseMixin, AbstractDevToolsMixin):
+	@asynccontextmanager
 	@requires_driver
-	async def bidi_connection(self) -> AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]:
-		return await self._wrap_to_trio(lambda: self.driver.bidi_connection())
-	
-	@requires_driver
-	async def capabilities(self) -> Dict[str, Any]:
-		return await self._wrap_to_trio(lambda: self.driver.capabilities)
+	async def bidi_connection(self) -> AsyncGenerator[BidiConnection, Any]:
+		async with self.driver.bidi_connection() as bidi_connection:
+			yield bidi_connection
 	
 	@requires_driver
 	async def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:

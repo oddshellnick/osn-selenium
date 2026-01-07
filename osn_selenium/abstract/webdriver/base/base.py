@@ -2,7 +2,9 @@ from selenium import webdriver
 from abc import ABC, abstractmethod
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from selenium.webdriver.remote.errorhandler import ErrorHandler
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from selenium.webdriver.remote.locator_converter import LocatorConverter
 from typing import (
 	Any,
 	Dict,
@@ -18,6 +20,10 @@ from selenium.webdriver.remote.webdriver import (
 
 
 class AbstractBaseMixin(ABC):
+	"""
+	Abstract base mixin providing core WebDriver functionality and session management.
+	"""
+	
 	@abstractmethod
 	def _ensure_driver(self) -> Optional[legacyWebDriver]:
 		"""
@@ -35,7 +41,7 @@ class AbstractBaseMixin(ABC):
 	@abstractmethod
 	def _session(self) -> Session:
 		"""
-		Internal method to access the current session object.
+		Internal method to access the current BiDi session object.
 
 		Returns:
 			Session: The session object.
@@ -43,9 +49,21 @@ class AbstractBaseMixin(ABC):
 		
 		...
 	
+	@abstractmethod
 	def _unwrap_args(self, arg: Any) -> Any:
+		"""
+		Internal method to convert local elements back into raw Selenium elements.
+
+		Args:
+			arg (Any): The argument to unwrap.
+
+		Returns:
+			Any: The raw Selenium element or object.
+		"""
+		
 		...
 	
+	@abstractmethod
 	def _wrap_result(self, result: Any) -> Union[
 		WEB_ELEMENT_TYPEHINT,
 		List[WEB_ELEMENT_TYPEHINT],
@@ -54,8 +72,55 @@ class AbstractBaseMixin(ABC):
 		Tuple[WEB_ELEMENT_TYPEHINT, ...],
 		Any,
 	]:
+		"""
+		Internal method to wrap raw Selenium results into local element types.
+
+		Args:
+			result (Any): The raw result from the driver.
+
+		Returns:
+			Union: The wrapped element, sequence of elements, or the original object.
+		"""
+		
 		...
 	
+	@property
+	@abstractmethod
+	def capabilities(self) -> Dict[str, Any]:
+		"""
+		Returns the capabilities of the current session as reported by the driver.
+
+		Returns:
+			Dict[str, Any]: A dictionary of session capabilities.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def caps(self) -> Dict[str, Any]:
+		"""
+		The direct representation of session capabilities.
+
+		Returns:
+			Dict[str, Any]: Current session capabilities.
+		"""
+		
+		...
+	
+	@caps.setter
+	@abstractmethod
+	def caps(self, value: Dict[str, Any]) -> None:
+		"""
+		Sets the session capabilities.
+
+		Args:
+			value (Dict[str, Any]): Dictionary of capabilities.
+		"""
+		
+		...
+	
+	@property
 	@abstractmethod
 	def command_executor(self) -> RemoteConnection:
 		"""
@@ -66,7 +131,20 @@ class AbstractBaseMixin(ABC):
 		"""
 		
 		...
+
+	@command_executor.setter
+	@abstractmethod
+	def command_executor(self, value: RemoteConnection) -> None:
+		"""
+		Sets the remote connection manager used for executing commands.
+
+		Args:
+			value (RemoteConnection): The remote connection instance.
+		"""
+
+		...
 	
+	@property
 	@abstractmethod
 	def driver(self) -> Optional[Union[webdriver.Chrome, webdriver.Edge, webdriver.Firefox]]:
 		"""
@@ -78,6 +156,31 @@ class AbstractBaseMixin(ABC):
 		
 		...
 	
+	@property
+	@abstractmethod
+	def error_handler(self) -> ErrorHandler:
+		"""
+		The error handler associated with the current session.
+
+		Returns:
+			ErrorHandler: The error handler instance.
+		"""
+		
+		...
+	
+	@error_handler.setter
+	@abstractmethod
+	def error_handler(self, value: ErrorHandler) -> None:
+		"""
+		Sets the error handler for the session.
+
+		Args:
+			value (ErrorHandler): The new error handler instance.
+		"""
+		
+		...
+	
+	@property
 	@abstractmethod
 	def is_active(self) -> bool:
 		"""
@@ -89,6 +192,31 @@ class AbstractBaseMixin(ABC):
 		
 		...
 	
+	@property
+	@abstractmethod
+	def locator_converter(self) -> LocatorConverter:
+		"""
+		The converter used for translating locators into WebDriver protocols.
+
+		Returns:
+			LocatorConverter: The locator converter instance.
+		"""
+		
+		...
+	
+	@locator_converter.setter
+	@abstractmethod
+	def locator_converter(self, value: LocatorConverter) -> None:
+		"""
+		Sets the locator converter instance.
+
+		Args:
+			value (LocatorConverter): The new locator converter.
+		"""
+		
+		...
+	
+	@property
 	@abstractmethod
 	def name(self) -> str:
 		"""
@@ -96,6 +224,54 @@ class AbstractBaseMixin(ABC):
 
 		Returns:
 			str: The name of the browser.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def pinned_scripts(self) -> Dict[str, Any]:
+		"""
+		A dictionary of scripts pinned to the current session.
+
+		Returns:
+			Dict[str, Any]: Pinned scripts and their handles.
+		"""
+		
+		...
+	
+	@pinned_scripts.setter
+	@abstractmethod
+	def pinned_scripts(self, value: Dict[str, Any]) -> None:
+		"""
+		Sets the pinned scripts for the session.
+
+		Args:
+			value (Dict[str, Any]): Dictionary of scripts to pin.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def session_id(self) -> Optional[str]:
+		"""
+		The unique session ID assigned by the browser driver.
+
+		Returns:
+			Optional[str]: The session identifier.
+		"""
+		
+		...
+	
+	@session_id.setter
+	@abstractmethod
+	def session_id(self, value: Optional[str]) -> None:
+		"""
+		Sets the unique session ID.
+
+		Args:
+			value (Optional[str]): The new session identifier.
 		"""
 		
 		...

@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-from contextlib import (
-	AbstractAsyncContextManager
-)
+from contextlib import asynccontextmanager
 from typing import (
 	Any,
 	AsyncGenerator,
@@ -14,26 +12,18 @@ from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 
 
 class AbstractDevToolsMixin(ABC):
-	"""Mixin responsible for CDP, DevTools, and Network interactions."""
+	"""
+	Mixin responsible for CDP (Chrome DevTools Protocol), BiDi, and Network interactions.
+	"""
 	
+	@asynccontextmanager
 	@abstractmethod
-	def bidi_connection(self) -> AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]:
+	async def bidi_connection(self) -> AsyncGenerator[BidiConnection, Any]:
 		"""
-		Returns an context manager for a BiDi (WebDriver Bi-Directional) connection.
+		Returns a context manager for a BiDi (WebDriver Bi-Directional) connection.
 
 		Returns:
-			AbstractAsyncContextManager[AsyncGenerator[BidiConnection, Any]]: The BiDi connection context manager.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def capabilities(self) -> Dict[str, Any]:
-		"""
-		Returns the capabilities of the current session.
-
-		Returns:
-			Dict[str, Any]: A dictionary of session capabilities.
+			AsyncGenerator[BidiConnection, Any]: The BiDi connection context manager.
 		"""
 		
 		...

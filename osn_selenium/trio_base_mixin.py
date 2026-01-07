@@ -1,7 +1,12 @@
+import sys
 import trio
 import functools
+from contextlib import asynccontextmanager
 from typing import (
+	AsyncGenerator,
 	Callable,
+	ContextManager,
+	Generator,
 	ParamSpec,
 	TypeVar
 )
@@ -15,6 +20,11 @@ class _TrioThreadMixin:
 	"""
 	Provides utilities for running synchronous functions in a Trio event loop
 	with a controlled concurrency, ensuring thread safety and resource limits.
+
+	Attributes:
+		_lock (trio.Lock): A Trio Lock to ensure exclusive access for certain operations.
+		_capacity_limiter (trio.CapacityLimiter): A Trio CapacityLimiter to control the number
+			of concurrent synchronous operations.
 	"""
 	
 	def __init__(self, lock: trio.Lock, limiter: trio.CapacityLimiter) -> None:
@@ -22,13 +32,12 @@ class _TrioThreadMixin:
 		Initializes the _TrioThreadMixin with a Trio Lock and CapacityLimiter.
 
 		Args:
-			lock (trio.Lock): A Trio Lock to ensure exclusive access for certain operations.
-			limiter (trio.CapacityLimiter): A Trio CapacityLimiter to control the number
-											of concurrent synchronous operations.
+			lock (trio.Lock): A Trio Lock for synchronization.
+			limiter (trio.CapacityLimiter): A limiter to control thread pool concurrency.
 		"""
 		
-		self._lock: trio.Lock = lock
-		self._capacity_limiter: trio.CapacityLimiter = limiter
+		self._lock = lock
+		self._capacity_limiter = limiter
 	
 	async def _wrap_to_trio(
 			self,
@@ -57,3 +66,35 @@ class _TrioThreadMixin:
 		
 		async with self._lock:
 			return await trio.to_thread.run_sync(fn, *args, limiter=self._capacity_limiter)
+	
+	@asynccontextmanager
+	async def _wrap_to_trio_context(
+			self,
+			cm_factory: Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]],
+			*args: METHOD_INPUT.args,
+			**kwargs: METHOD_INPUT.kwargs,
+	) -> AsyncGenerator[METHOD_OUTPUT, None]:
+		"""
+		Wraps a synchronous context manager to be used asynchronously with Trio.
+
+		Args:
+			cm_factory (Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]]):
+				A factory function that returns a synchronous context manager.
+			*args (METHOD_INPUT.args): Positional arguments for the context manager factory.
+			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the context manager factory.
+
+		Returns:
+			AsyncGenerator[METHOD_OUTPUT, None]: An asynchronous generator yielding the context manager's value.
+		"""
+		
+		sync_cm = await self._wrap_to_trio(cm_factory, *args, **kwargs)
+		
+		try:
+			yield await self._wrap_to_trio(sync_cm.__enter__)
+		except Exception as e:
+			exc_type, exc_val, exc_tb = sys.exc_info()
+			await self._wrap_to_trio(sync_cm.__exit__, exc_type, exc_val, exc_tb)
+		
+			raise e
+		else:
+			await self._wrap_to_trio(sync_cm.__exit__, None, None, None)
