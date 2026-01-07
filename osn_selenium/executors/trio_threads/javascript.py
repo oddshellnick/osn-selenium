@@ -1,4 +1,3 @@
-from osn_selenium.types import Point
 from osn_selenium._functions import read_js_scripts
 from selenium.webdriver.remote.webelement import WebElement
 from typing import (
@@ -11,6 +10,7 @@ from typing import (
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from osn_selenium.types import (
 	JS_Scripts,
+	Point,
 	Position,
 	Rectangle,
 	Size

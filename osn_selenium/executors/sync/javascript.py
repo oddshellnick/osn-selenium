@@ -1,4 +1,3 @@
-from osn_selenium.types import Point
 from osn_selenium._functions import read_js_scripts
 from typing import (
 	Any,
@@ -10,6 +9,7 @@ from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from osn_selenium.types import (
 	JS_Scripts,
+	Point,
 	Position,
 	Rectangle,
 	Size

@@ -131,7 +131,7 @@ class AbstractBaseMixin(ABC):
 		"""
 		
 		...
-
+	
 	@command_executor.setter
 	@abstractmethod
 	def command_executor(self, value: RemoteConnection) -> None:
@@ -141,7 +141,7 @@ class AbstractBaseMixin(ABC):
 		Args:
 			value (RemoteConnection): The remote connection instance.
 		"""
-
+		
 		...
 	
 	@property
