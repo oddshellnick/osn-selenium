@@ -24,7 +24,7 @@ class DevToolsMixin(BaseMixin, AbstractDevToolsMixin):
 			yield bidi_connection
 	
 	@requires_driver
-	def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
+	def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Dict[str, Any]:
 		return self.driver.execute_cdp_cmd(cmd=cmd, cmd_args=build_cdp_kwargs(**cmd_args))
 	
 	@requires_driver
