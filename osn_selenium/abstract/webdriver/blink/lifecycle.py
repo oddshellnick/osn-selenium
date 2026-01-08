@@ -4,12 +4,12 @@ from typing import Optional, Union
 
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.types import WindowRect
-from osn_selenium.abstract.webdriver.base.lifecycle import (
-    AbstractLifecycleMixin
+from osn_selenium.abstract.webdriver.core.lifecycle import (
+	AbstractCoreLifecycleMixin
 )
 
 
-class AbstractBlinkLifecycleMixin(AbstractLifecycleMixin):
+class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
     """
     Abstract mixin defining the lifecycle management interface for Blink-based WebDrivers.
 

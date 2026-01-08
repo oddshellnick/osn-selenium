@@ -12,7 +12,6 @@ from typing import (
 	Callable,
 	Optional,
 	Self,
-	TYPE_CHECKING,
 	Tuple,
 	Union
 )
@@ -25,10 +24,6 @@ from osn_selenium.abstract.instances.action_chains import (
 	AbstractActionChains,
 	AbstractHumanLikeActionChains
 )
-
-
-if TYPE_CHECKING:
-	from osn_selenium.webdrivers.sync.base import WebDriver
 
 
 class ActionChains(AbstractActionChains):

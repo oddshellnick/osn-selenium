@@ -4,10 +4,10 @@ from typing import Optional, Union
 
 from selenium import webdriver
 
-from osn_selenium.abstract.webdriver.base.base import AbstractBaseMixin
+from osn_selenium.abstract.webdriver.core.base import AbstractCoreBaseMixin
 
 
-class AbstractBlinkBaseMixin(AbstractBaseMixin):
+class AbstractBlinkBaseMixin(AbstractCoreBaseMixin):
     """
     Abstract mixin defining the base interface for Blink-based WebDrivers (Chrome, Edge).
 

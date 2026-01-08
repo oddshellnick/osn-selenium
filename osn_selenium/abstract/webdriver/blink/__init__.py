@@ -1,8 +1,8 @@
 from abc import abstractmethod
 
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
-from osn_selenium.abstract.webdriver.base import (
-    AbstractWebDriver as AbstractBaseWebDriver
+from osn_selenium.abstract.webdriver.core import (
+	AbstractCoreWebDriver as AbstractBaseWebDriver
 )
 
 

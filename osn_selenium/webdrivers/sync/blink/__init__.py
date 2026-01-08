@@ -8,7 +8,6 @@ from typing import (
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.executors.sync.cdp import CDPExecutor
-from osn_selenium.webdrivers.sync.base import WebDriver
 from osn_selenium.webdrivers.sync.blink.casting import BlinkCastingMixin
 from osn_selenium.webdrivers.sync.blink.logging import BlinkLoggingMixin
 from osn_selenium.webdrivers.sync.blink.network import BlinkNetworkMixin
@@ -25,7 +24,6 @@ class BlinkWebDriver(
 		BlinkLifecycleMixin,
 		BlinkLoggingMixin,
 		BlinkNetworkMixin,
-		WebDriver,
 		AbstractBlinkWebDriver
 ):
 	def __init__(

@@ -5,7 +5,7 @@ from subprocess import Popen
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_selenium.webdrivers.sync.base import LifecycleMixin
+from osn_selenium.webdrivers.sync.core import CoreLifecycleMixin
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
 from osn_windows_cmd.taskkill import (
 	ProcessID,
@@ -21,7 +21,7 @@ from osn_windows_cmd.netstat import (
 )
 
 
-class BlinkLifecycleMixin(BlinkSettingsMixin, LifecycleMixin, AbstractBlinkLifecycleMixin):
+class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkLifecycleMixin):
 	def _create_driver(self):
 		raise NotImplementedError("This function must be implemented in child classes.")
 	

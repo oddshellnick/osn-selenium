@@ -23,7 +23,7 @@ from osn_selenium.dev_tools.logger.main import (
 
 
 if TYPE_CHECKING:
-	from osn_selenium.webdrivers.trio_threads.base import WebDriver
+	from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
 
 
 class BaseMixin:
@@ -36,7 +36,7 @@ class BaseMixin:
 	by using an asynchronous context manager.
 
 	Attributes:
-		_webdriver (WebDriver): The parent WebDriver instance associated with this DevTools instance.
+		_webdriver (CoreWebDriver): The parent WebDriver instance associated with this DevTools instance.
 		_new_targets_filter (Optional[List[Dict[str, Any]]]): Processed filters for new targets.
 		_new_targets_buffer_size (int): Buffer size for new target events.
 		_target_background_task (Optional[devtools_background_func_type]): Optional background task for targets.
@@ -60,14 +60,14 @@ class BaseMixin:
 	
 	def __init__(
 			self,
-			parent_webdriver: "WebDriver",
+			parent_webdriver: "CoreWebDriver",
 			devtools_settings: Optional[DevToolsSettings] = None
 	):
 		"""
 		Initializes the DevTools manager.
 
 		Args:
-			parent_webdriver (WebDriver): The WebDriver instance to which this DevTools manager is attached.
+			parent_webdriver (CoreWebDriver): The WebDriver instance to which this DevTools manager is attached.
 			devtools_settings (Optional[DevToolsSettings]): Configuration settings for DevTools.
 				If None, default settings will be used.
 		"""

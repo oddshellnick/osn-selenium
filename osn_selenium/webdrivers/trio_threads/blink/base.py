@@ -12,7 +12,6 @@ from typing import (
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
 from osn_selenium.browsers_handler import get_path_to_browser
-from osn_selenium.webdrivers.trio_threads.base.base import BaseMixin
 from osn_windows_cmd.netstat import (
 	get_localhost_minimum_free_port
 )
@@ -27,9 +26,10 @@ from osn_selenium.flags.models.blink import (
 	BlinkExperimentalOptions,
 	BlinkFlags
 )
+from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
 
 
-class BlinkBaseMixin(BaseMixin, AbstractBlinkBaseMixin):
+class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 	def __init__(
 			self,
 			browser_exe: Optional[Union[str, pathlib.Path]],

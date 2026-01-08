@@ -11,7 +11,6 @@ from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.executors.trio_threads.cdp import CDPExecutor
-from osn_selenium.webdrivers.trio_threads.base import WebDriver
 from osn_selenium.abstract.webdriver.blink import (
 	AbstractBlinkWebDriver
 )
@@ -28,7 +27,6 @@ class BlinkWebDriver(
 		BlinkLifecycleMixin,
 		BlinkLoggingMixin,
 		BlinkNetworkMixin,
-		WebDriver,
 		AbstractBlinkWebDriver
 ):
 	def __init__(

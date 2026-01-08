@@ -4,12 +4,12 @@ from typing import Optional, Union
 
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.types import WindowRect
-from osn_selenium.abstract.webdriver.base.settings import (
-    AbstractSettingsMixin
+from osn_selenium.abstract.webdriver.core.settings import (
+	AbstractCoreSettingsMixin
 )
 
 
-class AbstractBlinkSettingsMixin(AbstractSettingsMixin):
+class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
     """
     Abstract mixin defining the interface for managing browser settings and configuration.
 
