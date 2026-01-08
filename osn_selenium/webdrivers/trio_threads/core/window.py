@@ -15,7 +15,9 @@ from osn_selenium.types import (
 )
 from osn_selenium.instances.trio_threads.switch_to import SwitchTo
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
-from osn_selenium.abstract.webdriver.core.window import AbstractCoreWindowMixin
+from osn_selenium.abstract.webdriver.core.window import (
+	AbstractCoreWindowMixin
+)
 
 
 class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):

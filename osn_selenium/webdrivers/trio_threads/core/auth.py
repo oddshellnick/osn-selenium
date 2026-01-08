@@ -8,7 +8,9 @@ from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
-from osn_selenium.abstract.webdriver.core.auth import AbstractCoreAuthMixin
+from osn_selenium.abstract.webdriver.core.auth import (
+	AbstractCoreAuthMixin
+)
 from selenium.webdriver.common.virtual_authenticator import (
 	Credential,
 	VirtualAuthenticatorOptions

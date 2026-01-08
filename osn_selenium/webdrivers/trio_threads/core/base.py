@@ -8,9 +8,11 @@ from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.webdrivers.decorators import requires_driver
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.instances.trio_threads.web_element import WebElement
-from osn_selenium.abstract.webdriver.core.base import AbstractCoreBaseMixin
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.abstract.webdriver.core.base import (
+	AbstractCoreBaseMixin
+)
 from typing import (
 	Any,
 	Dict,

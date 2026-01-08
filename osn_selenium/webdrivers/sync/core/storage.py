@@ -5,9 +5,11 @@ from typing import (
 	Optional
 )
 from osn_selenium.instances.sync.storage import Storage
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.abstract.webdriver.core.storage import AbstractCoreStorageMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.storage import (
+	AbstractCoreStorageMixin
+)
 
 
 class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):

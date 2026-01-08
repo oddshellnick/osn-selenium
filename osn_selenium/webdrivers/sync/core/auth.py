@@ -6,9 +6,11 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.sync.dialog import Dialog
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.abstract.webdriver.core.auth import AbstractCoreAuthMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.auth import (
+	AbstractCoreAuthMixin
+)
 from selenium.webdriver.common.virtual_authenticator import (
 	Credential,
 	VirtualAuthenticatorOptions

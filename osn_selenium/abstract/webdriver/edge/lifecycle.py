@@ -3,7 +3,10 @@ from abc import abstractmethod
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.edge import EdgeFlags
-from osn_selenium.abstract.webdriver.blink.lifecycle import AbstractBlinkLifecycleMixin
+from osn_selenium.abstract.webdriver.blink.lifecycle import (
+	AbstractBlinkLifecycleMixin
+)
+
 
 class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	"""
@@ -12,7 +15,7 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	Defines the contract for creating, starting, and restarting the Edge browser
 	and its associated WebDriver service.
 	"""
-
+	
 	@abstractmethod
 	def _create_driver(self) -> None:
 		"""
@@ -21,9 +24,9 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 		This method initializes and sets up the Selenium Edge WebDriver using EdgeDriver with configured options and service.
 		It also sets the window position, size, implicit wait time, and page load timeout.
 		"""
-
+		
 		...
-
+	
 	@abstractmethod
 	def restart_webdriver(
 			self,
@@ -57,9 +60,9 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 			window_rect (Optional[WindowRect]): Override window rectangle for the new session.
 				If provided, these dimensions will be used. If `None`, current settings are used.
 		"""
-
+		
 		...
-
+	
 	@abstractmethod
 	def start_webdriver(
 			self,
@@ -93,5 +96,5 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 			window_rect (Optional[WindowRect]): Override window rectangle for this start.
 				If provided, these dimensions will be used. If `None`, current settings are used.
 		"""
-
+		
 		...

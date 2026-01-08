@@ -3,7 +3,10 @@ from abc import abstractmethod
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
-from osn_selenium.abstract.webdriver.chrome.settings import AbstractChromeSettingsMixin
+from osn_selenium.abstract.webdriver.chrome.settings import (
+	AbstractChromeSettingsMixin
+)
+
 
 class AbstractYandexSettingsMixin(AbstractChromeSettingsMixin):
 	"""
@@ -12,7 +15,7 @@ class AbstractYandexSettingsMixin(AbstractChromeSettingsMixin):
 	Provides methods to update or reset configuration parameters such as flags,
 	executable paths, and window dimensions for the Yandex WebDriver.
 	"""
-
+	
 	@abstractmethod
 	def reset_settings(
 			self,
@@ -56,9 +59,9 @@ class AbstractYandexSettingsMixin(AbstractChromeSettingsMixin):
 				If `None`, it defaults to a new `WindowRect()` instance, effectively resetting
 				to the browser's default window behavior.
 		"""
-
+		
 		...
-
+	
 	@abstractmethod
 	def update_settings(
 			self,
@@ -100,5 +103,5 @@ class AbstractYandexSettingsMixin(AbstractChromeSettingsMixin):
 			window_rect (Optional[WindowRect]): The new window size and position settings.
 				If `None`, the current window rectangle settings remain unchanged.
 		"""
-
+		
 		...

@@ -8,14 +8,16 @@ from selenium.common import (
 	InvalidSessionIdException
 )
 from osn_selenium.instances.sync.switch_to import SwitchTo
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.types import (
 	Position,
 	Rectangle,
 	Size
 )
-from osn_selenium.abstract.webdriver.core.window import AbstractCoreWindowMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.window import (
+	AbstractCoreWindowMixin
+)
 
 
 class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):

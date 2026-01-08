@@ -10,9 +10,11 @@ from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
-from osn_selenium.abstract.webdriver.core.actions import AbstractCoreActionsMixin
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
+)
+from osn_selenium.abstract.webdriver.core.actions import (
+	AbstractCoreActionsMixin
 )
 from osn_selenium.instances.sync.action_chains import (
 	ActionChains,

@@ -2,8 +2,8 @@ from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.instances.trio_threads.mobile import Mobile
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.trio_threads.browser import Browser
-from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.instances.trio_threads.permissions import Permissions
+from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.instances.trio_threads.web_extension import WebExtension
 from osn_selenium.instances.trio_threads.browsing_context import BrowsingContext
 from osn_selenium.abstract.webdriver.core.components import (

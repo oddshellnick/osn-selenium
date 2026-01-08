@@ -3,10 +3,12 @@ from typing import Optional, Type
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.abstract.webdriver.core import AbstractCoreWebDriver
+from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
-from osn_selenium.executors.trio_threads.javascript import JSExecutor
+from osn_selenium.abstract.webdriver.core import (
+	AbstractCoreWebDriver
+)
 from osn_selenium.webdrivers.trio_threads.core.window import CoreWindowMixin
 from osn_selenium.webdrivers.trio_threads.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.trio_threads.core.capture import CoreCaptureMixin

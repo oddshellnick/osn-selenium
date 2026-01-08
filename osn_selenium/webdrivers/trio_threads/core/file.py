@@ -6,7 +6,9 @@ from typing import (
 )
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
-from osn_selenium.abstract.webdriver.core.file import AbstractCoreFileMixin
+from osn_selenium.abstract.webdriver.core.file import (
+	AbstractCoreFileMixin
+)
 
 
 class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):

@@ -1,9 +1,11 @@
 from typing import List, Optional
 from selenium.webdriver.common.by import By
 from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.instances.trio_threads.web_element import WebElement
-from osn_selenium.abstract.webdriver.core.element import AbstractCoreElementMixin
+from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.element import (
+	AbstractCoreElementMixin
+)
 
 
 class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):

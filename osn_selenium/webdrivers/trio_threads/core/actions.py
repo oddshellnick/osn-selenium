@@ -10,9 +10,11 @@ from selenium.webdriver import (
 )
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
-from osn_selenium.abstract.webdriver.core.actions import AbstractCoreActionsMixin
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
+)
+from osn_selenium.abstract.webdriver.core.actions import (
+	AbstractCoreActionsMixin
 )
 from osn_selenium.instances.trio_threads.action_chains import (
 	ActionChains,

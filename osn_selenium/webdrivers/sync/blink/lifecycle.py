@@ -5,8 +5,8 @@ from subprocess import Popen
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_selenium.webdrivers.sync.core import CoreLifecycleMixin
 from osn_windows_cmd.taskkill.parameters import TaskKillTypes
+from osn_selenium.webdrivers.sync.core import CoreLifecycleMixin
 from osn_windows_cmd.taskkill import (
 	ProcessID,
 	taskkill_windows

@@ -1,7 +1,9 @@
 from typing import Any, Optional
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.abstract.webdriver.core.capture import AbstractCoreCaptureMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.capture import (
+	AbstractCoreCaptureMixin
+)
 
 
 class CoreCaptureMixin(CoreBaseMixin, AbstractCoreCaptureMixin):

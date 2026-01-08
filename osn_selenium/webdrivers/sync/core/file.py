@@ -1,8 +1,10 @@
 from contextlib import contextmanager
 from typing import Any, Generator, List
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.abstract.webdriver.core.file import AbstractCoreFileMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.abstract.webdriver.core.file import (
+	AbstractCoreFileMixin
+)
 
 
 class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):

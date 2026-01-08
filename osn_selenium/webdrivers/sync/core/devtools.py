@@ -6,9 +6,9 @@ from typing import (
 	Dict,
 	Tuple
 )
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers._functions import build_cdp_kwargs
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 from osn_selenium.abstract.webdriver.core.devtools import (

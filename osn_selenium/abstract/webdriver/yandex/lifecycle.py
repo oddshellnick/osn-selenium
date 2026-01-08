@@ -3,7 +3,9 @@ from abc import abstractmethod
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
-from osn_selenium.abstract.webdriver.chrome.lifecycle import AbstractChromeLifecycleMixin
+from osn_selenium.abstract.webdriver.chrome.lifecycle import (
+	AbstractChromeLifecycleMixin
+)
 
 
 class AbstractYandexLifecycleMixin(AbstractChromeLifecycleMixin):
@@ -13,7 +15,7 @@ class AbstractYandexLifecycleMixin(AbstractChromeLifecycleMixin):
 	Defines the contract for creating, starting, and restarting the Yandex browser
 	and its associated WebDriver service.
 	"""
-
+	
 	@abstractmethod
 	def restart_webdriver(
 			self,
@@ -47,9 +49,9 @@ class AbstractYandexLifecycleMixin(AbstractChromeLifecycleMixin):
 			window_rect (Optional[WindowRect]): Override window rectangle for the new session.
 				If provided, these dimensions will be used. If `None`, current settings are used.
 		"""
-
+		
 		...
-
+	
 	@abstractmethod
 	def start_webdriver(
 			self,
@@ -83,5 +85,5 @@ class AbstractYandexLifecycleMixin(AbstractChromeLifecycleMixin):
 			window_rect (Optional[WindowRect]): Override window rectangle for this start.
 				If provided, these dimensions will be used. If `None`, current settings are used.
 		"""
-
+		
 		...

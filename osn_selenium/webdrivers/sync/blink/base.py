@@ -10,6 +10,7 @@ from typing import (
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
+from osn_selenium.webdrivers.sync.core import CoreWebDriver
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_windows_cmd.netstat import (
 	get_localhost_minimum_free_port
@@ -25,7 +26,6 @@ from osn_selenium.flags.models.blink import (
 	BlinkExperimentalOptions,
 	BlinkFlags
 )
-from osn_selenium.webdrivers.sync.core import CoreWebDriver
 
 
 class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):

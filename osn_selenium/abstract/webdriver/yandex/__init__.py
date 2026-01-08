@@ -1,14 +1,15 @@
 from abc import ABC
-
-from osn_selenium.abstract.webdriver.chrome import AbstractChromeWebDriver
+from osn_selenium.abstract.webdriver.chrome import (
+	AbstractChromeWebDriver
+)
 
 
 class AbstractYandexWebDriver(AbstractChromeWebDriver, ABC):
-    """
-    Abstract composite class representing a full Yandex WebDriver.
+	"""
+	Abstract composite class representing a full Yandex WebDriver.
 
-    Combines lifecycle, settings, and base functionality for Yandex browser.
-    Serves as the main entry point for abstract Yandex implementations.
-    """
-
-    pass
+	Combines lifecycle, settings, and base functionality for Yandex browser.
+	Serves as the main entry point for abstract Yandex implementations.
+	"""
+	
+	pass
