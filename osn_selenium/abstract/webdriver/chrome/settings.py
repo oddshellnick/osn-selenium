@@ -3,42 +3,16 @@ from abc import abstractmethod
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.chrome import ChromeFlags
-from osn_selenium.abstract.webdriver.blink import (
-	AbstractBlinkWebDriver
-)
-from selenium.webdriver.chrome.webdriver import (
-	WebDriver as legacyWebDriver
-)
+from osn_selenium.abstract.webdriver.blink.settings import AbstractBlinkSettingsMixin
 
+class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
+	"""
+	Abstract mixin for managing Chrome browser settings.
 
-class AbstractChromeWebDriver(AbstractBlinkWebDriver):
-	@abstractmethod
-	def _create_driver(self) -> None:
-		"""
-		Creates the Chrome webdriver instance.
+	Provides methods to update or reset configuration parameters such as flags,
+	executable paths, and window dimensions for the Chrome WebDriver.
+	"""
 
-		This method initializes and sets up the Selenium Chrome WebDriver using ChromeDriver with configured options and service.
-		It also sets the window position, size, implicit wait time, and page load timeout.
-		"""
-		
-		...
-	
-	@property
-	@abstractmethod
-	def driver(self) -> Optional[legacyWebDriver]:
-		"""
-		Gets the underlying Selenium WebDriver instance associated with this object.
-
-		This property provides direct access to the WebDriver object (e.g., Chrome)
-		that is being controlled, allowing for direct Selenium operations if needed.
-
-		Returns:
-			Optional[legacyWebDriver]:
-				The active WebDriver instance, or None if no driver is currently set or active.
-		"""
-		
-		...
-	
 	@abstractmethod
 	def reset_settings(
 			self,
@@ -82,81 +56,9 @@ class AbstractChromeWebDriver(AbstractBlinkWebDriver):
 				If `None`, it defaults to a new `WindowRect()` instance, effectively resetting
 				to the browser's default window behavior.
 		"""
-		
+
 		...
-	
-	@abstractmethod
-	def restart_webdriver(
-			self,
-			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
-			browser_name_in_system: Optional[str] = None,
-			use_browser_exe: Optional[bool] = None,
-			start_page_url: Optional[str] = None,
-			window_rect: Optional[WindowRect] = None,
-	):
-		"""
-		Restarts the WebDriver and browser session gracefully.
 
-		Performs a clean restart by first closing the existing WebDriver session and browser
-		(using `close_webdriver`), and then initiating a new session (using `start_webdriver`)
-		with potentially updated settings. If settings arguments are provided, they override
-		the existing settings for the new session; otherwise, the current settings are used.
-
-		Args:
-			flags (Optional[ChromeFlags]): Override flags for the new session.
-				If provided, these flags will be applied. If `None`, current settings are used.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Override browser executable for the new session.
-				If provided, this path will be used. If `None`, current settings are used.
-			browser_name_in_system (Optional[str]): Override browser name for auto-detection for the new session.
-				Only takes effect if `use_browser_exe` is also provided. If `None`, current settings are used.
-			use_browser_exe (Optional[bool]): Override auto-detection behavior for the new session.
-				If provided, this boolean determines if the browser executable is auto-detected.
-				If `None`, current settings are used.
-			start_page_url (Optional[str]): Override start page URL for the new session.
-				If provided, this URL will be used. If `None`, current setting is used.
-			window_rect (Optional[WindowRect]): Override window rectangle for the new session.
-				If provided, these dimensions will be used. If `None`, current settings are used.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def start_webdriver(
-			self,
-			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
-			browser_name_in_system: Optional[str] = None,
-			use_browser_exe: Optional[bool] = None,
-			start_page_url: Optional[str] = None,
-			window_rect: Optional[WindowRect] = None,
-	):
-		"""
-		Starts the WebDriver service and the browser session.
-
-		Initializes and starts the WebDriver instance and the associated browser process.
-		It first updates settings based on provided parameters (if the driver is not already running),
-		checks if a browser process needs to be started, starts it if necessary using Popen,
-		waits for it to become active, and then creates the WebDriver client instance (`self.driver`).
-
-		Args:
-			flags (Optional[ChromeFlags]): Override flags for this start.
-				If provided, these flags will be applied. If `None`, current settings are used.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Override browser executable path for this start.
-				If provided, this path will be used. If `None`, current settings are used.
-			browser_name_in_system (Optional[str]): Override browser name for auto-detection for this start.
-				Only takes effect if `use_browser_exe` is also provided. If `None`, current settings are used.
-			use_browser_exe (Optional[bool]): Override auto-detection behavior for this start.
-				If provided, this boolean determines if the browser executable is auto-detected.
-				If `None`, current settings are used.
-			start_page_url (Optional[str]): Override start page URL for this start.
-				If provided, this URL will be used. If `None`, current setting is used.
-			window_rect (Optional[WindowRect]): Override window rectangle for this start.
-				If provided, these dimensions will be used. If `None`, current settings are used.
-		"""
-		
-		...
-	
 	@abstractmethod
 	def update_settings(
 			self,
@@ -198,5 +100,5 @@ class AbstractChromeWebDriver(AbstractBlinkWebDriver):
 			window_rect (Optional[WindowRect]): The new window size and position settings.
 				If `None`, the current window rectangle settings remain unchanged.
 		"""
-		
+
 		...
