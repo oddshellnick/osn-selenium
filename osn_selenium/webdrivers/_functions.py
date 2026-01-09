@@ -48,7 +48,7 @@ def get_found_profile_dir(data: Series, profile_dir_command: str) -> Optional[st
 	
 		return found_profile_dir
 	
-	raise PlatformNotSupportedError(f"Unsupported platform: {sys.platform}.")
+	raise PlatformNotSupportedError(sys.platform)
 
 
 def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataFrame:
@@ -87,7 +87,7 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 			(connections_data["State"] == "LISTENING")
 		]
 	
-	raise PlatformNotSupportedError(f"Unsupported platform: {sys.platform}.")
+	raise PlatformNotSupportedError(sys.platform)
 
 
 def find_browser_previous_session(
