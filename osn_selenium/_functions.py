@@ -1,5 +1,5 @@
 import pathlib
-
+from typing import Optional
 from osn_selenium.types import JS_Scripts
 
 
@@ -14,10 +14,19 @@ def read_js_scripts() -> JS_Scripts:
 	Returns:
 		JS_Scripts: An object of type _JS_Scripts, containing the content of each JavaScript file as attributes.
 	"""
+	
+	global _CACHED_JS_SCRIPTS
+	
+	if _CACHED_JS_SCRIPTS is None:
+		scripts = {}
+		path_to_js_scripts = pathlib.Path(__file__).parent / "js_scripts"
+	
+		for script_file in path_to_js_scripts.iterdir():
+			scripts[script_file.stem] = open(script_file, "r", encoding="utf-8").read()
+	
+		_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
+	
+	return _CACHED_JS_SCRIPTS
 
-	scripts = {}
 
-	for script_file in (pathlib.Path(__file__).parent / "js_scripts").iterdir():
-		scripts[script_file.stem] = open(script_file, "r", encoding="utf-8").read()
-
-	return JS_Scripts.model_validate(scripts)
+_CACHED_JS_SCRIPTS: Optional[JS_Scripts] = None
