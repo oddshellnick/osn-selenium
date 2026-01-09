@@ -13,7 +13,21 @@ from selenium.webdriver.remote.mobile import (
 
 
 class Mobile(AbstractMobile):
+	"""
+	Wrapper for the legacy Selenium Mobile instance.
+
+	Manages network connection types and context settings (e.g., native app vs web view)
+	for mobile emulation.
+	"""
+	
 	def __init__(self, selenium_mobile: legacyMobile) -> None:
+		"""
+		Initializes the Mobile wrapper.
+
+		Args:
+			selenium_mobile (legacyMobile): The legacy Selenium Mobile instance to wrap.
+		"""
+		
 		if not isinstance(selenium_mobile, legacyMobile):
 			raise ExpectedTypeError(expected_class=legacyMobile, received_instance=selenium_mobile)
 		

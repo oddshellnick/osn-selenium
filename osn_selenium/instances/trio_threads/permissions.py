@@ -21,12 +21,28 @@ from selenium.webdriver.common.bidi.permissions import (
 
 
 class Permissions(_TrioThreadMixin, AbstractPermissions):
+	"""
+	Wrapper for the legacy Selenium Permissions instance.
+
+	Provides methods to set and modify browser permissions (e.g., camera, microphone, geolocation)
+	via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_permissions: legacyPermissions,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Permissions wrapper.
+
+		Args:
+			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_permissions, legacyPermissions):

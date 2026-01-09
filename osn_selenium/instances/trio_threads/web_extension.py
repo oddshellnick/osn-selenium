@@ -21,12 +21,28 @@ from selenium.webdriver.common.bidi.webextension import (
 
 
 class WebExtension(_TrioThreadMixin, AbstractWebExtension):
+	"""
+	Wrapper for the legacy Selenium WebExtension instance.
+
+	Manages the installation and uninstallation of browser extensions via the
+	WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_web_extension: legacyWebExtension,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the WebExtension wrapper.
+
+		Args:
+			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_web_extension, legacyWebExtension):

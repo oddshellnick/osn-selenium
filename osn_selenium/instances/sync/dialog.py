@@ -13,7 +13,21 @@ from osn_selenium.instances.errors import (
 
 
 class Dialog(AbstractDialog):
+	"""
+	Wrapper for the legacy Selenium FedCM Dialog instance.
+
+	Handles Federated Credential Management dialogs, including account selection
+	and dismissal.
+	"""
+	
 	def __init__(self, selenium_dialog: legacyDialog) -> None:
+		"""
+		Initializes the Dialog wrapper.
+
+		Args:
+			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance to wrap.
+		"""
+		
 		if not isinstance(selenium_dialog, legacyDialog):
 			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
 		

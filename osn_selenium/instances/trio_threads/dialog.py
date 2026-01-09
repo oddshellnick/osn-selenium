@@ -15,12 +15,28 @@ from osn_selenium.instances.errors import (
 
 
 class Dialog(_TrioThreadMixin, AbstractDialog):
+	"""
+	Wrapper for the legacy Selenium FedCM Dialog instance.
+
+	Handles Federated Credential Management dialogs, including account selection
+	and dismissal.
+	"""
+	
 	def __init__(
 			self,
 			selenium_dialog: legacyDialog,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Dialog wrapper.
+
+		Args:
+			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_dialog, legacyDialog):

@@ -24,7 +24,21 @@ from osn_selenium.instances.convert import (
 
 
 class SwitchTo(AbstractSwitchTo):
+	"""
+	Wrapper for the legacy Selenium SwitchTo instance.
+
+	Provides mechanisms to change the driver's focus to different frames,
+	windows, or alerts.
+	"""
+	
 	def __init__(self, selenium_switch_to: legacySwitchTo) -> None:
+		"""
+		Initializes the SwitchTo wrapper.
+
+		Args:
+			selenium_switch_to (legacySwitchTo): The legacy Selenium SwitchTo instance to wrap.
+		"""
+		
 		if not isinstance(selenium_switch_to, legacySwitchTo):
 			raise ExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
 		

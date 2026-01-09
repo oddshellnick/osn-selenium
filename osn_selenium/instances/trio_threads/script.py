@@ -14,12 +14,28 @@ from osn_selenium.instances.errors import (
 
 
 class Script(_TrioThreadMixin, AbstractScript):
+	"""
+	Wrapper for the legacy Selenium BiDi Script instance.
+
+	Facilitates execution of JavaScript within specific contexts, adding preload scripts,
+	and handling console messages or JS errors.
+	"""
+	
 	def __init__(
 			self,
 			selenium_script: legacyScript,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Script wrapper.
+
+		Args:
+			selenium_script (legacyScript): The legacy Selenium Script instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_script, legacyScript):

@@ -19,7 +19,21 @@ from selenium.webdriver.common.bidi.webextension import (
 
 
 class WebExtension(AbstractWebExtension):
+	"""
+	Wrapper for the legacy Selenium WebExtension instance.
+
+	Manages the installation and uninstallation of browser extensions via the
+	WebDriver BiDi protocol.
+	"""
+	
 	def __init__(self, selenium_web_extension: legacyWebExtension) -> None:
+		"""
+		Initializes the WebExtension wrapper.
+
+		Args:
+			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance to wrap.
+		"""
+		
 		if not isinstance(selenium_web_extension, legacyWebExtension):
 			raise ExpectedTypeError(
 					expected_class=legacyWebExtension,

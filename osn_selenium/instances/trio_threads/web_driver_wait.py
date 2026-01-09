@@ -25,12 +25,28 @@ OUTPUT = TypeVar("OUTPUT")
 
 
 class WebDriverWait(_TrioThreadMixin, AbstractWebDriverWait):
+	"""
+	Wrapper for the legacy Selenium WebDriverWait instance.
+
+	Provides conditional waiting functionality, pausing execution until
+	specific conditions (expected conditions) are met or a timeout occurs.
+	"""
+	
 	def __init__(
 			self,
 			selenium_webdriver_wait: legacyWebDriverWait,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the WebDriverWait wrapper.
+
+		Args:
+			selenium_webdriver_wait (legacyWebDriverWait): The legacy Selenium WebDriverWait instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_webdriver_wait, legacyWebDriverWait):

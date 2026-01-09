@@ -175,16 +175,16 @@ def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_T
 	Raises:
 		ExpectedTypeError: If the input instance is of an unsupported type.
 	"""
-
+	
 	if instance is None:
 		return None
-
+	
 	if isinstance(instance, ANY_ABSTRACT_TYPE):
 		return instance.legacy
-
+	
 	if isinstance(instance, ANY_LEGACY_TYPE):
 		return instance
-
+	
 	raise ExpectedTypeError(
 			expected_class=(ANY_ABSTRACT_TYPE, ANY_LEGACY_TYPE, None),
 			received_instance=instance

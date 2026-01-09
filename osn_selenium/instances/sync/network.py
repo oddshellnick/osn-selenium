@@ -17,7 +17,21 @@ from osn_selenium.instances.errors import (
 
 
 class Network(AbstractNetwork):
+	"""
+	Wrapper for the legacy Selenium BiDi Network instance.
+
+	Allows interception of network requests, adding authentication handlers,
+	and managing request callbacks.
+	"""
+	
 	def __init__(self, selenium_network: legacyNetwork) -> None:
+		"""
+		Initializes the Network wrapper.
+
+		Args:
+			selenium_network (legacyNetwork): The legacy Selenium Network instance to wrap.
+		"""
+		
 		if not isinstance(selenium_network, legacyNetwork):
 			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
 		

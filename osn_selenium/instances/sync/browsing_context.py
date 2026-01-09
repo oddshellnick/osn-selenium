@@ -25,7 +25,21 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 class BrowsingContext(AbstractBrowsingContext):
+	"""
+	Wrapper for the legacy Selenium BiDi BrowsingContext instance.
+
+	Controls browser tabs and windows (contexts), allowing navigation,
+	reloading, closing, screenshotting, and DOM tree inspection.
+	"""
+	
 	def __init__(self, selenium_browsing_context: legacyBrowsingContext) -> None:
+		"""
+		Initializes the BrowsingContext wrapper.
+
+		Args:
+			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium instance to wrap.
+		"""
+		
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
 			raise ExpectedTypeError(
 					expected_class=legacyBrowsingContext,

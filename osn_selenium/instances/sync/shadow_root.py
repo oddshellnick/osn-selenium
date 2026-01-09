@@ -22,7 +22,21 @@ if TYPE_CHECKING:
 
 
 class ShadowRoot(AbstractShadowRoot):
+	"""
+	Wrapper for the legacy Selenium ShadowRoot instance.
+
+	Represents the root of a Shadow DOM tree, allowing element search
+	within the encapsulated shadow scope.
+	"""
+	
 	def __init__(self, selenium_shadow_root: legacyShadowRoot) -> None:
+		"""
+		Initializes the ShadowRoot wrapper.
+
+		Args:
+			selenium_shadow_root (legacyShadowRoot): The legacy Selenium ShadowRoot instance to wrap.
+		"""
+		
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
 			raise ExpectedTypeError(
 					expected_class=legacyShadowRoot,
@@ -40,9 +54,9 @@ class ShadowRoot(AbstractShadowRoot):
 	
 	def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
 		impl_list = self.legacy.find_elements(by=by, value=value)
-
-		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
+		from osn_selenium.instances.trio_threads.web_element import WebElement
+
 		return [WebElement.from_legacy(selenium_web_element=e) for e in impl_list]
 	
 	@classmethod

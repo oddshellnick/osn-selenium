@@ -30,12 +30,28 @@ from osn_selenium.abstract.instances.action_chains import (
 
 
 class ActionChains(_TrioThreadMixin, AbstractActionChains):
+	"""
+	Wrapper for the legacy Selenium ActionChains instance.
+
+	Provides low-level interactions such as mouse movements, mouse button actions,
+	key presses, and context menu interactions.
+	"""
+	
 	def __init__(
 			self,
 			selenium_action_chains: legacyActionChains,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the ActionChains wrapper.
+
+		Args:
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_action_chains, legacyActionChains):
@@ -205,6 +221,13 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 
 
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
+	"""
+	Extended ActionChains class simulating human-like behavior.
+
+	Implements natural mouse movements (using Bezier curves or deviations),
+	human-like typing with variable delays, and smooth scrolling.
+	"""
+	
 	def __init__(
 			self,
 			execute_script_function: Callable[[str, Any], Coroutine[Any, Any, Any]],
@@ -212,6 +235,16 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the HumanLikeActionChains wrapper.
+
+		Args:
+			execute_script_function (Callable[[str, Any], Coroutine[Any, Any, Any]]): Function to execute JavaScript in the browser.
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(
 				selenium_action_chains=selenium_action_chains,
 				lock=lock,

@@ -23,7 +23,21 @@ from selenium.webdriver.common.bidi.storage import (
 
 
 class Storage(AbstractStorage):
+	"""
+	Wrapper for the legacy Selenium BiDi Storage instance.
+
+	Manages browser storage mechanisms, primarily focusing on getting, setting,
+	and deleting cookies with specific filters and partition descriptors.
+	"""
+	
 	def __init__(self, selenium_storage: legacyStorage) -> None:
+		"""
+		Initializes the Storage wrapper.
+
+		Args:
+			selenium_storage (legacyStorage): The legacy Selenium Storage instance to wrap.
+		"""
+		
 		if not isinstance(selenium_storage, legacyStorage):
 			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
 		

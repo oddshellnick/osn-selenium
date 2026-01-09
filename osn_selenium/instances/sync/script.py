@@ -12,7 +12,21 @@ from osn_selenium.instances.errors import (
 
 
 class Script(AbstractScript):
+	"""
+	Wrapper for the legacy Selenium BiDi Script instance.
+
+	Facilitates execution of JavaScript within specific contexts, adding preload scripts,
+	and handling console messages or JS errors.
+	"""
+	
 	def __init__(self, selenium_script: legacyScript) -> None:
+		"""
+		Initializes the Script wrapper.
+
+		Args:
+			selenium_script (legacyScript): The legacy Selenium Script instance to wrap.
+		"""
+		
 		if not isinstance(selenium_script, legacyScript):
 			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
 		

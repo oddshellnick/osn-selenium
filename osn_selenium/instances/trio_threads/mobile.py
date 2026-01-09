@@ -15,12 +15,28 @@ from selenium.webdriver.remote.mobile import (
 
 
 class Mobile(_TrioThreadMixin, AbstractMobile):
+	"""
+	Wrapper for the legacy Selenium Mobile instance.
+
+	Manages network connection types and context settings (e.g., native app vs web view)
+	for mobile emulation.
+	"""
+	
 	def __init__(
 			self,
 			selenium_mobile: legacyMobile,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Mobile wrapper.
+
+		Args:
+			selenium_mobile (legacyMobile): The legacy Selenium Mobile instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_mobile, legacyMobile):

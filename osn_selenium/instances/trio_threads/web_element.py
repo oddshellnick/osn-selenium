@@ -27,12 +27,28 @@ from selenium.webdriver.support.wait import (
 
 
 class WebElement(_TrioThreadMixin, AbstractWebElement):
+	"""
+	Wrapper for the legacy Selenium WebElement instance.
+
+	Represents an HTML element in the DOM, offering methods for interaction (click, type),
+	property retrieval, and finding child elements.
+	"""
+	
 	def __init__(
 			self,
 			selenium_web_element: legacyWebElement,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the WebElement wrapper.
+
+		Args:
+			selenium_web_element (legacyWebElement): The legacy Selenium WebElement instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_web_element, legacyWebElement):

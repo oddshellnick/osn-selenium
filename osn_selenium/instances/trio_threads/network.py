@@ -19,12 +19,28 @@ from osn_selenium.instances.errors import (
 
 
 class Network(_TrioThreadMixin, AbstractNetwork):
+	"""
+	Wrapper for the legacy Selenium BiDi Network instance.
+
+	Allows interception of network requests, adding authentication handlers,
+	and managing request callbacks.
+	"""
+	
 	def __init__(
 			self,
 			selenium_network: legacyNetwork,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Network wrapper.
+
+		Args:
+			selenium_network (legacyNetwork): The legacy Selenium Network instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_network, legacyNetwork):

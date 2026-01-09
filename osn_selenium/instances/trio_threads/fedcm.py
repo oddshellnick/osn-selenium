@@ -17,12 +17,28 @@ from osn_selenium.instances.errors import (
 
 
 class FedCM(_TrioThreadMixin, AbstractFedCM):
+	"""
+	Wrapper for the legacy Selenium FedCM instance.
+
+	Provides an interface for controlling the Federated Credential Management API,
+	including dialog delays and cooldown resets.
+	"""
+	
 	def __init__(
 			self,
 			selenium_fedcm: legacyFedCM,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the FedCM wrapper.
+
+		Args:
+			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_fedcm, legacyFedCM):

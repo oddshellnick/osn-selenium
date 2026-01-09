@@ -25,7 +25,21 @@ from selenium.webdriver.support.wait import (
 
 
 class WebElement(AbstractWebElement):
+	"""
+	Wrapper for the legacy Selenium WebElement instance.
+
+	Represents an HTML element in the DOM, offering methods for interaction (click, type),
+	property retrieval, and finding child elements.
+	"""
+	
 	def __init__(self, selenium_web_element: legacyWebElement) -> None:
+		"""
+		Initializes the WebElement wrapper.
+
+		Args:
+			selenium_web_element (legacyWebElement): The legacy Selenium WebElement instance to wrap.
+		"""
+		
 		if not isinstance(selenium_web_element, legacyWebElement):
 			raise ExpectedTypeError(
 					expected_class=legacyWebElement,

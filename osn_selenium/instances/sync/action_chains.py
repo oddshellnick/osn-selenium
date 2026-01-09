@@ -27,7 +27,21 @@ from osn_selenium.abstract.instances.action_chains import (
 
 
 class ActionChains(AbstractActionChains):
+	"""
+	Wrapper for the legacy Selenium ActionChains instance.
+
+	Provides low-level interactions such as mouse movements, mouse button actions,
+	key presses, and context menu interactions.
+	"""
+	
 	def __init__(self, selenium_action_chains: legacyActionChains) -> None:
+		"""
+		Initializes the ActionChains wrapper.
+
+		Args:
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance to wrap.
+		"""
+		
 		if not isinstance(selenium_action_chains, legacyActionChains):
 			raise ExpectedTypeError(
 					expected_class=legacyActionChains,
@@ -152,11 +166,26 @@ class ActionChains(AbstractActionChains):
 
 
 class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
+	"""
+	Extended ActionChains class simulating human-like behavior.
+
+	Implements natural mouse movements (using Bezier curves or deviations),
+	human-like typing with variable delays, and smooth scrolling.
+	"""
+	
 	def __init__(
 			self,
 			execute_script_function: Callable[[str, Any], Any],
 			selenium_action_chains: legacyActionChains
 	) -> None:
+		"""
+		Initializes the HumanLikeActionChains wrapper.
+
+		Args:
+			execute_script_function (Callable[[str, Any], Any]): Function to execute JavaScript in the browser.
+			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance.
+		"""
+		
 		super().__init__(selenium_action_chains=selenium_action_chains)
 		
 		self._js_executor = JSExecutor(execute_function=execute_script_function)

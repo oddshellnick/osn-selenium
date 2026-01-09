@@ -15,12 +15,28 @@ from selenium.webdriver.common.bidi.browser import (
 
 
 class Browser(_TrioThreadMixin, AbstractBrowser):
+	"""
+	Wrapper for the legacy Selenium BiDi Browser instance.
+
+	Provides methods to manage user contexts (profiles) and inspect client
+	window information via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(
 			self,
 			selenium_browser: legacyBrowser,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Browser wrapper.
+
+		Args:
+			selenium_browser (legacyBrowser): The legacy Selenium Browser instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_browser, legacyBrowser):

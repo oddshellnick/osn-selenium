@@ -15,7 +15,21 @@ from osn_selenium.instances.errors import (
 
 
 class FedCM(AbstractFedCM):
+	"""
+	Wrapper for the legacy Selenium FedCM instance.
+
+	Provides an interface for controlling the Federated Credential Management API,
+	including dialog delays and cooldown resets.
+	"""
+	
 	def __init__(self, selenium_fedcm: legacyFedCM) -> None:
+		"""
+		Initializes the FedCM wrapper.
+
+		Args:
+			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance to wrap.
+		"""
+		
 		if not isinstance(selenium_fedcm, legacyFedCM):
 			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
 		

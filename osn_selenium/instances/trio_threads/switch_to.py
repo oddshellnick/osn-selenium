@@ -26,12 +26,28 @@ from osn_selenium.instances.convert import (
 
 
 class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
+	"""
+	Wrapper for the legacy Selenium SwitchTo instance.
+
+	Provides mechanisms to change the driver's focus to different frames,
+	windows, or alerts.
+	"""
+	
 	def __init__(
 			self,
 			selenium_switch_to: legacySwitchTo,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the SwitchTo wrapper.
+
+		Args:
+			selenium_switch_to (legacySwitchTo): The legacy Selenium SwitchTo instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_switch_to, legacySwitchTo):

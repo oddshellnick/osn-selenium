@@ -19,7 +19,21 @@ from selenium.webdriver.common.bidi.permissions import (
 
 
 class Permissions(AbstractPermissions):
+	"""
+	Wrapper for the legacy Selenium Permissions instance.
+
+	Provides methods to set and modify browser permissions (e.g., camera, microphone, geolocation)
+	via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(self, selenium_permissions: legacyPermissions) -> None:
+		"""
+		Initializes the Permissions wrapper.
+
+		Args:
+			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
+		"""
+		
 		if not isinstance(selenium_permissions, legacyPermissions):
 			raise ExpectedTypeError(
 					expected_class=legacyPermissions,

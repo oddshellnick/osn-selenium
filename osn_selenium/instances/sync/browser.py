@@ -13,7 +13,21 @@ from selenium.webdriver.common.bidi.browser import (
 
 
 class Browser(AbstractBrowser):
+	"""
+	Wrapper for the legacy Selenium BiDi Browser instance.
+
+	Provides methods to manage user contexts (profiles) and inspect client
+	window information via the WebDriver BiDi protocol.
+	"""
+	
 	def __init__(self, selenium_browser: legacyBrowser) -> None:
+		"""
+		Initializes the Browser wrapper.
+
+		Args:
+			selenium_browser (legacyBrowser): The legacy Selenium Browser instance to wrap.
+		"""
+		
 		if not isinstance(selenium_browser, legacyBrowser):
 			raise ExpectedTypeError(expected_class=legacyBrowser, received_instance=selenium_browser)
 		

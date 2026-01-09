@@ -12,12 +12,28 @@ from osn_selenium.instances.errors import (
 
 
 class Alert(_TrioThreadMixin, AbstractAlert):
+	"""
+	Wrapper for the legacy Selenium Alert instance.
+
+	Manages browser alerts, prompts, and confirmation dialogs, allowing
+	acceptance, dismissal, text retrieval, and input.
+	"""
+	
 	def __init__(
 			self,
 			selenium_alert: legacyAlert,
 			lock: trio.Lock,
 			limiter: Optional[trio.CapacityLimiter] = None,
 	) -> None:
+		"""
+		Initializes the Alert wrapper.
+
+		Args:
+			selenium_alert (legacyAlert): The legacy Selenium Alert instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_alert, legacyAlert):

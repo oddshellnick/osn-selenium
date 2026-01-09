@@ -25,12 +25,28 @@ from selenium.webdriver.common.bidi.storage import (
 
 
 class Storage(_TrioThreadMixin, AbstractStorage):
+	"""
+	Wrapper for the legacy Selenium BiDi Storage instance.
+
+	Manages browser storage mechanisms, primarily focusing on getting, setting,
+	and deleting cookies with specific filters and partition descriptors.
+	"""
+	
 	def __init__(
 			self,
 			selenium_storage: legacyStorage,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the Storage wrapper.
+
+		Args:
+			selenium_storage (legacyStorage): The legacy Selenium Storage instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_storage, legacyStorage):

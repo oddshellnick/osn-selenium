@@ -10,7 +10,21 @@ from osn_selenium.instances.errors import (
 
 
 class Alert(AbstractAlert):
+	"""
+	Wrapper for the legacy Selenium Alert instance.
+
+	Manages browser alerts, prompts, and confirmation dialogs, allowing
+	acceptance, dismissal, text retrieval, and input.
+	"""
+	
 	def __init__(self, selenium_alert: legacyAlert) -> None:
+		"""
+		Initializes the Alert wrapper.
+
+		Args:
+			selenium_alert (legacyAlert): The legacy Selenium Alert instance to wrap.
+		"""
+		
 		if not isinstance(selenium_alert, legacyAlert):
 			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
 		

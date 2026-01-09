@@ -27,12 +27,28 @@ from selenium.webdriver.common.bidi.browsing_context import (
 
 
 class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
+	"""
+	Wrapper for the legacy Selenium BiDi BrowsingContext instance.
+
+	Controls browser tabs and windows (contexts), allowing navigation,
+	reloading, closing, screenshotting, and DOM tree inspection.
+	"""
+	
 	def __init__(
 			self,
 			selenium_browsing_context: legacyBrowsingContext,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> None:
+		"""
+		Initializes the BrowsingContext wrapper.
+
+		Args:
+			selenium_browsing_context (legacyBrowsingContext): The legacy Selenium instance to wrap.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+		"""
+		
 		super().__init__(lock=lock, limiter=limiter)
 		
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
