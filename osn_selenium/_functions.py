@@ -22,7 +22,7 @@ def read_js_scripts() -> JS_Scripts:
 		path_to_js_scripts = pathlib.Path(__file__).parent / "js_scripts"
 	
 		for script_file in path_to_js_scripts.iterdir():
-			scripts[script_file.stem] = open(script_file, "r", encoding="utf-8").read()
+			scripts[script_file.stem] = script_file.read_text(encoding="utf-8")
 	
 		_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
 	
