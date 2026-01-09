@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.blink.network import (
 
 
 class BlinkNetworkMixin(BlinkBaseMixin, AbstractBlinkNetworkMixin):
+	"""
+	Mixin for network interception and condition simulation for Blink WebDrivers.
+
+	Facilitates monitoring of network traffic, modifying requests/responses,
+	and emulating specific network conditions like offline mode or latency.
+	"""
+	
 	@requires_driver
 	async def delete_network_conditions(self) -> None:
 		return await self._wrap_to_trio(self.driver.delete_network_conditions)

@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.core.element import (
 
 
 class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
+	"""
+	Mixin for DOM element retrieval in Core WebDrivers.
+
+	Provides standard methods to locate single or multiple elements within
+	the current page context.
+	"""
+	
 	@requires_driver
 	def create_web_element(self, element_id: str) -> WebElement:
 		legacy = self.driver.create_web_element(element_id=element_id)

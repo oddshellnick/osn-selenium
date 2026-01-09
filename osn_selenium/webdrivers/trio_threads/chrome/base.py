@@ -17,6 +17,14 @@ from osn_selenium.abstract.webdriver.chrome.base import (
 
 
 class ChromeBaseMixin(BlinkWebDriver, AbstractChromeBaseMixin):
+	"""
+	Base mixin for Chrome WebDrivers handling core initialization and state management.
+
+	This class serves as the foundation for browser-specific implementations, managing
+	the WebDriver executable path, configuration flags, timeouts, and the active
+	driver instance.
+	"""
+	
 	def __init__(
 			self,
 			webdriver_path: str,

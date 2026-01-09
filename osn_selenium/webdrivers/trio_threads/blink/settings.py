@@ -10,6 +10,13 @@ from osn_selenium.abstract.webdriver.blink.settings import (
 
 
 class BlinkSettingsMixin(BlinkBaseMixin, AbstractBlinkSettingsMixin):
+	"""
+	Mixin for configuring and updating settings of the Blink WebDriver.
+
+	Provides methods to modify browser flags, window rectangles, and other
+	configuration parameters either before startup or during a reset.
+	"""
+	
 	async def reset_settings(
 			self,
 			flags: Optional[BlinkFlags] = None,

@@ -22,6 +22,13 @@ from osn_windows_cmd.netstat import (
 
 
 class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Blink WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
 	async def _create_driver(self):
 		raise NotImplementedError("This function must be implemented in child classes.")
 	

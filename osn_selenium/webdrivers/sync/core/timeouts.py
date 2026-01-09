@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.core.timeouts import (
 
 
 class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
+	"""
+	Mixin for configuring execution timeouts in Core WebDrivers.
+
+	Manages implicit waits, page load timeouts, and script execution limits
+	to control driver behavior during delays.
+	"""
+	
 	@requires_driver
 	def implicitly_wait(self, time_to_wait: float) -> None:
 		self.driver.implicitly_wait(time_to_wait=time_to_wait)

@@ -19,6 +19,13 @@ from osn_selenium.abstract.webdriver.core.lifecycle import (
 
 
 class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Core WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
 	async def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
 		def _make() -> legacyWebDriver:
 			return legacyWebDriver(

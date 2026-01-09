@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.yandex.settings import (
 
 
 class YandexSettingsMixin(YandexBaseMixin, AbstractYandexSettingsMixin):
+	"""
+	Mixin for configuring and updating settings of the Yandex WebDriver.
+
+	Provides methods to modify browser flags, window rectangles, and other
+	configuration parameters either before startup or during a reset.
+	"""
+	
 	def reset_settings(
 			self,
 			flags: Optional[YandexFlags] = None,

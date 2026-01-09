@@ -8,6 +8,13 @@ from osn_selenium.abstract.webdriver.core.file import (
 
 
 class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
+	"""
+	Mixin for file system interactions within Core WebDrivers.
+
+	Manages file upload detection, download verification, and cleanup of
+	downloaded files.
+	"""
+	
 	@requires_driver
 	def delete_downloadable_files(self) -> None:
 		self.driver.delete_downloadable_files()

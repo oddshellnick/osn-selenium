@@ -17,6 +17,13 @@ from osn_selenium.abstract.webdriver.core.devtools import (
 
 
 class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
+	"""
+	Mixin for Chrome DevTools Protocol (CDP) and BiDi interactions in Core WebDrivers.
+
+	Facilitates low-level browser control via CDP commands, network interception,
+	and bidirectional communication sessions.
+	"""
+	
 	@asynccontextmanager
 	@requires_driver
 	async def bidi_connection(self) -> AsyncGenerator[BidiConnection, Any]:

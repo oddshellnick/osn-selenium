@@ -32,6 +32,14 @@ from selenium.webdriver.remote.webelement import (
 
 
 class CoreBaseMixin(_TrioThreadMixin, AbstractCoreBaseMixin):
+	"""
+	Base mixin for Core WebDrivers handling core initialization and state management.
+
+	This class serves as the foundation for browser-specific implementations, managing
+	the WebDriver executable path, configuration flags, timeouts, and the active
+	driver instance.
+	"""
+	
 	def __init__(
 			self,
 			webdriver_path: str,

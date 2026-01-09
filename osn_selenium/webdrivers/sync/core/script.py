@@ -13,6 +13,13 @@ from osn_selenium.abstract.webdriver.core.script import (
 
 
 class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
+	"""
+	Mixin for JavaScript execution and management in Core WebDrivers.
+
+	Allows execution of synchronous and asynchronous JavaScript, as well as
+	pinning scripts for repeated use.
+	"""
+	
 	@requires_driver
 	def execute_async_script(self, script: str, *args: Any) -> Any:
 		args = self._unwrap_args(args)

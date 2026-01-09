@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.chrome.settings import (
 
 
 class ChromeSettingsMixin(ChromeBaseMixin, AbstractChromeSettingsMixin):
+	"""
+	Mixin for configuring and updating settings of the Chrome WebDriver.
+
+	Provides methods to modify browser flags, window rectangles, and other
+	configuration parameters either before startup or during a reset.
+	"""
+	
 	def reset_settings(
 			self,
 			flags: Optional[ChromeFlags] = None,

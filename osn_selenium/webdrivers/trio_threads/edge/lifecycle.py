@@ -13,6 +13,13 @@ from osn_selenium.abstract.webdriver.edge.lifecycle import (
 
 
 class EdgeLifecycleMixin(EdgeSettingsMixin, AbstractEdgeLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Edge WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
 	async def _create_driver(self) -> None:
 		def _create() -> legacyWebDriver:
 			webdriver_options = self._webdriver_flags_manager.options

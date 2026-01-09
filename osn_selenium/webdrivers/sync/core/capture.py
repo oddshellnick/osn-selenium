@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.core.capture import (
 
 
 class CoreCaptureMixin(CoreBaseMixin, AbstractCoreCaptureMixin):
+	"""
+	Mixin enabling screen capture and page source retrieval for Core WebDrivers.
+
+	Offers methods to take screenshots (file, base64, png), print pages,
+	and extract the current DOM source.
+	"""
+	
 	@requires_driver
 	def get_screenshot_as_base64(self) -> str:
 		return self.driver.get_screenshot_as_base64()

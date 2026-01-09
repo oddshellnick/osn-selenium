@@ -13,6 +13,13 @@ from osn_selenium.abstract.webdriver.chrome.lifecycle import (
 
 
 class ChromeLifecycleMixin(ChromeSettingsMixin, AbstractChromeLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Chrome WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
 	async def _create_driver(self) -> None:
 		def _create() -> legacyWebDriver:
 			webdriver_options = self._webdriver_flags_manager.options

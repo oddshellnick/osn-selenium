@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.yandex.lifecycle import (
 
 
 class YandexLifecycleMixin(YandexSettingsMixin, AbstractYandexLifecycleMixin):
+	"""
+	Mixin for managing the lifecycle of the Yandex WebDriver.
+
+	Handles the creation, startup, shutdown, and restarting processes of the
+	underlying browser instance, ensuring clean session management.
+	"""
+	
 	async def restart_webdriver(
 			self,
 			flags: Optional[YandexFlags] = None,

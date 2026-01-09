@@ -13,6 +13,13 @@ from osn_selenium.abstract.webdriver.core.storage import (
 
 
 class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
+	"""
+	Mixin for managing browser storage and cookies in Core WebDrivers.
+
+	Provides methods to add, retrieve, and delete cookies, as well as access
+	other storage mechanisms.
+	"""
+	
 	@requires_driver
 	async def add_cookie(self, cookie_dict: Dict[str, Any]) -> None:
 		await self._wrap_to_trio(self.driver.add_cookie, cookie_dict=cookie_dict)

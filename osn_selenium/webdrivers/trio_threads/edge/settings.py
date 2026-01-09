@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.edge.settings import (
 
 
 class EdgeSettingsMixin(EdgeBaseMixin, AbstractEdgeSettingsMixin):
+	"""
+	Mixin for configuring and updating settings of the Edge WebDriver.
+
+	Provides methods to modify browser flags, window rectangles, and other
+	configuration parameters either before startup or during a reset.
+	"""
+	
 	async def reset_settings(
 			self,
 			flags: Optional[EdgeFlags] = None,

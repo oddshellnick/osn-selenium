@@ -18,6 +18,13 @@ from selenium.webdriver.common.virtual_authenticator import (
 
 
 class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
+	"""
+	Mixin handling authentication and credential management for Core WebDrivers.
+
+	Provides interfaces for adding/removing credentials, managing virtual
+	authenticators, and handling Federated Credential Management (FedCM) dialogs.
+	"""
+	
 	@requires_driver
 	async def add_credential(self, credential: Credential) -> None:
 		await self._wrap_to_trio(self.driver.add_credential, credential=credential)

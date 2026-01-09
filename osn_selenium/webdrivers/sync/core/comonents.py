@@ -12,6 +12,13 @@ from osn_selenium.abstract.webdriver.core.components import (
 
 
 class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
+	"""
+	Mixin providing access to specialized browser components for Core WebDrivers.
+
+	Exposes interfaces for interacting with specific browser domains such as
+	permissions, mobile emulation, dialog handling, and web extensions.
+	"""
+	
 	@requires_driver
 	def browser(self) -> Browser:
 		legacy = self.driver.browser

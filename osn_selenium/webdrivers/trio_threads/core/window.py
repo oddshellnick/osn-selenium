@@ -21,6 +21,13 @@ from osn_selenium.abstract.webdriver.core.window import (
 
 
 class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
+	"""
+	Mixin for window and tab management in Core WebDrivers.
+
+	Controls window dimensions, position, state (minimized/maximized), and
+	switching between active window handles or frames.
+	"""
+	
 	async def close_all_windows(self) -> None:
 		for window_handle in reversed(await self.window_handles()):
 			await self.close_window(window_handle)

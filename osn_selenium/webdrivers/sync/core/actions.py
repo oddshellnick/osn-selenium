@@ -23,6 +23,13 @@ from osn_selenium.instances.sync.action_chains import (
 
 
 class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
+	"""
+	Mixin providing high-level interaction capabilities for Core WebDrivers.
+
+	Includes factories for standard and human-like ActionChains, as well as
+	custom WebDriverWait implementations.
+	"""
+	
 	@requires_driver
 	def action_chain(
 			self,

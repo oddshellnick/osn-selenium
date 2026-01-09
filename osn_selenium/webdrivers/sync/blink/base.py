@@ -29,6 +29,14 @@ from osn_selenium.flags.models.blink import (
 
 
 class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
+	"""
+	Base mixin for Blink WebDrivers handling core initialization and state management.
+
+	This class serves as the foundation for browser-specific implementations, managing
+	the WebDriver executable path, configuration flags, timeouts, and the active
+	driver instance.
+	"""
+	
 	def __init__(
 			self,
 			browser_exe: Optional[Union[str, pathlib.Path]],

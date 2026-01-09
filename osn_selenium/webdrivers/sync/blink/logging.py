@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.blink.logging import (
 
 
 class BlinkLoggingMixin(BlinkBaseMixin, AbstractBlinkLoggingMixin):
+	"""
+	Mixin for retrieving and managing browser logs for Blink WebDrivers.
+
+	Allows access to various log types (e.g., browser, performance, driver)
+	generated during the session execution.
+	"""
+	
 	@requires_driver
 	def get_log(self, log_type: str) -> Any:
 		return self.driver.get_log(log_type=log_type)

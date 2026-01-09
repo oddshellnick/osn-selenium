@@ -9,6 +9,13 @@ from osn_selenium.abstract.webdriver.core.settings import (
 
 
 class CoreSettingsMixin(CoreBaseMixin, AbstractCoreSettingsMixin):
+	"""
+	Mixin for configuring and updating settings of the Core WebDriver.
+
+	Provides methods to modify browser flags, window rectangles, and other
+	configuration parameters either before startup or during a reset.
+	"""
+	
 	def reset_settings(
 			self,
 			flags: Optional[BrowserFlags] = None,

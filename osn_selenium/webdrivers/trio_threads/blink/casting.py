@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.blink.casting import (
 
 
 class BlinkCastingMixin(BlinkBaseMixin, AbstractBlinkCastingMixin):
+	"""
+	Mixin handling object type casting and wrapping for Blink WebDrivers.
+
+	Ensures that raw Selenium objects are converted into their corresponding
+	internal wrapper representations and vice versa during method calls.
+	"""
+	
 	@requires_driver
 	async def get_sinks(self) -> List[Dict[str, Any]]:
 		return await self._wrap_to_trio(self.driver.get_sinks)

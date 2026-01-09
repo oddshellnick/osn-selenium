@@ -34,6 +34,13 @@ class CoreWebDriver(
 		CoreWindowMixin,
 		AbstractCoreWebDriver
 ):
+	"""
+	Concrete Core WebDriver implementation combining all functional mixins.
+
+	This class aggregates lifecycle management, element interaction, navigation,
+	and browser-specific features into a single usable driver instance.
+	"""
+	
 	def __init__(
 			self,
 			webdriver_path: str,

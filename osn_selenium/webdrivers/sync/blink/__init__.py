@@ -26,6 +26,13 @@ class BlinkWebDriver(
 		BlinkNetworkMixin,
 		AbstractBlinkWebDriver
 ):
+	"""
+	Concrete Blink WebDriver implementation combining all functional mixins.
+
+	This class aggregates lifecycle management, element interaction, navigation,
+	and browser-specific features into a single usable driver instance.
+	"""
+	
 	def __init__(
 			self,
 			browser_exe: Optional[Union[str, pathlib.Path]],

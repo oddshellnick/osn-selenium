@@ -5,4 +5,11 @@ from osn_selenium.webdrivers.trio_threads.chrome.lifecycle import ChromeLifecycl
 
 
 class ChromeWebDriver(ChromeLifecycleMixin, AbstractChromeWebDriver):
+	"""
+	Concrete Chrome WebDriver implementation combining all functional mixins.
+
+	This class aggregates lifecycle management, element interaction, navigation,
+	and browser-specific features into a single usable driver instance.
+	"""
+	
 	pass

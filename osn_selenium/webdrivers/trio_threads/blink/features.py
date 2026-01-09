@@ -7,6 +7,13 @@ from osn_selenium.abstract.webdriver.blink.features import (
 
 
 class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
+	"""
+	Mixin for managing browser features and capabilities for Blink WebDrivers.
+
+	Provides interfaces to query, enable, or disable specific browser features
+	and inspect the supported capabilities of the current session.
+	"""
+	
 	@requires_driver
 	async def get_issue_message(self) -> str:
 		return await self._wrap_to_trio(self.driver.get_issue_message)

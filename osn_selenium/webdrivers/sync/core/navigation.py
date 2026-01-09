@@ -6,6 +6,13 @@ from osn_selenium.abstract.webdriver.core.navigation import (
 
 
 class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
+	"""
+	Mixin controlling browser navigation for Core WebDrivers.
+
+	Includes standard navigation commands such as visiting URLs, history
+	traversal (back/forward), and page refreshing.
+	"""
+	
 	@requires_driver
 	def back(self) -> None:
 		self.driver.back()
