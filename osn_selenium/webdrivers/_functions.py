@@ -1,7 +1,7 @@
 import re
 import sys
+import psutil
 import pathlib
-from subprocess import PIPE, Popen
 from typing import Optional, Union
 from pandas import DataFrame, Series
 from osn_selenium.errors import (
@@ -16,39 +16,34 @@ def get_found_profile_dir(data: Series, profile_dir_command: str) -> Optional[st
 	"""
 	Extracts the browser profile directory path from a process's command line arguments.
 
-	This function executes a platform-specific command to retrieve the command line
-	of a process given its PID. It then searches for a profile directory path within
-	the command line using a provided command pattern. Currently, only Windows platform is supported.
-
 	Args:
-		data (Series): A Pandas Series containing process information, which must include a 'PID' column
-			representing the process ID.
-		profile_dir_command (str): A string representing the command line pattern to search for the profile directory.
-			This string should contain '{value}' as a placeholder where the profile directory path is expected.
-			For example: "--user-data-dir='{value}'".
+		data (Series): A Pandas Series containing process information, which must include a 'PID' column.
+		profile_dir_command (str): A string representing the command line pattern.
+								   Example: "--user-data-dir='{value}'" or "--user-data-dir={value}"
 
 	Returns:
-		Optional[str]: The profile directory path as a string if found in the command line, otherwise None.
-
-	Raises:
-		PlatformNotSupportedError: If the platform is not supported.
+		Optional[str]: The profile directory path if found, otherwise None.
 	"""
 	
-	if sys.platform == "win32":
-		stdout = Popen(
-				f"wmic process where processid={int(data['PID'])} get CommandLine /FORMAT:LIST",
-				stdout=PIPE,
-				shell=True
-		).communicate()[0].decode("866", errors="ignore").strip()
-		found_command_line = re.sub(r"^CommandLine=", "", stdout).strip()
+	pid = int(data["PID"])
 	
-		found_profile_dir = re.search(profile_dir_command.format(value="(.*?)"), found_command_line)
+	try:
+		proc = psutil.Process(pid)
+		cmdline_args = proc.cmdline()
+	
+		found_command_line = " ".join(cmdline_args)
+		pattern = profile_dir_command.format(value="(.*?)")
+	
+		found_profile_dir = re.search(pattern=pattern, string=found_command_line)
+	
 		if found_profile_dir is not None:
-			found_profile_dir = found_profile_dir.group(1)
+			result = found_profile_dir.group(1)
 	
-		return found_profile_dir
+			return result
+	except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+		return None
 	
-	raise PlatformNotSupportedError(sys.platform)
+	return None
 
 
 def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataFrame:
@@ -111,12 +106,13 @@ def find_browser_previous_session(
 	"""
 	
 	executables_table = get_active_executables_table(browser_exe)
+	ip_pattern = re.compile(r"127\.0\.0\.1:(\d+)")
 	
 	for index, row in executables_table.iterrows():
 		found_profile_dir = get_found_profile_dir(row, profile_dir_command)
 	
 		if found_profile_dir == profile_dir:
-			return int(re.search(r"127\.0\.0\.1:(\d+)", row["Local Address"]).group(1))
+			return int(re.search(pattern=ip_pattern, string=row["Local Address"]).group(1))
 	
 	return None
 
