@@ -17,6 +17,30 @@ if TYPE_CHECKING:
 else:
 	BaseTargetMixin = Any
 
+kwargs_type = Dict[str, Any]
+kwargs_output_type = Coroutine[Any, Any, kwargs_type]
+
+build_kwargs_from_handlers_func_type = Optional[
+	Callable[
+		[BaseTargetMixin, Mapping[str, Optional["ParameterHandler"]], Any],
+		kwargs_output_type
+	]
+]
+parameter_handler_type = Callable[
+	[BaseTargetMixin, trio.Event, Any, Any, Dict[str, Any]],
+	Coroutine[Any, Any, None]
+]
+event_choose_action_func_type = Callable[[BaseTargetMixin, Any], Sequence[str]]
+handle_function = Callable[[BaseTargetMixin, Any, Any], Coroutine[Any, Any, None]]
+response_handle_func_type = Optional[Callable[[BaseTargetMixin, Any], Coroutine[Any, Any, Any]]]
+on_error_func_type = Optional[Callable[[BaseTargetMixin, Any, BaseException], None]]
+AnyMapping = Mapping[str, Any]
+AnyCallable = Callable[..., Any]
+AbstractDomainHandlers = Mapping[str, "AbstractEventSettings"]
+AbstractDomainEnableKwargs = Mapping[str, Any]
+AbstractEventActions = Mapping[str, "AbstractActionSettings"]
+AbstractActionParametersHandlers = Mapping[str, "ParameterHandler"]
+
 
 class ParameterHandler(DictModel):
 	"""
@@ -30,7 +54,7 @@ class ParameterHandler(DictModel):
 		instances (Any): The data or configuration specific to this handler instance, passed as the `instances` argument to the `func`.
 	"""
 	
-	func: "parameter_handler_type"
+	func: parameter_handler_type
 	instances: Any
 
 
@@ -57,7 +81,7 @@ class AbstractEventActionsHandlerSettings(DictModel):
 		actions (AbstractEventActionsSettings): Settings for the available actions.
 	"""
 	
-	choose_action_func: "event_choose_action_func_type"
+	choose_action_func: event_choose_action_func_type
 	actions: AbstractEventActionsSettings
 
 
@@ -76,11 +100,11 @@ class AbstractEventSettings(DictModel):
 		on_error_func (on_error_func_type): An optional function to call if an error occurs during event handling.
 	"""
 	
-	handle_function: "handle_function"
+	handle_function: handle_function
 	class_to_use_path: str
 	listen_buffer_size: int
 	actions_handler: AbstractEventActionsHandlerSettings
-	on_error_func: "on_error_func_type"
+	on_error_func: on_error_func_type
 
 
 class AbstractDomainHandlersSettings(DictModel):
@@ -155,34 +179,10 @@ class AbstractActionSettings(DictModel):
 		parameters_handlers (AbstractActionParametersHandlersSettings): Settings for the action's parameter handlers.
 	"""
 	
-	kwargs_func: "build_kwargs_from_handlers_func_type"
-	response_handle_func: "response_handle_func_type"
+	kwargs_func: build_kwargs_from_handlers_func_type
+	response_handle_func: response_handle_func_type
 	parameters_handlers: AbstractActionParametersHandlersSettings
 
-
-kwargs_type = Dict[str, Any]
-kwargs_output_type = Coroutine[Any, Any, kwargs_type]
-
-build_kwargs_from_handlers_func_type = Optional[
-	Callable[
-		[BaseTargetMixin, Mapping[str, Optional[ParameterHandler]], Any],
-		kwargs_output_type
-	]
-]
-parameter_handler_type = Callable[
-	[BaseTargetMixin, trio.Event, Any, Any, Dict[str, Any]],
-	Coroutine[Any, Any, None]
-]
-event_choose_action_func_type = Callable[[BaseTargetMixin, Any], Sequence[str]]
-handle_function = Callable[[BaseTargetMixin, Any, Any], Coroutine[Any, Any, None]]
-response_handle_func_type = Optional[Callable[[BaseTargetMixin, Any], Coroutine[Any, Any, Any]]]
-on_error_func_type = Optional[Callable[[BaseTargetMixin, Any, BaseException], None]]
-AnyMapping = Mapping[str, Any]
-AnyCallable = Callable[..., Any]
-AbstractDomainHandlers = Mapping[str, AbstractEventSettings]
-AbstractDomainEnableKwargs = Mapping[str, Any]
-AbstractEventActions = Mapping[str, AbstractActionSettings]
-AbstractActionParametersHandlers = Mapping[str, ParameterHandler]
 
 AbstractActionParametersHandlersSettings.model_rebuild()
 AbstractActionSettings.model_rebuild()

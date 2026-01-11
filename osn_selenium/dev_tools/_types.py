@@ -9,8 +9,6 @@ from typing import (
 
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.base import BaseMixin as BaseTargetMixin
-
-
 else:
 	BaseTargetMixin = Any
 

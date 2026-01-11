@@ -97,9 +97,9 @@ def validate_type_filter(
 	Returns:
 		bool: True if the `type_` passes the filter, False otherwise.
 	"""
-
+	
 	from osn_selenium.dev_tools.logger.functions import validate_log_filter
-
+	
 	return validate_log_filter(filter_mode, filter_instances)(type_)
 
 
@@ -143,7 +143,7 @@ def validate_target_event_filter(filter_: Optional[Sequence[Dict[str, Any]]]) ->
 			and not type_filter.get("exclude", True)
 			for type_filter in filter_
 	)
-
+	
 	from osn_selenium.dev_tools.utils import TargetsFilters
 	
 	return TargetsFilters(

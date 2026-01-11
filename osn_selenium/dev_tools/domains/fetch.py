@@ -41,6 +41,20 @@ if TYPE_CHECKING:
 else:
 	DevToolsTarget = Any
 
+request_paused_actions_literal = Literal[
+	"continue_request",
+	"fail_request",
+	"fulfill_request",
+	"continue_response"
+]
+auth_required_actions_literal = Literal["continue_with_auth"]
+
+request_paused_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequence[request_paused_actions_literal]]
+handle_request_paused_func_type = Callable[[DevToolsTarget, "RequestPausedSettings", Any], Coroutine[Any, Any, None]]
+
+auth_required_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequence[auth_required_actions_literal]]
+handle_auth_required_func_type = Callable[[DevToolsTarget, "AuthRequiredSettings", Any], Coroutine[Any, Any, None]]
+
 
 class ContinueWithAuthParameterHandlersSettings(AbstractActionParametersHandlersSettings):
 	"""
@@ -147,7 +161,7 @@ class AuthRequiredActionsHandlerSettings(AbstractEventActionsHandlerSettings):
 	"""
 	
 	kwargs_func: build_kwargs_from_handlers_func_type = _build_kwargs_from_handlers_func
-	choose_action_func: "auth_required_choose_action_func_type" = auth_required_choose_func
+	choose_action_func: auth_required_choose_action_func_type = auth_required_choose_func
 	actions: Optional[AuthRequiredActionsSettings] = None
 
 
@@ -230,7 +244,7 @@ class AuthRequiredSettings(AbstractEventSettings):
 	"""
 	
 	class_to_use_path: str = "fetch.AuthRequired"
-	handle_function: "handle_auth_required_func_type" = _handle_auth_required
+	handle_function: handle_auth_required_func_type = _handle_auth_required
 	actions_handler: AuthRequiredActionsHandlerSettings
 	listen_buffer_size: int = 10
 	on_error_func: on_error_func_type = None
@@ -404,7 +418,7 @@ class RequestPausedActionsHandlerSettings(AbstractEventActionsHandlerSettings):
 		actions (Optional[RequestPausedActionsSettings]): Container for the configuration of the available actions. Defaults to None.
 	"""
 	
-	choose_action_func: "request_paused_choose_action_func_type" = request_paused_choose_func
+	choose_action_func: request_paused_choose_action_func_type = request_paused_choose_func
 	actions: Optional[RequestPausedActionsSettings] = None
 
 
@@ -491,7 +505,7 @@ class RequestPausedSettings(AbstractEventSettings):
 		on_error_func (on_error_func_type): An optional function to call if an error occurs during event handling. Defaults to None.
 	"""
 	
-	handle_function: "handle_request_paused_func_type" = _handle_request_paused
+	handle_function: handle_request_paused_func_type = _handle_request_paused
 	class_to_use_path: str = "fetch.RequestPaused"
 	listen_buffer_size: int = 100
 	actions_handler: Optional[RequestPausedActionsHandlerSettings] = None
@@ -551,19 +565,6 @@ class FetchSettings(AbstractDomainSettings):
 	enable_func_kwargs: Optional[FetchEnableKwargsSettings] = None
 	handlers: Optional[FetchHandlersSettings] = None
 
-
-request_paused_actions_literal = Literal[
-	"continue_request",
-	"fail_request",
-	"fulfill_request",
-	"continue_response"
-]
-auth_required_actions_literal = Literal["continue_with_auth"]
-
-request_paused_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequence[request_paused_actions_literal]]
-auth_required_choose_action_func_type = Callable[[DevToolsTarget, Any], Sequence[auth_required_actions_literal]]
-handle_request_paused_func_type = Callable[[DevToolsTarget, RequestPausedSettings, Any], Coroutine[Any, Any, None]]
-handle_auth_required_func_type = Callable[[DevToolsTarget, AuthRequiredSettings, Any], Coroutine[Any, Any, None]]
 
 ContinueWithAuthParameterHandlersSettings.model_rebuild()
 ContinueWithAuthParameterHandlersSettings.model_rebuild()

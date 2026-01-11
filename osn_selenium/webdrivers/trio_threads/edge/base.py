@@ -30,7 +30,7 @@ class EdgeBaseMixin(BlinkWebDriver, AbstractEdgeBaseMixin):
 			webdriver_path: str,
 			flags_manager_type: Type[EdgeFlagsManager] = EdgeFlagsManager,
 			use_browser_exe: bool = True,
-			browser_name_in_system: str = "Edge",
+			browser_name_in_system: str = "Microsoft Edge",
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
 			flags: Optional[EdgeFlags] = None,
 			start_page_url: str = "https://www.chrome.com",

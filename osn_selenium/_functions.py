@@ -3,6 +3,9 @@ from typing import Optional
 from osn_selenium.types import JS_Scripts
 
 
+_CACHED_JS_SCRIPTS: Optional[JS_Scripts] = None
+
+
 def read_js_scripts() -> JS_Scripts:
 	"""
 	Reads JavaScript scripts from files and returns them in a JS_Scripts object.
@@ -27,6 +30,3 @@ def read_js_scripts() -> JS_Scripts:
 		_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
 	
 	return _CACHED_JS_SCRIPTS
-
-
-_CACHED_JS_SCRIPTS: Optional[JS_Scripts] = None

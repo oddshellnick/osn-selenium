@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.base import BaseMixin
 	from osn_selenium.dev_tools._types import devtools_background_func_type
 
-
 METHOD_INPUT = ParamSpec("METHOD_INPUT")
 METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
 
