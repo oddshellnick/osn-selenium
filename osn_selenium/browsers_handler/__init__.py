@@ -9,10 +9,20 @@ from osn_selenium.browsers_handler.types import Browser
 from osn_selenium.errors import (
 	PlatformNotSupportedError
 )
-from osn_selenium.browsers_handler._windows import (
-	get_installed_browsers_win32,
-	get_webdriver_version
-)
+
+
+if sys.platform == "win32":
+	from osn_selenium.browsers_handler._windows import (
+			get_installed_browsers as _platform_get_installed_browsers,
+			get_webdriver_version as _platform_get_webdriver_version
+	)
+elif sys.platform == "linux":
+	from osn_selenium.browsers_handler._linux import (
+			get_installed_browsers as _platform_get_installed_browsers,
+			get_webdriver_version as _platform_get_webdriver_version
+	)
+else:
+	raise PlatformNotSupportedError(sys.platform)
 
 
 def get_version_of_driver(driver_path: Union[pathlib.Path, str]) -> Optional[str]:
@@ -24,15 +34,9 @@ def get_version_of_driver(driver_path: Union[pathlib.Path, str]) -> Optional[str
 
 	Returns:
 		Optional[str]: The version of the webdriver as a string, or None if not determined.
-
-	Raises:
-		PlatformNotSupportedError: If the operating system is not supported.
 	"""
 	
-	if sys.platform == "win32":
-		return get_webdriver_version(driver_path=driver_path)
-	
-	raise PlatformNotSupportedError(sys.platform)
+	return _platform_get_webdriver_version(driver_path=driver_path)
 
 
 def get_installed_browsers() -> List[Browser]:
@@ -49,10 +53,7 @@ def get_installed_browsers() -> List[Browser]:
 		PlatformNotSupportedError: If the operating system is not supported.
 	"""
 	
-	if sys.platform == "win32":
-		return get_installed_browsers_win32()
-	
-	raise PlatformNotSupportedError(sys.platform)
+	return _platform_get_installed_browsers()
 
 
 def get_version_of_browser(browser_name: str) -> Optional[str]:
@@ -69,8 +70,8 @@ def get_version_of_browser(browser_name: str) -> Optional[str]:
 	"""
 	
 	for browser in get_installed_browsers():
-		if browser["name"] == browser_name:
-			return browser["version"]
+		if browser.name == browser_name:
+			return browser.version
 	
 	return None
 

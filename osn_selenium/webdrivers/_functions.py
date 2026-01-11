@@ -1,14 +1,13 @@
 import re
-import sys
 import psutil
 import pathlib
-from typing import Optional, Union
 from pandas import DataFrame, Series
-from osn_selenium.errors import (
-	PlatformNotSupportedError
-)
-from osn_windows_cmd.netstat import (
-	get_netstat_connections_data as windows_netstat_connections_data
+from osn_system_utils.api._utils import LOCALHOST_IPS
+from typing import (
+	Dict,
+	List,
+	Optional,
+	Union
 )
 
 
@@ -67,22 +66,34 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 		PlatformNotSupportedError: If the platform is not supported.
 	"""
 	
-	if sys.platform == "win32":
-		connections_data = windows_netstat_connections_data(
-				show_all_ports=True,
-				show_connections_exe=True,
-				show_connection_pid=True
-		)
+	target_name = browser_exe if isinstance(browser_exe, str) else browser_exe.name
+	rows: List[Dict[str, Union[str, int]]] = []
 	
-		return connections_data.loc[
-			(
-					connections_data["Executable"] == (browser_exe if isinstance(browser_exe, str) else browser_exe.name)
-			) &
-			connections_data["Local Address"].str.contains(r"127\.0\.0\.1:\d+", regex=True, na=False) &
-			(connections_data["State"] == "LISTENING")
-		]
+	for conn in psutil.net_connections(kind="inet"):
+		if (
+				conn.status != psutil.CONN_LISTEN
+				or not conn.laddr
+				or conn.laddr.ip not in LOCALHOST_IPS
+				or not conn.pid
+		):
+			continue
 	
-	raise PlatformNotSupportedError(sys.platform)
+		try:
+			process = psutil.Process(conn.pid)
+			process_name = process.name()
+	
+			if process_name.lower() == target_name.lower():
+				rows.append(
+						{
+							"Executable": process_name,
+							"Local Address": f"{conn.laddr.ip}:{conn.laddr.port}",
+							"PID": conn.pid
+						}
+				)
+		except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+			continue
+	
+	return DataFrame(rows)
 
 
 def find_browser_previous_session(

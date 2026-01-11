@@ -1,5 +1,3 @@
-import re
-import sys
 import pathlib
 from selenium import webdriver
 from osn_selenium.types import WindowRect
@@ -12,9 +10,6 @@ from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
 from osn_selenium.webdrivers.sync.core import CoreWebDriver
 from osn_selenium.browsers_handler import get_path_to_browser
-from osn_windows_cmd.netstat import (
-	get_localhost_minimum_free_port
-)
 from osn_selenium.webdrivers._functions import (
 	find_browser_previous_session
 )
@@ -25,6 +20,10 @@ from osn_selenium.flags.models.blink import (
 	BlinkArguments,
 	BlinkExperimentalOptions,
 	BlinkFlags
+)
+from osn_system_utils.api.network import (
+	get_localhost_free_port_of,
+	get_random_localhost_free_port
 )
 
 
@@ -86,9 +85,6 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 				the browser's default window size will be used. Defaults to None.
 		"""
 		
-		self._console_encoding = sys.stdout.encoding
-		self._ip_pattern = re.compile(r"\A(\d+\.\d+\.\d+\.\d+|\[::]):\d+\Z")
-		
 		super().__init__(
 				webdriver_path=webdriver_path,
 				flags_manager_type=flags_manager_type,
@@ -140,18 +136,10 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 					return previous_session
 		
 		if debugging_port is not None:
-			return get_localhost_minimum_free_port(
-					console_encoding=self._console_encoding,
-					ip_pattern=self._ip_pattern,
-					ports_to_check=debugging_port
-			)
+			return get_localhost_free_port_of(ports_to_check=debugging_port, on_candidates="min")
 		
 		if self.debugging_port is None or self.debugging_port == 0:
-			return get_localhost_minimum_free_port(
-					console_encoding=self._console_encoding,
-					ip_pattern=self._ip_pattern,
-					ports_to_check=self.debugging_port
-			)
+			return get_random_localhost_free_port()
 		
 		return self.debugging_port
 	

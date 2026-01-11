@@ -27,9 +27,6 @@ class BlinkSettingsMixin(BlinkBaseMixin, AbstractBlinkSettingsMixin):
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
 		if not self.is_active:
-			if window_rect is None:
-				window_rect = await self._wrap_to_trio(WindowRect)
-		
 			if flags is not None:
 				await self._wrap_to_trio(self._webdriver_flags_manager.set_flags, flags)
 			else:

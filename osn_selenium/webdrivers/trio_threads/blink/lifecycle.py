@@ -5,17 +5,13 @@ from subprocess import Popen
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_windows_cmd.taskkill.parameters import TaskKillTypes
-from osn_windows_cmd.taskkill import (
-	ProcessID,
-	taskkill_windows
-)
+from osn_system_utils.api.process import kill_process_by_pid
 from osn_selenium.webdrivers.trio_threads.core import CoreLifecycleMixin
 from osn_selenium.webdrivers.trio_threads.blink.settings import BlinkSettingsMixin
 from osn_selenium.abstract.webdriver.blink.lifecycle import (
 	AbstractBlinkLifecycleMixin
 )
-from osn_windows_cmd.netstat import (
+from osn_system_utils.api.network import (
 	get_localhost_pids_with_addresses,
 	get_localhost_pids_with_ports
 )
@@ -33,18 +29,14 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 		raise NotImplementedError("This function must be implemented in child classes.")
 	
 	async def _check_browser_exe_active(self) -> bool:
-		pids_with_addrs = await self._wrap_to_trio(
-				get_localhost_pids_with_addresses,
-				self._console_encoding,
-				self._ip_pattern,
-		)
+		pids_with_addrs = await self._wrap_to_trio(get_localhost_pids_with_addresses)
 		
 		for pid, ports in pids_with_addrs.items():
 			if len(ports) == 1 and re.search(rf":{self.debugging_port}\Z", ports[0]) is not None:
 				address = re.search(rf"\A(.+):{self.debugging_port}\Z", ports[0]).group(1)
 		
 				if address != self.debugging_ip:
-					await self._set_debugging_port(debugging_port=self.debugging_port, debugging_address=address,)
+					await self._set_debugging_port(debugging_port=self.debugging_port, debugging_address=address)
 		
 				return True
 		
@@ -87,19 +79,11 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 	
 	async def close_webdriver(self) -> None:
 		if self.browser_exe is not None:
-			pids_to_ports = await self._wrap_to_trio(
-					get_localhost_pids_with_ports,
-					self._console_encoding,
-					self._ip_pattern,
-			)
+			pids_with_ports = await self._wrap_to_trio(get_localhost_pids_with_ports)
 		
-			for pid, ports in pids_to_ports.items():
-				if ports == [self.debugging_port]:
-					await self._wrap_to_trio(
-							taskkill_windows,
-							taskkill_type=TaskKillTypes.forcefully_terminate,
-							selectors=ProcessID(pid),
-					)
+			for pid, ports in pids_with_ports.items():
+				if self.debugging_port in ports and 1 <= len(ports) <= 2:
+					await self._wrap_to_trio(kill_process_by_pid, pid=pid, force=True)
 		
 					is_active = await self._check_browser_exe_active()
 		

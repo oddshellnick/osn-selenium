@@ -1,9 +1,7 @@
 from typing import Self, Union
-from win32api import GetSystemMetrics
 from pydantic import (
 	BaseModel,
-	ConfigDict,
-	Field
+	ConfigDict
 )
 from selenium.webdriver.common.actions.key_input import KeyInput
 from selenium.webdriver.common.actions.wheel_input import WheelInput
@@ -35,20 +33,16 @@ class WindowRect(DictModel):
 	occupying a significant portion of it.
 
 	Attributes:
-		x (int): The x-coordinate of the window's top-left corner.
-				 Defaults to 1/4 of the screen width.
-		y (int): The y-coordinate of the window's top-left corner.
-				 Defaults to 10% of the screen height.
-		width (int): The width of the window. Defaults to 1/2 of the
-					 screen width.
-		height (int): The height of the window. Defaults to 80% of the
-					  screen height.
+		x (int): The x-coordinate of the window's top-left corner. Defaults to 100.
+		y (int): The y-coordinate of the window's top-left corner. Defaults to 100.
+		width (int): The width of the window. Defaults to 400.
+		height (int): The height of the window. Defaults to 400.
 	"""
 	
-	x: int = Field(default_factory=lambda: GetSystemMetrics(0) // 4)
-	y: int = Field(default_factory=lambda: int(GetSystemMetrics(1) * 0.1))
-	width: int = Field(default_factory=lambda: GetSystemMetrics(0) // 2)
-	height: int = Field(default_factory=lambda: int(GetSystemMetrics(1) * 0.8))
+	x: int = 100
+	y: int = 100
+	width: int = 1024
+	height: int = 768
 
 
 class Size(DictModel):

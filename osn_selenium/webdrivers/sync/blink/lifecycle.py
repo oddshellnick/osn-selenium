@@ -5,17 +5,13 @@ from subprocess import Popen
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_windows_cmd.taskkill.parameters import TaskKillTypes
+from osn_system_utils.api.process import kill_process_by_pid
 from osn_selenium.webdrivers.sync.core import CoreLifecycleMixin
-from osn_windows_cmd.taskkill import (
-	ProcessID,
-	taskkill_windows
-)
 from osn_selenium.webdrivers.sync.blink.settings import BlinkSettingsMixin
 from osn_selenium.abstract.webdriver.blink.lifecycle import (
 	AbstractBlinkLifecycleMixin
 )
-from osn_windows_cmd.netstat import (
+from osn_system_utils.api.network import (
 	get_localhost_pids_with_addresses,
 	get_localhost_pids_with_ports
 )
@@ -33,7 +29,7 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 		raise NotImplementedError("This function must be implemented in child classes.")
 	
 	def _check_browser_exe_active(self) -> bool:
-		for pid, ports in get_localhost_pids_with_addresses(console_encoding=self._console_encoding, ip_pattern=self._ip_pattern).items():
+		for pid, ports in get_localhost_pids_with_addresses().items():
 			if len(ports) == 1 and re.search(rf":{self.debugging_port}\Z", ports[0]) is not None:
 				address = re.search(rf"\A(.+):{self.debugging_port}\Z", ports[0]).group(1)
 		
@@ -81,12 +77,11 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 	
 	def close_webdriver(self):
 		if self.browser_exe is not None:
-			for pid, ports in get_localhost_pids_with_ports(console_encoding=self._console_encoding, ip_pattern=self._ip_pattern).items():
-				if ports == [self.debugging_port]:
-					taskkill_windows(
-							taskkill_type=TaskKillTypes.forcefully_terminate,
-							selectors=ProcessID(pid)
-					)
+			pids_with_ports = get_localhost_pids_with_ports()
+		
+			for pid, ports in pids_with_ports.items():
+				if self.debugging_port in ports and 1 <= len(ports) <= 2:
+					kill_process_by_pid(pid=pid, force=True)
 		
 					is_active = self._check_browser_exe_active()
 		
