@@ -111,8 +111,8 @@ async def headers_handler(
 		headers = {name: value for name, value in event.request.headers.items()}
 	
 		for name, instance in headers_instances.items():
-			value = instance["value"]
-			instruction = instance["instruction"]
+			value = instance.value
+			instruction = instance.instruction
 	
 			if instruction == "set":
 				headers[name] = value
@@ -125,8 +125,7 @@ async def headers_handler(
 				continue
 	
 			if instruction == "remove":
-				if name in headers:
-					headers.pop(name)
+				headers.pop(name, None)
 	
 				continue
 	

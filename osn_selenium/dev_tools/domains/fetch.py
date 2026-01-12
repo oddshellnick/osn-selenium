@@ -99,16 +99,16 @@ async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictM
 	
 		kwargs_ready_events: List[trio.Event] = []
 	
-		for handler_name, handler_settings in handlers.model_dump().items():
+		for handler_name, handler_settings in handlers:
 			if handler_settings is not None:
 				kwargs_ready_event = trio.Event()
 				kwargs_ready_events.append(kwargs_ready_event)
 	
 				self._nursery_object.start_soon(
-						handler_settings["func"],
+						handler_settings.func,
 						self,
 						kwargs_ready_event,
-						handler_settings["instances"],
+						handler_settings.instances,
 						event,
 						kwargs
 				)
