@@ -143,6 +143,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 						user_data_dir_command.command,
 						user_data_dir,
 				)
+
 				if previous_session is not None:
 					return previous_session
 		
