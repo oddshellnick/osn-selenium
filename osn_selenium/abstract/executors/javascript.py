@@ -161,6 +161,7 @@ class AbstractJSExecutor(ABC):
 		...
 	
 	@property
+	@abstractmethod
 	def scripts(self) -> JS_Scripts:
 		"""
 		Provides access to the loaded JavaScript snippets.
