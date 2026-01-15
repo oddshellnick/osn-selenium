@@ -1,101 +1,19 @@
 import trio
-from datetime import datetime
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.exception_utils import log_exception
 from typing import (
-	Dict,
 	Optional,
-	Sequence,
 	TYPE_CHECKING,
 	Tuple
+)
+from osn_selenium.dev_tools.errors import trio_end_exceptions
+from osn_selenium.dev_tools.exception_utils import log_exception
+from osn_selenium.dev_tools.logger.types import (
+	CDPMainLogEntry,
+	FingerprintMainLogEntry
 )
 
 
 if TYPE_CHECKING:
-	from osn_selenium.dev_tools.logger.target import TargetLogEntry
 	from osn_selenium.dev_tools.settings import LoggerSettings
-
-
-class LogLevelStats(DictModel):
-	"""
-	Dataclass to store statistics for a specific log level.
-
-	Attributes:
-		num_logs (int): The total number of logs recorded for this level.
-		last_log_time (datetime): The timestamp of the most recent log entry for this level.
-	"""
-	
-	num_logs: int
-	last_log_time: datetime
-
-
-class LoggerChannelStats(DictModel):
-	"""
-	Dataclass to store statistics for a specific logging channel (per target).
-
-	Attributes:
-		target_id (str): The unique ID of the target associated with this channel.
-		title (str): The title of the target (e.g., page title).
-		url (str): The URL of the target.
-		num_logs (int): The total number of log entries for this channel.
-		last_log_time (datetime): The timestamp of the most recent log entry for this channel.
-		log_level_stats (Dict[str, LogLevelStats]): A dictionary mapping log levels to their specific statistics.
-	"""
-	
-	target_id: str
-	title: str
-	url: str
-	num_logs: int
-	last_log_time: datetime
-	log_level_stats: Dict[str, LogLevelStats]
-	
-	async def add_log(self, log_entry: "TargetLogEntry"):
-		"""
-		Updates the channel statistics based on a new log entry.
-
-		Args:
-			log_entry (TargetLogEntry): The new log entry to incorporate into the statistics.
-		"""
-		
-		self.num_logs += 1
-		self.last_log_time = log_entry.datetime
-		
-		if log_entry.level not in self.log_level_stats:
-			self.log_level_stats[log_entry.level] = LogLevelStats(num_logs=1, last_log_time=log_entry.datetime)
-		else:
-			self.log_level_stats[log_entry.level].num_logs += 1
-			self.log_level_stats[log_entry.level].last_log_time = log_entry.datetime
-
-
-class TargetTypeStats(DictModel):
-	"""
-	Dataclass to store statistics for a specific target type.
-
-	Attributes:
-		num_targets (int): The count of targets of this type.
-	"""
-	
-	num_targets: int
-
-
-class MainLogEntry(DictModel):
-	"""
-	Represents a summary log entry for the entire logging system.
-
-	Attributes:
-		num_channels (int): The total number of active logging channels (targets).
-		targets_types_stats (Dict[str, TargetTypeStats]): Statistics grouped by target type.
-		num_logs (int): The total number of log entries across all channels.
-		log_level_stats (Dict[str, LogLevelStats]): Overall statistics for each log level.
-		channels_stats (Sequence[LoggerChannelStats]): A List of statistics for each active logging channel.
-	"""
-	
-	num_channels: int
-	targets_types_stats: Dict[str, TargetTypeStats]
-	num_logs: int
-	log_level_stats: Dict[str, LogLevelStats]
-	channels_stats: Sequence[LoggerChannelStats]
 
 
 class MainLogger:
@@ -107,66 +25,103 @@ class MainLogger:
 
 	Attributes:
 		_nursery_object (trio.Nursery): The Trio nursery for managing concurrent tasks.
-		_receive_channel (trio.MemoryReceiveChannel[MainLogEntry]): The receive channel for main log entries.
-		_file_writing_stopped (Optional[trio.Event]): An event set when the file writing task stops.
+		_cdp_receive_channel (Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]]):
+			The receive channel for CDP main log entries.
+		_fingerprint_receive_channel (Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]):
+			The receive channel for fingerprint main log entries.
+		_cdp_file_writing_stopped (Optional[trio.Event]): An event set when the CDP file writing task stops.
+		_fingerprint_file_writing_stopped (Optional[trio.Event]): An event set when the fingerprint file writing task stops.
 		_is_active (bool): Flag indicating if the main logger is active.
-		_file_path (Optional[Path]): The path to the main log file.
+		_cdp_file_path (Optional[Path]): The path to the CDP main log file.
+		_fingerprint_file_path (Optional[Path]): The path to the fingerprint main log file.
 	"""
 	
 	def __init__(
 			self,
 			logger_settings: "LoggerSettings",
 			nursery_object: trio.Nursery,
-			receive_channel: trio.MemoryReceiveChannel[MainLogEntry]
+			cdp_receive_channel: Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]],
+			fingerprint_receive_channel: Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]
 	):
 		"""
 		Initializes the MainLogger.
 
 		Args:
-			logger_settings (LoggerSettings): The settings for logging, including log directory.
+			logger_settings ("LoggerSettings"): The settings for logging, including log directory.
 			nursery_object (trio.Nursery): The Trio nursery to spawn background tasks.
-			receive_channel (trio.MemoryReceiveChannel[MainLogEntry]): The channel from which main log entries are received.
+			cdp_receive_channel (Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]]):
+				The channel from which CDP main log entries are received.
+			fingerprint_receive_channel (Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]):
+				The channel from which fingerprint main log entries are received.
+
+		Raises:
+			ValueError: If settings require logging but `dir_path` is not set.
 		"""
 		
 		self._nursery_object = nursery_object
-		self._receive_channel = receive_channel
-		self._file_writing_stopped: Optional[trio.Event] = None
-		self._is_active = False
+		self._cdp_receive_channel = cdp_receive_channel
+		self._fingerprint_receive_channel = fingerprint_receive_channel
+		self._cdp_file_path = None
+		self._cdp_log_level_filter = None
+		self._cdp_target_type_filter = None
+		self._fingerprint_file_path = None
+		self._fingerprint_log_level_filter = None
+		self._fingerprint_target_type_filter = None
 		
-		if logger_settings.log_dir_path is None:
-			self._file_path = None
+		if logger_settings.dir_path is None:
+			if logger_settings.cdp_settings:
+				raise ValueError("Can't log CDP without LoggerSettings.dir_path!")
+			
+			if logger_settings.fingerprint_settings:
+				raise ValueError("Can't log Fingerprint without LoggerSettings.dir_path!")
 		else:
-			self._file_path = logger_settings.log_dir_path.joinpath("__MAIN__.txt")
+			logdir_path = logger_settings.dir_path.joinpath("__MAIN__")
+			logdir_path.mkdir(exist_ok=True)
+			
+			if logger_settings.cdp_settings:
+				self._cdp_file_path = logdir_path.joinpath(f"cdp_log.txt")
+			
+			if logger_settings.fingerprint_settings:
+				self._fingerprint_file_path = logdir_path.joinpath(f"fingerprint_log.txt")
+		
+		self._cdp_file_writing_stopped: Optional[trio.Event] = None
+		self._fingerprint_file_writing_stopped: Optional[trio.Event] = None
+		self._is_active = False
 	
 	async def close(self):
 		"""
-		Closes the main logger, including its receive channel.
+		Closes the main logger, including its receive channels and stops writing tasks.
 		"""
 		
-		if self._receive_channel is not None:
-			await self._receive_channel.aclose()
-			self._receive_channel = None
+		if self._cdp_receive_channel is not None:
+			await self._cdp_receive_channel.aclose()
+			self._cdp_receive_channel = None
 		
-		if self._file_writing_stopped is not None:
-			await self._file_writing_stopped.wait()
+		if self._cdp_file_writing_stopped is not None:
+			await self._cdp_file_writing_stopped.wait()
+			self._cdp_file_writing_stopped = None
+		
+		if self._fingerprint_receive_channel is not None:
+			await self._fingerprint_receive_channel.aclose()
+			self._fingerprint_receive_channel = None
+		
+		if self._fingerprint_file_writing_stopped is not None:
+			await self._fingerprint_file_writing_stopped.wait()
+			self._fingerprint_file_writing_stopped = None
 		
 		self._is_active = False
 	
-	async def _write_file(self):
+	async def _write_fingerprint_file(self):
 		"""
-		Asynchronously writes main log entries to the file.
+		Asynchronously writes fingerprint main log entries to the file.
 
-		This method continuously receives `MainLogEntry` objects from its channel
-		and overwrites the configured file with their string representation.
-		It runs as a background task.
-
-		Raises:
-			BaseException: If an unexpected error occurs during file writing.
+		This method continuously receives `FingerprintMainLogEntry` objects and
+		updates the log file.
 		"""
 		
 		try:
-			async with await trio.open_file(self._file_path, "w+", encoding="utf-8") as file:
-				async for log_entry in self._receive_channel:
+			async with await trio.open_file(self._fingerprint_file_path, "w+", encoding="utf-8") as file:
+				async for log_entry in self._fingerprint_receive_channel:
 					await file.seek(0)
 					await file.write(log_entry.model_dump_json(indent=4))
 					await file.truncate()
@@ -176,8 +131,32 @@ class MainLogger:
 		except* BaseException as error:
 			log_exception(error)
 		finally:
-			if self._file_writing_stopped is not None:
-				self._file_writing_stopped.set()
+			if self._fingerprint_file_writing_stopped is not None:
+				self._fingerprint_file_writing_stopped.set()
+	
+	async def _write_cdp_file(self):
+		"""
+		Asynchronously writes CDP main log entries to the file.
+
+		This method continuously receives `CDPMainLogEntry` objects from its channel
+		and overwrites the configured file with their string representation.
+		It runs as a background task.
+		"""
+		
+		try:
+			async with await trio.open_file(self._cdp_file_path, "w+", encoding="utf-8") as file:
+				async for log_entry in self._cdp_receive_channel:
+					await file.seek(0)
+					await file.write(log_entry.model_dump_json(indent=4))
+					await file.truncate()
+					await file.flush()
+		except* trio_end_exceptions:
+			pass
+		except* BaseException as error:
+			log_exception(error)
+		finally:
+			if self._cdp_file_writing_stopped is not None:
+				self._cdp_file_writing_stopped.set()
 	
 	async def run(self):
 		"""
@@ -189,10 +168,15 @@ class MainLogger:
 		
 		try:
 			if not self._is_active:
-				self._file_writing_stopped = trio.Event()
+				self._cdp_file_writing_stopped = trio.Event()
 		
-				if self._file_path is not None:
-					self._nursery_object.start_soon(self._write_file,)
+				if self._cdp_file_path is not None:
+					self._nursery_object.start_soon(self._write_cdp_file,)
+		
+				self._fingerprint_file_writing_stopped = trio.Event()
+		
+				if self._fingerprint_file_path is not None:
+					self._nursery_object.start_soon(self._write_fingerprint_file,)
 		
 				self._is_active = True
 		except* trio_end_exceptions:
@@ -202,24 +186,38 @@ class MainLogger:
 			await self.close()
 
 
-def build_main_logger(nursery_object: trio.Nursery, logger_settings: "LoggerSettings") -> Tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]:
+def build_main_logger(nursery_object: trio.Nursery, logger_settings: "LoggerSettings") -> Tuple[
+	Optional[trio.MemorySendChannel[CDPMainLogEntry]],
+	Optional[trio.MemorySendChannel[FingerprintMainLogEntry]],
+	MainLogger
+]:
 	"""
-	Builds and initializes a `MainLogger` instance along with its send channel.
+	Builds and initializes a `MainLogger` instance along with its send channels.
 
 	Args:
 		nursery_object (trio.Nursery): The Trio nursery to associate with the logger for background tasks.
-		logger_settings (LoggerSettings): The logger configuration settings.
+		logger_settings ("LoggerSettings"): The logger configuration settings.
 
 	Returns:
-		Tuple[trio.MemorySendChannel[MainLogEntry], MainLogger]: A tuple containing
-			the send channel for `MainLogEntry` objects and the initialized `MainLogger` instance.
+		Tuple[Optional[trio.MemorySendChannel[CDPMainLogEntry]], Optional[trio.MemorySendChannel[FingerprintMainLogEntry]], MainLogger]:
+			A tuple containing the send channels for logs and the initialized `MainLogger` instance.
 	"""
 	
-	send_channel, receive_channel = trio.open_memory_channel(1000)
+	if logger_settings.cdp_settings is not None:
+		cdp_send, cdp_recv = trio.open_memory_channel(logger_settings.cdp_settings.buffer_size)
+	else:
+		cdp_send, cdp_recv = None, None
+	
+	if logger_settings.fingerprint_settings is not None:
+		fp_send, fp_recv = trio.open_memory_channel(logger_settings.fingerprint_settings.buffer_size)
+	else:
+		fp_send, fp_recv = None, None
+	
 	target_logger = MainLogger(
 			logger_settings=logger_settings,
 			nursery_object=nursery_object,
-			receive_channel=receive_channel
+			cdp_receive_channel=cdp_recv,
+			fingerprint_receive_channel=fp_recv,
 	)
 	
-	return send_channel, target_logger
+	return cdp_send, fp_send, target_logger

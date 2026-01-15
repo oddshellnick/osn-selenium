@@ -27,7 +27,7 @@ class DiscoveryMixin(LoggingMixin):
 			BaseException: If other errors occur during initialization.
 		"""
 		
-		await self.log_step(message="New Targets listener starting.")
+		await self.log_cdp_step(message="New Targets listener starting.")
 		
 		try:
 			self._new_target_receive_channel: Tuple[trio.MemoryReceiveChannel, trio.Event] = (
@@ -43,10 +43,10 @@ class DiscoveryMixin(LoggingMixin):
 		except cdp_end_exceptions as error:
 			raise error
 		except BaseException as error:
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 			raise error
 		
-		await self.log_step(message="New Targets listener started.")
+		await self.log_cdp_step(message="New Targets listener started.")
 		
 		keep_alive = True
 		while keep_alive:
@@ -66,7 +66,7 @@ class DiscoveryMixin(LoggingMixin):
 			except* cdp_end_exceptions:
 				keep_alive = False
 			except* BaseException as error:
-				await self.log_error(error=error)
+				await self.log_cdp_error(error=error)
 				keep_alive = False
 		
 		self._new_target_receive_channel[1].set()
@@ -105,5 +105,5 @@ class DiscoveryMixin(LoggingMixin):
 		except cdp_end_exceptions as error:
 			raise error
 		except BaseException as error:
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 			raise error

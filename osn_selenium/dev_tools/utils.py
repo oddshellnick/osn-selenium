@@ -2,16 +2,17 @@ import inspect
 from pydantic import Field
 from types import ModuleType
 from osn_selenium.types import DictModel
+from osn_selenium.dev_tools._functions import (
+	yield_package_item_way
+)
 from typing import (
 	Any,
+	Iterable,
 	List,
 	Optional,
 	Set,
 	Tuple,
 	Union
-)
-from osn_selenium.dev_tools._functions import (
-	yield_package_item_way
 )
 
 
@@ -40,7 +41,7 @@ class TargetFilter(DictModel):
 
 	Attributes:
 		type_ (Optional[str]): The type of target to filter by (e.g., "page", "iframe").
-			If None, this filter applies regardless of type.
+			If None, this filter applies regardless of type. Aliased as 'type'.
 		exclude (Optional[bool]): If True, targets matching `type_` will be excluded.
 			If False or None, targets matching `type_` will be included.
 	"""
@@ -78,6 +79,21 @@ class TargetData(DictModel):
 	subtype: Optional[str] = None
 
 
+class FingerprintData(DictModel):
+	"""
+	Dataclass representing detected fingerprinting activity.
+
+	Attributes:
+		api (str): The API that was accessed.
+		method (str): The specific method within the API.
+		stacktrace (Optional[str]): The stack trace where the access occurred.
+	"""
+	
+	api: str
+	method: str
+	stacktrace: Optional[str]
+
+
 class DevToolsPackage:
 	"""
 	Wrapper around the DevTools module to safely retrieve nested attributes/classes.
@@ -102,12 +118,12 @@ class DevToolsPackage:
 		
 		self._package = package
 	
-	def get(self, name: Union[str, List[str], Set[str], Tuple[str, ...]]) -> Any:
+	def get(self, name: Union[str, Iterable[str]]) -> Any:
 		"""
 		Retrieves a nested attribute or class from the package by dot-separated path.
 
 		Args:
-			name (Union[str, List[str], Set[str], Tuple[str, ...]]): The dot-separated path string or iterable of strings
+			name (Union[str, Iterable[str]]): The dot-separated path string or iterable of strings
 				representing the path to the desired object.
 
 		Returns:
@@ -115,6 +131,14 @@ class DevToolsPackage:
 
 		Raises:
 			AttributeError: If any part of the path is not found in the package structure.
+
+		EXAMPLES
+		________
+		>>> # Assuming self._package has structure a.b.c
+		>>> pkg.get("a.b")
+		... <module 'a.b'>
+		>>> pkg.get(["a", "b", "c"])
+		... <object c>
 		"""
 		
 		object_ = self._package
