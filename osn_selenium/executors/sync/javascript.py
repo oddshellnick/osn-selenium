@@ -81,4 +81,4 @@ class JSExecutor(AbstractJSExecutor):
 		return self._scripts
 	
 	def stop_window_loading(self) -> None:
-		self.execute(self._scripts["stop_window_loading"])
+		self.execute(self._scripts.stop_window_loading)
