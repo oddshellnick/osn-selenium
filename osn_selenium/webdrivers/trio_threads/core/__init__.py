@@ -1,8 +1,11 @@
 import trio
 from typing import Optional, Type
 from osn_selenium.types import WindowRect
+from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
+from osn_selenium.dev_tools.settings import DevToolsSettings
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
@@ -50,6 +53,7 @@ class CoreWebDriver(
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
 	) -> None:
 		"""
@@ -72,6 +76,7 @@ class CoreWebDriver(
 				asynchronous script to finish execution. Defaults to 5.
 			window_rect (Optional[WindowRect]): The initial size and position of the
 				browser window. Defaults to None.
+			devtools_settings (Optional[DevToolsSettings]): Configuration for Chrome DevTools Protocol.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
@@ -87,7 +92,19 @@ class CoreWebDriver(
 				capacity_limiter=capacity_limiter,
 		)
 		
+		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
+		
+		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
+		
 		self._js_executor = JSExecutor(execute_function=self.execute_script)
+	
+	@property
+	def cdp(self) -> CDPExecutor:
+		return self._cdp_executor
+	
+	@property
+	def devtools(self) -> DevTools:
+		return self._devtools
 	
 	@property
 	def javascript(self) -> JSExecutor:

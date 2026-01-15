@@ -9,6 +9,7 @@ from typing import (
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
+from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.browsers_handler import get_path_to_browser
 from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
 from osn_selenium.webdrivers._functions import (
@@ -50,6 +51,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
 	):
 		"""
@@ -85,6 +87,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 			script_timeout (int): The default asynchronous script timeout in seconds. Defaults to 5.
 			window_rect (Optional[WindowRect]): The initial window size and position. If None,
 				the browser's default window size will be used. Defaults to None.
+			devtools_settings (Optional[DevToolsSettings]): Configuration for Chrome DevTools Protocol.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
@@ -97,6 +100,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
 		)
 		
@@ -143,7 +147,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 						user_data_dir_command.command,
 						user_data_dir,
 				)
-
+		
 				if previous_session is not None:
 					return previous_session
 		

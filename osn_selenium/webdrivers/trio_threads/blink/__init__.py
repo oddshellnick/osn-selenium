@@ -6,11 +6,9 @@ from typing import (
 	Type,
 	Union
 )
-from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
-from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.abstract.webdriver.blink import (
 	AbstractBlinkWebDriver
 )
@@ -85,6 +83,7 @@ class BlinkWebDriver(
 			script_timeout (int): The default asynchronous script timeout in seconds. Defaults to 5.
 			window_rect (Optional[WindowRect]): The initial window size and position. If None,
 				the browser's default window size will be used. Defaults to None.
+			devtools_settings (Optional[DevToolsSettings]): Configuration for Chrome DevTools Protocol.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
@@ -101,17 +100,6 @@ class BlinkWebDriver(
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
 		)
-		
-		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
-		
-		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
-	
-	@property
-	def cdp(self) -> CDPExecutor:
-		return self._cdp_executor
-	
-	@property
-	def devtools(self) -> DevTools:
-		return self._devtools

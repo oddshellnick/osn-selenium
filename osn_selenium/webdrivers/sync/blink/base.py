@@ -128,12 +128,12 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 		if self.browser_exe is not None:
 			user_data_dir_command = self._webdriver_flags_manager.flags_definitions.get("user_data_dir", None)
 			user_data_dir_value = self._webdriver_flags_manager.arguments.get("user_data_dir", None)
-
+		
 			user_data_dir = None if user_data_dir_command is None else user_data_dir_value.value if user_data_dir_value is not None else None
 		
 			if user_data_dir_command is not None:
 				previous_session = find_browser_previous_session(self.browser_exe, user_data_dir_command.command, user_data_dir)
-
+		
 				if previous_session is not None:
 					return previous_session
 		
