@@ -1,14 +1,9 @@
 import trio
-from datetime import datetime
 from selenium.webdriver.common.bidi.cdp import CdpSession
-from osn_selenium.dev_tools.logger.main import LoggerChannelStats
+from osn_selenium.dev_tools.logger.target import TargetLogger
 from osn_selenium.dev_tools.utils import (
 	DevToolsPackage,
 	TargetData
-)
-from osn_selenium.dev_tools.logger.target import (
-	TargetLogEntry,
-	TargetLogger
 )
 from osn_selenium.dev_tools._functions import (
 	validate_target_event_filter,
@@ -24,12 +19,18 @@ from typing import (
 	TYPE_CHECKING,
 	Tuple
 )
+from osn_selenium.dev_tools.logger.types import (
+	CDPLoggerChannelStats,
+	CDPTargetLogEntry,
+	FingerprintLoggerChannelStats,
+	FingerprintTargetLogEntry
+)
 
 
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings
-	from osn_selenium.dev_tools.settings import LoggerSettings
+	from osn_selenium.dev_tools.settings import LoggerSettings, FingerprintDetectionSettings
 	from osn_selenium.dev_tools._types import devtools_background_func_type
 
 
@@ -55,17 +56,19 @@ class BaseMixin:
 			self,
 			target_data: TargetData,
 			logger_settings: "LoggerSettings",
+			domains_settings: "DomainsSettings",
+			fingerprint_detection_settings: "FingerprintDetectionSettings",
 			devtools_package: DevToolsPackage,
 			websocket_url: Optional[str],
 			new_targets_filter_list: Sequence[Dict[str, Any]],
 			new_targets_buffer_size: int,
-			domains: "DomainsSettings",
 			nursery: trio.Nursery,
 			exit_event: trio.Event,
 			target_background_task: Optional["devtools_background_func_type"],
 			add_target_func: Callable[[Any], Coroutine[Any, Any, bool]],
 			remove_target_func: Callable[["DevToolsTarget"], Coroutine[Any, Any, Optional[bool]]],
-			add_log_func: Callable[[TargetLogEntry], Coroutine[Any, Any, None]],
+			add_cdp_log_func: Callable[[CDPTargetLogEntry], Coroutine[Any, Any, None]],
+			add_fingerprint_log_func: Callable[[FingerprintTargetLogEntry], Coroutine[Any, Any, None]],
 	):
 		"""
 		Initializes the BaseMixin.
@@ -73,55 +76,62 @@ class BaseMixin:
 		Args:
 			target_data (TargetData): Information about the target.
 			logger_settings ("LoggerSettings"): Configuration for logging.
+			domains_settings ("DomainsSettings"): Configuration for enabled domains and handlers.
+			fingerprint_detection_settings ("FingerprintDetectionSettings"): Configuration for fingerprint detection.
 			devtools_package (DevToolsPackage): Access to CDP commands and events.
 			websocket_url (Optional[str]): The debugger URL.
 			new_targets_filter_list (Sequence[Dict[str, Any]]): Filters for discovering new targets.
 			new_targets_buffer_size (int): Buffer size for new target events.
-			domains ("DomainsSettings"): Configuration for enabled domains and handlers.
 			nursery (trio.Nursery): Trio nursery for background tasks.
 			exit_event (trio.Event): Signal to stop all operations.
 			target_background_task (Optional[devtools_background_func_type]): Optional background task to run.
 			add_target_func (Callable[[Any], Coroutine[Any, Any, bool]]): Callback to add a new target.
 			remove_target_func (Callable[["DevToolsTarget"], Coroutine[Any, Any, Optional[bool]]]): Callback to remove this target.
-			add_log_func (Callable[[TargetLogEntry], Coroutine[Any, Any, None]]): Callback to record a log entry.
+			add_cdp_log_func (Callable[[CDPTargetLogEntry], Coroutine[Any, Any, None]]): Callback to record a CDP log entry.
+			add_fingerprint_log_func (Callable[[FingerprintTargetLogEntry], Coroutine[Any, Any, None]]): Callback to record a fingerprint log entry.
 		"""
 		
 		self.target_data = target_data
 		self._logger_settings = logger_settings
+		self._domains = domains_settings
+		self._fingerprint_detection_settings = fingerprint_detection_settings
 		self.devtools_package = devtools_package
 		self.websocket_url = websocket_url
 		self._new_targets_filter_list = new_targets_filter_list
-		self._new_targets_events_filters = validate_target_event_filter(new_targets_filter_list)
 		self._new_targets_buffer_size = new_targets_buffer_size
-		self._domains = domains
 		self._nursery_object = nursery
 		self.exit_event = exit_event
-		
-		self._target_type_log_accepted = validate_type_filter(
-				self.type_,
-				self._logger_settings.target_type_filter_mode,
-				self._logger_settings.target_type_filter
-		)
-		
 		self._target_background_task = target_background_task
 		self._add_target_func = add_target_func
 		self._remove_target_func = remove_target_func
-		self._add_log_func = add_log_func
+		self._add_cdp_log_func = add_cdp_log_func
+		self._add_fingerprint_log_func = add_fingerprint_log_func
+		self._new_targets_events_filters = validate_target_event_filter(new_targets_filter_list)
+		
+		self._cdp_target_type_log_accepted = validate_type_filter(
+				self.type_,
+				self._logger_settings.cdp_settings.target_type_filter_mode,
+				self._logger_settings.cdp_settings.target_type_filter
+		)
+		
+		self._cdp_log_stats = CDPLoggerChannelStats(
+				target_id=target_data.target_id,
+				title=target_data.title,
+				url=target_data.url,
+		)
+		
+		self._fingerprint_log_stats = FingerprintLoggerChannelStats(
+				target_id=target_data.target_id,
+				title=target_data.title,
+				url=target_data.url,
+		)
+		
 		self.started_event = trio.Event()
 		self.about_to_stop_event = trio.Event()
 		self.background_task_ended: Optional[trio.Event] = None
 		self.stopped_event = trio.Event()
-		
-		self._log_stats = LoggerChannelStats(
-				target_id=target_data.target_id,
-				title=target_data.title,
-				url=target_data.url,
-				num_logs=0,
-				last_log_time=datetime.now(),
-				log_level_stats={}
-		)
-		
-		self._logger_send_channel: Optional[trio.MemorySendChannel] = None
+		self._logger_cdp_send_channel: Optional[trio.MemorySendChannel[CDPTargetLogEntry]] = None
+		self._logger_fingerprint_send_channel: Optional[trio.MemorySendChannel[FingerprintTargetLogEntry]] = None
 		self._logger: Optional[TargetLogger] = None
 		self._cdp_session: Optional[CdpSession] = None
 		self._new_target_receive_channel: Optional[Tuple[trio.MemoryReceiveChannel, trio.Event]] = None
@@ -148,10 +158,10 @@ class BaseMixin:
 			value (Optional[str]): The new target type.
 		"""
 		
-		self._target_type_log_accepted = validate_type_filter(
+		self._cdp_target_type_log_accepted = validate_type_filter(
 				value,
-				self._logger_settings.target_type_filter_mode,
-				self._logger_settings.target_type_filter
+				self._logger_settings.cdp_settings.target_type_filter_mode,
+				self._logger_settings.cdp_settings.target_type_filter
 		)
 		self.target_data.type_ = value
 	
@@ -222,6 +232,17 @@ class BaseMixin:
 		self.target_data.can_access_opener = value
 	
 	@property
+	def cdp_log_stats(self) -> CDPLoggerChannelStats:
+		"""
+		Gets the CDP logging statistics for this target channel.
+
+		Returns:
+			CDPLoggerChannelStats: The statistics object.
+		"""
+		
+		return self._cdp_log_stats
+	
+	@property
 	def cdp_session(self) -> CdpSession:
 		"""
 		Gets the active CDP session for this target.
@@ -231,6 +252,17 @@ class BaseMixin:
 		"""
 		
 		return self._cdp_session
+	
+	@property
+	def fingerprint_log_stats(self) -> FingerprintLoggerChannelStats:
+		"""
+		Gets the fingerprint logging statistics for this target channel.
+
+		Returns:
+			FingerprintLoggerChannelStats: The statistics object.
+		"""
+		
+		return self._fingerprint_log_stats
 	
 	@property
 	def opener_frame_id(self) -> Optional[str]:
@@ -318,7 +350,7 @@ class BaseMixin:
 			value (Optional[str]): The new target ID.
 		"""
 		
-		self._log_stats.target_id = value
+		self._cdp_log_stats.target_id = value
 		self.target_data.target_id = value
 	
 	@property
@@ -330,7 +362,7 @@ class BaseMixin:
 			bool: True if logging is allowed, False otherwise.
 		"""
 		
-		return self._target_type_log_accepted
+		return self._cdp_target_type_log_accepted
 	
 	@property
 	def title(self) -> Optional[str]:
@@ -352,7 +384,7 @@ class BaseMixin:
 			value (Optional[str]): The new title.
 		"""
 		
-		self._log_stats.title = value
+		self._cdp_log_stats.title = value
 		self.target_data.title = value
 	
 	@property
@@ -375,5 +407,5 @@ class BaseMixin:
 			value (Optional[str]): The new URL.
 		"""
 		
-		self._log_stats.url = value
+		self._cdp_log_stats.url = value
 		self.target_data.url = value

@@ -234,7 +234,7 @@ async def execute_cdp_command(
 	"""
 	
 	try:
-		await self.log(
+		await self.log_cdp(
 				level="DEBUG",
 				message=f"Executing CDP command: {function.__name__}",
 				extra_data={"args": args, "kwargs": kwargs}
@@ -247,7 +247,7 @@ async def execute_cdp_command(
 		if error_mode == "raise":
 			raise error
 		elif error_mode == "log":
-			await self.log_error(
+			await self.log_cdp_error(
 					error=error,
 					extra_data={"cdp_command": function.__name__, "args": args, "kwargs": kwargs}
 			)

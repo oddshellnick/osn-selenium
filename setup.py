@@ -33,7 +33,7 @@ def get_description() -> str:
 
 setup(
 		name="osn-selenium",
-		version="1.0.0-beta.4",
+		version="1.0.0-beta.5",
 		author="oddshellnick",
 		author_email="oddshellnick.programming@gmail.com",
 		description=get_description(),
@@ -41,6 +41,6 @@ setup(
 		long_description_content_type="text/markdown",
 		packages=find_packages(exclude=["unit_tests*"]),
 		install_requires=get_install_requires(),
-		package_data={"osn_selenium": ["js_scripts/*.js"]},
+		package_data={"osn_selenium": ["javascript/scripts/*.js"]},
 		include_package_data=True,
 )

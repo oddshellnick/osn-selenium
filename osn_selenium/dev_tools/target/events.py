@@ -32,7 +32,7 @@ class EventHandlersMixin(LoggingMixin):
 			BaseException: If initialization fails.
 		"""
 		
-		await self.log_step(message=f"Event handler '{event_config.class_to_use_path}' starting.")
+		await self.log_cdp_step(message=f"Event handler '{event_config.class_to_use_path}' starting.")
 		
 		try:
 			receiver_channel: trio.MemoryReceiveChannel = self.cdp_session.listen(
@@ -48,10 +48,10 @@ class EventHandlersMixin(LoggingMixin):
 		except cdp_end_exceptions as error:
 			raise error
 		except BaseException as error:
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 			raise error
 		
-		await self.log_step(message=f"Event handler '{event_config.class_to_use_path}' started.")
+		await self.log_cdp_step(message=f"Event handler '{event_config.class_to_use_path}' started.")
 		
 		keep_alive = True
 		while keep_alive:
@@ -61,7 +61,7 @@ class EventHandlersMixin(LoggingMixin):
 			except* cdp_end_exceptions:
 				keep_alive = False
 			except* BaseException as error:
-				await self.log_error(error=error)
+				await self.log_cdp_error(error=error)
 				keep_alive = False
 		
 		channel_stopped_event.set()
@@ -85,7 +85,7 @@ class EventHandlersMixin(LoggingMixin):
 			BaseException: If other errors occur during setup.
 		"""
 		
-		await self.log_step(
+		await self.log_cdp_step(
 				message=f"Domain '{domain_config.name}' events handlers setup started."
 		)
 		
@@ -108,11 +108,11 @@ class EventHandlersMixin(LoggingMixin):
 		
 			events_ready_event.set()
 		
-			await self.log_step(
+			await self.log_cdp_step(
 					message=f"Domain '{domain_config.name}' events handlers setup complete."
 			)
 		except* cdp_end_exceptions as error:
 			raise error
 		except* BaseException as error:
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 			raise error

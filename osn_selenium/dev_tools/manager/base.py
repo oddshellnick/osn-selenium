@@ -4,6 +4,7 @@ from contextlib import (
 )
 from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.dev_tools.utils import DevToolsPackage
+from osn_selenium.dev_tools.logger.main import MainLogger
 from osn_selenium.dev_tools.domains import DomainsSettings
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from typing import (
@@ -14,11 +15,13 @@ from typing import (
 )
 from osn_selenium.dev_tools.logger.functions import prepare_log_dir
 from selenium.webdriver.remote.bidi_connection import BidiConnection
-from osn_selenium.dev_tools.logger.main import (
-	LogLevelStats,
-	MainLogEntry,
-	MainLogger,
-	TargetTypeStats
+from osn_selenium.dev_tools.logger.types import (
+	CDPLogLevelStats,
+	CDPMainLogEntry,
+	CDPTargetTypeStats,
+	FingerprintAPIStats,
+	FingerprintLogLevelStats,
+	FingerprintMainLogEntry
 )
 
 
@@ -52,10 +55,10 @@ class BaseMixin:
 		_is_active (bool): Flag indicating if the DevTools event handler is currently active.
 		_is_closing (bool): Flag indicating if the DevTools manager is in the process of closing.
 		_num_logs (int): Total count of all log entries across all targets.
-		_targets_types_stats (Dict[str, TargetTypeStats]): Statistics for each target type.
-		_log_level_stats (Dict[str, LogLevelStats]): Overall statistics for each log level.
+		_cdp_targets_types_stats (Dict[str, CDPTargetTypeStats]): Statistics for each target type.
+		_cdp_log_level_stats (Dict[str, CDPLogLevelStats]): Overall statistics for each log level.
+		_main_logger_cdp_send_channel (Optional[trio.MemorySendChannel[CDPMainLogEntry]]): Send channel for the main logger.
 		_main_logger (Optional[MainLogger]): The main logger instance.
-		_main_logger_send_channel (Optional[trio.MemorySendChannel[MainLogEntry]]): Send channel for the main logger.
 	"""
 	
 	def __init__(
@@ -76,6 +79,7 @@ class BaseMixin:
 			devtools_settings = DevToolsSettings()
 		
 		self._webdriver = parent_webdriver
+		self._fingerprint_detection_settings = devtools_settings.fingerprint_detection_settings
 		self._logger_settings = devtools_settings.logger_settings
 		self._domains_settings = devtools_settings.domains_settings
 		self._new_targets_buffer_size = devtools_settings.new_targets_buffer_size
@@ -98,10 +102,13 @@ class BaseMixin:
 		self._is_active = False
 		self._is_closing = False
 		self._num_logs = 0
-		self._targets_types_stats: Dict[str, TargetTypeStats] = {}
-		self._log_level_stats: Dict[str, LogLevelStats] = {}
+		self._cdp_targets_types_stats: Dict[str, CDPTargetTypeStats] = {}
+		self._cdp_log_level_stats: Dict[str, CDPLogLevelStats] = {}
+		self._main_logger_cdp_send_channel: Optional[trio.MemorySendChannel[CDPMainLogEntry]] = None
+		self._fingerprint_categories_stats: Dict[str, FingerprintAPIStats] = {}
+		self._fingerprint_log_level_stats: Dict[str, FingerprintLogLevelStats] = {}
+		self._main_logger_fingerprint_send_channel: Optional[trio.MemorySendChannel[FingerprintMainLogEntry]] = None
 		self._main_logger: Optional[MainLogger] = None
-		self._main_logger_send_channel: Optional[trio.MemorySendChannel[MainLogEntry]] = None
 		
 		prepare_log_dir(devtools_settings.logger_settings)
 	

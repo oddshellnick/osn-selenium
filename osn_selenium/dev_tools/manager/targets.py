@@ -1,9 +1,9 @@
 from typing import Any, List, Optional
 from osn_selenium.dev_tools.utils import TargetData
 from osn_selenium.dev_tools.target import DevToolsTarget
-from osn_selenium.dev_tools.logger.main import TargetTypeStats
 from osn_selenium.dev_tools.manager.logging import LoggingMixin
 from osn_selenium.dev_tools.exception_utils import log_exception
+from osn_selenium.dev_tools.logger.types import CDPTargetTypeStats
 from osn_selenium.dev_tools.errors import (
 	BidiConnectionNotEstablishedError,
 	cdp_end_exceptions
@@ -33,13 +33,13 @@ class TargetsMixin(LoggingMixin):
 		try:
 			async with self.targets_lock:
 				if target.target_id in self._handling_targets:
-					self._targets_types_stats[target.type_].num_targets -= 1
+					self._cdp_targets_types_stats[target.type_].num_targets -= 1
 		
 					target = self._handling_targets.pop(target.target_id)
-					await target.log_step(message=f"Target '{target.target_id}' removed.")
+					await target.log_cdp_step(message=f"Target '{target.target_id}' removed.")
 					await target.stop()
 		
-					await self._main_log()
+					await self._add_main_cdp_log()
 		
 					return True
 				else:
@@ -97,25 +97,27 @@ class TargetsMixin(LoggingMixin):
 									subtype=target_info.subtype,
 							),
 							logger_settings=self._logger_settings,
+							domains_settings=self._domains_settings,
+							fingerprint_detection_settings=self._fingerprint_detection_settings,
 							devtools_package=self._devtools_package,
 							websocket_url=self._websocket_url,
 							new_targets_filter_list=self._new_targets_filter,
 							new_targets_buffer_size=self._new_targets_buffer_size,
-							domains=self._domains_settings,
 							nursery=self._nursery_object,
 							exit_event=self.exit_event,
 							target_background_task=self._target_background_task,
 							add_target_func=self._add_target,
 							remove_target_func=self._remove_target,
-							add_log_func=self._add_log,
+							add_cdp_log_func=self._add_cdp_log,
+							add_fingerprint_log_func=self._add_fingerprint_log,
 					)
 		
-					if target_info.type_ not in self._targets_types_stats:
-						self._targets_types_stats[target_info.type_] = TargetTypeStats(num_targets=1)
+					if target_info.type_ not in self._cdp_targets_types_stats:
+						self._cdp_targets_types_stats[target_info.type_] = CDPTargetTypeStats(num_targets=1)
 					else:
-						self._targets_types_stats[target_info.type_].num_targets += 1
+						self._cdp_targets_types_stats[target_info.type_].num_targets += 1
 		
-					await self._main_log()
+					await self._add_main_cdp_log()
 		
 					self._nursery_object.start_soon(self._handling_targets[target_id].run,)
 		

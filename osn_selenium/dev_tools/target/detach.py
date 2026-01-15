@@ -44,7 +44,7 @@ class DetachMixin(LoggingMixin):
 			except* cdp_end_exceptions:
 				break_ = True
 			except* BaseException as error:
-				await self.log_error(error=error)
+				await self.log_cdp_error(error=error)
 				break_ = True
 		
 		if should_stop:

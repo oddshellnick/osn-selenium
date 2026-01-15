@@ -14,7 +14,7 @@ else:
 
 devtools_background_func_type = Callable[[BaseTargetMixin], Coroutine[Any, Any, None]]
 
-LogLevelsType = Literal[
+CDPLogLevelsType = Literal[
 	"INFO",
 	"ERROR",
 	"DEBUG",
@@ -23,3 +23,4 @@ LogLevelsType = Literal[
 	"AuthRequired",
 	"Building Kwargs"
 ]
+FingerprintLogLevelsType = Literal["Detect"]

@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
+from osn_selenium.javascript.types import JS_Scripts
 from selenium.webdriver.remote.webelement import WebElement
 from osn_selenium.types import (
-	JS_Scripts,
 	Point,
 	Position,
 	Rectangle,
@@ -11,6 +11,14 @@ from osn_selenium.types import (
 
 
 class AbstractJSExecutor(ABC):
+	"""
+	Abstract base class for executing JavaScript commands in a browser context.
+
+	This class defines the interface for interacting with JavaScript scripts,
+	including checking element visibility, getting computed styles, and managing
+	viewport properties.
+	"""
+	
 	@abstractmethod
 	def check_element_in_viewport(self, element: WebElement) -> bool:
 		"""
@@ -21,7 +29,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			bool: True if the element is fully within the viewport,
-				  otherwise False.
+				otherwise False.
 		"""
 		
 		...
@@ -76,7 +84,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			Rectangle: An object with the x, y, width, and height of the
-					   element.
+				element.
 		"""
 		
 		...
@@ -91,7 +99,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			Point: An object with the x and y coordinates of the random
-						 point relative to the viewport.
+				point relative to the viewport.
 		"""
 		
 		...
@@ -107,8 +115,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			Optional[Position]: An object with x and y coordinates relative to
-								the element's top-left corner, or None if no
-								point is found.
+				the element's top-left corner, or None if no point is found.
 		"""
 		
 		...
@@ -120,7 +127,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			Position: An object containing the x (horizontal) and y
-					  (vertical) scroll offsets.
+				(vertical) scroll offsets.
 		"""
 		
 		...
@@ -132,7 +139,7 @@ class AbstractJSExecutor(ABC):
 
 		Returns:
 			Rectangle: An object with the scroll offsets (x, y) and
-					   dimensions (width, height) of the viewport.
+				dimensions (width, height) of the viewport.
 		"""
 		
 		...
@@ -155,18 +162,31 @@ class AbstractJSExecutor(ABC):
 
 		Args:
 			link (str): The URL to open. If empty, a blank tab is opened.
-						Defaults to "".
+				Defaults to "".
 		"""
 		
 		...
 	
 	@property
+	@abstractmethod
 	def scripts(self) -> JS_Scripts:
 		"""
 		Provides access to the loaded JavaScript snippets.
 
 		Returns:
 			JS_Scripts: An object holding the predefined JS scripts.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def start_fingerprint_detection(self, optimize_events: bool = True) -> None:
+		"""
+		Initializes fingerprint detection mechanisms in the browser.
+
+		Args:
+			optimize_events (bool): Whether to optimize event reporting to reduce overhead.
+				Defaults to True.
 		"""
 		
 		...

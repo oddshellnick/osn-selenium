@@ -1,4 +1,4 @@
-from osn_selenium._functions import read_js_scripts
+from osn_selenium.javascript.types import JS_Scripts
 from typing import (
 	Any,
 	Callable,
@@ -6,13 +6,16 @@ from typing import (
 	Optional
 )
 from osn_selenium.instances.sync.web_element import WebElement
-from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from osn_selenium.types import (
-	JS_Scripts,
 	Point,
 	Position,
 	Rectangle,
 	Size
+)
+from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
+from osn_selenium.javascript.functions import (
+	inject_settings_in_js_script,
+	read_js_scripts
 )
 
 
@@ -80,5 +83,13 @@ class JSExecutor(AbstractJSExecutor):
 	def scripts(self) -> JS_Scripts:
 		return self._scripts
 	
+	def start_fingerprint_detection(self, optimize_events: bool = True) -> None:
+		self.execute(
+				inject_settings_in_js_script(
+						script=self._scripts.start_fingerprint_detection,
+						settings={"optimize_events": optimize_events}
+				)
+		)
+	
 	def stop_window_loading(self) -> None:
-		self.execute(self._scripts["stop_window_loading"])
+		self.execute(self._scripts.stop_window_loading)

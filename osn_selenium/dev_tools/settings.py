@@ -10,26 +10,46 @@ from typing import (
 	Union
 )
 from osn_selenium.dev_tools._types import (
-	LogLevelsType,
+	CDPLogLevelsType,
+	FingerprintLogLevelsType,
 	devtools_background_func_type
 )
 
 
-class LoggerSettings(DictModel):
+class FingerprintLoggerSettings(DictModel):
 	"""
-	Settings for configuring the LoggerManager.
+	Configuration settings for fingerprint logging.
 
 	Attributes:
-		log_dir_path (Optional[Path]): The base directory where log files will be stored.
-			If None, logging will only happen in memory and not be written to files.
+		buffer_size (int): The size of the log buffer. Defaults to 100.
+		log_level_filter_mode (Literal["exclude", "include"]): Mode for filtering log levels.
+			Defaults to "exclude".
+		log_level_filter (Optional[Union[FingerprintLogLevelsType, Sequence[FingerprintLogLevelsType]]]):
+			Specific log levels to filter based on the mode. Defaults to None.
+		category_filter_mode (Literal["exclude", "include"]): Mode for filtering categories.
+			Defaults to "exclude".
+		category_filter (Optional[Union[str, Sequence[str]]]): Specific categories to filter.
 			Defaults to None.
-		renew_log (bool): If True and `log_dir_path` is provided, the log directory
-			will be cleared (recreated) on initialization. Defaults to True.
+	"""
+	
+	buffer_size: int = 100
+	log_level_filter_mode: Literal["exclude", "include"] = "exclude"
+	log_level_filter: Optional[Union[FingerprintLogLevelsType, Sequence[FingerprintLogLevelsType]]] = None
+	category_filter_mode: Literal["exclude", "include"] = "exclude"
+	category_filter: Optional[Union[str, Sequence[str]]] = None
+
+
+class CDPLoggerSettings(DictModel):
+	"""
+	Configuration settings for Chrome DevTools Protocol (CDP) logging.
+
+	Attributes:
+		buffer_size (int): The size of the log buffer. Defaults to 100.
 		log_level_filter_mode (Literal["exclude", "include"]): The mode for filtering log levels.
 			"exclude" means log levels in `log_level_filter` will be excluded.
 			"include" means only log levels in `log_level_filter` will be included.
 			Defaults to "exclude".
-		log_level_filter (Optional[Union["LogLevelsType", Sequence["LogLevelsType"]]]):
+		log_level_filter (Optional[Union[CDPLogLevelsType, Sequence[CDPLogLevelsType]]]):
 			A single log level or a sequence of log levels to filter by.
 			Used in conjunction with `log_level_filter_mode`. Defaults to None.
 		target_type_filter_mode (Literal["exclude", "include"]): The mode for filtering target types.
@@ -41,12 +61,44 @@ class LoggerSettings(DictModel):
 			Used in conjunction with `target_type_filter_mode`. Defaults to None.
 	"""
 	
-	log_dir_path: Optional[Path] = None
-	renew_log: bool = True
+	buffer_size: int = 100
 	log_level_filter_mode: Literal["exclude", "include"] = "exclude"
-	log_level_filter: Optional[Union[LogLevelsType, Sequence[LogLevelsType]]] = None
+	log_level_filter: Optional[Union[CDPLogLevelsType, Sequence[CDPLogLevelsType]]] = None
 	target_type_filter_mode: Literal["exclude", "include"] = "exclude"
 	target_type_filter: Optional[Union[str, Sequence[str]]] = None
+
+
+class LoggerSettings(DictModel):
+	"""
+	Settings for configuring the LoggerManager.
+
+	Attributes:
+		dir_path (Optional[Path]): The base directory where log files will be stored.
+			If None, logging will only happen in memory and not be written to files.
+			Defaults to None.
+		renew_log (bool): Whether to clear/renew the log directory on startup. Defaults to True.
+		cdp_settings (Optional[CDPLoggerSettings]): Settings specific to CDP logging. Defaults to None.
+		fingerprint_settings (Optional[FingerprintLoggerSettings]): Settings specific to fingerprint logging.
+			Defaults to None.
+	"""
+	
+	dir_path: Optional[Path] = None
+	renew_log: bool = True
+	cdp_settings: Optional[CDPLoggerSettings] = None
+	fingerprint_settings: Optional[FingerprintLoggerSettings] = None
+
+
+class FingerprintDetectionSettings(DictModel):
+	"""
+	Configuration settings for fingerprint detection.
+
+	Attributes:
+		enable (bool): Whether fingerprint detection is enabled. Defaults to True.
+		optimize_events (bool): Whether to optimize event handling. Defaults to True.
+	"""
+	
+	enable: bool = True
+	optimize_events: bool = True
 
 
 class DevToolsSettings(DictModel):
@@ -63,6 +115,7 @@ class DevToolsSettings(DictModel):
 		target_background_task (Optional[devtools_background_func_type]): An optional asynchronous function
 			that will be run as a background task for each attached DevTools target. This can be used
 			for custom per-target logic. Defaults to None.
+		fingerprint_detection_settings (FingerprintDetectionSettings): Settings for fingerprint detection.
 		logger_settings (Optional[LoggerSettings]): Configuration settings for the internal logging system.
 			If None, default logging settings will be used (no file logging by default).
 			Defaults to None.
@@ -72,7 +125,7 @@ class DevToolsSettings(DictModel):
 	new_targets_filter: Optional[Sequence[TargetFilter]] = None
 	new_targets_buffer_size: int = 100
 	target_background_task: Optional[devtools_background_func_type] = None
-	
+	fingerprint_detection_settings: FingerprintDetectionSettings = Field(default_factory=FingerprintDetectionSettings)
 	logger_settings: Optional[LoggerSettings] = Field(default_factory=LoggerSettings)
 	domains_settings: Optional[DomainsSettings] = Field(default_factory=DomainsSettings)
 

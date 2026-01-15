@@ -97,18 +97,14 @@ def prepare_log_dir(logger_settings: LoggerSettings):
 					or does not represent a directory.
 	"""
 	
-	if isinstance(logger_settings.log_dir_path, Path) and (
-			logger_settings.log_dir_path.is_dir()
-			or not logger_settings.log_dir_path.exists()
-	):
-		if not logger_settings.log_dir_path.exists():
-			logger_settings.log_dir_path.mkdir(parents=True)
+	if isinstance(logger_settings.dir_path, Path) and (logger_settings.dir_path.is_dir() or not logger_settings.dir_path.exists()):
+		if not logger_settings.dir_path.exists():
+			logger_settings.dir_path.mkdir(parents=True)
 		elif logger_settings.renew_log:
-			shutil.rmtree(logger_settings.log_dir_path)
+			shutil.rmtree(logger_settings.dir_path)
 	
-			logger_settings.log_dir_path.mkdir()
-	
-	elif logger_settings.log_dir_path is not None:
+			logger_settings.dir_path.mkdir()
+	elif logger_settings.dir_path is not None:
 		raise ValueError(
-				f"'log_dir_path' must be a pathlib.Path to directory or None, got {logger_settings.log_dir_path} (type: {type(logger_settings.log_dir_path).__name__})"
+				f"'log_dir_path' must be a pathlib.Path to directory or None, got {logger_settings.dir_path} (type: {type(logger_settings.dir_path).__name__})"
 		)

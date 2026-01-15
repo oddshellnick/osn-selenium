@@ -5,6 +5,7 @@ from osn_selenium.dev_tools.target.detach import DetachMixin
 from osn_selenium.dev_tools.target.discovery import DiscoveryMixin
 from osn_selenium.dev_tools.target.events import EventHandlersMixin
 from osn_selenium.dev_tools.logger.target import build_target_logger
+from osn_selenium.dev_tools.target.fingerprint import FingerprintMixin
 from selenium.webdriver.common.bidi.cdp import (
 	BrowserError,
 	open_cdp
@@ -18,7 +19,7 @@ from osn_selenium.dev_tools._functions import (
 )
 
 
-class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
+class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, FingerprintMixin):
 	"""
 	Mixin managing the main lifecycle of the DevTools target (setup, run, close).
 	"""
@@ -37,9 +38,13 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 			await self._detached_receive_channel.aclose()
 			self._detached_receive_channel = None
 		
-		if self._logger_send_channel is not None:
-			await self._logger_send_channel.aclose()
-			self._logger_send_channel = None
+		if self._logger_cdp_send_channel is not None:
+			await self._logger_cdp_send_channel.aclose()
+			self._logger_cdp_send_channel = None
+		
+		if self._logger_fingerprint_send_channel is not None:
+			await self._logger_fingerprint_send_channel.aclose()
+			self._logger_fingerprint_send_channel = None
 		
 		if self._logger is not None:
 			await self._logger.close()
@@ -68,7 +73,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 		"""
 		
 		try:
-			await self.log_step(message="Target setup started.")
+			await self.log_cdp_step(message="Target setup started.")
 		
 			await self._setup_new_targets_attaching()
 		
@@ -77,7 +82,11 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 			new_targets_listener_ready_event = trio.Event()
 			target_ready_events.append(new_targets_listener_ready_event)
 		
+			fingerprint_detecting_ready_event = trio.Event()
+			target_ready_events.append(fingerprint_detecting_ready_event)
+		
 			self._nursery_object.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
+			self._nursery_object.start_soon(self._setup_fingerprint_detecting, fingerprint_detecting_ready_event)
 			self._nursery_object.start_soon(self._run_detach_checking,)
 		
 			for domain_name, domain_config in self._domains.model_dump(exclude_none=True).items():
@@ -114,11 +123,11 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 					function=self.devtools_package.get("runtime.run_if_waiting_for_debugger"),
 			)
 		
-			await self.log_step(message="Target setup complete.")
+			await self.log_cdp_step(message="Target setup complete.")
 		except* cdp_end_exceptions as error:
 			raise error
 		except* BaseException as error:
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 			raise error
 	
 	async def run(self):
@@ -133,12 +142,12 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 		"""
 		
 		try:
-			self._logger_send_channel, self._logger = build_target_logger(self.target_data, self._nursery_object, self._logger_settings)
+			self._logger_cdp_send_channel, self._logger_fingerprint_send_channel, self._logger = build_target_logger(self.target_data, self._nursery_object, self._logger_settings)
 		
-			if self._target_type_log_accepted:
+			if self._cdp_target_type_log_accepted:
 				await self._logger.run()
 		
-			await self.log_step(message=f"Target '{self.target_id}' added.")
+			await self.log_cdp_step(message=f"Target '{self.target_id}' added.")
 		
 			async with open_cdp(self.websocket_url) as new_connection:
 				target_id_instance = self.devtools_package.get("target.TargetID").from_json(self.target_id)
@@ -158,7 +167,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin):
 			self.about_to_stop_event.set()
 		except* BaseException as error:
 			self.about_to_stop_event.set()
-			await self.log_error(error=error)
+			await self.log_cdp_error(error=error)
 		finally:
 			await self._close_instances()
 			await self._remove_target_func(self)

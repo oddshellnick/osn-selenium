@@ -95,7 +95,7 @@ class LifecycleMixin(TargetsMixin):
 		self._get_devtools_package()
 		self._get_websocket_url()
 		
-		self._main_logger_send_channel, self._main_logger = build_main_logger(self._nursery_object, self._logger_settings)
+		self._main_logger_cdp_send_channel, self._main_logger_fingerprint_send_channel, self._main_logger = build_main_logger(self._nursery_object, self._logger_settings)
 		await self._main_logger.run()
 		
 		self.exit_event = trio.Event()
@@ -141,9 +141,13 @@ class LifecycleMixin(TargetsMixin):
 		async def _stop_main_logger():
 			"""Stops the main logger and closes its channels."""
 			
-			if self._main_logger_send_channel is not None:
-				await self._main_logger_send_channel.aclose()
-				self._main_logger_send_channel = None
+			if self._main_logger_cdp_send_channel is not None:
+				await self._main_logger_cdp_send_channel.aclose()
+				self._main_logger_cdp_send_channel = None
+			
+			if self._main_logger_fingerprint_send_channel is not None:
+				await self._main_logger_fingerprint_send_channel.aclose()
+				self._main_logger_fingerprint_send_channel = None
 			
 			if self._main_logger is not None:
 				await self._main_logger.close()
@@ -196,8 +200,10 @@ class LifecycleMixin(TargetsMixin):
 			self._devtools_package = None
 			self._websocket_url = None
 			self._num_logs = 0
-			self._targets_types_stats = {}
-			self._log_level_stats = {}
+			self._cdp_targets_types_stats = {}
+			self._cdp_log_level_stats = {}
+			self._fingerprint_categories_stats = {}
+			self._fingerprint_log_level_stats = {}
 			self._is_active = False
 			self._is_closing = False
 	

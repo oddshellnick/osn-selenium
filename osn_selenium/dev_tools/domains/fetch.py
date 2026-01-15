@@ -92,7 +92,7 @@ async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictM
 		BaseException: If any error occurs during the execution of parameter handlers or the process.
 	"""
 	
-	await self.log(level="INFO", message=f"Started to build kwargs for '{event}'")
+	await self.log_cdp(level="INFO", message=f"Started to build kwargs for '{event}'")
 	
 	try:
 		kwargs = {"request_id": event.request_id}
@@ -120,7 +120,7 @@ async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictM
 	except* cdp_end_exceptions as error:
 		raise error
 	except* BaseException as error:
-		await self.log_error(error=error)
+		await self.log_cdp_error(error=error)
 		raise error
 
 
@@ -187,17 +187,17 @@ async def _handle_auth_required(
 		BaseException: If a critical error occurs during the event handling process.
 	"""
 	
-	await self.log(level="INFO", message=f"Started to handle for '{event}'")
+	await self.log_cdp(level="INFO", message=f"Started to handle for '{event}'")
 	
 	try:
 		chosen_actions_func_names = handler_settings.actions_handler.choose_action_func(self, event)
-		await self.log(level="INFO", message=f"Chosen actions: '{chosen_actions_func_names}'")
+		await self.log_cdp(level="INFO", message=f"Chosen actions: '{chosen_actions_func_names}'")
 	
 		for action_func_name in chosen_actions_func_names:
 			chosen_func = getattr(handler_settings.actions_handler.actions, action_func_name)
 			kwargs = await chosen_func.kwargs_func(self, chosen_func.parameters_handlers, event)
 	
-			await self.log(level="INFO", message=f"Kwargs for '{action_func_name}': '{kwargs}'")
+			await self.log_cdp(level="INFO", message=f"Kwargs for '{action_func_name}': '{kwargs}'")
 			response_handle_func = chosen_func.response_handle_func
 	
 			try:
@@ -207,7 +207,7 @@ async def _handle_auth_required(
 						function=self.devtools_package.get(["fetch", action_func_name]),
 						**kwargs
 				)
-				await self.log(
+				await self.log_cdp(
 						level="AuthRequired",
 						message=f"Function '{action_func_name}' response: '{response}'"
 				)
@@ -217,14 +217,14 @@ async def _handle_auth_required(
 			except* cdp_end_exceptions:
 				pass
 			except* BaseException as error:
-				await self.log_error(error=error)
+				await self.log_cdp_error(error=error)
 	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
 	except* cdp_end_exceptions as error:
 		raise error
 	except* BaseException as error:
-		await self.log_error(error=error)
+		await self.log_cdp_error(error=error)
 		raise error
 
 
@@ -444,17 +444,17 @@ async def _handle_request_paused(
 		BaseException: If a critical error occurs during the event handling process.
 	"""
 	
-	await self.log(level="INFO", message=f"Started to handle for '{event}'")
+	await self.log_cdp(level="INFO", message=f"Started to handle for '{event}'")
 	
 	try:
 		chosen_actions_func_names = handler_settings.actions_handler.choose_action_func(self, event)
-		await self.log(level="INFO", message=f"Chosen actions: '{chosen_actions_func_names}'")
+		await self.log_cdp(level="INFO", message=f"Chosen actions: '{chosen_actions_func_names}'")
 	
 		for action_func_name in chosen_actions_func_names:
 			chosen_action_func = getattr(handler_settings.actions_handler.actions, action_func_name)
 	
 			kwargs = await chosen_action_func.kwargs_func(self, chosen_action_func.parameters_handlers, event)
-			await self.log(level="INFO", message=f"Kwargs for '{action_func_name}': '{kwargs}'")
+			await self.log_cdp(level="INFO", message=f"Kwargs for '{action_func_name}': '{kwargs}'")
 	
 			response_handle_func = chosen_action_func.response_handle_func
 	
@@ -469,7 +469,7 @@ async def _handle_request_paused(
 				if isinstance(response, ExceptionThrown):
 					raise response.exception
 	
-				await self.log(
+				await self.log_cdp(
 						level="RequestPaused",
 						message=f"Function '{action_func_name}' response: '{response}'"
 				)
@@ -479,14 +479,14 @@ async def _handle_request_paused(
 			except* cdp_end_exceptions:
 				pass
 			except* BaseException as error:
-				await self.log_error(error=error)
+				await self.log_cdp_error(error=error)
 	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
 	except* cdp_end_exceptions as error:
 		raise error
 	except* BaseException as error:
-		await self.log_error(error=error)
+		await self.log_cdp_error(error=error)
 		raise error
 
 

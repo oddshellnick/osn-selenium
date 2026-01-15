@@ -136,7 +136,7 @@ async def headers_handler(
 	
 		ready_event.set()
 	except BaseException as error:
-		await self.log_error(error=error)
+		await self.log_cdp_error(error=error)
 		raise error
 
 
