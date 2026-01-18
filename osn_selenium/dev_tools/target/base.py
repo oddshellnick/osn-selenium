@@ -30,7 +30,8 @@ from osn_selenium.dev_tools.logger.types import (
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings
-	from osn_selenium.dev_tools.settings import LoggerSettings, FingerprintDetectionSettings
+	from osn_selenium.dev_tools.settings import LoggerSettings
+	from osn_selenium.javascript.fingerprint import FingerprintSettings
 	from osn_selenium.dev_tools._types import devtools_background_func_type
 
 
@@ -43,21 +44,43 @@ class BaseMixin:
 
 	Attributes:
 		target_data (TargetData): The essential data identifying the target (id, type, url, etc.).
-		websocket_url (Optional[str]): The WebSocket URL used to connect to this target.
 		devtools_package (DevToolsPackage): The wrapper for the DevTools protocol module.
+		websocket_url (Optional[str]): The WebSocket URL used to connect to this target.
 		exit_event (trio.Event): Event to signal global exit.
 		started_event (trio.Event): Event set when the target handling has started.
 		about_to_stop_event (trio.Event): Event set when the target is about to stop.
 		stopped_event (trio.Event): Event set when the target handling has fully stopped.
 		background_task_ended (Optional[trio.Event]): Event set when the background task completes.
+		_logger_settings (LoggerSettings): Configuration for logging.
+		_domains_settings (Optional[DomainsSettings]): Configuration for enabled domains and handlers.
+		_fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
+		_new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
+		_new_targets_buffer_size (int): Buffer size for new target events.
+		_nursery_object (trio.Nursery): Trio nursery for background tasks.
+		_target_background_task (Optional[devtools_background_func_type]): Optional background task to run.
+		_add_target_func (Callable): Callback to add a new target.
+		_remove_target_func (Callable): Callback to remove this target.
+		_add_cdp_log_func (Callable): Callback to record a CDP log entry.
+		_add_fingerprint_log_func (Callable): Callback to record a fingerprint log entry.
+		_new_targets_events_filters (Any): Validated filters for target events.
+		_cdp_target_type_log_accepted (bool): Whether CDP logging is enabled for this target type.
+		_cdp_log_stats (CDPLoggerChannelStats): Statistics for CDP logs.
+		_fingerprint_log_stats (FingerprintLoggerChannelStats): Statistics for fingerprint logs.
+		_logger_cdp_send_channel (Optional[trio.MemorySendChannel]): Channel to send CDP logs to the logger.
+		_logger_fingerprint_send_channel (Optional[trio.MemorySendChannel]): Channel to send fingerprint logs.
+		_logger (Optional[TargetLogger]): The logger instance for this target.
+		_cdp_session (Optional[CdpSession]): The active CDP session.
+		_new_target_receive_channel (Optional[Tuple[trio.MemoryReceiveChannel, trio.Event]]): Channel for new target events.
+		_detached_receive_channel (Optional[trio.MemoryReceiveChannel]): Channel for detach events.
+		_events_receive_channels (Dict[str, Tuple[trio.MemoryReceiveChannel, trio.Event]]): Channels for domain events.
 	"""
 	
 	def __init__(
 			self,
 			target_data: TargetData,
 			logger_settings: "LoggerSettings",
-			domains_settings: "DomainsSettings",
-			fingerprint_detection_settings: "FingerprintDetectionSettings",
+			domains_settings: Optional["DomainsSettings"],
+			fingerprint_settings: Optional["FingerprintSettings"],
 			devtools_package: DevToolsPackage,
 			websocket_url: Optional[str],
 			new_targets_filter_list: Sequence[Dict[str, Any]],
@@ -75,26 +98,26 @@ class BaseMixin:
 
 		Args:
 			target_data (TargetData): Information about the target.
-			logger_settings ("LoggerSettings"): Configuration for logging.
-			domains_settings ("DomainsSettings"): Configuration for enabled domains and handlers.
-			fingerprint_detection_settings ("FingerprintDetectionSettings"): Configuration for fingerprint detection.
+			logger_settings (LoggerSettings): Configuration for logging.
+			domains_settings (Optional[DomainsSettings]): Configuration for enabled domains and handlers.
+			fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
 			devtools_package (DevToolsPackage): Access to CDP commands and events.
 			websocket_url (Optional[str]): The debugger URL.
-			new_targets_filter_list (Sequence[Dict[str, Any]]): Filters for discovering new targets.
+			new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
 			new_targets_buffer_size (int): Buffer size for new target events.
 			nursery (trio.Nursery): Trio nursery for background tasks.
 			exit_event (trio.Event): Signal to stop all operations.
 			target_background_task (Optional[devtools_background_func_type]): Optional background task to run.
 			add_target_func (Callable[[Any], Coroutine[Any, Any, bool]]): Callback to add a new target.
-			remove_target_func (Callable[["DevToolsTarget"], Coroutine[Any, Any, Optional[bool]]]): Callback to remove this target.
+			remove_target_func (Callable[[DevToolsTarget], Coroutine[Any, Any, Optional[bool]]]): Callback to remove this target.
 			add_cdp_log_func (Callable[[CDPTargetLogEntry], Coroutine[Any, Any, None]]): Callback to record a CDP log entry.
 			add_fingerprint_log_func (Callable[[FingerprintTargetLogEntry], Coroutine[Any, Any, None]]): Callback to record a fingerprint log entry.
 		"""
 		
 		self.target_data = target_data
 		self._logger_settings = logger_settings
-		self._domains = domains_settings
-		self._fingerprint_detection_settings = fingerprint_detection_settings
+		self._domains_settings = domains_settings
+		self._fingerprint_settings = fingerprint_settings
 		self.devtools_package = devtools_package
 		self.websocket_url = websocket_url
 		self._new_targets_filter_list = new_targets_filter_list

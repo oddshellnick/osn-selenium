@@ -98,7 +98,7 @@ class TargetsMixin(LoggingMixin):
 							),
 							logger_settings=self._logger_settings,
 							domains_settings=self._domains_settings,
-							fingerprint_detection_settings=self._fingerprint_detection_settings,
+							fingerprint_settings=self._fingerprint_settings,
 							devtools_package=self._devtools_package,
 							websocket_url=self._websocket_url,
 							new_targets_filter_list=self._new_targets_filter,
@@ -162,8 +162,8 @@ class TargetsMixin(LoggingMixin):
 				)
 		
 				return await self._bidi_connection_object.session.execute(self._devtools_package.get("target.get_targets")(targets_filter))
-			else:
-				raise BidiConnectionNotEstablishedError()
+		
+			raise BidiConnectionNotEstablishedError()
 		except cdp_end_exceptions as error:
 			raise error
 		except BaseException as error:

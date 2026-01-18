@@ -86,33 +86,34 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 			target_ready_events.append(fingerprint_detecting_ready_event)
 		
 			self._nursery_object.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
-			self._nursery_object.start_soon(self._setup_fingerprint_detecting, fingerprint_detecting_ready_event)
+			self._nursery_object.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
 			self._nursery_object.start_soon(self._run_detach_checking,)
 		
-			for domain_name, domain_config in self._domains.model_dump(exclude_none=True).items():
-				if domain_config.get("enable_func_path", None) is not None:
-					enable_func_kwargs = domain_config.get("enable_func_kwargs", {})
+			if self._domains_settings:
+				for domain_name, domain_config in self._domains_settings.model_dump(exclude_none=True).items():
+					if domain_config.get("enable_func_path", None) is not None:
+						enable_func_kwargs = domain_config.get("enable_func_kwargs", {})
 		
-					if (
-							domain_config["include_target_types"]
-							and self.type_ in domain_config["include_target_types"]
-							or domain_config["exclude_target_types"]
-							and self.type_ not in domain_config["exclude_target_types"]
-					):
-						await execute_cdp_command(
-								self=self,
-								error_mode="log",
-								function=self.devtools_package.get(domain_config["enable_func_path"]),
-								**enable_func_kwargs
-						)
+						if (
+								domain_config["include_target_types"]
+								and self.type_ in domain_config["include_target_types"]
+								or domain_config["exclude_target_types"]
+								and self.type_ not in domain_config["exclude_target_types"]
+						):
+							await execute_cdp_command(
+									self=self,
+									error_mode="log",
+									function=self.devtools_package.get(domain_config["enable_func_path"]),
+									**enable_func_kwargs
+							)
 		
-				domain_handlers_ready_event = trio.Event()
-				target_ready_events.append(domain_handlers_ready_event)
-				self._nursery_object.start_soon(
-						self._run_events_handlers,
-						domain_handlers_ready_event,
-						getattr(self._domains, domain_name)
-				)
+					domain_handlers_ready_event = trio.Event()
+					target_ready_events.append(domain_handlers_ready_event)
+					self._nursery_object.start_soon(
+							self._run_events_handlers,
+							domain_handlers_ready_event,
+							getattr(self._domains_settings, domain_name)
+					)
 		
 			for domain_handlers_ready_event in target_ready_events:
 				await domain_handlers_ready_event.wait()

@@ -85,12 +85,12 @@ class FingerprintData(DictModel):
 
 	Attributes:
 		api (str): The API that was accessed.
-		method (str): The specific method within the API.
+		used_method (str): The method called.
 		stacktrace (Optional[str]): The stack trace where the access occurred.
 	"""
 	
 	api: str
-	method: str
+	used_method: str
 	stacktrace: Optional[str]
 
 
