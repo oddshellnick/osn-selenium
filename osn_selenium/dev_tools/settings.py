@@ -9,6 +9,7 @@ from typing import (
 	Sequence,
 	Union
 )
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.dev_tools._types import (
 	CDPLogLevelsType,
 	FingerprintLogLevelsType,
@@ -88,19 +89,6 @@ class LoggerSettings(DictModel):
 	fingerprint_settings: Optional[FingerprintLoggerSettings] = None
 
 
-class FingerprintDetectionSettings(DictModel):
-	"""
-	Configuration settings for fingerprint detection.
-
-	Attributes:
-		enable (bool): Whether fingerprint detection is enabled. Defaults to True.
-		optimize_events (bool): Whether to optimize event handling. Defaults to True.
-	"""
-	
-	enable: bool = True
-	optimize_events: bool = True
-
-
 class DevToolsSettings(DictModel):
 	"""
 	Settings for configuring the DevTools manager.
@@ -115,19 +103,19 @@ class DevToolsSettings(DictModel):
 		target_background_task (Optional[devtools_background_func_type]): An optional asynchronous function
 			that will be run as a background task for each attached DevTools target. This can be used
 			for custom per-target logic. Defaults to None.
-		fingerprint_detection_settings (FingerprintDetectionSettings): Settings for fingerprint detection.
 		logger_settings (Optional[LoggerSettings]): Configuration settings for the internal logging system.
 			If None, default logging settings will be used (no file logging by default).
 			Defaults to None.
+        fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
 		domains_settings (Optional[DomainsSettings]): Configuration settings for various DevTools domains.
 	"""
 	
 	new_targets_filter: Optional[Sequence[TargetFilter]] = None
 	new_targets_buffer_size: int = 100
 	target_background_task: Optional[devtools_background_func_type] = None
-	fingerprint_detection_settings: FingerprintDetectionSettings = Field(default_factory=FingerprintDetectionSettings)
 	logger_settings: Optional[LoggerSettings] = Field(default_factory=LoggerSettings)
-	domains_settings: Optional[DomainsSettings] = Field(default_factory=DomainsSettings)
+	fingerprint_settings: Optional[FingerprintSettings] = None
+	domains_settings: Optional[DomainsSettings] = None
 
 
 LoggerSettings.model_rebuild()

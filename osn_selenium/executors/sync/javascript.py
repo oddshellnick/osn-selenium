@@ -5,7 +5,9 @@ from typing import (
 	Dict,
 	Optional
 )
+from osn_selenium.javascript.functions import read_js_scripts
 from osn_selenium.instances.sync.web_element import WebElement
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.types import (
 	Point,
 	Position,
@@ -13,10 +15,6 @@ from osn_selenium.types import (
 	Size
 )
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
-from osn_selenium.javascript.functions import (
-	inject_settings_in_js_script,
-	read_js_scripts
-)
 
 
 class JSExecutor(AbstractJSExecutor):
@@ -83,13 +81,8 @@ class JSExecutor(AbstractJSExecutor):
 	def scripts(self) -> JS_Scripts:
 		return self._scripts
 	
-	def start_fingerprint_detection(self, optimize_events: bool = True) -> None:
-		self.execute(
-				inject_settings_in_js_script(
-						script=self._scripts.start_fingerprint_detection,
-						settings={"optimize_events": optimize_events}
-				)
-		)
+	def start_fingerprint_detection(self, fingerprint_settings: FingerprintSettings) -> None:
+		self.execute(fingerprint_settings.generate_js())
 	
 	def stop_window_loading(self) -> None:
 		self.execute(self._scripts.stop_window_loading)

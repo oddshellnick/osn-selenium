@@ -54,10 +54,14 @@ class BaseMixin:
 		exit_event (Optional[trio.Event]): Trio Event to signal exiting of DevTools event handling.
 		_is_active (bool): Flag indicating if the DevTools event handler is currently active.
 		_is_closing (bool): Flag indicating if the DevTools manager is in the process of closing.
-		_num_logs (int): Total count of all log entries across all targets.
+		_num_cdp_logs (int): Total count of all CDP log entries across all targets.
+		_num_fingerprint_logs (int): Total count of all Fingerprint log entries across all targets.
 		_cdp_targets_types_stats (Dict[str, CDPTargetTypeStats]): Statistics for each target type.
 		_cdp_log_level_stats (Dict[str, CDPLogLevelStats]): Overall statistics for each log level.
 		_main_logger_cdp_send_channel (Optional[trio.MemorySendChannel[CDPMainLogEntry]]): Send channel for the main logger.
+		_fingerprint_categories_stats (Dict[str, FingerprintAPIStats]): Statistics for each API category.
+		_fingerprint_log_level_stats (Dict[str, FingerprintLogLevelStats]): Overall statistics for each log level.
+		_main_logger_fingerprint_send_channel (Optional[trio.MemorySendChannel[FingerprintMainLogEntry]]): Send channel for the main logger.
 		_main_logger (Optional[MainLogger]): The main logger instance.
 	"""
 	
@@ -79,9 +83,9 @@ class BaseMixin:
 			devtools_settings = DevToolsSettings()
 		
 		self._webdriver = parent_webdriver
-		self._fingerprint_detection_settings = devtools_settings.fingerprint_detection_settings
 		self._logger_settings = devtools_settings.logger_settings
 		self._domains_settings = devtools_settings.domains_settings
+		self._fingerprint_settings = devtools_settings.fingerprint_settings
 		self._new_targets_buffer_size = devtools_settings.new_targets_buffer_size
 		self._target_background_task = devtools_settings.target_background_task
 		
@@ -101,7 +105,8 @@ class BaseMixin:
 		self.exit_event: Optional[trio.Event] = None
 		self._is_active = False
 		self._is_closing = False
-		self._num_logs = 0
+		self._num_cdp_logs = 0
+		self._num_fingerprint_logs = 0
 		self._cdp_targets_types_stats: Dict[str, CDPTargetTypeStats] = {}
 		self._cdp_log_level_stats: Dict[str, CDPLogLevelStats] = {}
 		self._main_logger_cdp_send_channel: Optional[trio.MemorySendChannel[CDPMainLogEntry]] = None

@@ -5,7 +5,7 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.network import AbstractNetwork
@@ -18,7 +18,7 @@ from osn_selenium.instances.errors import (
 )
 
 
-class Network(_TrioThreadMixin, AbstractNetwork):
+class Network(TrioThreadMixin, AbstractNetwork):
 	"""
 	Wrapper for the legacy Selenium BiDi Network instance.
 
@@ -49,7 +49,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		self._selenium_network = selenium_network
 	
 	async def add_auth_handler(self, username: str, password: str) -> int:
-		return await self._wrap_to_trio(self.legacy.add_auth_handler, username=username, password=password)
+		return await self._sync_to_trio(self.legacy.add_auth_handler, username=username, password=password)
 	
 	async def add_request_handler(
 			self,
@@ -58,7 +58,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 			url_patterns: Optional[List[str]] = None,
 			contexts: Optional[List[str]] = None,
 	) -> int:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.add_request_handler,
 				event=event,
 				callback=callback,
@@ -67,7 +67,7 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		)
 	
 	async def clear_request_handlers(self) -> None:
-		await self._wrap_to_trio(self.legacy.clear_request_handlers)
+		await self._sync_to_trio(self.legacy.clear_request_handlers)
 	
 	@classmethod
 	def from_legacy(
@@ -103,10 +103,10 @@ class Network(_TrioThreadMixin, AbstractNetwork):
 		return self._selenium_network
 	
 	async def remove_auth_handler(self, callback_id: int) -> None:
-		await self._wrap_to_trio(self.legacy.remove_auth_handler, callback_id=callback_id)
+		await self._sync_to_trio(self.legacy.remove_auth_handler, callback_id=callback_id)
 	
 	async def remove_request_handler(self, event: str, callback_id: int) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.legacy.remove_request_handler,
 				event=event,
 				callback_id=callback_id

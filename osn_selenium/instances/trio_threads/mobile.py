@@ -1,7 +1,7 @@
 import trio
 from typing import List, Self, Union
 from osn_selenium.instances.types import MOBILE_TYPEHINT
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.mobile import AbstractMobile
 from osn_selenium.instances.errors import (
@@ -14,7 +14,7 @@ from selenium.webdriver.remote.mobile import (
 )
 
 
-class Mobile(_TrioThreadMixin, AbstractMobile):
+class Mobile(TrioThreadMixin, AbstractMobile):
 	"""
 	Wrapper for the legacy Selenium Mobile instance.
 
@@ -45,10 +45,10 @@ class Mobile(_TrioThreadMixin, AbstractMobile):
 		self._selenium_mobile = selenium_mobile
 	
 	async def context(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.context)
+		return await self._sync_to_trio(lambda: self.legacy.context)
 	
 	async def contexts(self) -> List[str]:
-		return await self._wrap_to_trio(lambda: self.legacy.contexts)
+		return await self._sync_to_trio(lambda: self.legacy.contexts)
 	
 	@classmethod
 	def from_legacy(
@@ -80,14 +80,14 @@ class Mobile(_TrioThreadMixin, AbstractMobile):
 		return cls(selenium_mobile=legacy_mobile_obj, lock=lock, limiter=limiter)
 	
 	async def network_connection(self) -> _ConnectionType:
-		return await self._wrap_to_trio(lambda: self.legacy.network_connection)
+		return await self._sync_to_trio(lambda: self.legacy.network_connection)
 	
 	@property
 	def legacy(self) -> legacyMobile:
 		return self._selenium_mobile
 	
 	async def set_context(self, new_context: str) -> None:
-		await self._wrap_to_trio(lambda: setattr(self.legacy, "context", new_context))
+		await self._sync_to_trio(lambda: setattr(self.legacy, "context", new_context))
 	
 	async def set_network_connection(self, network: Union[int, _ConnectionType]) -> _ConnectionType:
-		return await self._wrap_to_trio(self.legacy.set_network_connection, network)
+		return await self._sync_to_trio(self.legacy.set_network_connection, network)

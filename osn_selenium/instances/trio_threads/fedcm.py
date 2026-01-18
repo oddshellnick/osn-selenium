@@ -6,7 +6,7 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import FEDCM_TYPEHINT
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
@@ -16,7 +16,7 @@ from osn_selenium.instances.errors import (
 )
 
 
-class FedCM(_TrioThreadMixin, AbstractFedCM):
+class FedCM(TrioThreadMixin, AbstractFedCM):
 	"""
 	Wrapper for the legacy Selenium FedCM instance.
 
@@ -47,22 +47,22 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		self._selenium_fedcm = selenium_fedcm
 	
 	async def accept(self) -> None:
-		await self._wrap_to_trio(self.legacy.accept)
+		await self._sync_to_trio(self.legacy.accept)
 	
 	async def account_list(self) -> List[Dict]:
-		return await self._wrap_to_trio(lambda: self.legacy.account_list)
+		return await self._sync_to_trio(lambda: self.legacy.account_list)
 	
 	async def dialog_type(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.dialog_type)
+		return await self._sync_to_trio(lambda: self.legacy.dialog_type)
 	
 	async def disable_delay(self) -> None:
-		await self._wrap_to_trio(self.legacy.disable_delay)
+		await self._sync_to_trio(self.legacy.disable_delay)
 	
 	async def dismiss(self) -> None:
-		await self._wrap_to_trio(self.legacy.dismiss)
+		await self._sync_to_trio(self.legacy.dismiss)
 	
 	async def enable_delay(self) -> None:
-		await self._wrap_to_trio(self.legacy.enable_delay)
+		await self._sync_to_trio(self.legacy.enable_delay)
 	
 	@classmethod
 	def from_legacy(
@@ -98,13 +98,13 @@ class FedCM(_TrioThreadMixin, AbstractFedCM):
 		return self._selenium_fedcm
 	
 	async def reset_cooldown(self) -> None:
-		await self._wrap_to_trio(self.legacy.reset_cooldown)
+		await self._sync_to_trio(self.legacy.reset_cooldown)
 	
 	async def select_account(self, index: int) -> None:
-		await self._wrap_to_trio(self.legacy.select_account, index)
+		await self._sync_to_trio(self.legacy.select_account, index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._wrap_to_trio(lambda: self.legacy.subtitle)
+		return await self._sync_to_trio(lambda: self.legacy.subtitle)
 	
 	async def title(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.title)
+		return await self._sync_to_trio(lambda: self.legacy.title)

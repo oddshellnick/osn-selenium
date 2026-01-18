@@ -36,7 +36,7 @@ class LoggingMixin(BaseMixin):
 				log_entry = CDPMainLogEntry(
 						num_channels=len(self._handling_targets),
 						targets_types_stats=self._cdp_targets_types_stats,
-						num_logs=self._num_logs,
+						num_logs=self._num_cdp_logs,
 						log_level_stats=self._cdp_log_level_stats,
 						channels_stats=[
 							target.cdp_log_stats
@@ -69,7 +69,7 @@ class LoggingMixin(BaseMixin):
 		"""
 		
 		try:
-			self._num_logs += 1
+			self._num_cdp_logs += 1
 		
 			if log_entry.level not in self._cdp_log_level_stats:
 				self._cdp_log_level_stats[log_entry.level] = CDPLogLevelStats(num_logs=1, last_log_time=log_entry.datetime)
@@ -98,7 +98,7 @@ class LoggingMixin(BaseMixin):
 				log_entry = FingerprintMainLogEntry(
 						num_channels=len(self._handling_targets),
 						apis_stats=self._fingerprint_categories_stats,
-						num_logs=self._num_logs,
+						num_logs=self._num_fingerprint_logs,
 						log_level_stats=self._fingerprint_log_level_stats,
 						channels_stats=[
 							target.fingerprint_log_stats
@@ -128,7 +128,7 @@ class LoggingMixin(BaseMixin):
 		"""
 		
 		try:
-			self._num_logs += 1
+			self._num_fingerprint_logs += 1
 		
 			if log_entry.level not in self._fingerprint_log_level_stats:
 				self._fingerprint_log_level_stats[log_entry.level] = FingerprintLogLevelStats(num_logs=1, last_log_time=log_entry.datetime)
@@ -137,10 +137,10 @@ class LoggingMixin(BaseMixin):
 				self._fingerprint_log_level_stats[log_entry.level].last_log_time = log_entry.datetime
 		
 			if log_entry.api not in self._fingerprint_categories_stats:
-				self._fingerprint_categories_stats[log_entry.api] = FingerprintAPIStats(num_targets=1, methods_stats={log_entry.method: 1})
+				self._fingerprint_categories_stats[log_entry.api] = FingerprintAPIStats(num_logs=1, methods_stats={log_entry.used_method: 1})
 			else:
-				self._fingerprint_categories_stats[log_entry.api].num_targets += 1
-				self._fingerprint_categories_stats[log_entry.api].methods_stats[log_entry.method] = self._fingerprint_categories_stats[log_entry.api].methods_stats.get(log_entry.method, 0) + 1
+				self._fingerprint_categories_stats[log_entry.api].num_logs += 1
+				self._fingerprint_categories_stats[log_entry.api].methods_stats[log_entry.used_method] = self._fingerprint_categories_stats[log_entry.api].methods_stats.get(log_entry.used_method, 0) + 1
 		
 			await self._add_main_fingerprint_log()
 		except cdp_end_exceptions:

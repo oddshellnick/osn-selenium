@@ -39,7 +39,7 @@ class EdgeBaseMixin(BlinkWebDriver, AbstractEdgeBaseMixin):
 	):
 		"""
 		Initializes the synchronous Edge WebDriver mixin with specified configuration.
-		
+
 		Args:
 			webdriver_path (str): Path to the EdgeDriver executable.
 			flags_manager_type (Type[EdgeFlagsManager]): The class type used for managing Edge flags.

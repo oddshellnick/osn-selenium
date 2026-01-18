@@ -21,11 +21,11 @@ class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
 	
 	@requires_driver
 	async def delete_downloadable_files(self) -> None:
-		await self._wrap_to_trio(self.driver.delete_downloadable_files)
+		await self._sync_to_trio(self.driver.delete_downloadable_files)
 	
 	@requires_driver
 	async def download_file(self, file_name: str, target_directory: str) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.driver.download_file,
 				file_name=file_name,
 				target_directory=target_directory,
@@ -44,7 +44,7 @@ class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
 	@asynccontextmanager
 	@requires_driver
 	async def file_detector_context(self, file_detector_class: Any, *args: Any, **kwargs: Any) -> AsyncGenerator[Any, None]:
-		async with self._wrap_to_trio_context(
+		async with self._sync_to_trio_context(
 				self.driver.file_detector_context,
 				file_detector_class,
 				*args,
@@ -54,4 +54,4 @@ class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
 	
 	@requires_driver
 	async def get_downloadable_files(self) -> List[str]:
-		return await self._wrap_to_trio(self.driver.get_downloadable_files)
+		return await self._sync_to_trio(self.driver.get_downloadable_files)

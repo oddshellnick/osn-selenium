@@ -1,7 +1,7 @@
 import trio
 from typing import List, Optional, Self
 from osn_selenium.instances.types import DIALOG_TYPEHINT
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from selenium.webdriver.common.fedcm.account import Account
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.dialog import AbstractDialog
@@ -14,7 +14,7 @@ from osn_selenium.instances.errors import (
 )
 
 
-class Dialog(_TrioThreadMixin, AbstractDialog):
+class Dialog(TrioThreadMixin, AbstractDialog):
 	"""
 	Wrapper for the legacy Selenium FedCM Dialog instance.
 
@@ -45,10 +45,10 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		self._selenium_dialog = selenium_dialog
 	
 	async def accept(self) -> None:
-		await self._wrap_to_trio(self.legacy.accept)
+		await self._sync_to_trio(self.legacy.accept)
 	
 	async def dismiss(self) -> None:
-		await self._wrap_to_trio(self.legacy.dismiss)
+		await self._sync_to_trio(self.legacy.dismiss)
 	
 	@classmethod
 	def from_legacy(
@@ -80,20 +80,20 @@ class Dialog(_TrioThreadMixin, AbstractDialog):
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	
 	async def get_accounts(self) -> List[Account]:
-		return await self._wrap_to_trio(self.legacy.get_accounts)
+		return await self._sync_to_trio(self.legacy.get_accounts)
 	
 	@property
 	def legacy(self) -> legacyDialog:
 		return self._selenium_dialog
 	
 	async def select_account(self, index: int) -> None:
-		await self._wrap_to_trio(self.legacy.select_account, index=index)
+		await self._sync_to_trio(self.legacy.select_account, index=index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._wrap_to_trio(lambda: self.legacy.subtitle)
+		return await self._sync_to_trio(lambda: self.legacy.subtitle)
 	
 	async def title(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.title)
+		return await self._sync_to_trio(lambda: self.legacy.title)
 	
 	async def type(self) -> Optional[str]:
-		return await self._wrap_to_trio(lambda: self.legacy.type)
+		return await self._sync_to_trio(lambda: self.legacy.type)

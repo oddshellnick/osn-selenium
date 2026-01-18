@@ -1,7 +1,7 @@
 import trio
 from typing import Optional, Self
 from osn_selenium.instances.types import ALERT_TYPEHINT
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
@@ -11,7 +11,7 @@ from osn_selenium.instances.errors import (
 )
 
 
-class Alert(_TrioThreadMixin, AbstractAlert):
+class Alert(TrioThreadMixin, AbstractAlert):
 	"""
 	Wrapper for the legacy Selenium Alert instance.
 
@@ -42,10 +42,10 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 		self._selenium_alert = selenium_alert
 	
 	async def accept(self) -> None:
-		await self._wrap_to_trio(self._selenium_alert.accept)
+		await self._sync_to_trio(self._selenium_alert.accept)
 	
 	async def dismiss(self) -> None:
-		await self._wrap_to_trio(self._selenium_alert.dismiss)
+		await self._sync_to_trio(self._selenium_alert.dismiss)
 	
 	@classmethod
 	def from_legacy(
@@ -81,7 +81,7 @@ class Alert(_TrioThreadMixin, AbstractAlert):
 		return self._selenium_alert
 	
 	async def send_keys(self, keysToSend: str) -> None:
-		await self._wrap_to_trio(self._selenium_alert.send_keys, keysToSend=keysToSend)
+		await self._sync_to_trio(self._selenium_alert.send_keys, keysToSend=keysToSend)
 	
 	async def text(self) -> str:
-		return await self._wrap_to_trio(lambda: self._selenium_alert.text)
+		return await self._sync_to_trio(lambda: self._selenium_alert.text)

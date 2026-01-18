@@ -4,7 +4,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.storage import AbstractStorage
@@ -24,7 +24,7 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
-class Storage(_TrioThreadMixin, AbstractStorage):
+class Storage(TrioThreadMixin, AbstractStorage):
 	"""
 	Wrapper for the legacy Selenium BiDi Storage instance.
 
@@ -59,7 +59,7 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> DeleteCookiesResult:
-		return await self._wrap_to_trio(self.legacy.delete_cookies, filter=filter, partition=partition)
+		return await self._sync_to_trio(self.legacy.delete_cookies, filter=filter, partition=partition)
 	
 	@classmethod
 	def from_legacy(
@@ -95,7 +95,7 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> GetCookiesResult:
-		return await self._wrap_to_trio(self.legacy.get_cookies, filter=filter, partition=partition)
+		return await self._sync_to_trio(self.legacy.get_cookies, filter=filter, partition=partition)
 	
 	@property
 	def legacy(self) -> legacyStorage:
@@ -106,4 +106,4 @@ class Storage(_TrioThreadMixin, AbstractStorage):
 			cookie: PartialCookie,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> SetCookieResult:
-		return await self._wrap_to_trio(self.legacy.set_cookie, cookie=cookie, partition=partition)
+		return await self._sync_to_trio(self.legacy.set_cookie, cookie=cookie, partition=partition)

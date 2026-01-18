@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	BROWSING_CONTEXT_TYPEHINT
@@ -26,7 +26,7 @@ from selenium.webdriver.common.bidi.browsing_context import (
 )
 
 
-class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
+class BrowsingContext(TrioThreadMixin, AbstractBrowsingContext):
 	"""
 	Wrapper for the legacy Selenium BiDi BrowsingContext instance.
 
@@ -60,7 +60,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		self._selenium_browsing_context = selenium_browsing_context
 	
 	async def activate(self, context: str) -> Any:
-		return await self._wrap_to_trio(self.legacy.activate, context)
+		return await self._sync_to_trio(self.legacy.activate, context)
 	
 	async def add_event_handler(
 			self,
@@ -68,7 +68,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			callback: Callable,
 			contexts: Optional[List[str]] = None,
 	) -> int:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.add_event_handler,
 				event=event,
 				callback=callback,
@@ -82,7 +82,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			format: Optional[Dict] = None,
 			clip: Optional[Dict] = None,
 	) -> str:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.capture_screenshot,
 				context=context,
 				origin=origin,
@@ -91,10 +91,10 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		)
 	
 	async def clear_event_handlers(self) -> None:
-		await self._wrap_to_trio(self.legacy.clear_event_handlers)
+		await self._sync_to_trio(self.legacy.clear_event_handlers)
 	
 	async def close(self, context: str, prompt_unload: bool = False) -> None:
-		await self._wrap_to_trio(self.legacy.close, context=context, prompt_unload=prompt_unload)
+		await self._sync_to_trio(self.legacy.close, context=context, prompt_unload=prompt_unload)
 	
 	async def create(
 			self,
@@ -103,7 +103,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			background: bool = False,
 			user_context: Optional[str] = None,
 	) -> str:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.create,
 				type=type,
 				reference_context=reference_context,
@@ -145,7 +145,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		)
 	
 	async def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None) -> List[BrowsingContextInfo]:
-		return await self._wrap_to_trio(self.legacy.get_tree, max_depth=max_depth, root=root)
+		return await self._sync_to_trio(self.legacy.get_tree, max_depth=max_depth, root=root)
 	
 	async def handle_user_prompt(
 			self,
@@ -153,7 +153,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			accept: Optional[bool] = None,
 			user_text: Optional[str] = None,
 	) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.legacy.handle_user_prompt,
 				context=context,
 				accept=accept,
@@ -172,7 +172,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			serialization_options: Optional[Dict] = None,
 			start_nodes: Optional[List[Dict]] = None,
 	) -> List[Dict]:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.locate_nodes,
 				context=context,
 				locator=locator,
@@ -182,7 +182,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		)
 	
 	async def navigate(self, context: str, url: str, wait: Optional[str] = None) -> Dict:
-		return await self._wrap_to_trio(self.legacy.navigate, context=context, url=url, wait=wait)
+		return await self._sync_to_trio(self.legacy.navigate, context=context, url=url, wait=wait)
 	
 	async def print(
 			self,
@@ -195,7 +195,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			scale: float = 1.0,
 			shrink_to_fit: bool = True,
 	) -> str:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.print,
 				context=context,
 				background=background,
@@ -213,7 +213,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			ignore_cache: Optional[bool] = None,
 			wait: Optional[str] = None,
 	) -> Dict:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.reload,
 				context=context,
 				ignore_cache=ignore_cache,
@@ -221,7 +221,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		)
 	
 	async def remove_event_handler(self, event: str, callback_id: int) -> None:
-		await self._wrap_to_trio(self.legacy.remove_event_handler, event=event, callback_id=callback_id)
+		await self._sync_to_trio(self.legacy.remove_event_handler, event=event, callback_id=callback_id)
 	
 	async def set_viewport(
 			self,
@@ -230,7 +230,7 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 			device_pixel_ratio: Optional[float] = None,
 			user_contexts: Optional[List[str]] = None,
 	) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.legacy.set_viewport,
 				context=context,
 				viewport=viewport,
@@ -239,4 +239,4 @@ class BrowsingContext(_TrioThreadMixin, AbstractBrowsingContext):
 		)
 	
 	async def traverse_history(self, context: str, delta: int) -> Dict:
-		return await self._wrap_to_trio(self.legacy.traverse_history, context=context, delta=delta)
+		return await self._sync_to_trio(self.legacy.traverse_history, context=context, delta=delta)

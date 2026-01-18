@@ -16,12 +16,12 @@ class BlinkNetworkMixin(BlinkBaseMixin, AbstractBlinkNetworkMixin):
 	
 	@requires_driver
 	async def delete_network_conditions(self) -> None:
-		return await self._wrap_to_trio(self.driver.delete_network_conditions)
+		return await self._sync_to_trio(self.driver.delete_network_conditions)
 	
 	@requires_driver
 	async def get_network_conditions(self) -> Dict[str, Any]:
-		return await self._wrap_to_trio(self.driver.get_network_conditions)
+		return await self._sync_to_trio(self.driver.get_network_conditions)
 	
 	@requires_driver
 	async def set_network_conditions(self, **network_conditions: Dict[str, Any]) -> None:
-		return await self._wrap_to_trio(self.driver.set_network_conditions, **network_conditions)
+		return await self._sync_to_trio(self.driver.set_network_conditions, **network_conditions)

@@ -122,7 +122,7 @@ class LoggingMixin(BaseMixin):
 		Records a fingerprint detection log entry.
 
 		Args:
-			level (FingerprintLogLevelsType): The log level (e.g., "Detect").
+			level ("FingerprintLogLevelsType"): The log level (e.g., "Detect").
 			data (FingerprintData): The detected fingerprint data.
 		"""
 		
@@ -130,7 +130,7 @@ class LoggingMixin(BaseMixin):
 				target_data=self.target_data,
 				level=level,
 				api=data.api,
-				method=data.method,
+				used_method=data.used_method,
 				datetime=datetime.now(),
 				stacktrace=data.stacktrace,
 		)

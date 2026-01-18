@@ -16,23 +16,23 @@ class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
 	
 	@requires_driver
 	async def implicitly_wait(self, time_to_wait: float) -> None:
-		await self._wrap_to_trio(self.driver.implicitly_wait, time_to_wait=time_to_wait)
+		await self._sync_to_trio(self.driver.implicitly_wait, time_to_wait=time_to_wait)
 	
 	@requires_driver
 	async def set_page_load_timeout(self, time_to_wait: float) -> None:
-		await self._wrap_to_trio(self.driver.set_page_load_timeout, time_to_wait=time_to_wait)
+		await self._sync_to_trio(self.driver.set_page_load_timeout, time_to_wait=time_to_wait)
 	
 	@requires_driver
 	async def set_script_timeout(self, time_to_wait: float) -> None:
-		await self._wrap_to_trio(self.driver.set_script_timeout, time_to_wait=time_to_wait)
+		await self._sync_to_trio(self.driver.set_script_timeout, time_to_wait=time_to_wait)
 	
 	@requires_driver
 	async def set_timeouts(self, timeouts: Any) -> None:
-		await self._wrap_to_trio(lambda: setattr(self.driver, "timeouts", timeouts))
+		await self._sync_to_trio(lambda: setattr(self.driver, "timeouts", timeouts))
 	
 	@requires_driver
 	async def timeouts(self) -> Any:
-		return await self._wrap_to_trio(lambda: self.driver.timeouts)
+		return await self._sync_to_trio(lambda: self.driver.timeouts)
 	
 	@requires_driver
 	async def set_driver_timeouts(
@@ -46,7 +46,7 @@ class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
 			self.driver.implicitly_wait(implicit_wait_timeout)
 			self.driver.set_script_timeout(script_timeout)
 		
-		await self._wrap_to_trio(_set)
+		await self._sync_to_trio(_set)
 	
 	async def update_times(
 			self,

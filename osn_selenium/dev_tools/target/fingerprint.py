@@ -3,10 +3,6 @@ from osn_selenium.dev_tools.utils import FingerprintData
 from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 from osn_selenium.dev_tools._functions import execute_cdp_command
-from osn_selenium.javascript.functions import (
-	inject_settings_in_js_script,
-	read_js_scripts
-)
 
 
 class FingerprintMixin(LoggingMixin):
@@ -56,22 +52,22 @@ class FingerprintMixin(LoggingMixin):
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
 	
-	async def _setup_fingerprint_detecting(self, ready_event: trio.Event):
+	async def _setup_fingerprint_injection(self, ready_event: trio.Event):
 		"""
-		Sets up the environment for fingerprint detection.
+		Injects the fingerprint detection scripts into the browser page.
 
-		Enables necessary domains, adds bindings, injects detection scripts,
-		and starts the event listener.
+		Enables necessary domains (Page, Runtime), adds the reporting binding,
+		and evaluates the fingerprint injection script on new document creation.
 
 		Args:
-			ready_event (trio.Event): Event to signal when setup is complete.
+			ready_event (trio.Event): Event to signal when injection setup is complete.
 
 		Raises:
 			cdp_end_exceptions: If a CDP connection error occurs.
 			BaseException: If any other error occurs.
 		"""
 		
-		if self._fingerprint_detection_settings.enable:
+		if self._fingerprint_settings:
 			try:
 				await execute_cdp_command(
 						self=self,
@@ -91,19 +87,11 @@ class FingerprintMixin(LoggingMixin):
 						name="__osn_fingerprint_report__"
 				)
 		
-				scripts = read_js_scripts()
-				detection_script = scripts.start_fingerprint_detection
-		
 				await execute_cdp_command(
 						self=self,
 						error_mode="log",
 						function=self.devtools_package.get("page.add_script_to_evaluate_on_new_document"),
-						source=inject_settings_in_js_script(
-								script=detection_script,
-								settings={
-									"optimize_events": self._fingerprint_detection_settings.optimize_events
-								}
-						),
+						source=self._fingerprint_settings.generate_js(),
 						run_immediately=True
 				)
 		

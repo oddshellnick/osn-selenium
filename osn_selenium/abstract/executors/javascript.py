@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
+
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.javascript.types import JS_Scripts
 from selenium.webdriver.remote.webelement import WebElement
 from osn_selenium.types import (
@@ -180,15 +182,7 @@ class AbstractJSExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def start_fingerprint_detection(self, optimize_events: bool = True) -> None:
-		"""
-		Initializes fingerprint detection mechanisms in the browser.
-
-		Args:
-			optimize_events (bool): Whether to optimize event reporting to reduce overhead.
-				Defaults to True.
-		"""
-		
+	def start_fingerprint_detection(self, fingerprint_settings: FingerprintSettings) -> None:
 		...
 	
 	@abstractmethod

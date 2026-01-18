@@ -35,7 +35,7 @@ class FingerprintTargetLogEntry(DictModel):
 		target_data (TargetData): Information about the target.
 		level (FingerprintLogLevelsType): The log level (e.g., "Detect").
 		api (str): The API involved in the fingerprinting.
-		method (str): The method called.
+		used_method (str): The method called.
 		datetime (datetime): When the event occurred.
 		stacktrace (Optional[str]): Stack trace of the event.
 	"""
@@ -43,7 +43,7 @@ class FingerprintTargetLogEntry(DictModel):
 	target_data: TargetData
 	level: FingerprintLogLevelsType
 	api: str
-	method: str
+	used_method: str
 	datetime: datetime
 	stacktrace: Optional[str]
 
@@ -91,11 +91,11 @@ class FingerprintAPIStats(DictModel):
 	Statistics for a specific Fingerprint API.
 
 	Attributes:
-		num_targets (int): Number of targets accessing this API.
+		num_logs (int): Number of targets accessing this API.
 		methods_stats (Dict[str, int]): Count of calls per method.
 	"""
 	
-	num_targets: int
+	num_logs: int
 	methods_stats: Dict[str, int]
 
 

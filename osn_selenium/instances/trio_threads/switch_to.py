@@ -4,7 +4,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
@@ -25,7 +25,7 @@ from osn_selenium.instances.convert import (
 )
 
 
-class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
+class SwitchTo(TrioThreadMixin, AbstractSwitchTo):
 	"""
 	Wrapper for the legacy Selenium SwitchTo instance.
 
@@ -57,13 +57,13 @@ class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
 	
 	async def active_element(self) -> WebElement:
 		return WebElement.from_legacy(
-				await self._wrap_to_trio(lambda: self.legacy.active_element),
+				await self._sync_to_trio(lambda: self.legacy.active_element),
 				lock=self._lock,
 				limiter=self._capacity_limiter
 		)
 	
 	async def alert(self) -> Alert:
-		legacy_alert_instance = await self._wrap_to_trio(lambda: self.legacy.alert)
+		legacy_alert_instance = await self._sync_to_trio(lambda: self.legacy.alert)
 		
 		return Alert(
 				selenium_alert=legacy_alert_instance,
@@ -72,10 +72,10 @@ class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
 		)
 	
 	async def default_content(self) -> None:
-		await self._wrap_to_trio(self.legacy.default_content)
+		await self._sync_to_trio(self.legacy.default_content)
 	
 	async def frame(self, frame_reference: Union[str, int, WEB_ELEMENT_TYPEHINT]) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.legacy.frame,
 				frame_reference=get_legacy_frame_reference(frame_reference)
 		)
@@ -113,10 +113,10 @@ class SwitchTo(_TrioThreadMixin, AbstractSwitchTo):
 		return self._selenium_switch_to
 	
 	async def new_window(self, type_hint: Optional[str] = None) -> None:
-		await self._wrap_to_trio(self.legacy.new_window, type_hint)
+		await self._sync_to_trio(self.legacy.new_window, type_hint)
 	
 	async def parent_frame(self) -> None:
-		await self._wrap_to_trio(self.legacy.parent_frame)
+		await self._sync_to_trio(self.legacy.parent_frame)
 	
 	async def window(self, window_name: str) -> None:
-		await self._wrap_to_trio(self.legacy.window, window_name)
+		await self._sync_to_trio(self.legacy.window, window_name)

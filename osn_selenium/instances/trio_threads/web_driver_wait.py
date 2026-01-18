@@ -4,7 +4,7 @@ from typing import (
 	Self,
 	TypeVar
 )
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WebDriverWaitInputType
@@ -24,7 +24,7 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 OUTPUT = TypeVar("OUTPUT")
 
 
-class WebDriverWait(_TrioThreadMixin, AbstractWebDriverWait):
+class WebDriverWait(TrioThreadMixin, AbstractWebDriverWait):
 	"""
 	Wrapper for the legacy Selenium WebDriverWait instance.
 
@@ -80,14 +80,14 @@ class WebDriverWait(_TrioThreadMixin, AbstractWebDriverWait):
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._wrap_to_trio(self._selenium_webdriver_wait.until, method=method, message=message)
+		return await self._sync_to_trio(self._selenium_webdriver_wait.until, method=method, message=message)
 	
 	async def until_not(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self._selenium_webdriver_wait.until_not,
 				method=method,
 				message=message

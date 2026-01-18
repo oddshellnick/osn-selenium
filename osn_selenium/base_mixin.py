@@ -16,7 +16,7 @@ METHOD_INPUT = ParamSpec("METHOD_INPUT")
 METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
 
 
-class _TrioThreadMixin:
+class TrioThreadMixin:
 	"""
 	Provides utilities for running synchronous functions in a Trio event loop
 	with a controlled concurrency, ensuring thread safety and resource limits.
@@ -39,7 +39,7 @@ class _TrioThreadMixin:
 		self._lock = lock
 		self._capacity_limiter = limiter
 	
-	async def _wrap_to_trio(
+	async def _sync_to_trio(
 			self,
 			fn: Callable[METHOD_INPUT, METHOD_OUTPUT],
 			*args: METHOD_INPUT.args,
@@ -68,7 +68,7 @@ class _TrioThreadMixin:
 			return await trio.to_thread.run_sync(fn, *args, limiter=self._capacity_limiter)
 	
 	@asynccontextmanager
-	async def _wrap_to_trio_context(
+	async def _sync_to_trio_context(
 			self,
 			cm_factory: Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]],
 			*args: METHOD_INPUT.args,
@@ -87,14 +87,14 @@ class _TrioThreadMixin:
 			AsyncGenerator[METHOD_OUTPUT, None]: An asynchronous generator yielding the context manager's value.
 		"""
 		
-		sync_cm = await self._wrap_to_trio(cm_factory, *args, **kwargs)
+		sync_cm = await self._sync_to_trio(cm_factory, *args, **kwargs)
 		
 		try:
-			yield await self._wrap_to_trio(sync_cm.__enter__)
+			yield await self._sync_to_trio(sync_cm.__enter__)
 		except Exception as e:
 			exc_type, exc_val, exc_tb = sys.exc_info()
-			await self._wrap_to_trio(sync_cm.__exit__, exc_type, exc_val, exc_tb)
+			await self._sync_to_trio(sync_cm.__exit__, exc_type, exc_val, exc_tb)
 		
 			raise e
 		else:
-			await self._wrap_to_trio(sync_cm.__exit__, None, None, None)
+			await self._sync_to_trio(sync_cm.__exit__, None, None, None)
