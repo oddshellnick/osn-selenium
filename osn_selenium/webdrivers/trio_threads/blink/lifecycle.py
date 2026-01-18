@@ -29,7 +29,7 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 		raise NotImplementedError("This function must be implemented in child classes.")
 	
 	async def _check_browser_exe_active(self) -> bool:
-		pids_with_addrs = await self._wrap_to_trio(get_localhost_pids_with_addresses)
+		pids_with_addrs = await self._sync_to_trio(get_localhost_pids_with_addresses)
 		
 		for pid, ports in pids_with_addrs.items():
 			if len(ports) == 1 and re.search(rf":{self.debugging_port}\Z", ports[0]) is not None:
@@ -65,7 +65,7 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 				is_active = await self._check_browser_exe_active()
 		
 				if not is_active:
-					await self._wrap_to_trio(Popen, args=self._webdriver_flags_manager.start_command, shell=True)
+					await self._sync_to_trio(Popen, args=self._webdriver_flags_manager.start_command, shell=True)
 		
 					while not is_active:
 						is_active = await self._check_browser_exe_active()
@@ -79,11 +79,11 @@ class BlinkLifecycleMixin(BlinkSettingsMixin, CoreLifecycleMixin, AbstractBlinkL
 	
 	async def close_webdriver(self) -> None:
 		if self.browser_exe is not None:
-			pids_with_ports = await self._wrap_to_trio(get_localhost_pids_with_ports)
+			pids_with_ports = await self._sync_to_trio(get_localhost_pids_with_ports)
 		
 			for pid, ports in pids_with_ports.items():
 				if self.debugging_port in ports and 1 <= len(ports) <= 2:
-					await self._wrap_to_trio(kill_process_by_pid, pid=pid, force=True)
+					await self._sync_to_trio(kill_process_by_pid, pid=pid, force=True)
 		
 					is_active = await self._check_browser_exe_active()
 		

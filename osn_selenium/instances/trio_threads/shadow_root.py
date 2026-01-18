@@ -1,6 +1,6 @@
 import trio
 from selenium.webdriver.common.by import By
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
 	List,
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.web_element import WebElement
 
 
-class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
+class ShadowRoot(TrioThreadMixin, AbstractShadowRoot):
 	"""
 	Wrapper for the legacy Selenium ShadowRoot instance.
 
@@ -57,14 +57,14 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		self._selenium_shadow_root = selenium_shadow_root
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
-		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
+		impl_el = await self._sync_to_trio(self.legacy.find_element, by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
-		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
+		impl_list = await self._sync_to_trio(self.legacy.find_elements, by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
@@ -106,7 +106,7 @@ class ShadowRoot(_TrioThreadMixin, AbstractShadowRoot):
 		)
 	
 	async def id(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.id)
+		return await self._sync_to_trio(lambda: self.legacy.id)
 	
 	@property
 	def legacy(self) -> legacyShadowRoot:

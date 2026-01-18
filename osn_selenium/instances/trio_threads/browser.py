@@ -1,6 +1,6 @@
 import trio
 from typing import List, Self
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.browser import AbstractBrowser
@@ -14,7 +14,7 @@ from selenium.webdriver.common.bidi.browser import (
 )
 
 
-class Browser(_TrioThreadMixin, AbstractBrowser):
+class Browser(TrioThreadMixin, AbstractBrowser):
 	"""
 	Wrapper for the legacy Selenium BiDi Browser instance.
 
@@ -45,7 +45,7 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 		self._selenium_browser = selenium_browser
 	
 	async def create_user_context(self) -> str:
-		return await self._wrap_to_trio(self._selenium_browser.create_user_context)
+		return await self._sync_to_trio(self._selenium_browser.create_user_context)
 	
 	@classmethod
 	def from_legacy(
@@ -77,17 +77,17 @@ class Browser(_TrioThreadMixin, AbstractBrowser):
 		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	
 	async def get_client_windows(self) -> List[ClientWindowInfo]:
-		return await self._wrap_to_trio(self._selenium_browser.get_client_windows)
+		return await self._sync_to_trio(self._selenium_browser.get_client_windows)
 	
 	async def get_user_contexts(self) -> List[str]:
-		return await self._wrap_to_trio(self._selenium_browser.get_user_contexts)
+		return await self._sync_to_trio(self._selenium_browser.get_user_contexts)
 	
 	@property
 	def legacy(self) -> legacyBrowser:
 		return self._selenium_browser
 	
 	async def remove_user_context(self, user_context_id: str) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_browser.remove_user_context,
 				user_context_id=user_context_id
 		)

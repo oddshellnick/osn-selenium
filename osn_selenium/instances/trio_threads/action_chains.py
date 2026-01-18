@@ -1,6 +1,6 @@
 import trio
 from osn_selenium.types import Point
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
@@ -29,7 +29,7 @@ from osn_selenium.abstract.instances.action_chains import (
 )
 
 
-class ActionChains(_TrioThreadMixin, AbstractActionChains):
+class ActionChains(TrioThreadMixin, AbstractActionChains):
 	"""
 	Wrapper for the legacy Selenium ActionChains instance.
 
@@ -63,7 +63,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		self._selenium_action_chains = selenium_action_chains
 	
 	async def click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.click,
 				on_element=get_legacy_instance(on_element)
 		)
@@ -71,7 +71,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def click_and_hold(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.click_and_hold,
 				on_element=get_legacy_instance(on_element)
 		)
@@ -79,7 +79,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def context_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.context_click,
 				on_element=get_legacy_instance(on_element)
 		)
@@ -87,7 +87,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def double_click(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.double_click,
 				on_element=get_legacy_instance(on_element)
 		)
@@ -95,7 +95,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def drag_and_drop(self, source: WEB_ELEMENT_TYPEHINT, target: WEB_ELEMENT_TYPEHINT) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.drag_and_drop,
 				source=get_legacy_instance(source),
 				target=get_legacy_instance(target)
@@ -104,7 +104,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def drag_and_drop_by_offset(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.drag_and_drop_by_offset,
 				source=get_legacy_instance(source),
 				xoffset=xoffset,
@@ -114,7 +114,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def key_down(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.key_down,
 				value=value,
 				element=get_legacy_instance(element)
@@ -123,7 +123,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def key_up(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.key_up,
 				value=value,
 				element=get_legacy_instance(element)
@@ -136,7 +136,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self._selenium_action_chains
 	
 	async def move_by_offset(self, xoffset: int, yoffset: int) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.move_by_offset,
 				xoffset=xoffset,
 				yoffset=yoffset,
@@ -145,7 +145,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.move_to_element,
 				to_element=get_legacy_instance(to_element)
 		)
@@ -153,7 +153,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.move_to_element_with_offset,
 				to_element=get_legacy_instance(to_element),
 				xoffset=xoffset,
@@ -163,15 +163,15 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def pause(self, seconds: Union[float, int]) -> Self:
-		await self._wrap_to_trio(self._selenium_action_chains.pause, seconds=seconds)
+		await self._sync_to_trio(self._selenium_action_chains.pause, seconds=seconds)
 		
 		return self
 	
 	async def perform(self) -> None:
-		await self._wrap_to_trio(self._selenium_action_chains.perform)
+		await self._sync_to_trio(self._selenium_action_chains.perform)
 	
 	async def release(self, on_element: Optional[WEB_ELEMENT_TYPEHINT] = None) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.release,
 				on_element=get_legacy_instance(on_element)
 		)
@@ -179,7 +179,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def scroll_by_amount(self, delta_x: int, delta_y: int) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.scroll_by_amount,
 				delta_x=delta_x,
 				delta_y=delta_y
@@ -188,7 +188,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def scroll_from_origin(self, scroll_origin: ScrollOrigin, delta_x: int, delta_y: int) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.scroll_from_origin,
 				scroll_origin=scroll_origin,
 				delta_x=delta_x,
@@ -198,7 +198,7 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.scroll_to_element,
 				element=get_legacy_instance(element)
 		)
@@ -206,12 +206,12 @@ class ActionChains(_TrioThreadMixin, AbstractActionChains):
 		return self
 	
 	async def send_keys(self, *keys_to_send: str) -> Self:
-		await self._wrap_to_trio(self._selenium_action_chains.send_keys, *keys_to_send)
+		await self._sync_to_trio(self._selenium_action_chains.send_keys, *keys_to_send)
 		
 		return self
 	
 	async def send_keys_to_element(self, element: WEB_ELEMENT_TYPEHINT, *keys_to_send: str) -> Self:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self._selenium_action_chains.send_keys_to_element,
 				get_legacy_instance(element),
 				*keys_to_send
@@ -254,7 +254,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		self._js_executor = JSExecutor(execute_function=execute_script_function)
 	
 	async def hm_move(self, start_position: Point, end_position: Point) -> Self:
-		parts = await self._wrap_to_trio(
+		parts = await self._sync_to_trio(
 				move_to_parts,
 				start_position=start_position,
 				end_position=end_position
@@ -321,7 +321,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		start = Point(x=int(origin.x_offset), y=int(origin.y_offset))
 		end = Point(x=int(origin.x_offset) + int(delta_x), y=int(origin.y_offset) + int(delta_y))
 		
-		parts = await self._wrap_to_trio(scroll_to_parts, start_position=start, end_position=end)
+		parts = await self._sync_to_trio(scroll_to_parts, start_position=start, end_position=end)
 		
 		for part in parts:
 			await self.pause(seconds=part.duration * 0.001)
@@ -362,7 +362,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		return await self.hm_scroll(delta_x=delta_x, delta_y=delta_y, origin=origin)
 	
 	async def hm_text_input(self, text: str) -> Self:
-		parts = await self._wrap_to_trio(text_input_to_parts, text=text)
+		parts = await self._sync_to_trio(text_input_to_parts, text=text)
 		
 		for part in parts:
 			await self.pause(seconds=part.duration * 0.001)

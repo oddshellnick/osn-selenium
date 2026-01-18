@@ -21,7 +21,7 @@ class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
 	
 	@requires_driver
 	async def browser(self) -> Browser:
-		legacy = await self._wrap_to_trio(lambda: self.driver.browser)
+		legacy = await self._sync_to_trio(lambda: self.driver.browser)
 		
 		return Browser(
 				selenium_browser=legacy,
@@ -31,7 +31,7 @@ class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
 	
 	@requires_driver
 	async def browsing_context(self) -> BrowsingContext:
-		legacy = await self._wrap_to_trio(lambda: self.driver.browsing_context)
+		legacy = await self._sync_to_trio(lambda: self.driver.browsing_context)
 		
 		return BrowsingContext(
 				selenium_browsing_context=legacy,
@@ -41,13 +41,13 @@ class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
 	
 	@requires_driver
 	async def dialog(self) -> Dialog:
-		legacy = await self._wrap_to_trio(lambda: self.driver.dialog)
+		legacy = await self._sync_to_trio(lambda: self.driver.dialog)
 		
 		return Dialog(legacy, lock=self._lock, limiter=self._capacity_limiter)
 	
 	@requires_driver
 	async def mobile(self) -> Mobile:
-		legacy = await self._wrap_to_trio(lambda: self.driver.mobile)
+		legacy = await self._sync_to_trio(lambda: self.driver.mobile)
 		
 		return Mobile(
 				selenium_mobile=legacy,
@@ -57,7 +57,7 @@ class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
 	
 	@requires_driver
 	async def permissions(self) -> Permissions:
-		legacy = await self._wrap_to_trio(lambda: self.driver.permissions)
+		legacy = await self._sync_to_trio(lambda: self.driver.permissions)
 		
 		return Permissions(
 				selenium_permissions=legacy,
@@ -67,7 +67,7 @@ class CoreComponentsMixin(CoreBaseMixin, AbstractCoreComponentsMixin):
 	
 	@requires_driver
 	async def webextension(self) -> WebExtension:
-		legacy = await self._wrap_to_trio(lambda: self.driver.webextension)
+		legacy = await self._sync_to_trio(lambda: self.driver.webextension)
 		
 		return WebExtension(
 				selenium_web_extension=legacy,

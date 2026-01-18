@@ -2,7 +2,7 @@ import trio
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.webdrivers.decorators import requires_driver
@@ -31,7 +31,7 @@ from selenium.webdriver.remote.webelement import (
 )
 
 
-class CoreBaseMixin(_TrioThreadMixin, AbstractCoreBaseMixin):
+class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
 	"""
 	Base mixin for Core WebDrivers handling core initialization and state management.
 
@@ -104,7 +104,7 @@ class CoreBaseMixin(_TrioThreadMixin, AbstractCoreBaseMixin):
 	
 	@requires_driver
 	async def _session(self) -> Session:
-		return await self._wrap_to_trio(lambda: self.driver._session)
+		return await self._sync_to_trio(lambda: self.driver._session)
 	
 	def _unwrap_args(self, arg: Any) -> Any:
 		if isinstance(arg, WebElement):
@@ -190,7 +190,7 @@ class CoreBaseMixin(_TrioThreadMixin, AbstractCoreBaseMixin):
 	
 	@requires_driver
 	async def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		return await self._wrap_to_trio(self.driver.execute, driver_command=driver_command, params=params)
+		return await self._sync_to_trio(self.driver.execute, driver_command=driver_command, params=params)
 	
 	@property
 	def is_active(self) -> bool:

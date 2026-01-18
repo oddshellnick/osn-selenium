@@ -16,12 +16,12 @@ class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
 	
 	@requires_driver
 	async def get_issue_message(self) -> str:
-		return await self._wrap_to_trio(self.driver.get_issue_message)
+		return await self._sync_to_trio(self.driver.get_issue_message)
 	
 	@requires_driver
 	async def launch_app(self, id: str) -> Dict[str, Any]:
-		return await self._wrap_to_trio(self.driver.launch_app, id=id)
+		return await self._sync_to_trio(self.driver.launch_app, id=id)
 	
 	@requires_driver
 	async def set_permissions(self, name: str, value: str) -> None:
-		return await self._wrap_to_trio(self.driver.set_permissions, name=name, value=value)
+		return await self._sync_to_trio(self.driver.set_permissions, name=name, value=value)

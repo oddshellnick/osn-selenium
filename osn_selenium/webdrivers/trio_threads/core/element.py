@@ -18,7 +18,7 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	
 	@requires_driver
 	async def create_web_element(self, element_id: str) -> WebElement:
-		legacy = await self._wrap_to_trio(self.driver.create_web_element, element_id=element_id)
+		legacy = await self._sync_to_trio(self.driver.create_web_element, element_id=element_id)
 		
 		return WebElement(
 				selenium_web_element=legacy,
@@ -28,7 +28,7 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	
 	@requires_driver
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> WebElement:
-		element = await self._wrap_to_trio(self.driver.find_element, by=by, value=value)
+		element = await self._sync_to_trio(self.driver.find_element, by=by, value=value)
 		
 		return WebElement(
 				selenium_web_element=element,
@@ -38,7 +38,7 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	
 	@requires_driver
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List[WebElement]:
-		elements = await self._wrap_to_trio(self.driver.find_elements, by=by, value=value)
+		elements = await self._sync_to_trio(self.driver.find_elements, by=by, value=value)
 		
 		return [
 			WebElement(

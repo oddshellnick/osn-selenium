@@ -1,6 +1,6 @@
 import trio
 from selenium.webdriver.common.by import By
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from typing import (
@@ -26,7 +26,7 @@ from selenium.webdriver.support.wait import (
 )
 
 
-class WebElement(_TrioThreadMixin, AbstractWebElement):
+class WebElement(TrioThreadMixin, AbstractWebElement):
 	"""
 	Wrapper for the legacy Selenium WebElement instance.
 
@@ -76,16 +76,16 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		return self.legacy != get_legacy_instance(other)
 	
 	async def accessible_name(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.accessible_name)
+		return await self._sync_to_trio(lambda: self.legacy.accessible_name)
 	
 	async def aria_role(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.aria_role)
+		return await self._sync_to_trio(lambda: self.legacy.aria_role)
 	
 	async def clear(self) -> None:
-		await self._wrap_to_trio(self.legacy.clear)
+		await self._sync_to_trio(self.legacy.clear)
 	
 	async def click(self) -> None:
-		await self._wrap_to_trio(self.legacy.click)
+		await self._sync_to_trio(self.legacy.click)
 	
 	@classmethod
 	def from_legacy(
@@ -117,7 +117,7 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Any = None) -> Self:
-		impl_el = await self._wrap_to_trio(self.legacy.find_element, by=by, value=value)
+		impl_el = await self._sync_to_trio(self.legacy.find_element, by=by, value=value)
 		return self.from_legacy(
 				selenium_web_element=impl_el,
 				lock=self._lock,
@@ -125,7 +125,7 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		)
 	
 	async def find_elements(self, by: str = By.ID, value: Any = None) -> List[Self]:
-		impl_list = await self._wrap_to_trio(self.legacy.find_elements, by=by, value=value)
+		impl_list = await self._sync_to_trio(self.legacy.find_elements, by=by, value=value)
 		return [
 			self.from_legacy(
 					selenium_web_element=e,
@@ -135,75 +135,75 @@ class WebElement(_TrioThreadMixin, AbstractWebElement):
 		]
 	
 	async def get_attribute(self, name: str) -> Optional[str]:
-		return await self._wrap_to_trio(self.legacy.get_attribute, name=name)
+		return await self._sync_to_trio(self.legacy.get_attribute, name=name)
 	
 	async def get_dom_attribute(self, name: str) -> Optional[str]:
-		return await self._wrap_to_trio(self.legacy.get_dom_attribute, name=name)
+		return await self._sync_to_trio(self.legacy.get_dom_attribute, name=name)
 	
 	async def get_property(self, name: str) -> Any:
-		return await self._wrap_to_trio(self.legacy.get_property, name=name)
+		return await self._sync_to_trio(self.legacy.get_property, name=name)
 	
 	async def id(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.id)
+		return await self._sync_to_trio(lambda: self.legacy.id)
 	
 	async def is_displayed(self) -> bool:
-		return await self._wrap_to_trio(self.legacy.is_displayed)
+		return await self._sync_to_trio(self.legacy.is_displayed)
 	
 	async def is_enabled(self) -> bool:
-		return await self._wrap_to_trio(self.legacy.is_enabled)
+		return await self._sync_to_trio(self.legacy.is_enabled)
 	
 	async def is_selected(self) -> bool:
-		return await self._wrap_to_trio(self.legacy.is_selected)
+		return await self._sync_to_trio(self.legacy.is_selected)
 	
 	async def location(self) -> Dict:
-		return await self._wrap_to_trio(lambda: self.legacy.location)
+		return await self._sync_to_trio(lambda: self.legacy.location)
 	
 	async def location_once_scrolled_into_view(self) -> Dict:
-		return await self._wrap_to_trio(lambda: self.legacy.location_once_scrolled_into_view)
+		return await self._sync_to_trio(lambda: self.legacy.location_once_scrolled_into_view)
 	
 	async def parent(self) -> Self:
-		impl_parent = await self._wrap_to_trio(lambda: self.legacy.parent)
+		impl_parent = await self._sync_to_trio(lambda: self.legacy.parent)
 		return self.from_legacy(impl_parent, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def rect(self) -> Dict:
-		return await self._wrap_to_trio(lambda: self.legacy.rect)
+		return await self._sync_to_trio(lambda: self.legacy.rect)
 	
 	async def screenshot(self, filename: str) -> bool:
-		return await self._wrap_to_trio(self.legacy.screenshot, filename=filename)
+		return await self._sync_to_trio(self.legacy.screenshot, filename=filename)
 	
 	async def screenshot_as_base64(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.screenshot_as_base64)
+		return await self._sync_to_trio(lambda: self.legacy.screenshot_as_base64)
 	
 	async def screenshot_as_png(self) -> bytes:
-		return await self._wrap_to_trio(lambda: self.legacy.screenshot_as_png)
+		return await self._sync_to_trio(lambda: self.legacy.screenshot_as_png)
 	
 	async def send_keys(self, *value: str) -> None:
-		await self._wrap_to_trio(self.legacy.send_keys, *value)
+		await self._sync_to_trio(self.legacy.send_keys, *value)
 	
 	async def session_id(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.session_id)
+		return await self._sync_to_trio(lambda: self.legacy.session_id)
 	
 	async def shadow_root(self) -> ShadowRoot:
 		return ShadowRoot(
-				await self._wrap_to_trio(lambda: self.legacy.shadow_root),
+				await self._sync_to_trio(lambda: self.legacy.shadow_root),
 				lock=self._lock,
 				limiter=self._capacity_limiter
 		)
 	
 	async def size(self) -> Dict:
-		return await self._wrap_to_trio(lambda: self.legacy.size)
+		return await self._sync_to_trio(lambda: self.legacy.size)
 	
 	async def submit(self) -> None:
-		await self._wrap_to_trio(self.legacy.submit)
+		await self._sync_to_trio(self.legacy.submit)
 	
 	async def tag_name(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.tag_name)
+		return await self._sync_to_trio(lambda: self.legacy.tag_name)
 	
 	async def text(self) -> str:
-		return await self._wrap_to_trio(lambda: self.legacy.text)
+		return await self._sync_to_trio(lambda: self.legacy.text)
 	
 	async def value_of_css_property(self, property_name: str) -> str:
-		return await self._wrap_to_trio(self.legacy.value_of_css_property, property_name=property_name)
+		return await self._sync_to_trio(self.legacy.value_of_css_property, property_name=property_name)
 	
 	def web_driver_wait(
 			self,

@@ -5,7 +5,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
@@ -20,7 +20,7 @@ from selenium.webdriver.common.bidi.webextension import (
 )
 
 
-class WebExtension(_TrioThreadMixin, AbstractWebExtension):
+class WebExtension(TrioThreadMixin, AbstractWebExtension):
 	"""
 	Wrapper for the legacy Selenium WebExtension instance.
 
@@ -92,7 +92,7 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 			archive_path: Optional[str] = None,
 			base64_value: Optional[str] = None,
 	) -> Dict:
-		return await self._wrap_to_trio(
+		return await self._sync_to_trio(
 				self.legacy.install,
 				path=path,
 				archive_path=archive_path,
@@ -104,4 +104,4 @@ class WebExtension(_TrioThreadMixin, AbstractWebExtension):
 		return self._selenium_web_extension
 	
 	async def uninstall(self, extension_id_or_result: Union[str, Dict]) -> None:
-		await self._wrap_to_trio(self.legacy.uninstall, extension_id_or_result=extension_id_or_result)
+		await self._sync_to_trio(self.legacy.uninstall, extension_id_or_result=extension_id_or_result)

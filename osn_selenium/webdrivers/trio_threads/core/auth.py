@@ -27,15 +27,15 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 	
 	@requires_driver
 	async def add_credential(self, credential: Credential) -> None:
-		await self._wrap_to_trio(self.driver.add_credential, credential=credential)
+		await self._sync_to_trio(self.driver.add_credential, credential=credential)
 	
 	@requires_driver
 	async def add_virtual_authenticator(self, options: VirtualAuthenticatorOptions) -> None:
-		await self._wrap_to_trio(self.driver.add_virtual_authenticator, options=options)
+		await self._sync_to_trio(self.driver.add_virtual_authenticator, options=options)
 	
 	@requires_driver
 	async def fedcm(self) -> FedCM:
-		legacy = await self._wrap_to_trio(lambda: self.driver.fedcm)
+		legacy = await self._sync_to_trio(lambda: self.driver.fedcm)
 		
 		return FedCM(selenium_fedcm=legacy, lock=self._lock, limiter=self._capacity_limiter)
 	
@@ -46,7 +46,7 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Any = None,
 	) -> Dialog:
-		legacy = await self._wrap_to_trio(
+		legacy = await self._sync_to_trio(
 				self.driver.fedcm_dialog,
 				timeout=timeout,
 				poll_frequency=poll_frequency,
@@ -61,28 +61,28 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 	
 	@requires_driver
 	async def get_credentials(self) -> List[Credential]:
-		return await self._wrap_to_trio(self.driver.get_credentials)
+		return await self._sync_to_trio(self.driver.get_credentials)
 	
 	@requires_driver
 	async def remove_all_credentials(self) -> None:
-		await self._wrap_to_trio(self.driver.remove_all_credentials)
+		await self._sync_to_trio(self.driver.remove_all_credentials)
 	
 	@requires_driver
 	async def remove_credential(self, credential_id: Union[str, bytearray]) -> None:
-		await self._wrap_to_trio(self.driver.remove_credential, credential_id=credential_id)
+		await self._sync_to_trio(self.driver.remove_credential, credential_id=credential_id)
 	
 	@requires_driver
 	async def remove_virtual_authenticator(self) -> None:
-		await self._wrap_to_trio(self.driver.remove_virtual_authenticator)
+		await self._sync_to_trio(self.driver.remove_virtual_authenticator)
 	
 	@requires_driver
 	async def set_user_verified(self, verified: bool) -> None:
-		await self._wrap_to_trio(self.driver.set_user_verified, verified=verified)
+		await self._sync_to_trio(self.driver.set_user_verified, verified=verified)
 	
 	@requires_driver
 	async def supports_fedcm(self) -> bool:
-		return await self._wrap_to_trio(lambda: self.driver.supports_fedcm)
+		return await self._sync_to_trio(lambda: self.driver.supports_fedcm)
 	
 	@requires_driver
 	async def virtual_authenticator_id(self) -> Optional[str]:
-		return await self._wrap_to_trio(lambda: self.driver.virtual_authenticator_id)
+		return await self._sync_to_trio(lambda: self.driver.virtual_authenticator_id)

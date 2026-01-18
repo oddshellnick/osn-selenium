@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
@@ -20,7 +20,7 @@ from selenium.webdriver.common.bidi.permissions import (
 )
 
 
-class Permissions(_TrioThreadMixin, AbstractPermissions):
+class Permissions(TrioThreadMixin, AbstractPermissions):
 	"""
 	Wrapper for the legacy Selenium Permissions instance.
 
@@ -97,7 +97,7 @@ class Permissions(_TrioThreadMixin, AbstractPermissions):
 			origin: str,
 			user_context: Optional[str] = None,
 	) -> None:
-		await self._wrap_to_trio(
+		await self._sync_to_trio(
 				self.legacy.set_permission,
 				descriptor=descriptor,
 				state=state,

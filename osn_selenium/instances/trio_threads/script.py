@@ -1,7 +1,7 @@
 import trio
 from typing import Any, Callable, Self
 from osn_selenium.instances.types import SCRIPT_TYPEHINT
-from osn_selenium.trio_base_mixin import _TrioThreadMixin
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (
@@ -13,7 +13,7 @@ from osn_selenium.instances.errors import (
 )
 
 
-class Script(_TrioThreadMixin, AbstractScript):
+class Script(TrioThreadMixin, AbstractScript):
 	"""
 	Wrapper for the legacy Selenium BiDi Script instance.
 
@@ -44,13 +44,13 @@ class Script(_TrioThreadMixin, AbstractScript):
 		self._selenium_script = selenium_script
 	
 	async def add_console_message_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._wrap_to_trio(self.legacy.add_console_message_handler, handler=handler)
+		return await self._sync_to_trio(self.legacy.add_console_message_handler, handler=handler)
 	
 	async def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._wrap_to_trio(self.legacy.add_javascript_error_handler, handler=handler)
+		return await self._sync_to_trio(self.legacy.add_javascript_error_handler, handler=handler)
 	
 	async def execute(self, script: str, *args: Any) -> Any:
-		return await self._wrap_to_trio(self.legacy.execute, script, *args)
+		return await self._sync_to_trio(self.legacy.execute, script, *args)
 	
 	@classmethod
 	def from_legacy(
@@ -86,10 +86,10 @@ class Script(_TrioThreadMixin, AbstractScript):
 		return self._selenium_script
 	
 	async def pin(self, script: str) -> str:
-		return await self._wrap_to_trio(self.legacy.pin, script=script)
+		return await self._sync_to_trio(self.legacy.pin, script=script)
 	
 	async def remove_console_message_handler(self, id: int) -> None:
-		await self._wrap_to_trio(self.legacy.remove_console_message_handler, id=id)
+		await self._sync_to_trio(self.legacy.remove_console_message_handler, id=id)
 	
 	async def unpin(self, script_id: str) -> None:
-		await self._wrap_to_trio(self.legacy.unpin, script_id=script_id)
+		await self._sync_to_trio(self.legacy.unpin, script_id=script_id)

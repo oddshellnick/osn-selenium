@@ -38,7 +38,7 @@ class YandexBaseMixin(ChromeWebDriver, AbstractYandexBaseMixin):
 	):
 		"""
 		Initializes the synchronous Yandex WebDriver mixin with specified configuration.
-		
+
 		Args:
 			webdriver_path (str): Path to the YandexDriver executable.
 			flags_manager_type (Type[YandexFlagsManager]): The class type used for managing Yandex flags.
