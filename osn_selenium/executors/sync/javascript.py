@@ -1,4 +1,3 @@
-from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.javascript.types import JS_Scripts
 from typing import (
 	Any,
@@ -6,7 +5,9 @@ from typing import (
 	Dict,
 	Optional
 )
+from osn_selenium.javascript.functions import read_js_scripts
 from osn_selenium.instances.sync.web_element import WebElement
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.types import (
 	Point,
 	Position,
@@ -14,10 +15,6 @@ from osn_selenium.types import (
 	Size
 )
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
-from osn_selenium.javascript.functions import (
-	inject_data_in_js_script,
-	read_js_scripts
-)
 
 
 class JSExecutor(AbstractJSExecutor):
