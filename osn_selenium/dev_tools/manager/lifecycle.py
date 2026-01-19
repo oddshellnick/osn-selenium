@@ -100,7 +100,9 @@ class LifecycleMixin(TargetsMixin):
 		
 		self.exit_event = trio.Event()
 		
+		self._fingerprint_injection_script = await self._webdriver._sync_to_trio(self._fingerprint_settings.generate_js)
 		main_target = (await self._get_all_targets())[0]
+
 		await self._add_target(main_target)
 		
 		self._is_active = True

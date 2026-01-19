@@ -31,7 +31,6 @@ if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings
 	from osn_selenium.dev_tools.settings import LoggerSettings
-	from osn_selenium.javascript.fingerprint import FingerprintSettings
 	from osn_selenium.dev_tools._types import devtools_background_func_type
 
 
@@ -51,9 +50,8 @@ class BaseMixin:
 		about_to_stop_event (trio.Event): Event set when the target is about to stop.
 		stopped_event (trio.Event): Event set when the target handling has fully stopped.
 		background_task_ended (Optional[trio.Event]): Event set when the background task completes.
-		_logger_settings (LoggerSettings): Configuration for logging.
-		_domains_settings (Optional[DomainsSettings]): Configuration for enabled domains and handlers.
-		_fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
+		_logger_settings ("LoggerSettings"): Configuration for logging.
+		_domains_settings (Optional["DomainsSettings"]): Configuration for enabled domains and handlers.
 		_new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
 		_new_targets_buffer_size (int): Buffer size for new target events.
 		_nursery_object (trio.Nursery): Trio nursery for background tasks.
@@ -62,6 +60,7 @@ class BaseMixin:
 		_remove_target_func (Callable): Callback to remove this target.
 		_add_cdp_log_func (Callable): Callback to record a CDP log entry.
 		_add_fingerprint_log_func (Callable): Callback to record a fingerprint log entry.
+		_fingerprint_injection_script (Optional[str]): JS script to inject into the target.
 		_new_targets_events_filters (Any): Validated filters for target events.
 		_cdp_target_type_log_accepted (bool): Whether CDP logging is enabled for this target type.
 		_cdp_log_stats (CDPLoggerChannelStats): Statistics for CDP logs.
@@ -80,13 +79,13 @@ class BaseMixin:
 			target_data: TargetData,
 			logger_settings: "LoggerSettings",
 			domains_settings: Optional["DomainsSettings"],
-			fingerprint_settings: Optional["FingerprintSettings"],
 			devtools_package: DevToolsPackage,
 			websocket_url: Optional[str],
 			new_targets_filter_list: Sequence[Dict[str, Any]],
 			new_targets_buffer_size: int,
 			nursery: trio.Nursery,
 			exit_event: trio.Event,
+			fingerprint_injection_script: Optional[str],
 			target_background_task: Optional["devtools_background_func_type"],
 			add_target_func: Callable[[Any], Coroutine[Any, Any, bool]],
 			remove_target_func: Callable[["DevToolsTarget"], Coroutine[Any, Any, Optional[bool]]],
@@ -98,15 +97,15 @@ class BaseMixin:
 
 		Args:
 			target_data (TargetData): Information about the target.
-			logger_settings (LoggerSettings): Configuration for logging.
-			domains_settings (Optional[DomainsSettings]): Configuration for enabled domains and handlers.
-			fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
+			logger_settings ("LoggerSettings"): Configuration for logging.
+			domains_settings (Optional["DomainsSettings"]): Configuration for enabled domains and handlers.
 			devtools_package (DevToolsPackage): Access to CDP commands and events.
 			websocket_url (Optional[str]): The debugger URL.
 			new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
 			new_targets_buffer_size (int): Buffer size for new target events.
 			nursery (trio.Nursery): Trio nursery for background tasks.
 			exit_event (trio.Event): Signal to stop all operations.
+			fingerprint_injection_script (Optional[str]): JS script to inject into the target.
 			target_background_task (Optional[devtools_background_func_type]): Optional background task to run.
 			add_target_func (Callable[[Any], Coroutine[Any, Any, bool]]): Callback to add a new target.
 			remove_target_func (Callable[[DevToolsTarget], Coroutine[Any, Any, Optional[bool]]]): Callback to remove this target.
@@ -117,7 +116,6 @@ class BaseMixin:
 		self.target_data = target_data
 		self._logger_settings = logger_settings
 		self._domains_settings = domains_settings
-		self._fingerprint_settings = fingerprint_settings
 		self.devtools_package = devtools_package
 		self.websocket_url = websocket_url
 		self._new_targets_filter_list = new_targets_filter_list
@@ -129,6 +127,7 @@ class BaseMixin:
 		self._remove_target_func = remove_target_func
 		self._add_cdp_log_func = add_cdp_log_func
 		self._add_fingerprint_log_func = add_fingerprint_log_func
+		self._fingerprint_injection_script = fingerprint_injection_script
 		self._new_targets_events_filters = validate_target_event_filter(new_targets_filter_list)
 		
 		self._cdp_target_type_log_accepted = validate_type_filter(

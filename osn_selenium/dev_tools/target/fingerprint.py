@@ -67,7 +67,7 @@ class FingerprintMixin(LoggingMixin):
 			BaseException: If any other error occurs.
 		"""
 		
-		if self._fingerprint_settings:
+		if self._fingerprint_injection_script:
 			try:
 				await execute_cdp_command(
 						self=self,
@@ -91,7 +91,7 @@ class FingerprintMixin(LoggingMixin):
 						self=self,
 						error_mode="log",
 						function=self.devtools_package.get("page.add_script_to_evaluate_on_new_document"),
-						source=self._fingerprint_settings.generate_js(),
+						source=self._fingerprint_injection_script,
 						run_immediately=True
 				)
 		

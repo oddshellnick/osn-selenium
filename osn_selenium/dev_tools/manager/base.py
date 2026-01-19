@@ -63,6 +63,7 @@ class BaseMixin:
 		_fingerprint_log_level_stats (Dict[str, FingerprintLogLevelStats]): Overall statistics for each log level.
 		_main_logger_fingerprint_send_channel (Optional[trio.MemorySendChannel[FingerprintMainLogEntry]]): Send channel for the main logger.
 		_main_logger (Optional[MainLogger]): The main logger instance.
+		_fingerprint_injection_script (Optional[str]): Injection script for fingerprinting.
 	"""
 	
 	def __init__(
@@ -114,8 +115,9 @@ class BaseMixin:
 		self._fingerprint_log_level_stats: Dict[str, FingerprintLogLevelStats] = {}
 		self._main_logger_fingerprint_send_channel: Optional[trio.MemorySendChannel[FingerprintMainLogEntry]] = None
 		self._main_logger: Optional[MainLogger] = None
-		
-		prepare_log_dir(devtools_settings.logger_settings)
+		self._fingerprint_injection_script: Optional[str] = None
+
+		prepare_log_dir(logger_settings=devtools_settings.logger_settings)
 	
 	@property
 	def is_active(self) -> bool:
