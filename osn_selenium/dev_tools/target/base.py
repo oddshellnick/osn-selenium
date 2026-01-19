@@ -128,12 +128,12 @@ class BaseMixin:
 		self._add_cdp_log_func = add_cdp_log_func
 		self._add_fingerprint_log_func = add_fingerprint_log_func
 		self._fingerprint_injection_script = fingerprint_injection_script
-		self._new_targets_events_filters = validate_target_event_filter(new_targets_filter_list)
+		self._new_targets_events_filters = validate_target_event_filter(filter_=new_targets_filter_list)
 		
 		self._cdp_target_type_log_accepted = validate_type_filter(
-				self.type_,
-				self._logger_settings.cdp_settings.target_type_filter_mode,
-				self._logger_settings.cdp_settings.target_type_filter
+				type_=self.type_,
+				filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
+				filter_instances=self._logger_settings.cdp_settings.target_type_filter
 		)
 		
 		self._cdp_log_stats = CDPLoggerChannelStats(
@@ -181,9 +181,9 @@ class BaseMixin:
 		"""
 		
 		self._cdp_target_type_log_accepted = validate_type_filter(
-				value,
-				self._logger_settings.cdp_settings.target_type_filter_mode,
-				self._logger_settings.cdp_settings.target_type_filter
+				type_=value,
+				filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
+				filter_instances=self._logger_settings.cdp_settings.target_type_filter
 		)
 		self.target_data.type_ = value
 	
