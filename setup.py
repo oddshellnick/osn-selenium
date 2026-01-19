@@ -9,8 +9,8 @@ def get_long_description() -> str:
 	
 	if long_description_path.is_file():
 		return open(long_description_path, "r", encoding="utf-8").read()
-	else:
-		raise FileNotFoundError("README.md not found")
+
+	raise FileNotFoundError("README.md not found")
 
 
 def get_install_requires() -> List[str]:
@@ -18,8 +18,8 @@ def get_install_requires() -> List[str]:
 	
 	if requirement_path.is_file():
 		return open(requirement_path, "r", encoding="utf-8").read().splitlines()
-	else:
-		raise FileNotFoundError("requirements.txt not found")
+
+	raise FileNotFoundError("requirements.txt not found")
 
 
 def get_description() -> str:
@@ -27,8 +27,8 @@ def get_description() -> str:
 	
 	if description_path.is_file():
 		return open(description_path, "r", encoding="utf-8").read()
-	else:
-		raise FileNotFoundError("description.txt not found")
+
+	raise FileNotFoundError("description.txt not found")
 
 
 setup(
