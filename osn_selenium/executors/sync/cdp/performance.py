@@ -5,23 +5,26 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.executors.unified.cdp.performance import (
+	UnifiedPerformanceCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.performance import (
 	AbstractPerformanceCDPExecutor
 )
 
 
-class PerformanceCDPExecutor(AbstractPerformanceCDPExecutor):
+class PerformanceCDPExecutor(UnifiedPerformanceCDPExecutor, AbstractPerformanceCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedPerformanceCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("Performance.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self, time_domain: Optional[str] = None) -> None:
-		return self._execute_function("Performance.enable", locals())
+		return self._enable_impl(time_domain=time_domain)
 	
-	def get_metrics(self) -> List[Any]:
-		return self._execute_function("Performance.getMetrics", locals())
+	def get_metrics(self) -> List[Dict[str, Any]]:
+		return self._get_metrics_impl()
 	
 	def set_time_domain(self, time_domain: str) -> None:
-		return self._execute_function("Performance.setTimeDomain", locals())
+		return self._set_time_domain_impl(time_domain=time_domain)

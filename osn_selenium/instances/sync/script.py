@@ -1,17 +1,15 @@
 from typing import Any, Callable, Self
 from osn_selenium.instances.types import SCRIPT_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.script import UnifiedScript
 from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Script(AbstractScript):
+class Script(UnifiedScript, AbstractScript):
 	"""
 	Wrapper for the legacy Selenium BiDi Script instance.
 
@@ -27,22 +25,19 @@ class Script(AbstractScript):
 			selenium_script (legacyScript): The legacy Selenium Script instance to wrap.
 		"""
 		
-		if not isinstance(selenium_script, legacyScript):
-			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
-		
-		self._selenium_script = selenium_script
+		UnifiedScript.__init__(self, selenium_script=selenium_script)
 	
 	def add_console_message_handler(self, handler: Callable[[Any], None]) -> int:
-		return self.legacy.add_console_message_handler(handler=handler)
+		return self._add_console_message_handler_impl(handler=handler)
 	
 	def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
-		return self.legacy.add_javascript_error_handler(handler=handler)
+		return self._add_javascript_error_handler_impl(handler=handler)
 	
 	def execute(self, script: str, *args: Any) -> Any:
-		return self.legacy.execute(script, *args)
+		return self._execute_impl(script, *args)
 	
 	@classmethod
-	def from_legacy(cls, selenium_script: SCRIPT_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: SCRIPT_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Script object.
 
@@ -50,28 +45,28 @@ class Script(AbstractScript):
 		instance into the new interface.
 
 		Args:
-			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+			legacy_object (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Script.
 		"""
 		
-		legacy_script_obj = get_legacy_instance(selenium_script)
+		legacy_script_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
+			raise TypesConvertError(from_=legacyScript, to_=legacy_object)
 		
 		return cls(selenium_script=legacy_script_obj)
 	
 	@property
 	def legacy(self) -> legacyScript:
-		return self._selenium_script
+		return self._legacy_impl
 	
 	def pin(self, script: str) -> str:
-		return self.legacy.pin(script=script)
+		return self._pin_impl(script=script)
 	
 	def remove_console_message_handler(self, id: int) -> None:
-		self.legacy.remove_console_message_handler(id=id)
+		self._remove_console_message_handler_impl(id=id)
 	
 	def unpin(self, script_id: str) -> None:
-		self.legacy.unpin(script_id=script_id)
+		self._unpin_impl(script_id=script_id)

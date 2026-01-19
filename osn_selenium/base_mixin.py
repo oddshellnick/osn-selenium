@@ -1,19 +1,20 @@
 import sys
 import trio
-import functools
 from contextlib import asynccontextmanager
 from typing import (
-	AsyncGenerator,
+	Any,
+	AsyncContextManager,
+	AsyncIterator,
 	Callable,
 	ContextManager,
-	Generator,
+	Coroutine,
 	ParamSpec,
 	TypeVar
 )
 
 
-METHOD_INPUT = ParamSpec("METHOD_INPUT")
-METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
+_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
+_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
 
 
 class TrioThreadMixin:
@@ -29,7 +30,7 @@ class TrioThreadMixin:
 	
 	def __init__(self, lock: trio.Lock, limiter: trio.CapacityLimiter) -> None:
 		"""
-		Initializes the _TrioThreadMixin with a Trio Lock and CapacityLimiter.
+		Initializes the TrioThreadMixin with a Trio Lock and CapacityLimiter.
 
 		Args:
 			lock (trio.Lock): A Trio Lock for synchronization.
@@ -39,62 +40,81 @@ class TrioThreadMixin:
 		self._lock = lock
 		self._capacity_limiter = limiter
 	
-	async def _sync_to_trio(
-			self,
-			fn: Callable[METHOD_INPUT, METHOD_OUTPUT],
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs,
-	) -> METHOD_OUTPUT:
+	@property
+	def capacity_limiter(self) -> trio.CapacityLimiter:
 		"""
-		Wraps a synchronous function to be run in a Trio thread.
-
-		This method ensures that the function is run safely within the Trio
-		event loop, using the instance's lock for exclusive access and
-		the capacity limiter to control concurrency.
-
-		Args:
-			fn (Callable[METHOD_INPUT, METHOD_OUTPUT]): The synchronous function to run.
-			*args (METHOD_INPUT.args): Positional arguments to pass to the function.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments to pass to the function.
+		The Trio CapacityLimiter used for concurrency control.
 
 		Returns:
-			METHOD_OUTPUT: The result of the synchronous function.
+			trio.CapacityLimiter: The limiter instance.
 		"""
 		
-		if kwargs:
-			fn = functools.partial(fn, **kwargs)
-		
-		async with self._lock:
-			return await trio.to_thread.run_sync(fn, *args, limiter=self._capacity_limiter)
+		return self._capacity_limiter
 	
-	@asynccontextmanager
-	async def _sync_to_trio_context(
-			self,
-			cm_factory: Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]],
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs,
-	) -> AsyncGenerator[METHOD_OUTPUT, None]:
+	@property
+	def lock(self) -> trio.Lock:
 		"""
-		Wraps a synchronous context manager to be used asynchronously with Trio.
-
-		Args:
-			cm_factory (Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]]):
-				A factory function that returns a synchronous context manager.
-			*args (METHOD_INPUT.args): Positional arguments for the context manager factory.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the context manager factory.
+		The Trio Lock used for synchronization.
 
 		Returns:
-			AsyncGenerator[METHOD_OUTPUT, None]: An asynchronous generator yielding the context manager's value.
+			trio.Lock: The lock instance.
 		"""
 		
-		sync_cm = await self._sync_to_trio(cm_factory, *args, **kwargs)
+		return self._lock
+	
+	def sync_to_trio(self, sync_function: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, Coroutine[Any, Any, _METHOD_OUTPUT]]:
+		"""
+		Wraps a synchronous function to run within a Trio thread pool using a lock and limiter.
+
+		Args:
+			sync_function (Callable[_METHOD_INPUT, _METHOD_OUTPUT]): The synchronous function to wrap.
+
+		Returns:
+			Callable[_METHOD_INPUT, Coroutine[Any, Any, _METHOD_OUTPUT]]: An async wrapper for the sync function.
+		"""
 		
-		try:
-			yield await self._sync_to_trio(sync_cm.__enter__)
-		except Exception as e:
-			exc_type, exc_val, exc_tb = sys.exc_info()
-			await self._sync_to_trio(sync_cm.__exit__, exc_type, exc_val, exc_tb)
+		async def wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> _METHOD_OUTPUT:
+			def function_with_kwargs(*args_) -> _METHOD_OUTPUT:
+				return sync_function(*args_, **kwargs)
+			
+			async with self._lock:
+				result = await trio.to_thread.run_sync(function_with_kwargs, *args, limiter=self._capacity_limiter)
+			
+				return result
 		
-			raise e
-		else:
-			await self._sync_to_trio(sync_cm.__exit__, None, None, None)
+		return wrapper
+	
+	def sync_to_trio_context(
+			self,
+			context_manager_factory: Callable[_METHOD_INPUT, ContextManager[_METHOD_OUTPUT]]
+	) -> Callable[_METHOD_INPUT, AsyncContextManager[_METHOD_OUTPUT]]:
+		"""
+		Converts a synchronous context manager factory to an asynchronous Trio-compatible context manager.
+
+		Args:
+			context_manager_factory (Callable[_METHOD_INPUT, ContextManager[_METHOD_OUTPUT]]): A factory function returning a context manager.
+
+		Returns:
+			Callable[_METHOD_INPUT, AsyncContextManager[_METHOD_OUTPUT]]: An async function returning an async context manager.
+		"""
+		
+		@asynccontextmanager
+		async def wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> AsyncIterator[_METHOD_OUTPUT]:
+			sync_context_manager = await self.sync_to_trio(sync_function=context_manager_factory)(*args, **kwargs)
+			
+			enter_ = self.sync_to_trio(sync_function=sync_context_manager.__enter__)
+			exit_ = self.sync_to_trio(sync_function=sync_context_manager.__exit__)
+			
+			try:
+				result = await enter_()
+			
+				yield result
+			except Exception as e:
+				exc_type, exc_val, exc_tb = sys.exc_info()
+			
+				if not await exit_(exc_type, exc_val, exc_tb):
+					raise e
+			else:
+				await exit_(None, None, None)
+		
+		return wrapper

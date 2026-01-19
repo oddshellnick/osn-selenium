@@ -5,12 +5,9 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 from osn_selenium.abstract.instances.web_driver_wait import (
 	AbstractWebDriverWait
-)
-from osn_selenium.abstract.instances.action_chains import (
-	AbstractActionChains,
-	AbstractHumanLikeActionChains
 )
 
 
@@ -18,7 +15,7 @@ class AbstractCoreActionsMixin(ABC):
 	"""Mixin responsible for user actions chains."""
 	
 	@abstractmethod
-	def action_chain(
+	def action_chains(
 			self,
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None
@@ -32,25 +29,6 @@ class AbstractCoreActionsMixin(ABC):
 
 		Returns:
 			AbstractActionChains: A new ActionChains instance.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def hm_action_chain(
-			self,
-			duration: int = 250,
-			devices: Optional[List[DEVICES_TYPEHINT]] = None,
-	) -> AbstractHumanLikeActionChains:
-		"""
-		Creates a new HumanLikeActionChains instance for building complex user interactions.
-
-		Args:
-			duration (int): The default duration for pointer actions in milliseconds.
-			devices (Optional[List[DEVICES_TYPEHINT]]): A list of input devices to use.
-
-		Returns:
-			AbstractHumanLikeActionChains: A new HumanLikeActionChains instance.
 		"""
 		
 		...

@@ -2,13 +2,20 @@ import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
-from osn_selenium.webdrivers.trio_threads.yandex.base import YandexBaseMixin
+from osn_selenium.webdrivers.trio_threads.chrome import ChromeSettingsMixin
+from osn_selenium.webdrivers.unified.yandex.settings import (
+	UnifiedYandexSettingsMixin
+)
 from osn_selenium.abstract.webdriver.yandex.settings import (
 	AbstractYandexSettingsMixin
 )
 
 
-class YandexSettingsMixin(YandexBaseMixin, AbstractYandexSettingsMixin):
+class YandexSettingsMixin(
+		UnifiedYandexSettingsMixin,
+		ChromeSettingsMixin,
+		AbstractYandexSettingsMixin
+):
 	"""
 	Mixin for configuring and updating settings of the Yandex WebDriver.
 
@@ -25,7 +32,7 @@ class YandexSettingsMixin(YandexBaseMixin, AbstractYandexSettingsMixin):
 			start_page_url: str = "",
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await super().reset_settings(
+		await self.sync_to_trio(sync_function=self._reset_settings_impl)(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -43,7 +50,7 @@ class YandexSettingsMixin(YandexBaseMixin, AbstractYandexSettingsMixin):
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await super().update_settings(
+		await self.sync_to_trio(sync_function=self._update_settings_impl)(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,

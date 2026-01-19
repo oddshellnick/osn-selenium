@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractEmulationCDPExecutor(ABC):
@@ -10,13 +15,13 @@ class AbstractEmulationCDPExecutor(ABC):
 			top: int,
 			width: int,
 			height: int,
-			work_area_insets: Optional[Any] = None,
+			work_area_insets: Optional[Dict[str, Any]] = None,
 			device_pixel_ratio: Optional[float] = None,
 			rotation: Optional[int] = None,
 			color_depth: Optional[int] = None,
 			label: Optional[str] = None,
 			is_internal: Optional[bool] = None
-	) -> Any:
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -48,7 +53,7 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_screen_infos(self) -> List[Any]:
+	def get_screen_infos(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -76,7 +81,7 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_default_background_color_override(self, color: Optional[Any] = None) -> None:
+	def set_default_background_color_override(self, color: Optional[Dict[str, Any]] = None) -> None:
 		...
 	
 	@abstractmethod
@@ -92,15 +97,15 @@ class AbstractEmulationCDPExecutor(ABC):
 			position_x: Optional[int] = None,
 			position_y: Optional[int] = None,
 			dont_set_visible_size: Optional[bool] = None,
-			screen_orientation: Optional[Any] = None,
-			viewport: Optional[Any] = None,
-			display_feature: Optional[Any] = None,
-			device_posture: Optional[Any] = None
+			screen_orientation: Optional[Dict[str, Any]] = None,
+			viewport: Optional[Dict[str, Any]] = None,
+			display_feature: Optional[Dict[str, Any]] = None,
+			device_posture: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
 	@abstractmethod
-	def set_device_posture_override(self, posture: Any) -> None:
+	def set_device_posture_override(self, posture: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -108,7 +113,7 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_display_features_override(self, features: List[Any]) -> None:
+	def set_display_features_override(self, features: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -120,7 +125,11 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_emulated_media(self, media: Optional[str] = None, features: Optional[List[Any]] = None) -> None:
+	def set_emulated_media(
+			self,
+			media: Optional[str] = None,
+			features: Optional[List[Dict[str, Any]]] = None
+	) -> None:
 		...
 	
 	@abstractmethod
@@ -178,7 +187,12 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_pressure_source_override_enabled(self, enabled: bool, source: str, metadata: Optional[Any] = None) -> None:
+	def set_pressure_source_override_enabled(
+			self,
+			enabled: bool,
+			source: str,
+			metadata: Optional[Dict[str, Any]] = None
+	) -> None:
 		...
 	
 	@abstractmethod
@@ -186,7 +200,7 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_safe_area_insets_override(self, insets: Any) -> None:
+	def set_safe_area_insets_override(self, insets: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -198,11 +212,11 @@ class AbstractEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_sensor_override_enabled(self, enabled: bool, type_: str, metadata: Optional[Any] = None) -> None:
+	def set_sensor_override_enabled(self, enabled: bool, type_: str, metadata: Optional[Dict[str, Any]] = None) -> None:
 		...
 	
 	@abstractmethod
-	def set_sensor_override_readings(self, type_: str, reading: Any) -> None:
+	def set_sensor_override_readings(self, type_: str, reading: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -223,7 +237,7 @@ class AbstractEmulationCDPExecutor(ABC):
 			user_agent: str,
 			accept_language: Optional[str] = None,
 			platform: Optional[str] = None,
-			user_agent_metadata: Optional[Any] = None
+			user_agent_metadata: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	

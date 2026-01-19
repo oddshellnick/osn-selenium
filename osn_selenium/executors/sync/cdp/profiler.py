@@ -6,29 +6,32 @@ from typing import (
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.profiler import (
+	UnifiedProfilerCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.profiler import (
 	AbstractProfilerCDPExecutor
 )
 
 
-class ProfilerCDPExecutor(AbstractProfilerCDPExecutor):
+class ProfilerCDPExecutor(UnifiedProfilerCDPExecutor, AbstractProfilerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedProfilerCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("Profiler.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("Profiler.enable", locals())
+		return self._enable_impl()
 	
-	def get_best_effort_coverage(self) -> List[Any]:
-		return self._execute_function("Profiler.getBestEffortCoverage", locals())
+	def get_best_effort_coverage(self) -> List[Dict[str, Any]]:
+		return self._get_best_effort_coverage_impl()
 	
 	def set_sampling_interval(self, interval: int) -> None:
-		return self._execute_function("Profiler.setSamplingInterval", locals())
+		return self._set_sampling_interval_impl(interval=interval)
 	
 	def start(self) -> None:
-		return self._execute_function("Profiler.start", locals())
+		return self._start_impl()
 	
 	def start_precise_coverage(
 			self,
@@ -36,13 +39,17 @@ class ProfilerCDPExecutor(AbstractProfilerCDPExecutor):
 			detailed: Optional[bool] = None,
 			allow_triggered_updates: Optional[bool] = None
 	) -> float:
-		return self._execute_function("Profiler.startPreciseCoverage", locals())
+		return self._start_precise_coverage_impl(
+				call_count=call_count,
+				detailed=detailed,
+				allow_triggered_updates=allow_triggered_updates
+		)
 	
-	def stop(self) -> Any:
-		return self._execute_function("Profiler.stop", locals())
+	def stop(self) -> Dict[str, Any]:
+		return self._stop_impl()
 	
 	def stop_precise_coverage(self) -> None:
-		return self._execute_function("Profiler.stopPreciseCoverage", locals())
+		return self._stop_precise_coverage_impl()
 	
-	def take_precise_coverage(self) -> Tuple[List[Any], float]:
-		return self._execute_function("Profiler.takePreciseCoverage", locals())
+	def take_precise_coverage(self) -> Tuple[List[Dict[str, Any]], float]:
+		return self._take_precise_coverage_impl()

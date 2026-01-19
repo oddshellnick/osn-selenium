@@ -1,21 +1,27 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.background_service import (
+	UnifiedBackgroundServiceCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.background_service import (
 	AbstractBackgroundServiceCDPExecutor
 )
 
 
-class BackgroundServiceCDPExecutor(AbstractBackgroundServiceCDPExecutor):
+class BackgroundServiceCDPExecutor(
+		UnifiedBackgroundServiceCDPExecutor,
+		AbstractBackgroundServiceCDPExecutor
+):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedBackgroundServiceCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def clear_events(self, service: str) -> None:
-		return self._execute_function("BackgroundService.clearEvents", locals())
+		return self._clear_events_impl(service=service)
 	
 	def set_recording(self, should_record: bool, service: str) -> None:
-		return self._execute_function("BackgroundService.setRecording", locals())
+		return self._set_recording_impl(should_record=should_record, service=service)
 	
 	def start_observing(self, service: str) -> None:
-		return self._execute_function("BackgroundService.startObserving", locals())
+		return self._start_observing_impl(service=service)
 	
 	def stop_observing(self, service: str) -> None:
-		return self._execute_function("BackgroundService.stopObserving", locals())
+		return self._stop_observing_impl(service=service)

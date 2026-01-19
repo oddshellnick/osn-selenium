@@ -4,14 +4,20 @@ from typing import (
 	Dict,
 	List
 )
+from osn_selenium.executors.unified.cdp.performance_timeline import (
+	UnifiedPerformanceTimelineCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.performance_timeline import (
 	AbstractPerformanceTimelineCDPExecutor
 )
 
 
-class PerformanceTimelineCDPExecutor(AbstractPerformanceTimelineCDPExecutor):
+class PerformanceTimelineCDPExecutor(
+		UnifiedPerformanceTimelineCDPExecutor,
+		AbstractPerformanceTimelineCDPExecutor
+):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedPerformanceTimelineCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def enable(self, event_types: List[str]) -> None:
-		return self._execute_function("PerformanceTimeline.enable", locals())
+		return self._enable_impl(event_types=event_types)

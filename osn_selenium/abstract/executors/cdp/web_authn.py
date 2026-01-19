@@ -1,14 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractWebAuthnCDPExecutor(ABC):
 	@abstractmethod
-	def add_credential(self, authenticator_id: str, credential: Any) -> None:
+	def add_credential(self, authenticator_id: str, credential: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
-	def add_virtual_authenticator(self, options: Any) -> str:
+	def add_virtual_authenticator(self, options: Dict[str, Any]) -> str:
 		...
 	
 	@abstractmethod
@@ -24,11 +29,11 @@ class AbstractWebAuthnCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_credential(self, authenticator_id: str, credential_id: str) -> Any:
+	def get_credential(self, authenticator_id: str, credential_id: str) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_credentials(self, authenticator_id: str) -> List[Any]:
+	def get_credentials(self, authenticator_id: str) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod

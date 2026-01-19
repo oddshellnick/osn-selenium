@@ -37,7 +37,7 @@ def _get_process_version(executable_path: Union[Path, str]) -> Optional[str]:
 			return match.group(1)
 	
 		return None
-	except (Exception,):
+	except (Exception):
 		return None
 
 
@@ -71,7 +71,7 @@ def _get_browser_from_binary(browser_name: str, binary_name: str, processed_path
 	
 		version = get_browser_version(path_obj)
 	
-		browser = Browser(name=browser_name, path=path_obj, version=version,)
+		browser = Browser(name=browser_name, path=path_obj, version=version)
 	
 		return browser, path_obj
 	
@@ -128,7 +128,7 @@ def get_installed_browsers() -> List[Browser]:
 	
 					found_browsers.append(found_browser)
 					processed_paths.add(path_obj)
-			except (Exception,):
+			except (Exception):
 				continue
 				
 	for name, binaries in _STANDARD_BROWSERS_BINARIES.items():
@@ -162,5 +162,5 @@ _STANDARD_BROWSERS_BINARIES = {
 		"microsoft-edge-dev",
 		"microsoft-edge-canary"
 	],
-	"Yandex Browser": ["yandex-browser", "yandex-browser-beta", "yandex_browser"]
+	"Yandex": ["yandex-browser", "yandex-browser-beta", "yandex_browser"]
 }

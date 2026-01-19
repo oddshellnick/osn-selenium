@@ -1,23 +1,35 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional,
 	Tuple
+)
+from osn_selenium.executors.unified.cdp.dom_snapshot import (
+	UnifiedDomSnapshotCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.dom_snapshot import (
 	AbstractDomSnapshotCDPExecutor
 )
 
 
-class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
+class DomSnapshotCDPExecutor(
+		UnifiedDomSnapshotCDPExecutor,
+		TrioThreadMixin,
+		AbstractDomSnapshotCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedDomSnapshotCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def capture_snapshot(
 			self,
@@ -26,14 +38,20 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_dom_rects: Optional[bool] = None,
 			include_blended_background_colors: Optional[bool] = None,
 			include_text_color_opacities: Optional[bool] = None
-	) -> Tuple[List[Any], List[str]]:
-		return await self._execute_function("DOMSnapshot.captureSnapshot", locals())
+	) -> Tuple[List[Dict[str, Any]], List[str]]:
+		return await self.sync_to_trio(sync_function=self._capture_snapshot_impl)(
+				computed_styles=computed_styles,
+				include_paint_order=include_paint_order,
+				include_dom_rects=include_dom_rects,
+				include_blended_background_colors=include_blended_background_colors,
+				include_text_color_opacities=include_text_color_opacities
+		)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("DOMSnapshot.disable", locals())
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._execute_function("DOMSnapshot.enable", locals())
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_snapshot(
 			self,
@@ -41,5 +59,10 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_event_listeners: Optional[bool] = None,
 			include_paint_order: Optional[bool] = None,
 			include_user_agent_shadow_tree: Optional[bool] = None
-	) -> Tuple[List[Any], List[Any], List[Any]]:
-		return await self._execute_function("DOMSnapshot.getSnapshot", locals())
+	) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+		return await self.sync_to_trio(sync_function=self._get_snapshot_impl)(
+				computed_style_whitelist=computed_style_whitelist,
+				include_event_listeners=include_event_listeners,
+				include_paint_order=include_paint_order,
+				include_user_agent_shadow_tree=include_user_agent_shadow_tree
+		)

@@ -1,12 +1,13 @@
 from typing import Any, Dict
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
+from osn_selenium.webdrivers.unified.blink.network import (
+	UnifiedBlinkNetworkMixin
+)
 from osn_selenium.abstract.webdriver.blink.network import (
 	AbstractBlinkNetworkMixin
 )
 
 
-class BlinkNetworkMixin(BlinkBaseMixin, AbstractBlinkNetworkMixin):
+class BlinkNetworkMixin(UnifiedBlinkNetworkMixin, AbstractBlinkNetworkMixin):
 	"""
 	Mixin for network interception and condition simulation for Blink WebDrivers.
 
@@ -14,14 +15,11 @@ class BlinkNetworkMixin(BlinkBaseMixin, AbstractBlinkNetworkMixin):
 	and emulating specific network conditions like offline mode or latency.
 	"""
 	
-	@requires_driver
 	def delete_network_conditions(self) -> None:
-		self.driver.delete_network_conditions()
+		self._delete_network_conditions_impl()
 	
-	@requires_driver
 	def get_network_conditions(self) -> Dict[str, Any]:
-		return self.driver.get_network_conditions()
+		return self._get_network_conditions_impl()
 	
-	@requires_driver
-	def set_network_conditions(self, **network_conditions: Dict[str, Any]) -> None:
-		self.driver.set_network_conditions(**network_conditions)
+	def set_network_conditions(self, **network_conditions: Any) -> None:
+		self._set_network_conditions_impl(**network_conditions)

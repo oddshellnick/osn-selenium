@@ -5,29 +5,32 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.executors.unified.cdp.autofill import (
+	UnifiedAutofillCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.autofill import (
 	AbstractAutofillCDPExecutor
 )
 
 
-class AutofillCDPExecutor(AbstractAutofillCDPExecutor):
+class AutofillCDPExecutor(UnifiedAutofillCDPExecutor, AbstractAutofillCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedAutofillCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("Autofill.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("Autofill.enable", locals())
+		return self._enable_impl()
 	
-	def set_addresses(self, addresses: List[Any]) -> None:
-		return self._execute_function("Autofill.setAddresses", locals())
+	def set_addresses(self, addresses: List[Dict[str, Any]]) -> None:
+		return self._set_addresses_impl(addresses=addresses)
 	
 	def trigger(
 			self,
 			field_id: int,
 			frame_id: Optional[str] = None,
-			card: Optional[Any] = None,
-			address: Optional[Any] = None
+			card: Optional[Dict[str, Any]] = None,
+			address: Optional[Dict[str, Any]] = None
 	) -> None:
-		return self._execute_function("Autofill.trigger", locals())
+		return self._trigger_impl(field_id=field_id, frame_id=frame_id, card=card, address=address)

@@ -1,12 +1,14 @@
-from typing import Any, Optional
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from typing import Optional
+from selenium.webdriver.common.timeouts import Timeouts
+from osn_selenium.webdrivers.unified.core.timeouts import (
+	UnifiedCoreTimeoutsMixin
+)
 from osn_selenium.abstract.webdriver.core.timeouts import (
 	AbstractCoreTimeoutsMixin
 )
 
 
-class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
+class CoreTimeoutsMixin(UnifiedCoreTimeoutsMixin, AbstractCoreTimeoutsMixin):
 	"""
 	Mixin for configuring execution timeouts in Core WebDrivers.
 
@@ -14,36 +16,32 @@ class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
 	to control driver behavior during delays.
 	"""
 	
-	@requires_driver
+	def get_timeouts(self) -> Timeouts:
+		return self._get_timeouts_impl()
+	
 	def implicitly_wait(self, time_to_wait: float) -> None:
-		self.driver.implicitly_wait(time_to_wait=time_to_wait)
+		self._implicitly_wait_impl(time_to_wait=time_to_wait)
 	
-	@requires_driver
-	def set_page_load_timeout(self, time_to_wait: float) -> None:
-		self.driver.set_page_load_timeout(time_to_wait=time_to_wait)
-	
-	@requires_driver
-	def set_script_timeout(self, time_to_wait: float) -> None:
-		self.driver.set_script_timeout(time_to_wait=time_to_wait)
-	
-	@requires_driver
-	def set_timeouts(self, timeouts: Any) -> None:
-		setattr(self.driver, "timeouts", timeouts)
-	
-	@requires_driver
-	def timeouts(self) -> Any:
-		return self.driver.timeouts
-	
-	@requires_driver
 	def set_driver_timeouts(
 			self,
 			page_load_timeout: float,
 			implicit_wait_timeout: float,
 			script_timeout: float,
 	) -> None:
-		self.driver.set_page_load_timeout(page_load_timeout)
-		self.driver.implicitly_wait(implicit_wait_timeout)
-		self.driver.set_script_timeout(script_timeout)
+		self._set_driver_timeouts_impl(
+				page_load_timeout=page_load_timeout,
+				implicit_wait_timeout=implicit_wait_timeout,
+				script_timeout=script_timeout,
+		)
+	
+	def set_page_load_timeout(self, time_to_wait: float) -> None:
+		self._set_page_load_timeout_impl(time_to_wait=time_to_wait)
+	
+	def set_script_timeout(self, time_to_wait: float) -> None:
+		self._set_script_timeout_impl(time_to_wait=time_to_wait)
+	
+	def set_timeouts(self, timeouts: Timeouts) -> None:
+		self._set_timeouts_impl(timeouts=timeouts)
 	
 	def update_times(
 			self,
@@ -51,12 +49,8 @@ class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
 			temp_page_load_timeout: Optional[float] = None,
 			temp_script_timeout: Optional[float] = None,
 	) -> None:
-		implicitly_wait = temp_implicitly_wait if temp_implicitly_wait is not None else self._base_implicitly_wait
-		page_load_timeout = temp_page_load_timeout if temp_page_load_timeout is not None else self._base_page_load_timeout
-		script_timeout = temp_script_timeout if temp_script_timeout is not None else self._base_script_timeout
-		
-		self.set_driver_timeouts(
-				page_load_timeout=page_load_timeout,
-				implicit_wait_timeout=implicitly_wait,
-				script_timeout=script_timeout,
+		self._update_times_impl(
+				temp_implicitly_wait=temp_implicitly_wait,
+				temp_page_load_timeout=temp_page_load_timeout,
+				temp_script_timeout=temp_script_timeout,
 		)

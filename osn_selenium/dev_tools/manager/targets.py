@@ -49,7 +49,7 @@ class TargetsMixin(LoggingMixin):
 		except BaseException as error:
 			log_exception(error)
 	
-	async def _add_target(self, target_event: Any) -> Optional[bool]:
+	async def _add_target(self, target_event: Any, is_main_target: bool = False) -> Optional[bool]:
 		"""
 		Adds a new browser target to the manager based on a target event.
 
@@ -96,15 +96,16 @@ class TargetsMixin(LoggingMixin):
 									browser_context_id=target_info.browser_context_id,
 									subtype=target_info.subtype,
 							),
+							is_main_target=is_main_target,
 							logger_settings=self._logger_settings,
 							domains_settings=self._domains_settings,
-							fingerprint_settings=self._fingerprint_settings,
 							devtools_package=self._devtools_package,
 							websocket_url=self._websocket_url,
 							new_targets_filter_list=self._new_targets_filter,
 							new_targets_buffer_size=self._new_targets_buffer_size,
 							nursery=self._nursery_object,
 							exit_event=self.exit_event,
+							fingerprint_injection_script=self._fingerprint_injection_script,
 							target_background_task=self._target_background_task,
 							add_target_func=self._add_target,
 							remove_target_func=self._remove_target,
@@ -119,7 +120,7 @@ class TargetsMixin(LoggingMixin):
 		
 					await self._add_main_cdp_log()
 		
-					self._nursery_object.start_soon(self._handling_targets[target_id].run,)
+					self._nursery_object.start_soon(self._handling_targets[target_id].run)
 		
 					return True
 				else:

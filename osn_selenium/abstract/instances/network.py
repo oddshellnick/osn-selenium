@@ -19,7 +19,7 @@ class AbstractNetwork(ABC):
 	"""
 	
 	@abstractmethod
-	def add_auth_handler(self, username: str, password: str,) -> None:
+	def add_auth_handler(self, username: str, password: str) -> None:
 		"""
 		Adds a handler for authentication challenges.
 
@@ -85,7 +85,7 @@ class AbstractNetwork(ABC):
 		...
 	
 	@abstractmethod
-	def remove_request_handler(self, event: Any, callback_id: str,) -> None:
+	def remove_request_handler(self, event: Any, callback_id: str) -> None:
 		"""
 		Removes a network request handler.
 

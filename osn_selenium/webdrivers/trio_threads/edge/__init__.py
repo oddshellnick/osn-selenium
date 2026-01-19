@@ -1,10 +1,30 @@
+import trio
+import pathlib
+from osn_selenium.types import WindowRect
+from typing import (
+	Optional,
+	Type,
+	Union
+)
+from osn_selenium.flags.edge import EdgeFlagsManager
+from osn_selenium.flags.models.edge import EdgeFlags
+from osn_selenium.dev_tools.settings import DevToolsSettings
+from osn_selenium.webdrivers.trio_threads.blink import BlinkWebDriver
+from osn_selenium.webdrivers.trio_threads.edge.base import EdgeBaseMixin
 from osn_selenium.abstract.webdriver.edge import (
 	AbstractEdgeWebDriver
 )
+from osn_selenium.webdrivers.trio_threads.edge.settings import EdgeSettingsMixin
 from osn_selenium.webdrivers.trio_threads.edge.lifecycle import EdgeLifecycleMixin
 
 
-class EdgeWebDriver(EdgeLifecycleMixin, AbstractEdgeWebDriver):
+class EdgeWebDriver(
+		EdgeBaseMixin,
+		EdgeLifecycleMixin,
+		EdgeSettingsMixin,
+		BlinkWebDriver,
+		AbstractEdgeWebDriver,
+):
 	"""
 	Concrete Edge WebDriver implementation combining all functional mixins.
 
@@ -12,4 +32,51 @@ class EdgeWebDriver(EdgeLifecycleMixin, AbstractEdgeWebDriver):
 	and browser-specific features into a single usable driver instance.
 	"""
 	
-	pass
+	def __init__(
+			self,
+			webdriver_path: str,
+			flags_manager_type: Type[EdgeFlagsManager] = EdgeFlagsManager,
+			use_browser_exe: bool = True,
+			browser_name_in_system: str = "Microsoft Edge",
+			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			flags: Optional[EdgeFlags] = None,
+			start_page_url: str = "about:blank",
+			implicitly_wait: int = 5,
+			page_load_timeout: int = 5,
+			script_timeout: int = 5,
+			window_rect: Optional[WindowRect] = None,
+			devtools_settings: Optional[DevToolsSettings] = None,
+			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+	):
+		BlinkWebDriver.__init__(
+				self,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				webdriver_path=webdriver_path,
+				use_browser_exe=use_browser_exe,
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+				devtools_settings=devtools_settings,
+				capacity_limiter=capacity_limiter,
+		)
+		
+		EdgeBaseMixin.__init__(
+				self,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				use_browser_exe=use_browser_exe,
+				webdriver_path=webdriver_path,
+				architecture="trio_threads",
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				start_page_url=start_page_url,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+				capacity_limiter=capacity_limiter,
+		)

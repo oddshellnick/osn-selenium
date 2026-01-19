@@ -1,22 +1,34 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional
+)
+from osn_selenium.executors.unified.cdp.emulation import (
+	UnifiedEmulationCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.emulation import (
 	AbstractEmulationCDPExecutor
 )
 
 
-class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
+class EmulationCDPExecutor(
+		UnifiedEmulationCDPExecutor,
+		TrioThreadMixin,
+		AbstractEmulationCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedEmulationCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def add_screen(
 			self,
@@ -24,59 +36,70 @@ class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
 			top: int,
 			width: int,
 			height: int,
-			work_area_insets: Optional[Any] = None,
+			work_area_insets: Optional[Dict[str, Any]] = None,
 			device_pixel_ratio: Optional[float] = None,
 			rotation: Optional[int] = None,
 			color_depth: Optional[int] = None,
 			label: Optional[str] = None,
 			is_internal: Optional[bool] = None
-	) -> Any:
-		return await self._execute_function("Emulation.addScreen", locals())
+	) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._add_screen_impl)(
+				left=left,
+				top=top,
+				width=width,
+				height=height,
+				work_area_insets=work_area_insets,
+				device_pixel_ratio=device_pixel_ratio,
+				rotation=rotation,
+				color_depth=color_depth,
+				label=label,
+				is_internal=is_internal
+		)
 	
 	async def can_emulate(self) -> bool:
-		return await self._execute_function("Emulation.canEmulate", locals())
+		return await self.sync_to_trio(sync_function=self._can_emulate_impl)()
 	
 	async def clear_device_metrics_override(self) -> None:
-		return await self._execute_function("Emulation.clearDeviceMetricsOverride", locals())
+		return await self.sync_to_trio(sync_function=self._clear_device_metrics_override_impl)()
 	
 	async def clear_device_posture_override(self) -> None:
-		return await self._execute_function("Emulation.clearDevicePostureOverride", locals())
+		return await self.sync_to_trio(sync_function=self._clear_device_posture_override_impl)()
 	
 	async def clear_display_features_override(self) -> None:
-		return await self._execute_function("Emulation.clearDisplayFeaturesOverride", locals())
+		return await self.sync_to_trio(sync_function=self._clear_display_features_override_impl)()
 	
 	async def clear_geolocation_override(self) -> None:
-		return await self._execute_function("Emulation.clearGeolocationOverride", locals())
+		return await self.sync_to_trio(sync_function=self._clear_geolocation_override_impl)()
 	
 	async def clear_idle_override(self) -> None:
-		return await self._execute_function("Emulation.clearIdleOverride", locals())
+		return await self.sync_to_trio(sync_function=self._clear_idle_override_impl)()
 	
 	async def get_overridden_sensor_information(self, type_: str) -> float:
-		return await self._execute_function("Emulation.getOverriddenSensorInformation", locals())
+		return await self.sync_to_trio(sync_function=self._get_overridden_sensor_information_impl)(type_=type_)
 	
-	async def get_screen_infos(self) -> List[Any]:
-		return await self._execute_function("Emulation.getScreenInfos", locals())
+	async def get_screen_infos(self) -> List[Dict[str, Any]]:
+		return await self.sync_to_trio(sync_function=self._get_screen_infos_impl)()
 	
 	async def remove_screen(self, screen_id: str) -> None:
-		return await self._execute_function("Emulation.removeScreen", locals())
+		return await self.sync_to_trio(sync_function=self._remove_screen_impl)(screen_id=screen_id)
 	
 	async def reset_page_scale_factor(self) -> None:
-		return await self._execute_function("Emulation.resetPageScaleFactor", locals())
+		return await self.sync_to_trio(sync_function=self._reset_page_scale_factor_impl)()
 	
 	async def set_auto_dark_mode_override(self, enabled: Optional[bool] = None) -> None:
-		return await self._execute_function("Emulation.setAutoDarkModeOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_auto_dark_mode_override_impl)(enabled=enabled)
 	
 	async def set_automation_override(self, enabled: bool) -> None:
-		return await self._execute_function("Emulation.setAutomationOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_automation_override_impl)(enabled=enabled)
 	
 	async def set_cpu_throttling_rate(self, rate: float) -> None:
-		return await self._execute_function("Emulation.setCPUThrottlingRate", locals())
+		return await self.sync_to_trio(sync_function=self._set_cpu_throttling_rate_impl)(rate=rate)
 	
 	async def set_data_saver_override(self, data_saver_enabled: Optional[bool] = None) -> None:
-		return await self._execute_function("Emulation.setDataSaverOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_data_saver_override_impl)(data_saver_enabled=data_saver_enabled)
 	
-	async def set_default_background_color_override(self, color: Optional[Any] = None) -> None:
-		return await self._execute_function("Emulation.setDefaultBackgroundColorOverride", locals())
+	async def set_default_background_color_override(self, color: Optional[Dict[str, Any]] = None) -> None:
+		return await self.sync_to_trio(sync_function=self._set_default_background_color_override_impl)(color=color)
 	
 	async def set_device_metrics_override(
 			self,
@@ -90,39 +113,58 @@ class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
 			position_x: Optional[int] = None,
 			position_y: Optional[int] = None,
 			dont_set_visible_size: Optional[bool] = None,
-			screen_orientation: Optional[Any] = None,
-			viewport: Optional[Any] = None,
-			display_feature: Optional[Any] = None,
-			device_posture: Optional[Any] = None
+			screen_orientation: Optional[Dict[str, Any]] = None,
+			viewport: Optional[Dict[str, Any]] = None,
+			display_feature: Optional[Dict[str, Any]] = None,
+			device_posture: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._execute_function("Emulation.setDeviceMetricsOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_device_metrics_override_impl)(
+				width=width,
+				height=height,
+				device_scale_factor=device_scale_factor,
+				mobile=mobile,
+				scale=scale,
+				screen_width=screen_width,
+				screen_height=screen_height,
+				position_x=position_x,
+				position_y=position_y,
+				dont_set_visible_size=dont_set_visible_size,
+				screen_orientation=screen_orientation,
+				viewport=viewport,
+				display_feature=display_feature,
+				device_posture=device_posture
+		)
 	
-	async def set_device_posture_override(self, posture: Any) -> None:
-		return await self._execute_function("Emulation.setDevicePostureOverride", locals())
+	async def set_device_posture_override(self, posture: Dict[str, Any]) -> None:
+		return await self.sync_to_trio(sync_function=self._set_device_posture_override_impl)(posture=posture)
 	
 	async def set_disabled_image_types(self, image_types: List[str]) -> None:
-		return await self._execute_function("Emulation.setDisabledImageTypes", locals())
+		return await self.sync_to_trio(sync_function=self._set_disabled_image_types_impl)(image_types=image_types)
 	
-	async def set_display_features_override(self, features: List[Any]) -> None:
-		return await self._execute_function("Emulation.setDisplayFeaturesOverride", locals())
+	async def set_display_features_override(self, features: List[Dict[str, Any]]) -> None:
+		return await self.sync_to_trio(sync_function=self._set_display_features_override_impl)(features=features)
 	
 	async def set_document_cookie_disabled(self, disabled: bool) -> None:
-		return await self._execute_function("Emulation.setDocumentCookieDisabled", locals())
+		return await self.sync_to_trio(sync_function=self._set_document_cookie_disabled_impl)(disabled=disabled)
 	
 	async def set_emit_touch_events_for_mouse(self, enabled: bool, configuration: Optional[str] = None) -> None:
-		return await self._execute_function("Emulation.setEmitTouchEventsForMouse", locals())
+		return await self.sync_to_trio(sync_function=self._set_emit_touch_events_for_mouse_impl)(enabled=enabled, configuration=configuration)
 	
-	async def set_emulated_media(self, media: Optional[str] = None, features: Optional[List[Any]] = None) -> None:
-		return await self._execute_function("Emulation.setEmulatedMedia", locals())
+	async def set_emulated_media(
+			self,
+			media: Optional[str] = None,
+			features: Optional[List[Dict[str, Any]]] = None
+	) -> None:
+		return await self.sync_to_trio(sync_function=self._set_emulated_media_impl)(media=media, features=features)
 	
 	async def set_emulated_os_text_scale(self, scale: Optional[float] = None) -> None:
-		return await self._execute_function("Emulation.setEmulatedOSTextScale", locals())
+		return await self.sync_to_trio(sync_function=self._set_emulated_os_text_scale_impl)(scale=scale)
 	
 	async def set_emulated_vision_deficiency(self, type_: str) -> None:
-		return await self._execute_function("Emulation.setEmulatedVisionDeficiency", locals())
+		return await self.sync_to_trio(sync_function=self._set_emulated_vision_deficiency_impl)(type_=type_)
 	
 	async def set_focus_emulation_enabled(self, enabled: bool) -> None:
-		return await self._execute_function("Emulation.setFocusEmulationEnabled", locals())
+		return await self.sync_to_trio(sync_function=self._set_focus_emulation_enabled_impl)(enabled=enabled)
 	
 	async def set_geolocation_override(
 			self,
@@ -134,22 +176,30 @@ class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
 			heading: Optional[float] = None,
 			speed: Optional[float] = None
 	) -> None:
-		return await self._execute_function("Emulation.setGeolocationOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_geolocation_override_impl)(
+				latitude=latitude,
+				longitude=longitude,
+				accuracy=accuracy,
+				altitude=altitude,
+				altitude_accuracy=altitude_accuracy,
+				heading=heading,
+				speed=speed
+		)
 	
 	async def set_hardware_concurrency_override(self, hardware_concurrency: int) -> None:
-		return await self._execute_function("Emulation.setHardwareConcurrencyOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_hardware_concurrency_override_impl)(hardware_concurrency=hardware_concurrency)
 	
 	async def set_idle_override(self, is_user_active: bool, is_screen_unlocked: bool) -> None:
-		return await self._execute_function("Emulation.setIdleOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_idle_override_impl)(is_user_active=is_user_active, is_screen_unlocked=is_screen_unlocked)
 	
 	async def set_locale_override(self, locale: Optional[str] = None) -> None:
-		return await self._execute_function("Emulation.setLocaleOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_locale_override_impl)(locale=locale)
 	
 	async def set_navigator_overrides(self, platform: str) -> None:
-		return await self._execute_function("Emulation.setNavigatorOverrides", locals())
+		return await self.sync_to_trio(sync_function=self._set_navigator_overrides_impl)(platform=platform)
 	
 	async def set_page_scale_factor(self, page_scale_factor: float) -> None:
-		return await self._execute_function("Emulation.setPageScaleFactor", locals())
+		return await self.sync_to_trio(sync_function=self._set_page_scale_factor_impl)(page_scale_factor=page_scale_factor)
 	
 	async def set_pressure_data_override(
 			self,
@@ -157,46 +207,60 @@ class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
 			state: str,
 			own_contribution_estimate: Optional[float] = None
 	) -> None:
-		return await self._execute_function("Emulation.setPressureDataOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_pressure_data_override_impl)(
+				source=source,
+				state=state,
+				own_contribution_estimate=own_contribution_estimate
+		)
 	
-	async def set_pressure_source_override_enabled(self, enabled: bool, source: str, metadata: Optional[Any] = None) -> None:
-		return await self._execute_function("Emulation.setPressureSourceOverrideEnabled", locals())
+	async def set_pressure_source_override_enabled(
+			self,
+			enabled: bool,
+			source: str,
+			metadata: Optional[Dict[str, Any]] = None
+	) -> None:
+		return await self.sync_to_trio(sync_function=self._set_pressure_source_override_enabled_impl)(enabled=enabled, source=source, metadata=metadata)
 	
 	async def set_pressure_state_override(self, source: str, state: str) -> None:
-		return await self._execute_function("Emulation.setPressureStateOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_pressure_state_override_impl)(source=source, state=state)
 	
-	async def set_safe_area_insets_override(self, insets: Any) -> None:
-		return await self._execute_function("Emulation.setSafeAreaInsetsOverride", locals())
+	async def set_safe_area_insets_override(self, insets: Dict[str, Any]) -> None:
+		return await self.sync_to_trio(sync_function=self._set_safe_area_insets_override_impl)(insets=insets)
 	
 	async def set_script_execution_disabled(self, value: bool) -> None:
-		return await self._execute_function("Emulation.setScriptExecutionDisabled", locals())
+		return await self.sync_to_trio(sync_function=self._set_script_execution_disabled_impl)(value=value)
 	
 	async def set_scrollbars_hidden(self, hidden: bool) -> None:
-		return await self._execute_function("Emulation.setScrollbarsHidden", locals())
+		return await self.sync_to_trio(sync_function=self._set_scrollbars_hidden_impl)(hidden=hidden)
 	
-	async def set_sensor_override_enabled(self, enabled: bool, type_: str, metadata: Optional[Any] = None) -> None:
-		return await self._execute_function("Emulation.setSensorOverrideEnabled", locals())
+	async def set_sensor_override_enabled(self, enabled: bool, type_: str, metadata: Optional[Dict[str, Any]] = None) -> None:
+		return await self.sync_to_trio(sync_function=self._set_sensor_override_enabled_impl)(enabled=enabled, type_=type_, metadata=metadata)
 	
-	async def set_sensor_override_readings(self, type_: str, reading: Any) -> None:
-		return await self._execute_function("Emulation.setSensorOverrideReadings", locals())
+	async def set_sensor_override_readings(self, type_: str, reading: Dict[str, Any]) -> None:
+		return await self.sync_to_trio(sync_function=self._set_sensor_override_readings_impl)(type_=type_, reading=reading)
 	
 	async def set_small_viewport_height_difference_override(self, difference: int) -> None:
-		return await self._execute_function("Emulation.setSmallViewportHeightDifferenceOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_small_viewport_height_difference_override_impl)(difference=difference)
 	
 	async def set_timezone_override(self, timezone_id: str) -> None:
-		return await self._execute_function("Emulation.setTimezoneOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_timezone_override_impl)(timezone_id=timezone_id)
 	
 	async def set_touch_emulation_enabled(self, enabled: bool, max_touch_points: Optional[int] = None) -> None:
-		return await self._execute_function("Emulation.setTouchEmulationEnabled", locals())
+		return await self.sync_to_trio(sync_function=self._set_touch_emulation_enabled_impl)(enabled=enabled, max_touch_points=max_touch_points)
 	
 	async def set_user_agent_override(
 			self,
 			user_agent: str,
 			accept_language: Optional[str] = None,
 			platform: Optional[str] = None,
-			user_agent_metadata: Optional[Any] = None
+			user_agent_metadata: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._execute_function("Emulation.setUserAgentOverride", locals())
+		return await self.sync_to_trio(sync_function=self._set_user_agent_override_impl)(
+				user_agent=user_agent,
+				accept_language=accept_language,
+				platform=platform,
+				user_agent_metadata=user_agent_metadata
+		)
 	
 	async def set_virtual_time_policy(
 			self,
@@ -205,7 +269,12 @@ class EmulationCDPExecutor(AbstractEmulationCDPExecutor):
 			max_virtual_time_task_starvation_count: Optional[int] = None,
 			initial_virtual_time: Optional[float] = None
 	) -> float:
-		return await self._execute_function("Emulation.setVirtualTimePolicy", locals())
+		return await self.sync_to_trio(sync_function=self._set_virtual_time_policy_impl)(
+				policy=policy,
+				budget=budget,
+				max_virtual_time_task_starvation_count=max_virtual_time_task_starvation_count,
+				initial_virtual_time=initial_virtual_time
+		)
 	
 	async def set_visible_size(self, width: int, height: int) -> None:
-		return await self._execute_function("Emulation.setVisibleSize", locals())
+		return await self.sync_to_trio(sync_function=self._set_visible_size_impl)(width=width, height=height)

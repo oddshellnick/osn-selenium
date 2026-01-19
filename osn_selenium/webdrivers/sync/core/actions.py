@@ -4,25 +4,24 @@ from typing import (
 	List,
 	Optional
 )
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.instances.sync.action_chains import ActionChains
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
-from selenium.webdriver import (
-	ActionChains as legacyActionChains
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
 )
-from selenium.webdriver.support.wait import (
-	WebDriverWait as legacyWebDriverWait
+from osn_selenium.webdrivers._functions import (
+	get_js_executor_bridge
+)
+from osn_selenium.webdrivers.unified.core.actions import (
+	UnifiedCoreActionsMixin
 )
 from osn_selenium.abstract.webdriver.core.actions import (
 	AbstractCoreActionsMixin
 )
-from osn_selenium.instances.sync.action_chains import (
-	ActionChains,
-	HumanLikeActionChains
-)
 
 
-class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
+class CoreActionsMixin(UnifiedCoreActionsMixin, CoreScriptMixin, AbstractCoreActionsMixin):
 	"""
 	Mixin providing high-level interaction capabilities for Core WebDrivers.
 
@@ -30,39 +29,28 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 	custom WebDriverWait implementations.
 	"""
 	
-	@requires_driver
-	def action_chain(
+	def action_chains(
 			self,
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
+		legacy = self._action_chains_impl(duration=duration, devices=devices)
+		
 		return ActionChains(
-				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
+				selenium_action_chains=legacy,
+				execute_js_script_function=get_js_executor_bridge(self),
 		)
 	
-	@requires_driver
-	def hm_action_chain(
-			self,
-			duration: int = 250,
-			devices: Optional[List[DEVICES_TYPEHINT]] = None,
-	) -> HumanLikeActionChains:
-		return HumanLikeActionChains(
-				execute_script_function=self.execute_script,
-				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
-		)
-	
-	@requires_driver
 	def web_driver_wait(
 			self,
 			timeout: float,
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Optional[Iterable[BaseException]] = None,
 	) -> WebDriverWait:
-		return WebDriverWait(
-				selenium_webdriver_wait=legacyWebDriverWait(
-						driver=self.driver,
-						timeout=timeout,
-						poll_frequency=poll_frequency,
-						ignored_exceptions=ignored_exceptions,
-				),
+		legacy = self._web_driver_wait_impl(
+				timeout=timeout,
+				poll_frequency=poll_frequency,
+				ignored_exceptions=ignored_exceptions
 		)
+		
+		return get_sync_instance_wrapper(wrapper_class=WebDriverWait, legacy_object=legacy)

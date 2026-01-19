@@ -43,7 +43,7 @@ class AbstractNetworkCDPExecutor(ABC):
 			method: Optional[str] = None,
 			post_data: Optional[str] = None,
 			headers: Optional[Dict[Any, Any]] = None,
-			auth_challenge_response: Optional[Any] = None
+			auth_challenge_response: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
@@ -54,7 +54,7 @@ class AbstractNetworkCDPExecutor(ABC):
 			url: Optional[str] = None,
 			domain: Optional[str] = None,
 			path: Optional[str] = None,
-			partition_key: Optional[Any] = None
+			partition_key: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
@@ -77,7 +77,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def emulate_network_conditions_by_rule(self, offline: bool, matched_network_conditions: List[Any]) -> List[str]:
+	def emulate_network_conditions_by_rule(self, offline: bool, matched_network_conditions: List[Dict[str, Any]]) -> List[str]:
 		...
 	
 	@abstractmethod
@@ -96,7 +96,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_all_cookies(self) -> List[Any]:
+	def get_all_cookies(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -104,7 +104,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_cookies(self, urls: Optional[List[str]] = None) -> List[Any]:
+	def get_cookies(self, urls: Optional[List[str]] = None) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -124,7 +124,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_security_isolation_status(self, frame_id: Optional[str] = None) -> Any:
+	def get_security_isolation_status(self, frame_id: Optional[str] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -132,8 +132,8 @@ class AbstractNetworkCDPExecutor(ABC):
 			self,
 			frame_id: Optional[str] = None,
 			url: str = None,
-			options: Any = None
-	) -> Any:
+			options: Dict[str, Any] = None
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -158,7 +158,7 @@ class AbstractNetworkCDPExecutor(ABC):
 			query: str,
 			case_sensitive: Optional[bool] = None,
 			is_regex: Optional[bool] = None
-	) -> List[Any]:
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -172,7 +172,7 @@ class AbstractNetworkCDPExecutor(ABC):
 	@abstractmethod
 	def set_blocked_ur_ls(
 			self,
-			url_patterns: Optional[List[Any]] = None,
+			url_patterns: Optional[List[Dict[str, Any]]] = None,
 			urls: Optional[List[str]] = None
 	) -> None:
 		...
@@ -201,7 +201,7 @@ class AbstractNetworkCDPExecutor(ABC):
 			same_party: Optional[bool] = None,
 			source_scheme: Optional[str] = None,
 			source_port: Optional[int] = None,
-			partition_key: Optional[Any] = None
+			partition_key: Optional[Dict[str, Any]] = None
 	) -> bool:
 		...
 	
@@ -215,7 +215,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_cookies(self, cookies: List[Any]) -> None:
+	def set_cookies(self, cookies: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -227,7 +227,7 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_request_interception(self, patterns: List[Any]) -> None:
+	def set_request_interception(self, patterns: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -236,7 +236,7 @@ class AbstractNetworkCDPExecutor(ABC):
 			user_agent: str,
 			accept_language: Optional[str] = None,
 			platform: Optional[str] = None,
-			user_agent_metadata: Optional[Any] = None
+			user_agent_metadata: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	

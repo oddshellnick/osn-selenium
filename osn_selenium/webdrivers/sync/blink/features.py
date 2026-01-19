@@ -1,12 +1,13 @@
 from typing import Any, Dict
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
+from osn_selenium.webdrivers.unified.blink.features import (
+	UnifiedBlinkFeaturesMixin
+)
 from osn_selenium.abstract.webdriver.blink.features import (
 	AbstractBlinkFeaturesMixin
 )
 
 
-class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
+class BlinkFeaturesMixin(UnifiedBlinkFeaturesMixin, AbstractBlinkFeaturesMixin):
 	"""
 	Mixin for managing browser features and capabilities for Blink WebDrivers.
 
@@ -14,14 +15,11 @@ class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
 	and inspect the supported capabilities of the current session.
 	"""
 	
-	@requires_driver
 	def get_issue_message(self) -> Any:
-		return self.driver.get_issue_message()
+		return self._get_issue_message_impl()
 	
-	@requires_driver
 	def launch_app(self, id: str) -> Dict[str, Any]:
-		return self.driver.launch_app(id=id)
+		return self._launch_app_impl(id=id)
 	
-	@requires_driver
 	def set_permissions(self, name: str, value: str) -> None:
-		self.driver.set_permissions(name=name, value=value)
+		self._set_permissions_impl(name=name, value=value)

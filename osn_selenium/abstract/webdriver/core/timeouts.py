@@ -1,9 +1,21 @@
-from typing import Any, Optional
+from typing import Optional
 from abc import ABC, abstractmethod
+from selenium.webdriver.common.timeouts import Timeouts
 
 
 class AbstractCoreTimeoutsMixin(ABC):
 	"""Mixin responsible for timeouts and waits."""
+	
+	@abstractmethod
+	def get_timeouts(self) -> Timeouts:
+		"""
+		Gets the timeouts object for the current session.
+
+		Returns:
+			Timeouts: An object for managing driver timeouts.
+		"""
+		
+		...
 	
 	@abstractmethod
 	def implicitly_wait(self, time_to_wait: float) -> None:
@@ -57,23 +69,12 @@ class AbstractCoreTimeoutsMixin(ABC):
 		...
 	
 	@abstractmethod
-	def set_timeouts(self, timeouts: Any) -> None:
+	def set_timeouts(self, timeouts: Timeouts) -> None:
 		"""
 		Sets the timeouts for the driver.
 
 		Args:
-			timeouts (Any): The timeouts configuration object.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def timeouts(self) -> Any:
-		"""
-		Gets the timeouts object for the current session.
-
-		Returns:
-			Any: An object for managing driver timeouts.
+			timeouts (Timeouts): The timeouts configuration object.
 		"""
 		
 		...

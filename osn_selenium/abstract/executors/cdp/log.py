@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Dict, List
 from abc import ABC, abstractmethod
 
 
@@ -16,7 +16,7 @@ class AbstractLogCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def start_violations_report(self, config: List[Any]) -> None:
+	def start_violations_report(self, config: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod

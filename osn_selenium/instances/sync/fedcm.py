@@ -5,16 +5,14 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import FEDCM_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class FedCM(AbstractFedCM):
+class FedCM(UnifiedFedCM, AbstractFedCM):
 	"""
 	Wrapper for the legacy Selenium FedCM instance.
 
@@ -30,31 +28,28 @@ class FedCM(AbstractFedCM):
 			selenium_fedcm (legacyFedCM): The legacy Selenium FedCM instance to wrap.
 		"""
 		
-		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
-		
-		self._selenium_fedcm = selenium_fedcm
+		UnifiedFedCM.__init__(self, selenium_fedcm=selenium_fedcm)
 	
 	def accept(self) -> None:
-		self.legacy.accept()
+		self._accept_impl()
 	
 	def account_list(self) -> List[Dict]:
-		return self.legacy.account_list
+		return self._account_list_impl()
 	
 	def dialog_type(self) -> str:
-		return self.legacy.dialog_type
+		return self._dialog_type_impl()
 	
 	def disable_delay(self) -> None:
-		self.legacy.disable_delay()
+		self._disable_delay_impl()
 	
 	def dismiss(self) -> None:
-		self.legacy.dismiss()
+		self._dismiss_impl()
 	
 	def enable_delay(self) -> None:
-		self.legacy.enable_delay()
+		self._enable_delay_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_fedcm: FEDCM_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: FEDCM_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium FedCM object.
 
@@ -62,31 +57,31 @@ class FedCM(AbstractFedCM):
 		instance into the new interface.
 
 		Args:
-			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+			legacy_object (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing FedCM.
 		"""
 		
-		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
+		legacy_fedcm_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
+			raise TypesConvertError(from_=legacyFedCM, to_=legacy_object)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj)
 	
 	@property
 	def legacy(self) -> legacyFedCM:
-		return self._selenium_fedcm
+		return self._legacy_impl
 	
 	def reset_cooldown(self) -> None:
-		self.legacy.reset_cooldown()
+		self._reset_cooldown_impl()
 	
 	def select_account(self, index: int) -> None:
-		self.legacy.select_account(index=index)
+		self._select_account_impl(index=index)
 	
 	def subtitle(self) -> Optional[str]:
-		return self.legacy.subtitle
+		return self._subtitle_impl()
 	
 	def title(self) -> str:
-		return self.legacy.title
+		return self._title_impl()

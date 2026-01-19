@@ -8,7 +8,7 @@ class AbstractExtensionsCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_storage_items(self, id_: str, storage_area: str, keys: Optional[List[str]] = None) -> dict:
+	def get_storage_items(self, id_: str, storage_area: str, keys: Optional[List[str]] = None) -> Any:
 		...
 	
 	@abstractmethod
@@ -20,7 +20,7 @@ class AbstractExtensionsCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_storage_items(self, id_: str, storage_area: str, values: dict) -> None:
+	def set_storage_items(self, id_: str, storage_area: str, values: Any) -> None:
 		...
 	
 	@abstractmethod

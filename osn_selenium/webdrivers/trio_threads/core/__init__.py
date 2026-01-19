@@ -5,19 +5,21 @@ from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
-from osn_selenium.executors.trio_threads.cdp import CDPExecutor
-from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
+from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.abstract.webdriver.core import (
 	AbstractCoreWebDriver
 )
 from osn_selenium.webdrivers.trio_threads.core.window import CoreWindowMixin
+from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.webdrivers.trio_threads.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.trio_threads.core.capture import CoreCaptureMixin
 from osn_selenium.webdrivers.trio_threads.core.element import CoreElementMixin
 from osn_selenium.webdrivers.trio_threads.core.storage import CoreStorageMixin
 from osn_selenium.webdrivers.trio_threads.core.devtools import CoreDevToolsMixin
+from osn_selenium.webdrivers.trio_threads.core.settings import CoreSettingsMixin
+from osn_selenium.webdrivers.trio_threads.core.timeouts import CoreTimeoutsMixin
 from osn_selenium.webdrivers.trio_threads.core.lifecycle import CoreLifecycleMixin
 from osn_selenium.webdrivers.trio_threads.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationMixin
@@ -26,6 +28,7 @@ from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationM
 class CoreWebDriver(
 		CoreActionsMixin,
 		CoreAuthMixin,
+		CoreBaseMixin,
 		CoreCaptureMixin,
 		CoreComponentsMixin,
 		CoreDevToolsMixin,
@@ -33,9 +36,12 @@ class CoreWebDriver(
 		CoreFileMixin,
 		CoreLifecycleMixin,
 		CoreNavigationMixin,
+		CoreScriptMixin,
+		CoreSettingsMixin,
 		CoreStorageMixin,
+		CoreTimeoutsMixin,
 		CoreWindowMixin,
-		AbstractCoreWebDriver
+		AbstractCoreWebDriver,
 ):
 	"""
 	Concrete Core WebDriver implementation combining all functional mixins.
@@ -81,7 +87,8 @@ class CoreWebDriver(
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreBaseMixin.__init__(
+				self,
 				webdriver_path=webdriver_path,
 				flags_manager_type=flags_manager_type,
 				flags=flags,
@@ -93,19 +100,7 @@ class CoreWebDriver(
 		)
 		
 		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
-		
-		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
-		
-		self._js_executor = JSExecutor(execute_function=self.execute_script)
-	
-	@property
-	def cdp(self) -> CDPExecutor:
-		return self._cdp_executor
 	
 	@property
 	def devtools(self) -> DevTools:
 		return self._devtools
-	
-	@property
-	def javascript(self) -> JSExecutor:
-		return self._js_executor

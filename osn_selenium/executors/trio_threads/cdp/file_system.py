@@ -1,20 +1,28 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.file_system import (
+	UnifiedFileSystemCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.file_system import (
 	AbstractFileSystemCDPExecutor
 )
 
 
-class FileSystemCDPExecutor(AbstractFileSystemCDPExecutor):
+class FileSystemCDPExecutor(
+		UnifiedFileSystemCDPExecutor,
+		TrioThreadMixin,
+		AbstractFileSystemCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedFileSystemCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
-	async def get_directory(self, bucket_file_system_locator: Any) -> Any:
-		return await self._execute_function("FileSystem.getDirectory", locals())
+	async def get_directory(self, bucket_file_system_locator: Dict[str, Any]) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._get_directory_impl)(bucket_file_system_locator=bucket_file_system_locator)

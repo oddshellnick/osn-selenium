@@ -4,26 +4,29 @@ from typing import (
 	Dict,
 	List
 )
+from osn_selenium.executors.unified.cdp.log import (
+	UnifiedLogCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.log import (
 	AbstractLogCDPExecutor
 )
 
 
-class LogCDPExecutor(AbstractLogCDPExecutor):
+class LogCDPExecutor(UnifiedLogCDPExecutor, AbstractLogCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedLogCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def clear(self) -> None:
-		return self._execute_function("Log.clear", locals())
+		return self._clear_impl()
 	
 	def disable(self) -> None:
-		return self._execute_function("Log.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("Log.enable", locals())
+		return self._enable_impl()
 	
-	def start_violations_report(self, config: List[Any]) -> None:
-		return self._execute_function("Log.startViolationsReport", locals())
+	def start_violations_report(self, config: List[Dict[str, Any]]) -> None:
+		return self._start_violations_report_impl(config=config)
 	
 	def stop_violations_report(self) -> None:
-		return self._execute_function("Log.stopViolationsReport", locals())
+		return self._stop_violations_report_impl()

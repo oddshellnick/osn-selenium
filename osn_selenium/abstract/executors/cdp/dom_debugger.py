@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractDomDebuggerCDPExecutor(ABC):
@@ -9,7 +14,7 @@ class AbstractDomDebuggerCDPExecutor(ABC):
 			object_id: str,
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
-	) -> List[Any]:
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod

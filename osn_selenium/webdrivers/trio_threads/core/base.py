@@ -1,40 +1,38 @@
 import trio
-from osn_selenium.types import WindowRect
-from osn_selenium.flags.base import BrowserFlagsManager
-from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.base_mixin import TrioThreadMixin
-from selenium.webdriver.common.bidi.session import Session
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from osn_selenium.webdrivers.decorators import requires_driver
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.instances.trio_threads.web_element import WebElement
-from selenium.webdriver.remote.locator_converter import LocatorConverter
-from selenium.webdriver.remote.remote_connection import RemoteConnection
-from osn_selenium.abstract.webdriver.core.base import (
-	AbstractCoreBaseMixin
-)
 from typing import (
 	Any,
 	Dict,
-	List,
 	Optional,
-	Set,
-	Tuple,
-	Type,
-	Union
+	Type
+)
+from osn_selenium.flags.base import BrowserFlagsManager
+from osn_selenium.flags.models.base import BrowserFlags
+from selenium.webdriver.common.bidi.session import Session
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
+from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.executors.trio_threads.javascript import JSExecutor
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT,
+	WindowRect
+)
+from selenium.webdriver.remote.locator_converter import LocatorConverter
+from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+from osn_selenium.abstract.webdriver.core.base import (
+	AbstractCoreBaseMixin
 )
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
-from selenium.webdriver.remote.webelement import (
-	WebElement as legacyWebElement
+from osn_selenium.webdrivers._functions import (
+	get_cdp_executor_bridge,
+	get_js_executor_bridge
 )
 
 
-class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
+class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin):
 	"""
-	Base mixin for Core WebDrivers handling core initialization and state management.
-
 	This class serves as the foundation for browser-specific implementations, managing
 	the WebDriver executable path, configuration flags, timeouts, and the active
 	driver instance.
@@ -75,158 +73,116 @@ class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
 		
-		super().__init__(
+		UnifiedCoreBaseMixin.__init__(
+				self,
+				webdriver_path=webdriver_path,
+				architecture="trio_threads",
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+		)
+		
+		TrioThreadMixin.__init__(
+				self,
 				lock=trio.Lock(),
 				limiter=capacity_limiter
 				if capacity_limiter is not None
 				else trio.CapacityLimiter(100),
 		)
 		
-		self._window_rect = window_rect
-		self._webdriver_path = webdriver_path
-		self._webdriver_flags_manager = flags_manager_type()
-		self._driver: Optional[legacyWebDriver] = None
-		self._base_implicitly_wait = float(implicitly_wait)
-		self._base_page_load_timeout = float(page_load_timeout)
-		self._base_script_timeout = float(script_timeout)
-		self._is_active = False
+		self._cdp_executor = CDPExecutor(
+				execute_function=get_cdp_executor_bridge(self),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
 		
-		if flags is not None:
-			self._webdriver_flags_manager.update_flags(flags)
+		self._js_executor = JSExecutor(
+				execute_function=get_js_executor_bridge(self),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
+	
+	@property
+	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+		return self._architecture_impl
+	
+	@property
+	def capabilities(self) -> Dict[str, Any]:
+		return self._capabilities_impl()
+	
+	@property
+	def caps(self) -> Dict[str, Any]:
+		return self._caps_get_impl()
+	
+	@caps.setter
+	def caps(self, value: Dict[str, Any]) -> None:
+		self._caps_set_impl(value=value)
+	
+	@property
+	def cdp(self) -> CDPExecutor:
+		return self._cdp_executor
+	
+	@property
+	def command_executor(self) -> RemoteConnection:
+		return self._command_executor_get_impl()
+	
+	@command_executor.setter
+	def command_executor(self, value: RemoteConnection) -> None:
+		self._command_executor_set_impl(value=value)
 	
 	@property
 	def driver(self) -> Optional[legacyWebDriver]:
-		return self._driver
-	
-	def _ensure_driver(self) -> None:
-		if self.driver is None:
-			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
-	
-	@requires_driver
-	async def _session(self) -> Session:
-		return await self._sync_to_trio(lambda: self.driver._session)
-	
-	def _unwrap_args(self, arg: Any) -> Any:
-		if isinstance(arg, WebElement):
-			return arg.legacy
-		
-		if isinstance(arg, list):
-			return [self._unwrap_args(item) for item in arg]
-		
-		if isinstance(arg, dict):
-			return {k: self._unwrap_args(v) for k, v in arg.items()}
-		
-		if isinstance(arg, tuple):
-			return tuple(self._unwrap_args(item) for item in arg)
-		
-		if isinstance(arg, set):
-			return {self._unwrap_args(item) for item in arg}
-		
-		return arg
-	
-	def _wrap_result(self, result: Any) -> Union[
-		WEB_ELEMENT_TYPEHINT,
-		List[WEB_ELEMENT_TYPEHINT],
-		Dict[Any, WEB_ELEMENT_TYPEHINT],
-		Set[WEB_ELEMENT_TYPEHINT],
-		Tuple[WEB_ELEMENT_TYPEHINT, ...],
-		Any,
-	]:
-		if isinstance(result, legacyWebElement):
-			return WebElement.from_legacy(
-					selenium_web_element=result,
-					lock=self._lock,
-					limiter=self._capacity_limiter
-			)
-		
-		if isinstance(result, list):
-			return [self._wrap_result(item) for item in result]
-		
-		if isinstance(result, dict):
-			return {k: self._wrap_result(v) for k, v in result.items()}
-		
-		if isinstance(result, tuple):
-			return tuple(self._wrap_result(item) for item in result)
-		
-		if isinstance(result, set):
-			return {self._wrap_result(item) for item in result}
-		
-		return result
+		return self._driver_impl
 	
 	@property
-	@requires_driver
-	def capabilities(self) -> Dict[str, Any]:
-		return self.driver.capabilities
-	
-	@property
-	@requires_driver
-	def caps(self) -> Dict[str, Any]:
-		return self.driver.caps
-	
-	@caps.setter
-	@requires_driver
-	def caps(self, value: Dict[str, Any]) -> None:
-		self.driver.caps = value
-	
-	@property
-	@requires_driver
-	def command_executor(self) -> RemoteConnection:
-		return self.driver.command_executor
-	
-	@command_executor.setter
-	@requires_driver
-	def command_executor(self, value: RemoteConnection) -> None:
-		self.driver.command_executor = value
-	
-	@property
-	@requires_driver
 	def error_handler(self) -> ErrorHandler:
-		return self.driver.error_handler
+		return self._error_handler_get_impl()
 	
 	@error_handler.setter
-	@requires_driver
 	def error_handler(self, value: ErrorHandler) -> None:
-		self.driver.error_handler = value
+		self._error_handler_set_impl(value=value)
 	
-	@requires_driver
 	async def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		return await self._sync_to_trio(self.driver.execute, driver_command=driver_command, params=params)
+		return await self.sync_to_trio(sync_function=self._execute_impl)(driver_command=driver_command, params=params)
 	
 	@property
 	def is_active(self) -> bool:
-		return self._is_active
+		return self._is_active_impl
 	
 	@property
-	@requires_driver
+	def javascript(self) -> JSExecutor:
+		return self._js_executor
+	
+	@property
 	def locator_converter(self) -> LocatorConverter:
-		return self.driver.locator_converter
+		return self._locator_converter_get_impl()
 	
 	@locator_converter.setter
-	@requires_driver
 	def locator_converter(self, value: LocatorConverter) -> None:
-		self.driver.locator_converter = value
+		self._locator_converter_set_impl(value=value)
 	
 	@property
-	@requires_driver
 	def name(self) -> str:
-		return self.driver.name
+		return self._name_impl()
 	
 	@property
-	@requires_driver
 	def pinned_scripts(self) -> Dict[str, Any]:
-		return self.driver.pinned_scripts
+		return self._pinned_scripts_get_impl()
 	
 	@pinned_scripts.setter
-	@requires_driver
 	def pinned_scripts(self, value: Dict[str, Any]) -> None:
-		self.driver.pinned_scripts = value
+		self._pinned_scripts_set_impl(value=value)
+	
+	async def _session(self) -> Session:
+		return await self.sync_to_trio(sync_function=self._session_impl)()
 	
 	@property
-	@requires_driver
 	def session_id(self) -> Optional[str]:
-		return self.driver.session_id
+		return self._session_id_get_impl()
 	
 	@session_id.setter
-	@requires_driver
 	def session_id(self, value: Optional[str]) -> None:
-		self.driver.session_id = value
+		self._session_id_set_impl(value=value)

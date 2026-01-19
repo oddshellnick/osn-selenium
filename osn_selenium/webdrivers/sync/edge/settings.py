@@ -2,18 +2,20 @@ import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.edge import EdgeFlags
-from osn_selenium.webdrivers.sync.edge.base import EdgeBaseMixin
+from osn_selenium.webdrivers.unified.edge.settings import (
+	UnifiedEdgeSettingsMixin
+)
 from osn_selenium.abstract.webdriver.edge.settings import (
 	AbstractEdgeSettingsMixin
 )
 
 
-class EdgeSettingsMixin(EdgeBaseMixin, AbstractEdgeSettingsMixin):
+class EdgeSettingsMixin(UnifiedEdgeSettingsMixin, AbstractEdgeSettingsMixin):
 	"""
 	Mixin for configuring and updating settings of the Edge WebDriver.
 
 	Provides methods to modify browser flags, window rectangles, and other
-	configuration parameters either before startup or during a reset.
+	configuration parameters either before startup either during a reset.
 	"""
 	
 	def reset_settings(
@@ -24,8 +26,8 @@ class EdgeSettingsMixin(EdgeBaseMixin, AbstractEdgeSettingsMixin):
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
 			window_rect: Optional[WindowRect] = None,
-	):
-		super().reset_settings(
+	) -> None:
+		self._reset_settings_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -42,8 +44,8 @@ class EdgeSettingsMixin(EdgeBaseMixin, AbstractEdgeSettingsMixin):
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
-	):
-		super().update_settings(
+	) -> None:
+		self._update_settings_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,

@@ -1,11 +1,17 @@
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.webdrivers.unified.core.navigation import (
+	UnifiedCoreNavigationMixin
+)
 from osn_selenium.abstract.webdriver.core.navigation import (
 	AbstractCoreNavigationMixin
 )
 
 
-class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
+class CoreNavigationMixin(
+		UnifiedCoreNavigationMixin,
+		TrioThreadMixin,
+		AbstractCoreNavigationMixin
+):
 	"""
 	Mixin controlling browser navigation for Core WebDrivers.
 
@@ -13,26 +19,20 @@ class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
 	traversal (back/forward), and page refreshing.
 	"""
 	
-	@requires_driver
 	async def back(self) -> None:
-		await self._sync_to_trio(self.driver.back)
+		await self.sync_to_trio(sync_function=self._back_impl)()
 	
-	@requires_driver
 	async def current_url(self) -> str:
-		return await self._sync_to_trio(lambda: self.driver.current_url)
+		return await self.sync_to_trio(sync_function=self._current_url_impl)()
 	
-	@requires_driver
 	async def forward(self) -> None:
-		await self._sync_to_trio(self.driver.forward)
+		await self.sync_to_trio(sync_function=self._forward_impl)()
 	
-	@requires_driver
 	async def get(self, url: str) -> None:
-		await self._sync_to_trio(self.driver.get, url=url)
+		await self.sync_to_trio(sync_function=self._get_impl)(url=url)
 	
-	@requires_driver
 	async def refresh(self) -> None:
-		await self._sync_to_trio(self.driver.refresh)
+		await self.sync_to_trio(sync_function=self._refresh_impl)()
 	
-	@requires_driver
 	async def title(self) -> str:
-		return await self._sync_to_trio(lambda: self.driver.title)
+		return await self.sync_to_trio(sync_function=self._title_impl)()

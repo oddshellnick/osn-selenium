@@ -1,15 +1,21 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.device_orientation import (
+	UnifiedDeviceOrientationCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.device_orientation import (
 	AbstractDeviceOrientationCDPExecutor
 )
 
 
-class DeviceOrientationCDPExecutor(AbstractDeviceOrientationCDPExecutor):
+class DeviceOrientationCDPExecutor(
+		UnifiedDeviceOrientationCDPExecutor,
+		AbstractDeviceOrientationCDPExecutor
+):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedDeviceOrientationCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def clear_device_orientation_override(self) -> None:
-		return self._execute_function("DeviceOrientation.clearDeviceOrientationOverride", locals())
+		return self._clear_device_orientation_override_impl()
 	
 	def set_device_orientation_override(self, alpha: float, beta: float, gamma: float) -> None:
-		return self._execute_function("DeviceOrientation.setDeviceOrientationOverride", locals())
+		return self._set_device_orientation_override_impl(alpha=alpha, beta=beta, gamma=gamma)

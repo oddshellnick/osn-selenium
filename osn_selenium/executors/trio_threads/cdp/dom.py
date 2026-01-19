@@ -1,26 +1,34 @@
-from osn_selenium.abstract.executors.cdp.dom import (
-	AbstractDomCDPExecutor
-)
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.dom import (
+	UnifiedDomCDPExecutor
+)
+from osn_selenium.abstract.executors.cdp.dom import (
+	AbstractDomCDPExecutor
+)
 
 
-class DomCDPExecutor(AbstractDomCDPExecutor):
+class DomCDPExecutor(UnifiedDomCDPExecutor, TrioThreadMixin, AbstractDomCDPExecutor):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedDomCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def collect_class_names_from_subtree(self, node_id: int) -> List[str]:
-		return await self._execute_function("DOM.collectClassNamesFromSubtree", locals())
+		return await self.sync_to_trio(sync_function=self._collect_class_names_from_subtree_impl)(node_id=node_id)
 	
 	async def copy_to(
 			self,
@@ -28,7 +36,11 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			target_node_id: int,
 			insert_before_node_id: Optional[int] = None
 	) -> int:
-		return await self._execute_function("DOM.copyTo", locals())
+		return await self.sync_to_trio(sync_function=self._copy_to_impl)(
+				node_id=node_id,
+				target_node_id=target_node_id,
+				insert_before_node_id=insert_before_node_id
+		)
 	
 	async def describe_node(
 			self,
@@ -37,17 +49,23 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			object_id: Optional[str] = None,
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
-	) -> Any:
-		return await self._execute_function("DOM.describeNode", locals())
+	) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._describe_node_impl)(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id,
+				depth=depth,
+				pierce=pierce
+		)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("DOM.disable", locals())
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def discard_search_results(self, search_id: str) -> None:
-		return await self._execute_function("DOM.discardSearchResults", locals())
+		return await self.sync_to_trio(sync_function=self._discard_search_results_impl)(search_id=search_id)
 	
 	async def enable(self, include_whitespace: Optional[str] = None) -> None:
-		return await self._execute_function("DOM.enable", locals())
+		return await self.sync_to_trio(sync_function=self._enable_impl)(include_whitespace=include_whitespace)
 	
 	async def focus(
 			self,
@@ -55,24 +73,24 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
 	) -> None:
-		return await self._execute_function("DOM.focus", locals())
+		return await self.sync_to_trio(sync_function=self._focus_impl)(node_id=node_id, backend_node_id=backend_node_id, object_id=object_id)
 	
 	async def force_show_popover(self, node_id: int, enable: bool) -> List[int]:
-		return await self._execute_function("DOM.forceShowPopover", locals())
+		return await self.sync_to_trio(sync_function=self._force_show_popover_impl)(node_id=node_id, enable=enable)
 	
 	async def get_anchor_element(self, node_id: int, anchor_specifier: Optional[str] = None) -> int:
-		return await self._execute_function("DOM.getAnchorElement", locals())
+		return await self.sync_to_trio(sync_function=self._get_anchor_element_impl)(node_id=node_id, anchor_specifier=anchor_specifier)
 	
 	async def get_attributes(self, node_id: int) -> List[str]:
-		return await self._execute_function("DOM.getAttributes", locals())
+		return await self.sync_to_trio(sync_function=self._get_attributes_impl)(node_id=node_id)
 	
 	async def get_box_model(
 			self,
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
-	) -> Any:
-		return await self._execute_function("DOM.getBoxModel", locals())
+	) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._get_box_model_impl)(node_id=node_id, backend_node_id=backend_node_id, object_id=object_id)
 	
 	async def get_container_for_node(
 			self,
@@ -83,33 +101,40 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			queries_scroll_state: Optional[bool] = None,
 			queries_anchored: Optional[bool] = None
 	) -> Optional[int]:
-		return await self._execute_function("DOM.getContainerForNode", locals())
+		return await self.sync_to_trio(sync_function=self._get_container_for_node_impl)(
+				node_id=node_id,
+				container_name=container_name,
+				physical_axes=physical_axes,
+				logical_axes=logical_axes,
+				queries_scroll_state=queries_scroll_state,
+				queries_anchored=queries_anchored
+		)
 	
 	async def get_content_quads(
 			self,
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
-	) -> List[List[Any]]:
-		return await self._execute_function("DOM.getContentQuads", locals())
+	) -> List[List[float]]:
+		return await self.sync_to_trio(sync_function=self._get_content_quads_impl)(node_id=node_id, backend_node_id=backend_node_id, object_id=object_id)
 	
-	async def get_detached_dom_nodes(self) -> List[Any]:
-		return await self._execute_function("DOM.getDetachedDomNodes", locals())
+	async def get_detached_dom_nodes(self) -> List[Dict[str, Any]]:
+		return await self.sync_to_trio(sync_function=self._get_detached_dom_nodes_impl)()
 	
-	async def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Any:
-		return await self._execute_function("DOM.getDocument", locals())
+	async def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._get_document_impl)(depth=depth, pierce=pierce)
 	
 	async def get_element_by_relation(self, node_id: int, relation: str) -> int:
-		return await self._execute_function("DOM.getElementByRelation", locals())
+		return await self.sync_to_trio(sync_function=self._get_element_by_relation_impl)(node_id=node_id, relation=relation)
 	
 	async def get_file_info(self, object_id: str) -> str:
-		return await self._execute_function("DOM.getFileInfo", locals())
+		return await self.sync_to_trio(sync_function=self._get_file_info_impl)(object_id=object_id)
 	
-	async def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Any]:
-		return await self._execute_function("DOM.getFlattenedDocument", locals())
+	async def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Dict[str, Any]]:
+		return await self.sync_to_trio(sync_function=self._get_flattened_document_impl)(depth=depth, pierce=pierce)
 	
 	async def get_frame_owner(self, frame_id: str) -> Tuple[int, Optional[int]]:
-		return await self._execute_function("DOM.getFrameOwner", locals())
+		return await self.sync_to_trio(sync_function=self._get_frame_owner_impl)(frame_id=frame_id)
 	
 	async def get_node_for_location(
 			self,
@@ -118,18 +143,23 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			include_user_agent_shadow_dom: Optional[bool] = None,
 			ignore_pointer_events_none: Optional[bool] = None
 	) -> Tuple[int, str, Optional[int]]:
-		return await self._execute_function("DOM.getNodeForLocation", locals())
+		return await self.sync_to_trio(sync_function=self._get_node_for_location_impl)(
+				x=x,
+				y=y,
+				include_user_agent_shadow_dom=include_user_agent_shadow_dom,
+				ignore_pointer_events_none=ignore_pointer_events_none
+		)
 	
-	async def get_node_stack_traces(self, node_id: int) -> Optional[Any]:
-		return await self._execute_function("DOM.getNodeStackTraces", locals())
+	async def get_node_stack_traces(self, node_id: int) -> Optional[Dict[str, Any]]:
+		return await self.sync_to_trio(sync_function=self._get_node_stack_traces_impl)(node_id=node_id)
 	
 	async def get_nodes_for_subtree_by_style(
 			self,
 			node_id: int,
-			computed_styles: List[Any],
+			computed_styles: List[Dict[str, Any]],
 			pierce: Optional[bool] = None
 	) -> List[int]:
-		return await self._execute_function("DOM.getNodesForSubtreeByStyle", locals())
+		return await self.sync_to_trio(sync_function=self._get_nodes_for_subtree_by_style_impl)(node_id=node_id, computed_styles=computed_styles, pierce=pierce)
 	
 	async def get_outer_html(
 			self,
@@ -138,31 +168,36 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			object_id: Optional[str] = None,
 			include_shadow_dom: Optional[bool] = None
 	) -> str:
-		return await self._execute_function("DOM.getOuterHTML", locals())
+		return await self.sync_to_trio(sync_function=self._get_outer_html_impl)(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id,
+				include_shadow_dom=include_shadow_dom
+		)
 	
 	async def get_querying_descendants_for_container(self, node_id: int) -> List[int]:
-		return await self._execute_function("DOM.getQueryingDescendantsForContainer", locals())
+		return await self.sync_to_trio(sync_function=self._get_querying_descendants_for_container_impl)(node_id=node_id)
 	
 	async def get_relayout_boundary(self, node_id: int) -> int:
-		return await self._execute_function("DOM.getRelayoutBoundary", locals())
+		return await self.sync_to_trio(sync_function=self._get_relayout_boundary_impl)(node_id=node_id)
 	
 	async def get_search_results(self, search_id: str, from_index: int, to_index: int) -> List[int]:
-		return await self._execute_function("DOM.getSearchResults", locals())
+		return await self.sync_to_trio(sync_function=self._get_search_results_impl)(search_id=search_id, from_index=from_index, to_index=to_index)
 	
 	async def get_top_layer_elements(self) -> List[int]:
-		return await self._execute_function("DOM.getTopLayerElements", locals())
+		return await self.sync_to_trio(sync_function=self._get_top_layer_elements_impl)()
 	
 	async def hide_highlight(self) -> None:
-		return await self._execute_function("DOM.hideHighlight", locals())
+		return await self.sync_to_trio(sync_function=self._hide_highlight_impl)()
 	
 	async def highlight_node(self) -> None:
-		return await self._execute_function("DOM.highlightNode", locals())
+		return await self.sync_to_trio(sync_function=self._highlight_node_impl)()
 	
 	async def highlight_rect(self) -> None:
-		return await self._execute_function("DOM.highlightRect", locals())
+		return await self.sync_to_trio(sync_function=self._highlight_rect_impl)()
 	
 	async def mark_undoable_state(self) -> None:
-		return await self._execute_function("DOM.markUndoableState", locals())
+		return await self.sync_to_trio(sync_function=self._mark_undoable_state_impl)()
 	
 	async def move_to(
 			self,
@@ -170,31 +205,38 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			target_node_id: int,
 			insert_before_node_id: Optional[int] = None
 	) -> int:
-		return await self._execute_function("DOM.moveTo", locals())
+		return await self.sync_to_trio(sync_function=self._move_to_impl)(
+				node_id=node_id,
+				target_node_id=target_node_id,
+				insert_before_node_id=insert_before_node_id
+		)
 	
 	async def perform_search(self, query: str, include_user_agent_shadow_dom: Optional[bool] = None) -> Tuple[str, int]:
-		return await self._execute_function("DOM.performSearch", locals())
+		return await self.sync_to_trio(sync_function=self._perform_search_impl)(
+				query=query,
+				include_user_agent_shadow_dom=include_user_agent_shadow_dom
+		)
 	
 	async def push_node_by_path_to_frontend(self, path: str) -> int:
-		return await self._execute_function("DOM.pushNodeByPathToFrontend", locals())
+		return await self.sync_to_trio(sync_function=self._push_node_by_path_to_frontend_impl)(path=path)
 	
 	async def push_nodes_by_backend_ids_to_frontend(self, backend_node_ids: List[int]) -> List[int]:
-		return await self._execute_function("DOM.pushNodesByBackendIdsToFrontend", locals())
+		return await self.sync_to_trio(sync_function=self._push_nodes_by_backend_ids_to_frontend_impl)(backend_node_ids=backend_node_ids)
 	
 	async def query_selector(self, node_id: int, selector: str) -> int:
-		return await self._execute_function("DOM.querySelector", locals())
+		return await self.sync_to_trio(sync_function=self._query_selector_impl)(node_id=node_id, selector=selector)
 	
 	async def query_selector_all(self, node_id: int, selector: str) -> List[int]:
-		return await self._execute_function("DOM.querySelectorAll", locals())
+		return await self.sync_to_trio(sync_function=self._query_selector_all_impl)(node_id=node_id, selector=selector)
 	
 	async def redo(self) -> None:
-		return await self._execute_function("DOM.redo", locals())
+		return await self.sync_to_trio(sync_function=self._redo_impl)()
 	
 	async def remove_attribute(self, node_id: int, name: str) -> None:
-		return await self._execute_function("DOM.removeAttribute", locals())
+		return await self.sync_to_trio(sync_function=self._remove_attribute_impl)(node_id=node_id, name=name)
 	
 	async def remove_node(self, node_id: int) -> None:
-		return await self._execute_function("DOM.removeNode", locals())
+		return await self.sync_to_trio(sync_function=self._remove_node_impl)(node_id=node_id)
 	
 	async def request_child_nodes(
 			self,
@@ -202,10 +244,10 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
 	) -> None:
-		return await self._execute_function("DOM.requestChildNodes", locals())
+		return await self.sync_to_trio(sync_function=self._request_child_nodes_impl)(node_id=node_id, depth=depth, pierce=pierce)
 	
 	async def request_node(self, object_id: str) -> int:
-		return await self._execute_function("DOM.requestNode", locals())
+		return await self.sync_to_trio(sync_function=self._request_node_impl)(object_id=object_id)
 	
 	async def resolve_node(
 			self,
@@ -213,23 +255,33 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			backend_node_id: Optional[int] = None,
 			object_group: Optional[str] = None,
 			execution_context_id: Optional[int] = None
-	) -> Any:
-		return await self._execute_function("DOM.resolveNode", locals())
+	) -> Dict[str, Any]:
+		return await self.sync_to_trio(sync_function=self._resolve_node_impl)(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_group=object_group,
+				execution_context_id=execution_context_id
+		)
 	
 	async def scroll_into_view_if_needed(
 			self,
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None,
-			rect: Optional[Any] = None
+			rect: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._execute_function("DOM.scrollIntoViewIfNeeded", locals())
+		return await self.sync_to_trio(sync_function=self._scroll_into_view_if_needed_impl)(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id,
+				rect=rect
+		)
 	
 	async def set_attribute_value(self, node_id: int, name: str, value: str) -> None:
-		return await self._execute_function("DOM.setAttributeValue", locals())
+		return await self.sync_to_trio(sync_function=self._set_attribute_value_impl)(node_id=node_id, name=name, value=value)
 	
 	async def set_attributes_as_text(self, node_id: int, text: str, name: Optional[str] = None) -> None:
-		return await self._execute_function("DOM.setAttributesAsText", locals())
+		return await self.sync_to_trio(sync_function=self._set_attributes_as_text_impl)(node_id=node_id, text=text, name=name)
 	
 	async def set_file_input_files(
 			self,
@@ -238,22 +290,27 @@ class DomCDPExecutor(AbstractDomCDPExecutor):
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
 	) -> None:
-		return await self._execute_function("DOM.setFileInputFiles", locals())
+		return await self.sync_to_trio(sync_function=self._set_file_input_files_impl)(
+				files=files,
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id
+		)
 	
 	async def set_inspected_node(self, node_id: int) -> None:
-		return await self._execute_function("DOM.setInspectedNode", locals())
+		return await self.sync_to_trio(sync_function=self._set_inspected_node_impl)(node_id=node_id)
 	
 	async def set_node_name(self, node_id: int, name: str) -> int:
-		return await self._execute_function("DOM.setNodeName", locals())
+		return await self.sync_to_trio(sync_function=self._set_node_name_impl)(node_id=node_id, name=name)
 	
 	async def set_node_stack_traces_enabled(self, enable: bool) -> None:
-		return await self._execute_function("DOM.setNodeStackTracesEnabled", locals())
+		return await self.sync_to_trio(sync_function=self._set_node_stack_traces_enabled_impl)(enable=enable)
 	
 	async def set_node_value(self, node_id: int, value: str) -> None:
-		return await self._execute_function("DOM.setNodeValue", locals())
+		return await self.sync_to_trio(sync_function=self._set_node_value_impl)(node_id=node_id, value=value)
 	
 	async def set_outer_html(self, node_id: int, outer_html: str) -> None:
-		return await self._execute_function("DOM.setOuterHTML", locals())
+		return await self.sync_to_trio(sync_function=self._set_outer_html_impl)(node_id=node_id, outer_html=outer_html)
 	
 	async def undo(self) -> None:
-		return await self._execute_function("DOM.undo", locals())
+		return await self.sync_to_trio(sync_function=self._undo_impl)()

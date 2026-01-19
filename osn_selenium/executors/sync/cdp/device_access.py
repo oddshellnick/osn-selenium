@@ -1,21 +1,24 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.device_access import (
+	UnifiedDeviceAccessCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.device_access import (
 	AbstractDeviceAccessCDPExecutor
 )
 
 
-class DeviceAccessCDPExecutor(AbstractDeviceAccessCDPExecutor):
+class DeviceAccessCDPExecutor(UnifiedDeviceAccessCDPExecutor, AbstractDeviceAccessCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedDeviceAccessCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def cancel_prompt(self, id_: str) -> None:
-		return self._execute_function("DeviceAccess.cancelPrompt", locals())
+		return self._cancel_prompt_impl(id_=id_)
 	
 	def disable(self) -> None:
-		return self._execute_function("DeviceAccess.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("DeviceAccess.enable", locals())
+		return self._enable_impl()
 	
 	def select_prompt(self, id_: str, device_id: str) -> None:
-		return self._execute_function("DeviceAccess.selectPrompt", locals())
+		return self._select_prompt_impl(id_=id_, device_id=device_id)

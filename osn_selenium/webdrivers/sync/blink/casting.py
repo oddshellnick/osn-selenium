@@ -1,12 +1,13 @@
 from typing import Any, Dict, List
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
+from osn_selenium.webdrivers.unified.blink.casting import (
+	UnifiedBlinkCastingMixin
+)
 from osn_selenium.abstract.webdriver.blink.casting import (
 	AbstractBlinkCastingMixin
 )
 
 
-class BlinkCastingMixin(BlinkBaseMixin, AbstractBlinkCastingMixin):
+class BlinkCastingMixin(UnifiedBlinkCastingMixin, AbstractBlinkCastingMixin):
 	"""
 	Mixin handling object type casting and wrapping for Blink WebDrivers.
 
@@ -14,22 +15,17 @@ class BlinkCastingMixin(BlinkBaseMixin, AbstractBlinkCastingMixin):
 	internal wrapper representations and vice versa during method calls.
 	"""
 	
-	@requires_driver
 	def get_sinks(self) -> List[Dict[str, Any]]:
-		return self.driver.get_sinks()
+		return self._get_sinks_impl()
 	
-	@requires_driver
 	def set_sink_to_use(self, sink_name: str) -> Dict[str, Any]:
-		return self.driver.set_sink_to_use(sink_name=sink_name)
+		return self._set_sink_to_use_impl(sink_name=sink_name)
 	
-	@requires_driver
 	def start_desktop_mirroring(self, sink_name: str) -> Dict[str, Any]:
-		return self.driver.start_desktop_mirroring(sink_name=sink_name)
+		return self._start_desktop_mirroring_impl(sink_name=sink_name)
 	
-	@requires_driver
 	def start_tab_mirroring(self, sink_name: str) -> Dict[str, Any]:
-		return self.driver.start_tab_mirroring(sink_name=sink_name)
+		return self._start_tab_mirroring_impl(sink_name=sink_name)
 	
-	@requires_driver
 	def stop_casting(self, sink_name: str) -> Dict[str, Any]:
-		return self.driver.stop_casting(sink_name=sink_name)
+		return self._stop_casting_impl(sink_name=sink_name)

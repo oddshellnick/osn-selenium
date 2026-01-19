@@ -40,7 +40,7 @@ class AbstractScript(ABC):
 		...
 	
 	@abstractmethod
-	def execute(self, script: str, *args: Any,) -> Mapping:
+	def execute(self, script: str, *args: Any) -> Mapping:
 		"""
 		Executes a script.
 

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -47,11 +48,11 @@ class AbstractBrowserCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_histogram(self, name: str, delta: Optional[bool] = None) -> Any:
+	def get_histogram(self, name: str, delta: Optional[bool] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[Any]:
+	def get_histograms(self, query: Optional[str] = None, delta: Optional[bool] = None) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -59,11 +60,11 @@ class AbstractBrowserCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_window_bounds(self, window_id: int) -> Any:
+	def get_window_bounds(self, window_id: int) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int, Any]:
+	def get_window_for_target(self, target_id: Optional[str] = None) -> Tuple[int, Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -105,7 +106,7 @@ class AbstractBrowserCDPExecutor(ABC):
 	@abstractmethod
 	def set_permission(
 			self,
-			permission: Any,
+			permission: Dict[str, Any],
 			setting: str,
 			origin: Optional[str] = None,
 			embedded_origin: Optional[str] = None,
@@ -114,5 +115,5 @@ class AbstractBrowserCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_window_bounds(self, window_id: int, bounds: Any) -> None:
+	def set_window_bounds(self, window_id: int, bounds: Dict[str, Any]) -> None:
 		...

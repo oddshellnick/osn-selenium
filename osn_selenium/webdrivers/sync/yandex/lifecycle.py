@@ -2,13 +2,20 @@ import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
-from osn_selenium.webdrivers.sync.yandex.settings import YandexSettingsMixin
+from osn_selenium.webdrivers.sync.chrome import ChromeLifecycleMixin
+from osn_selenium.webdrivers.unified.yandex.lifecycle import (
+	UnifiedYandexLifecycleMixin
+)
 from osn_selenium.abstract.webdriver.yandex.lifecycle import (
 	AbstractYandexLifecycleMixin
 )
 
 
-class YandexLifecycleMixin(YandexSettingsMixin, AbstractYandexLifecycleMixin):
+class YandexLifecycleMixin(
+		UnifiedYandexLifecycleMixin,
+		ChromeLifecycleMixin,
+		AbstractYandexLifecycleMixin
+):
 	"""
 	Mixin for managing the lifecycle of the Yandex WebDriver.
 
@@ -24,8 +31,8 @@ class YandexLifecycleMixin(YandexSettingsMixin, AbstractYandexLifecycleMixin):
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
-	):
-		super().restart_webdriver(
+	) -> None:
+		self._restart_webdriver_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -42,8 +49,8 @@ class YandexLifecycleMixin(YandexSettingsMixin, AbstractYandexLifecycleMixin):
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
-	):
-		super().start_webdriver(
+	) -> None:
+		self._start_webdriver_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,

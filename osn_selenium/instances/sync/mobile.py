@@ -1,18 +1,16 @@
 from typing import List, Self, Union
 from osn_selenium.instances.types import MOBILE_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.mobile import UnifiedMobile
 from osn_selenium.abstract.instances.mobile import AbstractMobile
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
 )
 
 
-class Mobile(AbstractMobile):
+class Mobile(UnifiedMobile, AbstractMobile):
 	"""
 	Wrapper for the legacy Selenium Mobile instance.
 
@@ -28,19 +26,16 @@ class Mobile(AbstractMobile):
 			selenium_mobile (legacyMobile): The legacy Selenium Mobile instance to wrap.
 		"""
 		
-		if not isinstance(selenium_mobile, legacyMobile):
-			raise ExpectedTypeError(expected_class=legacyMobile, received_instance=selenium_mobile)
-		
-		self._selenium_mobile = selenium_mobile
+		UnifiedMobile.__init__(self, selenium_mobile=selenium_mobile)
 	
 	def context(self) -> str:
-		return self.legacy.context
+		return self._context_impl()
 	
 	def contexts(self) -> List[str]:
-		return self.legacy.contexts
+		return self._contexts_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_mobile: MOBILE_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: MOBILE_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Mobile object.
 
@@ -48,28 +43,28 @@ class Mobile(AbstractMobile):
 		instance into the new interface.
 
 		Args:
-			selenium_mobile (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
+			legacy_object (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Mobile.
 		"""
 		
-		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
+		legacy_mobile_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypesConvertError(from_=legacyMobile, to_=selenium_mobile)
+			raise TypesConvertError(from_=legacyMobile, to_=legacy_object)
 		
 		return cls(selenium_mobile=legacy_mobile_obj)
 	
-	def network_connection(self) -> _ConnectionType:
-		return self.legacy.network_connection
-	
 	@property
 	def legacy(self) -> legacyMobile:
-		return self._selenium_mobile
+		return self._legacy_impl
+	
+	def network_connection(self) -> _ConnectionType:
+		return self._network_connection_impl()
 	
 	def set_context(self, new_context: str) -> None:
-		setattr(self.legacy, "context", new_context)
+		self._set_context_impl(new_context=new_context)
 	
 	def set_network_connection(self, network: Union[int, _ConnectionType]) -> _ConnectionType:
-		return self.legacy.set_network_connection(network)
+		return self._set_network_connection_impl(network=network)

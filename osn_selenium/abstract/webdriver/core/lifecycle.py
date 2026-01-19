@@ -14,20 +14,6 @@ class AbstractCoreLifecycleMixin(ABC):
 	"""Mixin responsible for driver lifecycle, creation, session, and connection management."""
 	
 	@abstractmethod
-	def _create_driver(self) -> None:
-		"""
-		Abstract method to create a WebDriver instance. Must be implemented in child classes.
-
-		This method is intended to be overridden in subclasses to provide browser-specific
-		WebDriver instantiation logic (e.g., creating ChromeDriver, FirefoxDriver, etc.).
-
-		Raises:
-			NotImplementedError: If the method is not implemented in a subclass.
-		"""
-		
-		...
-	
-	@abstractmethod
 	def close_webdriver(self) -> None:
 		"""
 		Closes the WebDriver instance and all associated windows.

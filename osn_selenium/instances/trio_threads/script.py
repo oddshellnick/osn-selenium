@@ -1,19 +1,17 @@
 import trio
 from typing import Any, Callable, Self
-from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.types import SCRIPT_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.script import UnifiedScript
 from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Script(TrioThreadMixin, AbstractScript):
+class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 	"""
 	Wrapper for the legacy Selenium BiDi Script instance.
 
@@ -36,26 +34,23 @@ class Script(TrioThreadMixin, AbstractScript):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedScript.__init__(self, selenium_script=selenium_script)
 		
-		if not isinstance(selenium_script, legacyScript):
-			raise ExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
-		
-		self._selenium_script = selenium_script
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def add_console_message_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._sync_to_trio(self.legacy.add_console_message_handler, handler=handler)
+		return await self.sync_to_trio(sync_function=self._add_console_message_handler_impl)(handler=handler)
 	
 	async def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._sync_to_trio(self.legacy.add_javascript_error_handler, handler=handler)
+		return await self.sync_to_trio(sync_function=self._add_javascript_error_handler_impl)(handler=handler)
 	
 	async def execute(self, script: str, *args: Any) -> Any:
-		return await self._sync_to_trio(self.legacy.execute, script, *args)
+		return await self.sync_to_trio(sync_function=self._execute_impl)(script, *args)
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_script: SCRIPT_TYPEHINT,
+			legacy_object: SCRIPT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -66,7 +61,7 @@ class Script(TrioThreadMixin, AbstractScript):
 		instance into the new interface.
 
 		Args:
-			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+			legacy_object (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -74,22 +69,22 @@ class Script(TrioThreadMixin, AbstractScript):
 			Self: A new instance of a class implementing Script.
 		"""
 		
-		legacy_script_obj = get_legacy_instance(selenium_script)
+		legacy_script_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
+			raise TypesConvertError(from_=legacyScript, to_=legacy_object)
 		
 		return cls(selenium_script=legacy_script_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyScript:
-		return self._selenium_script
+		return self._legacy_impl
 	
 	async def pin(self, script: str) -> str:
-		return await self._sync_to_trio(self.legacy.pin, script=script)
+		return await self.sync_to_trio(sync_function=self._pin_impl)(script=script)
 	
 	async def remove_console_message_handler(self, id: int) -> None:
-		await self._sync_to_trio(self.legacy.remove_console_message_handler, id=id)
+		await self.sync_to_trio(sync_function=self._remove_console_message_handler_impl)(id=id)
 	
 	async def unpin(self, script_id: str) -> None:
-		await self._sync_to_trio(self.legacy.unpin, script_id=script_id)
+		await self.sync_to_trio(sync_function=self._unpin_impl)(script_id=script_id)

@@ -5,44 +5,47 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.executors.unified.cdp.web_authn import (
+	UnifiedWebAuthnCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.web_authn import (
 	AbstractWebAuthnCDPExecutor
 )
 
 
-class WebAuthnCDPExecutor(AbstractWebAuthnCDPExecutor):
+class WebAuthnCDPExecutor(UnifiedWebAuthnCDPExecutor, AbstractWebAuthnCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedWebAuthnCDPExecutor.__init__(self, execute_function=execute_function)
 	
-	def add_credential(self, authenticator_id: str, credential: Any) -> None:
-		return self._execute_function("WebAuthn.addCredential", locals())
+	def add_credential(self, authenticator_id: str, credential: Dict[str, Any]) -> None:
+		return self._add_credential_impl(authenticator_id=authenticator_id, credential=credential)
 	
-	def add_virtual_authenticator(self, options: Any) -> str:
-		return self._execute_function("WebAuthn.addVirtualAuthenticator", locals())
+	def add_virtual_authenticator(self, options: Dict[str, Any]) -> str:
+		return self._add_virtual_authenticator_impl(options=options)
 	
 	def clear_credentials(self, authenticator_id: str) -> None:
-		return self._execute_function("WebAuthn.clearCredentials", locals())
+		return self._clear_credentials_impl(authenticator_id=authenticator_id)
 	
 	def disable(self) -> None:
-		return self._execute_function("WebAuthn.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self, enable_ui: Optional[bool] = None) -> None:
-		return self._execute_function("WebAuthn.enable", locals())
+		return self._enable_impl(enable_ui=enable_ui)
 	
-	def get_credential(self, authenticator_id: str, credential_id: str) -> Any:
-		return self._execute_function("WebAuthn.getCredential", locals())
+	def get_credential(self, authenticator_id: str, credential_id: str) -> Dict[str, Any]:
+		return self._get_credential_impl(authenticator_id=authenticator_id, credential_id=credential_id)
 	
-	def get_credentials(self, authenticator_id: str) -> List[Any]:
-		return self._execute_function("WebAuthn.getCredentials", locals())
+	def get_credentials(self, authenticator_id: str) -> List[Dict[str, Any]]:
+		return self._get_credentials_impl(authenticator_id=authenticator_id)
 	
 	def remove_credential(self, authenticator_id: str, credential_id: str) -> None:
-		return self._execute_function("WebAuthn.removeCredential", locals())
+		return self._remove_credential_impl(authenticator_id=authenticator_id, credential_id=credential_id)
 	
 	def remove_virtual_authenticator(self, authenticator_id: str) -> None:
-		return self._execute_function("WebAuthn.removeVirtualAuthenticator", locals())
+		return self._remove_virtual_authenticator_impl(authenticator_id=authenticator_id)
 	
 	def set_automatic_presence_simulation(self, authenticator_id: str, enabled: bool) -> None:
-		return self._execute_function("WebAuthn.setAutomaticPresenceSimulation", locals())
+		return self._set_automatic_presence_simulation_impl(authenticator_id=authenticator_id, enabled=enabled)
 	
 	def set_credential_properties(
 			self,
@@ -51,7 +54,12 @@ class WebAuthnCDPExecutor(AbstractWebAuthnCDPExecutor):
 			backup_eligibility: Optional[bool] = None,
 			backup_state: Optional[bool] = None
 	) -> None:
-		return self._execute_function("WebAuthn.setCredentialProperties", locals())
+		return self._set_credential_properties_impl(
+				authenticator_id=authenticator_id,
+				credential_id=credential_id,
+				backup_eligibility=backup_eligibility,
+				backup_state=backup_state
+		)
 	
 	def set_response_override_bits(
 			self,
@@ -60,7 +68,12 @@ class WebAuthnCDPExecutor(AbstractWebAuthnCDPExecutor):
 			is_bad_uv: Optional[bool] = None,
 			is_bad_up: Optional[bool] = None
 	) -> None:
-		return self._execute_function("WebAuthn.setResponseOverrideBits", locals())
+		return self._set_response_override_bits_impl(
+				authenticator_id=authenticator_id,
+				is_bogus_signature=is_bogus_signature,
+				is_bad_uv=is_bad_uv,
+				is_bad_up=is_bad_up
+		)
 	
 	def set_user_verified(self, authenticator_id: str, is_user_verified: bool) -> None:
-		return self._execute_function("WebAuthn.setUserVerified", locals())
+		return self._set_user_verified_impl(authenticator_id=authenticator_id, is_user_verified=is_user_verified)

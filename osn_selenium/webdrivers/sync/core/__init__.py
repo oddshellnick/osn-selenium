@@ -2,15 +2,18 @@ from typing import Optional, Type
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.executors.sync.javascript import JSExecutor
 from osn_selenium.webdrivers.sync.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.sync.core.file import CoreFileMixin
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.sync.core.window import CoreWindowMixin
+from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.webdrivers.sync.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.sync.core.capture import CoreCaptureMixin
 from osn_selenium.webdrivers.sync.core.element import CoreElementMixin
 from osn_selenium.webdrivers.sync.core.storage import CoreStorageMixin
 from osn_selenium.webdrivers.sync.core.devtools import CoreDevToolsMixin
+from osn_selenium.webdrivers.sync.core.settings import CoreSettingsMixin
+from osn_selenium.webdrivers.sync.core.timeouts import CoreTimeoutsMixin
 from osn_selenium.webdrivers.sync.core.lifecycle import CoreLifecycleMixin
 from osn_selenium.abstract.webdriver.core import (
 	AbstractCoreWebDriver
@@ -22,6 +25,7 @@ from osn_selenium.webdrivers.sync.core.navigation import CoreNavigationMixin
 class CoreWebDriver(
 		CoreActionsMixin,
 		CoreAuthMixin,
+		CoreBaseMixin,
 		CoreCaptureMixin,
 		CoreComponentsMixin,
 		CoreDevToolsMixin,
@@ -29,9 +33,12 @@ class CoreWebDriver(
 		CoreFileMixin,
 		CoreLifecycleMixin,
 		CoreNavigationMixin,
+		CoreScriptMixin,
+		CoreSettingsMixin,
 		CoreStorageMixin,
+		CoreTimeoutsMixin,
 		CoreWindowMixin,
-		AbstractCoreWebDriver
+		AbstractCoreWebDriver,
 ):
 	"""
 	Concrete Core WebDriver implementation combining all functional mixins.
@@ -69,7 +76,8 @@ class CoreWebDriver(
 				browser window. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreBaseMixin.__init__(
+				self,
 				webdriver_path=webdriver_path,
 				flags_manager_type=flags_manager_type,
 				flags=flags,
@@ -78,9 +86,3 @@ class CoreWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 		)
-		
-		self._js_executor = JSExecutor(execute_function=self.execute_script)
-	
-	@property
-	def javascript(self) -> JSExecutor:
-		return self._js_executor

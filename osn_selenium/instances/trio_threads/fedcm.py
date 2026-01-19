@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Dict,
 	List,
@@ -6,17 +7,14 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import FEDCM_TYPEHINT
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class FedCM(TrioThreadMixin, AbstractFedCM):
+class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 	"""
 	Wrapper for the legacy Selenium FedCM instance.
 
@@ -39,35 +37,32 @@ class FedCM(TrioThreadMixin, AbstractFedCM):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedFedCM.__init__(self, selenium_fedcm=selenium_fedcm)
 		
-		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
-		
-		self._selenium_fedcm = selenium_fedcm
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self.legacy.accept)
+		await self.sync_to_trio(sync_function=self._accept_impl)()
 	
 	async def account_list(self) -> List[Dict]:
-		return await self._sync_to_trio(lambda: self.legacy.account_list)
+		return await self.sync_to_trio(sync_function=self._account_list_impl)()
 	
 	async def dialog_type(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.dialog_type)
+		return await self.sync_to_trio(sync_function=self._dialog_type_impl)()
 	
 	async def disable_delay(self) -> None:
-		await self._sync_to_trio(self.legacy.disable_delay)
+		await self.sync_to_trio(sync_function=self._disable_delay_impl)()
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self.legacy.dismiss)
+		await self.sync_to_trio(sync_function=self._dismiss_impl)()
 	
 	async def enable_delay(self) -> None:
-		await self._sync_to_trio(self.legacy.enable_delay)
+		await self.sync_to_trio(sync_function=self._enable_delay_impl)()
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_fedcm: FEDCM_TYPEHINT,
+			legacy_object: FEDCM_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -78,7 +73,7 @@ class FedCM(TrioThreadMixin, AbstractFedCM):
 		instance into the new interface.
 
 		Args:
-			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+			legacy_object (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -86,25 +81,25 @@ class FedCM(TrioThreadMixin, AbstractFedCM):
 			Self: A new instance of a class implementing FedCM.
 		"""
 		
-		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
+		legacy_fedcm_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
+			raise TypesConvertError(from_=legacyFedCM, to_=legacy_object)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyFedCM:
-		return self._selenium_fedcm
+		return self._legacy_impl
 	
 	async def reset_cooldown(self) -> None:
-		await self._sync_to_trio(self.legacy.reset_cooldown)
+		await self.sync_to_trio(sync_function=self._reset_cooldown_impl)()
 	
 	async def select_account(self, index: int) -> None:
-		await self._sync_to_trio(self.legacy.select_account, index)
+		await self.sync_to_trio(sync_function=self._select_account_impl)(index=index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._sync_to_trio(lambda: self.legacy.subtitle)
+		return await self.sync_to_trio(sync_function=self._subtitle_impl)()
 	
 	async def title(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.title)
+		return await self.sync_to_trio(sync_function=self._title_impl)()

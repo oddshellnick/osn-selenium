@@ -197,12 +197,63 @@ def validate_target_event(event: Any, filter_: "TargetsFilters") -> Optional[boo
 	return result
 
 
+async def cdp_command_error(
+		self: "LoggingTargetMixin",
+		error: BaseException,
+		error_mode: Literal["raise", "log", "log_without_args", "pass"],
+		command_name: str,
+		*args: Any,
+		**kwargs: Any,
+):
+	"""
+	Handles errors occurring during CDP command execution based on the specified error mode.
+
+	Args:
+		self ("LoggingTargetMixin"): The instance executing the command.
+		error (BaseException): The exception that was caught.
+		error_mode (Literal["raise", "log", "log_without_args", "pass"]): Strategy for handling the error.
+		command_name (str): Name of the CDP command that failed.
+		*args (Any): Positional arguments passed to the command.
+		**kwargs (Any): Keyword arguments passed to the command.
+
+	Returns:
+		Union[Any, ExceptionThrown]: Returns ExceptionThrown if not raising.
+
+	Raises:
+		BaseException: The original error if error_mode is "raise".
+		ValueError: If an invalid error_mode is provided.
+	"""
+	
+	if error_mode == "raise":
+		raise error
+	
+	if error_mode == "log":
+		await self.log_cdp_error(
+				error=error,
+				extra_data={"cdp_command": command_name, "args": args, "kwargs": kwargs}
+		)
+	
+		return ExceptionThrown(exception=error)
+	
+	if error_mode == "log_without_args":
+		await self.log_cdp_error(error=error, extra_data={"cdp_command": command_name})
+	
+		return ExceptionThrown(exception=error)
+	
+	if error_mode == "pass":
+		return ExceptionThrown(exception=error)
+	
+	raise ValueError(f"Wrong error_mode: {error_mode}. Expected: 'raise', 'log', 'pass'.")
+
+
 async def execute_cdp_command(
 		self: "LoggingTargetMixin",
-		error_mode: Literal["raise", "log", "pass"],
 		function: Callable[..., Any],
+		cdp_error_mode: Literal["raise", "log", "log_without_args", "pass"] = "raise",
+		error_mode: Literal["raise", "log", "log_without_args", "pass"] = "raise",
+		command_retries: int = 0,
 		*args: Any,
-		**kwargs: Any
+		**kwargs: Any,
 ) -> Union[Any, ExceptionThrown]:
 	"""
 	Executes a Chrome DevTools Protocol (CDP) command with specified error handling.
@@ -215,11 +266,10 @@ async def execute_cdp_command(
 
 	Args:
 		self ("LoggingTargetMixin"): The `LoggingTargetMixin` instance through which the command is executed.
-		error_mode (Literal["raise", "log", "pass"]): Defines how exceptions are handled.
-			"raise": Re-raises the exception.
-			"log": Logs the exception and returns `ExceptionThrown`.
-			"pass": Returns `ExceptionThrown` without logging.
 		function (Callable[..., Any]): The CDP command function to execute (e.g., `devtools.page.navigate`).
+		cdp_error_mode (Literal["raise", "log", "log_without_args", "pass"]): Strategy for connection errors.
+		error_mode (Literal["raise", "log", "log_without_args", "pass"]): Strategy for general execution errors.
+		command_retries (int): Number of times to retry the command on failure.
 		*args (Any): Positional arguments to pass to the CDP command function.
 		**kwargs (Any): Keyword arguments to pass to the CDP command function.
 
@@ -240,20 +290,28 @@ async def execute_cdp_command(
 				extra_data={"args": args, "kwargs": kwargs}
 		)
 	
+		for i in range(command_retries):
+			try:
+				return await self.cdp_session.execute(function(*args, **kwargs))
+			except* (BaseException):
+				await trio.sleep(1.0)
+	
 		return await self.cdp_session.execute(function(*args, **kwargs))
 	except cdp_end_exceptions as error:
-		raise error
+		return await cdp_command_error(
+				self=self,
+				error=error,
+				error_mode=cdp_error_mode,
+				command_name=function.__name__,
+				*args,
+				**kwargs
+		)
 	except BaseException as error:
-		if error_mode == "raise":
-			raise error
-		elif error_mode == "log":
-			await self.log_cdp_error(
-					error=error,
-					extra_data={"cdp_command": function.__name__, "args": args, "kwargs": kwargs}
-			)
-	
-			return ExceptionThrown(exception=error)
-		elif error_mode == "pass":
-			return ExceptionThrown(exception=error)
-		else:
-			raise ValueError(f"Wrong error_mode: {error_mode}. Expected: 'raise', 'log', 'pass'.")
+		return await cdp_command_error(
+				self=self,
+				error=error,
+				error_mode=error_mode,
+				command_name=function.__name__,
+				*args,
+				**kwargs
+		)

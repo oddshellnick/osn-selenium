@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractInputCDPExecutor(ABC):
@@ -13,7 +18,7 @@ class AbstractInputCDPExecutor(ABC):
 			type_: str,
 			x: float,
 			y: float,
-			data: Any,
+			data: Dict[str, Any],
 			modifiers: Optional[int] = None
 	) -> None:
 		...
@@ -65,7 +70,7 @@ class AbstractInputCDPExecutor(ABC):
 	def dispatch_touch_event(
 			self,
 			type_: str,
-			touch_points: List[Any],
+			touch_points: List[Dict[str, Any]],
 			modifiers: Optional[int] = None,
 			timestamp: Optional[float] = None
 	) -> None:

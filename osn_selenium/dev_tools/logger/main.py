@@ -171,12 +171,12 @@ class MainLogger:
 				self._cdp_file_writing_stopped = trio.Event()
 		
 				if self._cdp_file_path is not None:
-					self._nursery_object.start_soon(self._write_cdp_file,)
+					self._nursery_object.start_soon(self._write_cdp_file)
 		
 				self._fingerprint_file_writing_stopped = trio.Event()
 		
 				if self._fingerprint_file_path is not None:
-					self._nursery_object.start_soon(self._write_fingerprint_file,)
+					self._nursery_object.start_soon(self._write_fingerprint_file)
 		
 				self._is_active = True
 		except* trio_end_exceptions:

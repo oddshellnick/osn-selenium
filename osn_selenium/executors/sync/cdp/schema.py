@@ -4,14 +4,17 @@ from typing import (
 	Dict,
 	List
 )
+from osn_selenium.executors.unified.cdp.schema import (
+	UnifiedSchemaCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.schema import (
 	AbstractSchemaCDPExecutor
 )
 
 
-class SchemaCDPExecutor(AbstractSchemaCDPExecutor):
+class SchemaCDPExecutor(UnifiedSchemaCDPExecutor, AbstractSchemaCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedSchemaCDPExecutor.__init__(self, execute_function=execute_function)
 	
-	def get_domains(self) -> List[Any]:
-		return self._execute_function("Schema.getDomains", locals())
+	def get_domains(self) -> List[Dict[str, Any]]:
+		return self._get_domains_impl()

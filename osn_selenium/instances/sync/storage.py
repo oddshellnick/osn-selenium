@@ -4,12 +4,10 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.types import STORAGE_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.storage import UnifiedStorage
 from osn_selenium.abstract.instances.storage import AbstractStorage
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -22,7 +20,7 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
-class Storage(AbstractStorage):
+class Storage(UnifiedStorage, AbstractStorage):
 	"""
 	Wrapper for the legacy Selenium BiDi Storage instance.
 
@@ -38,20 +36,17 @@ class Storage(AbstractStorage):
 			selenium_storage (legacyStorage): The legacy Selenium Storage instance to wrap.
 		"""
 		
-		if not isinstance(selenium_storage, legacyStorage):
-			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
-		
-		self._selenium_storage = selenium_storage
+		UnifiedStorage.__init__(self, selenium_storage=selenium_storage)
 	
 	def delete_cookies(
 			self,
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> DeleteCookiesResult:
-		return self.legacy.delete_cookies(filter=filter, partition=partition)
+		return self._delete_cookies_impl(filter=filter, partition=partition)
 	
 	@classmethod
-	def from_legacy(cls, selenium_storage: STORAGE_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: STORAGE_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Storage object.
 
@@ -59,16 +54,16 @@ class Storage(AbstractStorage):
 		instance into the new interface.
 
 		Args:
-			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
+			legacy_object (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Storage.
 		"""
 		
-		legacy_storage_obj = get_legacy_instance(selenium_storage)
+		legacy_storage_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypesConvertError(from_=legacyStorage, to_=selenium_storage)
+			raise TypesConvertError(from_=legacyStorage, to_=legacy_object)
 		
 		return cls(selenium_storage=legacy_storage_obj)
 	
@@ -77,15 +72,15 @@ class Storage(AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> GetCookiesResult:
-		return self.legacy.get_cookies(filter=filter, partition=partition)
+		return self._get_cookies_impl(filter=filter, partition=partition)
 	
 	@property
 	def legacy(self) -> legacyStorage:
-		return self._selenium_storage
+		return self._legacy_impl
 	
 	def set_cookie(
 			self,
 			cookie: PartialCookie,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> SetCookieResult:
-		return self.legacy.set_cookie(cookie=cookie, partition=partition)
+		return self._set_cookie_impl(cookie=cookie, partition=partition)

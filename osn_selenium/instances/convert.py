@@ -1,13 +1,16 @@
-from typing import (
-	Optional,
-	Union,
-	overload
-)
-from osn_selenium.instances.errors import ExpectedTypeError
+import trio
 from selenium.webdriver.common.alert import Alert as legacyAlert
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile
+)
+from typing import (
+	Any,
+	Optional,
+	Type,
+	TypeVar,
+	Union,
+	overload
 )
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
@@ -27,6 +30,10 @@ from selenium.webdriver.common.bidi.network import (
 from selenium.webdriver.common.bidi.storage import (
 	Storage as legacyStorage
 )
+from osn_selenium.instances.errors import (
+	ExpectedTypeError,
+	TypeIsNotWrapper
+)
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
@@ -44,6 +51,10 @@ from selenium.webdriver.common.bidi.permissions import (
 )
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
+)
+from osn_selenium.instances.protocols import (
+	SyncInstanceWrapper,
+	TrioThreadInstanceWrapper
 )
 from selenium.webdriver.common.bidi.browsing_context import (
 	BrowsingContext as legacyBrowsingContext
@@ -68,6 +79,10 @@ from osn_selenium.instances.types import (
 	WEB_ELEMENT_TYPEHINT,
 	WEB_EXTENSION_TYPEHINT
 )
+
+
+_SYNC_WRAPPER_TYPE = TypeVar("_SYNC_WRAPPER_TYPE", bound=SyncInstanceWrapper)
+_TRIO_THREAD_WRAPPER_TYPE = TypeVar("_TRIO_THREAD_WRAPPER_TYPE", bound=TrioThreadInstanceWrapper)
 
 
 @overload
@@ -191,6 +206,55 @@ def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_T
 	)
 
 
+def get_trio_thread_instance_wrapper(
+		wrapper_class: Type[_TRIO_THREAD_WRAPPER_TYPE],
+		legacy_object: Any,
+		lock: trio.Lock,
+		limiter: trio.CapacityLimiter,
+) -> _TRIO_THREAD_WRAPPER_TYPE:
+	"""
+	Creates a Trio-compatible thread instance wrapper for a legacy Selenium object.
+
+	Args:
+		wrapper_class (Type[_TRIO_THREAD_WRAPPER_TYPE]): The class used to wrap the legacy object.
+		legacy_object (Any): The legacy Selenium object to be wrapped.
+		lock (trio.Lock): The lock for Trio synchronization.
+		limiter (trio.CapacityLimiter): The capacity limiter for Trio.
+
+	Returns:
+		_TRIO_THREAD_WRAPPER_TYPE: An instance of the wrapper class.
+
+	Raises:
+		TypeIsNotWrapper: If the provided wrapper_class does not implement TrioThreadInstanceWrapper.
+	"""
+	
+	if not isinstance(wrapper_class, TrioThreadInstanceWrapper):
+		raise TypeIsNotWrapper(class_var=wrapper_class, wrapper_protocol=TrioThreadInstanceWrapper)
+	
+	return wrapper_class.from_legacy(legacy_object=legacy_object, lock=lock, limiter=limiter)
+
+
+def get_sync_instance_wrapper(wrapper_class: Type[_SYNC_WRAPPER_TYPE], legacy_object: Any) -> _SYNC_WRAPPER_TYPE:
+	"""
+	Creates a synchronous instance wrapper for a legacy Selenium object.
+
+	Args:
+		wrapper_class (Type[_SYNC_WRAPPER_TYPE]): The class used to wrap the legacy object.
+		legacy_object (Any): The legacy Selenium object to be wrapped.
+
+	Returns:
+		_SYNC_WRAPPER_TYPE: An instance of the wrapper class.
+
+	Raises:
+		TypeIsNotWrapper: If the provided wrapper_class does not implement SyncInstanceWrapper.
+	"""
+	
+	if not isinstance(wrapper_class, SyncInstanceWrapper):
+		raise TypeIsNotWrapper(class_var=wrapper_class, wrapper_protocol=SyncInstanceWrapper)
+	
+	return wrapper_class.from_legacy(legacy_object=legacy_object)
+
+
 def get_legacy_frame_reference(frame_reference: Optional[Union[str, int, WEB_ELEMENT_TYPEHINT]]) -> Optional[Union[str, int, legacyWebElement]]:
 	"""
 	Converts a frame reference to its legacy Selenium equivalent.
@@ -211,4 +275,4 @@ def get_legacy_frame_reference(frame_reference: Optional[Union[str, int, WEB_ELE
 	if isinstance(frame_reference, (str, int)):
 		return frame_reference
 	
-	return get_legacy_instance(frame_reference)
+	return get_legacy_instance(instance=frame_reference)

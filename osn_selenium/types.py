@@ -1,4 +1,4 @@
-from typing import Self, Union
+from typing import Literal, Self, Union
 from pydantic import (
 	BaseModel,
 	ConfigDict
@@ -132,3 +132,4 @@ class ExtraDictModel(BaseModel):
 
 
 DEVICES_TYPEHINT = Union[PointerInput, KeyInput, WheelInput]
+ARCHITECTURE_TYPEHINT = Literal["sync", "trio_threads"]

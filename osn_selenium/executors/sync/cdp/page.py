@@ -6,20 +6,23 @@ from typing import (
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.page import (
+	UnifiedPageCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.page import (
 	AbstractPageCDPExecutor
 )
 
 
-class PageCDPExecutor(AbstractPageCDPExecutor):
+class PageCDPExecutor(UnifiedPageCDPExecutor, AbstractPageCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedPageCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def add_compilation_cache(self, url: str, data: str) -> None:
-		return self._execute_function("Page.addCompilationCache", locals())
+		return self._add_compilation_cache_impl(url=url, data=data)
 	
 	def add_script_to_evaluate_on_load(self, script_source: str) -> str:
-		return self._execute_function("Page.addScriptToEvaluateOnLoad", locals())
+		return self._add_script_to_evaluate_on_load_impl(script_source=script_source)
 	
 	def add_script_to_evaluate_on_new_document(
 			self,
@@ -28,42 +31,54 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			include_command_line_api: Optional[bool] = None,
 			run_immediately: Optional[bool] = None
 	) -> str:
-		return self._execute_function("Page.addScriptToEvaluateOnNewDocument", locals())
+		return self._add_script_to_evaluate_on_new_document_impl(
+				source=source,
+				world_name=world_name,
+				include_command_line_api=include_command_line_api,
+				run_immediately=run_immediately
+		)
 	
 	def bring_to_front(self) -> None:
-		return self._execute_function("Page.bringToFront", locals())
+		return self._bring_to_front_impl()
 	
 	def capture_screenshot(
 			self,
 			format_: Optional[str] = None,
 			quality: Optional[int] = None,
-			clip: Optional[Any] = None,
+			clip: Optional[Dict[str, Any]] = None,
 			from_surface: Optional[bool] = None,
 			capture_beyond_viewport: Optional[bool] = None,
 			optimize_for_speed: Optional[bool] = None
 	) -> str:
-		return self._execute_function("Page.captureScreenshot", locals())
+		return self._capture_screenshot_impl(
+				format_=format_,
+				quality=quality,
+				clip=clip,
+				from_surface=from_surface,
+				capture_beyond_viewport=capture_beyond_viewport,
+				optimize_for_speed=optimize_for_speed
+		)
 	
 	def capture_snapshot(self, format_: Optional[str] = None) -> str:
-		return self._execute_function("Page.captureSnapshot", locals())
+		return self._capture_snapshot_impl(format_=format_)
 	
 	def clear_compilation_cache(self) -> None:
-		return self._execute_function("Page.clearCompilationCache", locals())
+		return self._clear_compilation_cache_impl()
 	
 	def clear_device_metrics_override(self) -> None:
-		return self._execute_function("Page.clearDeviceMetricsOverride", locals())
+		return self._clear_device_metrics_override_impl()
 	
 	def clear_device_orientation_override(self) -> None:
-		return self._execute_function("Page.clearDeviceOrientationOverride", locals())
+		return self._clear_device_orientation_override_impl()
 	
 	def clear_geolocation_override(self) -> None:
-		return self._execute_function("Page.clearGeolocationOverride", locals())
+		return self._clear_geolocation_override_impl()
 	
 	def close(self) -> None:
-		return self._execute_function("Page.close", locals())
+		return self._close_impl()
 	
 	def crash(self) -> None:
-		return self._execute_function("Page.crash", locals())
+		return self._crash_impl()
 	
 	def create_isolated_world(
 			self,
@@ -71,58 +86,69 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			world_name: Optional[str] = None,
 			grant_univeral_access: Optional[bool] = None
 	) -> int:
-		return self._execute_function("Page.createIsolatedWorld", locals())
+		return self._create_isolated_world_impl(
+				frame_id=frame_id,
+				world_name=world_name,
+				grant_univeral_access=grant_univeral_access
+		)
 	
 	def delete_cookie(self, cookie_name: str, url: str) -> None:
-		return self._execute_function("Page.deleteCookie", locals())
+		return self._delete_cookie_impl(cookie_name=cookie_name, url=url)
 	
 	def disable(self) -> None:
-		return self._execute_function("Page.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self, enable_file_chooser_opened_event: Optional[bool] = None) -> None:
-		return self._execute_function("Page.enable", locals())
+		return self._enable_impl(enable_file_chooser_opened_event=enable_file_chooser_opened_event)
 	
 	def generate_test_report(self, message: str, group: Optional[str] = None) -> None:
-		return self._execute_function("Page.generateTestReport", locals())
+		return self._generate_test_report_impl(message=message, group=group)
 	
-	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Any]:
-		return self._execute_function("Page.getAdScriptAncestry", locals())
+	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Dict[str, Any]]:
+		return self._get_ad_script_ancestry_impl(frame_id=frame_id)
 	
 	def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
-		return self._execute_function("Page.getAppId", locals())
+		return self._get_app_id_impl()
 	
-	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Any], Optional[str], Optional[Any], Any]:
-		return self._execute_function("Page.getAppManifest", locals())
+	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Dict[str, Any]], Optional[str], Optional[Dict[str, Any]], Dict[str, Any]]:
+		return self._get_app_manifest_impl(manifest_id=manifest_id)
 	
-	def get_frame_tree(self) -> Any:
-		return self._execute_function("Page.getFrameTree", locals())
+	def get_frame_tree(self) -> Dict[str, Any]:
+		return self._get_frame_tree_impl()
 	
-	def get_installability_errors(self) -> List[Any]:
-		return self._execute_function("Page.getInstallabilityErrors", locals())
+	def get_installability_errors(self) -> List[Dict[str, Any]]:
+		return self._get_installability_errors_impl()
 	
-	def get_layout_metrics(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
-		return self._execute_function("Page.getLayoutMetrics", locals())
+	def get_layout_metrics(self) -> Tuple[
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any]
+	]:
+		return self._get_layout_metrics_impl()
 	
 	def get_manifest_icons(self) -> Optional[str]:
-		return self._execute_function("Page.getManifestIcons", locals())
+		return self._get_manifest_icons_impl()
 	
-	def get_navigation_history(self) -> Tuple[int, List[Any]]:
-		return self._execute_function("Page.getNavigationHistory", locals())
+	def get_navigation_history(self) -> Tuple[int, List[Dict[str, Any]]]:
+		return self._get_navigation_history_impl()
 	
-	def get_origin_trials(self, frame_id: str) -> List[Any]:
-		return self._execute_function("Page.getOriginTrials", locals())
+	def get_origin_trials(self, frame_id: str) -> List[Dict[str, Any]]:
+		return self._get_origin_trials_impl(frame_id=frame_id)
 	
-	def get_permissions_policy_state(self, frame_id: str) -> List[Any]:
-		return self._execute_function("Page.getPermissionsPolicyState", locals())
+	def get_permissions_policy_state(self, frame_id: str) -> List[Dict[str, Any]]:
+		return self._get_permissions_policy_state_impl(frame_id=frame_id)
 	
 	def get_resource_content(self, frame_id: str, url: str) -> Tuple[str, bool]:
-		return self._execute_function("Page.getResourceContent", locals())
+		return self._get_resource_content_impl(frame_id=frame_id, url=url)
 	
-	def get_resource_tree(self) -> Any:
-		return self._execute_function("Page.getResourceTree", locals())
+	def get_resource_tree(self) -> Dict[str, Any]:
+		return self._get_resource_tree_impl()
 	
 	def handle_java_script_dialog(self, accept: bool, prompt_text: Optional[str] = None) -> None:
-		return self._execute_function("Page.handleJavaScriptDialog", locals())
+		return self._handle_java_script_dialog_impl(accept=accept, prompt_text=prompt_text)
 	
 	def navigate(
 			self,
@@ -132,10 +158,16 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			frame_id: Optional[str] = None,
 			referrer_policy: Optional[str] = None
 	) -> Tuple[str, Optional[str], Optional[str], Optional[bool]]:
-		return self._execute_function("Page.navigate", locals())
+		return self._navigate_impl(
+				url=url,
+				referrer=referrer,
+				transition_type=transition_type,
+				frame_id=frame_id,
+				referrer_policy=referrer_policy
+		)
 	
 	def navigate_to_history_entry(self, entry_id: int) -> None:
-		return self._execute_function("Page.navigateToHistoryEntry", locals())
+		return self._navigate_to_history_entry_impl(entry_id=entry_id)
 	
 	def print_to_pdf(
 			self,
@@ -157,10 +189,28 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			generate_tagged_pdf: Optional[bool] = None,
 			generate_document_outline: Optional[bool] = None
 	) -> Tuple[str, Optional[str]]:
-		return self._execute_function("Page.printToPDF", locals())
+		return self._print_to_pdf_impl(
+				landscape=landscape,
+				display_header_footer=display_header_footer,
+				print_background=print_background,
+				scale=scale,
+				paper_width=paper_width,
+				paper_height=paper_height,
+				margin_top=margin_top,
+				margin_bottom=margin_bottom,
+				margin_left=margin_left,
+				margin_right=margin_right,
+				page_ranges=page_ranges,
+				header_template=header_template,
+				footer_template=footer_template,
+				prefer_css_page_size=prefer_css_page_size,
+				transfer_mode=transfer_mode,
+				generate_tagged_pdf=generate_tagged_pdf,
+				generate_document_outline=generate_document_outline
+		)
 	
-	def produce_compilation_cache(self, scripts: List[Any]) -> None:
-		return self._execute_function("Page.produceCompilationCache", locals())
+	def produce_compilation_cache(self, scripts: List[Dict[str, Any]]) -> None:
+		return self._produce_compilation_cache_impl(scripts=scripts)
 	
 	def reload(
 			self,
@@ -168,19 +218,23 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			script_to_evaluate_on_load: Optional[str] = None,
 			loader_id: Optional[str] = None
 	) -> None:
-		return self._execute_function("Page.reload", locals())
+		return self._reload_impl(
+				ignore_cache=ignore_cache,
+				script_to_evaluate_on_load=script_to_evaluate_on_load,
+				loader_id=loader_id
+		)
 	
 	def remove_script_to_evaluate_on_load(self, identifier: str) -> None:
-		return self._execute_function("Page.removeScriptToEvaluateOnLoad", locals())
+		return self._remove_script_to_evaluate_on_load_impl(identifier=identifier)
 	
 	def remove_script_to_evaluate_on_new_document(self, identifier: str) -> None:
-		return self._execute_function("Page.removeScriptToEvaluateOnNewDocument", locals())
+		return self._remove_script_to_evaluate_on_new_document_impl(identifier=identifier)
 	
 	def reset_navigation_history(self) -> None:
-		return self._execute_function("Page.resetNavigationHistory", locals())
+		return self._reset_navigation_history_impl()
 	
 	def screencast_frame_ack(self, session_id: int) -> None:
-		return self._execute_function("Page.screencastFrameAck", locals())
+		return self._screencast_frame_ack_impl(session_id=session_id)
 	
 	def search_in_resource(
 			self,
@@ -189,14 +243,20 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			query: str,
 			case_sensitive: Optional[bool] = None,
 			is_regex: Optional[bool] = None
-	) -> List[Any]:
-		return self._execute_function("Page.searchInResource", locals())
+	) -> List[Dict[str, Any]]:
+		return self._search_in_resource_impl(
+				frame_id=frame_id,
+				url=url,
+				query=query,
+				case_sensitive=case_sensitive,
+				is_regex=is_regex
+		)
 	
 	def set_ad_blocking_enabled(self, enabled: bool) -> None:
-		return self._execute_function("Page.setAdBlockingEnabled", locals())
+		return self._set_ad_blocking_enabled_impl(enabled=enabled)
 	
 	def set_bypass_csp(self, enabled: bool) -> None:
-		return self._execute_function("Page.setBypassCSP", locals())
+		return self._set_bypass_csp_impl(enabled=enabled)
 	
 	def set_device_metrics_override(
 			self,
@@ -210,25 +270,42 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			position_x: Optional[int] = None,
 			position_y: Optional[int] = None,
 			dont_set_visible_size: Optional[bool] = None,
-			screen_orientation: Optional[Any] = None,
-			viewport: Optional[Any] = None
+			screen_orientation: Optional[Dict[str, Any]] = None,
+			viewport: Optional[Dict[str, Any]] = None
 	) -> None:
-		return self._execute_function("Page.setDeviceMetricsOverride", locals())
+		return self._set_device_metrics_override_impl(
+				width=width,
+				height=height,
+				device_scale_factor=device_scale_factor,
+				mobile=mobile,
+				scale=scale,
+				screen_width=screen_width,
+				screen_height=screen_height,
+				position_x=position_x,
+				position_y=position_y,
+				dont_set_visible_size=dont_set_visible_size,
+				screen_orientation=screen_orientation,
+				viewport=viewport
+		)
 	
 	def set_device_orientation_override(self, alpha: float, beta: float, gamma: float) -> None:
-		return self._execute_function("Page.setDeviceOrientationOverride", locals())
+		return self._set_device_orientation_override_impl(alpha=alpha, beta=beta, gamma=gamma)
 	
 	def set_document_content(self, frame_id: str, html: str) -> None:
-		return self._execute_function("Page.setDocumentContent", locals())
+		return self._set_document_content_impl(frame_id=frame_id, html=html)
 	
 	def set_download_behavior(self, behavior: str, download_path: Optional[str] = None) -> None:
-		return self._execute_function("Page.setDownloadBehavior", locals())
+		return self._set_download_behavior_impl(behavior=behavior, download_path=download_path)
 	
-	def set_font_families(self, font_families: Any, for_scripts: Optional[List[Any]] = None) -> None:
-		return self._execute_function("Page.setFontFamilies", locals())
+	def set_font_families(
+			self,
+			font_families: Dict[str, Any],
+			for_scripts: Optional[List[Dict[str, Any]]] = None
+	) -> None:
+		return self._set_font_families_impl(font_families=font_families, for_scripts=for_scripts)
 	
-	def set_font_sizes(self, font_sizes: Any) -> None:
-		return self._execute_function("Page.setFontSizes", locals())
+	def set_font_sizes(self, font_sizes: Dict[str, Any]) -> None:
+		return self._set_font_sizes_impl(font_sizes=font_sizes)
 	
 	def set_geolocation_override(
 			self,
@@ -236,28 +313,28 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			longitude: Optional[float] = None,
 			accuracy: Optional[float] = None
 	) -> None:
-		return self._execute_function("Page.setGeolocationOverride", locals())
+		return self._set_geolocation_override_impl(latitude=latitude, longitude=longitude, accuracy=accuracy)
 	
 	def set_intercept_file_chooser_dialog(self, enabled: bool, cancel: Optional[bool] = None) -> None:
-		return self._execute_function("Page.setInterceptFileChooserDialog", locals())
+		return self._set_intercept_file_chooser_dialog_impl(enabled=enabled, cancel=cancel)
 	
 	def set_lifecycle_events_enabled(self, enabled: bool) -> None:
-		return self._execute_function("Page.setLifecycleEventsEnabled", locals())
+		return self._set_lifecycle_events_enabled_impl(enabled=enabled)
 	
 	def set_prerendering_allowed(self, is_allowed: bool) -> None:
-		return self._execute_function("Page.setPrerenderingAllowed", locals())
+		return self._set_prerendering_allowed_impl(is_allowed=is_allowed)
 	
 	def set_rph_registration_mode(self, mode: str) -> None:
-		return self._execute_function("Page.setRPHRegistrationMode", locals())
+		return self._set_rph_registration_mode_impl(mode=mode)
 	
 	def set_spc_transaction_mode(self, mode: str) -> None:
-		return self._execute_function("Page.setSPCTransactionMode", locals())
+		return self._set_spc_transaction_mode_impl(mode=mode)
 	
 	def set_touch_emulation_enabled(self, enabled: bool, configuration: Optional[str] = None) -> None:
-		return self._execute_function("Page.setTouchEmulationEnabled", locals())
+		return self._set_touch_emulation_enabled_impl(enabled=enabled, configuration=configuration)
 	
 	def set_web_lifecycle_state(self, state: str) -> None:
-		return self._execute_function("Page.setWebLifecycleState", locals())
+		return self._set_web_lifecycle_state_impl(state=state)
 	
 	def start_screencast(
 			self,
@@ -267,13 +344,19 @@ class PageCDPExecutor(AbstractPageCDPExecutor):
 			max_height: Optional[int] = None,
 			every_nth_frame: Optional[int] = None
 	) -> None:
-		return self._execute_function("Page.startScreencast", locals())
+		return self._start_screencast_impl(
+				format_=format_,
+				quality=quality,
+				max_width=max_width,
+				max_height=max_height,
+				every_nth_frame=every_nth_frame
+		)
 	
 	def stop_loading(self) -> None:
-		return self._execute_function("Page.stopLoading", locals())
+		return self._stop_loading_impl()
 	
 	def stop_screencast(self) -> None:
-		return self._execute_function("Page.stopScreencast", locals())
+		return self._stop_screencast_impl()
 	
 	def wait_for_debugger(self) -> None:
-		return self._execute_function("Page.waitForDebugger", locals())
+		return self._wait_for_debugger_impl()

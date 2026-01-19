@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -13,7 +14,7 @@ class AbstractAuditsCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def check_forms_issues(self) -> List[Any]:
+	def check_forms_issues(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod

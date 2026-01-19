@@ -108,7 +108,7 @@ class AbstractWebElement(ABC):
 		...
 	
 	@abstractmethod
-	def find_element(self, by: str = By.ID, value: Optional[str] = None,) -> Self:
+	def find_element(self, by: str = By.ID, value: Optional[str] = None) -> Self:
 		"""
 		Finds a child element within this element's context.
 
@@ -123,7 +123,7 @@ class AbstractWebElement(ABC):
 		...
 	
 	@abstractmethod
-	def find_elements(self, by: str = By.ID, value: Optional[str] = None,) -> Sequence[Self]:
+	def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> Sequence[Self]:
 		"""
 		Finds all child elements within this element's context.
 

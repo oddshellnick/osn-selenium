@@ -1,17 +1,19 @@
 import inspect
 import functools
 from typing import (
+	Any,
 	Callable,
 	ParamSpec,
 	TypeVar
 )
 
 
-METHOD_INPUT = ParamSpec("METHOD_INPUT")
-METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
+_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
+_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
+_METHOD = TypeVar("_METHOD", bound=Callable[..., Any])
 
 
-def requires_driver(fn: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
+def requires_driver(fn: _METHOD) -> _METHOD:
 	"""
 	A decorator that ensures a '_ensure_driver' method is called before
 	executing the decorated method.
@@ -21,41 +23,49 @@ def requires_driver(fn: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHO
 	to the original method.
 
 	Args:
-		fn (Callable[METHOD_INPUT, METHOD_OUTPUT]): The method to decorate.
+		fn (_METHOD): The method to decorate.
 
 	Returns:
-		Callable[METHOD_INPUT, METHOD_OUTPUT]: The wrapped synchronous or asynchronous method.
+		_METHOD: The wrapped synchronous or asynchronous method.
 	"""
 	
 	@functools.wraps(fn)
-	def sync_wrapper(self: object, *args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+	def sync_wrapper(
+			self: object,
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs
+	) -> _METHOD_OUTPUT:
 		"""
 		Synchronous wrapper for methods decorated with requires_driver.
 
 		Args:
 			self (object): The instance on which the method is called.
-			*args (METHOD_INPUT.args): Positional arguments for the wrapped method.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
+			*args (_METHOD_INPUT.args): Positional arguments for the wrapped method.
+			**kwargs (_METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
 
 		Returns:
-			METHOD_OUTPUT: The result of the wrapped method.
+			_METHOD_OUTPUT: The result of the wrapped method.
 		"""
 		
 		getattr(self, "_ensure_driver")()
 		return fn(self, *args, **kwargs)
 	
 	@functools.wraps(fn)
-	async def async_wrapper(self: object, *args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+	async def async_wrapper(
+			self: object,
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs
+	) -> _METHOD_OUTPUT:
 		"""
 		Asynchronous wrapper for methods decorated with requires_driver.
 
 		Args:
 			self (object): The instance on which the method is called.
-			*args (METHOD_INPUT.args): Positional arguments for the wrapped method.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
+			*args (_METHOD_INPUT.args): Positional arguments for the wrapped method.
+			**kwargs (_METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
 
 		Returns:
-			METHOD_OUTPUT: The result of the wrapped method.
+			_METHOD_OUTPUT: The result of the wrapped method.
 		"""
 		
 		getattr(self, "_ensure_driver")()

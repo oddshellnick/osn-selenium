@@ -1,19 +1,20 @@
 from selenium import webdriver
 from abc import ABC, abstractmethod
-from selenium.webdriver.common.bidi.session import Session
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from selenium.webdriver.remote.remote_connection import RemoteConnection
-from selenium.webdriver.remote.locator_converter import LocatorConverter
 from typing import (
 	Any,
 	Dict,
-	List,
 	Optional,
-	Set,
-	Tuple,
 	Union
 )
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT
+)
+from selenium.webdriver.common.bidi.session import Session
+from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
+from selenium.webdriver.remote.remote_connection import RemoteConnection
+from selenium.webdriver.remote.locator_converter import LocatorConverter
+from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
@@ -49,37 +50,14 @@ class AbstractCoreBaseMixin(ABC):
 		
 		...
 	
+	@property
 	@abstractmethod
-	def _unwrap_args(self, arg: Any) -> Any:
+	def architecture(self) -> ARCHITECTURE_TYPEHINT:
 		"""
-		Internal method to convert local elements back into raw Selenium elements.
-
-		Args:
-			arg (Any): The argument to unwrap.
+		Returns the architecture of the driver.
 
 		Returns:
-			Any: The raw Selenium element or object.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def _wrap_result(self, result: Any) -> Union[
-		WEB_ELEMENT_TYPEHINT,
-		List[WEB_ELEMENT_TYPEHINT],
-		Dict[Any, WEB_ELEMENT_TYPEHINT],
-		Set[WEB_ELEMENT_TYPEHINT],
-		Tuple[WEB_ELEMENT_TYPEHINT, ...],
-		Any,
-	]:
-		"""
-		Internal method to wrap raw Selenium results into local element types.
-
-		Args:
-			result (Any): The raw result from the driver.
-
-		Returns:
-			Union: The wrapped element, sequence of elements, or the original object.
+			ARCHITECTURE_TYPEHINT: The architecture name.
 		"""
 		
 		...
@@ -116,6 +94,19 @@ class AbstractCoreBaseMixin(ABC):
 
 		Args:
 			value (Dict[str, Any]): Dictionary of capabilities.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def cdp(self) -> AbstractCDPExecutor:
+		"""
+		Returns the CDP (Chrome DevTools Protocol) executor.
+
+		Returns:
+			AbstractCDPExecutor: The CDP executor instance used for sending
+			commands directly to the browser via the DevTools protocol.
 		"""
 		
 		...
@@ -203,6 +194,18 @@ class AbstractCoreBaseMixin(ABC):
 
 		Returns:
 			bool: True if the driver is active, False otherwise.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def javascript(self) -> AbstractJSExecutor:
+		"""
+		Returns the JavaScript executor for this WebDriver instance.
+
+		Returns:
+			AbstractJSExecutor: The JavaScript executor instance.
 		"""
 		
 		...

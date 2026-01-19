@@ -22,7 +22,7 @@ class AbstractShadowRoot(ABC):
 	"""
 	
 	@abstractmethod
-	def find_element(self, by: By = By.ID, value: Optional[str] = None,) -> "AbstractWebElement":
+	def find_element(self, by: By = By.ID, value: Optional[str] = None) -> "AbstractWebElement":
 		"""
 		Find an element within the shadow root's context.
 
@@ -37,7 +37,7 @@ class AbstractShadowRoot(ABC):
 		...
 	
 	@abstractmethod
-	def find_elements(self, by: By = By.ID, value: Optional[str] = None,) -> Sequence["AbstractWebElement"]:
+	def find_elements(self, by: By = By.ID, value: Optional[str] = None) -> Sequence["AbstractWebElement"]:
 		"""
 		Find all elements within the shadow root's context.
 

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 
@@ -12,5 +12,5 @@ class AbstractWebAudioCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_realtime_data(self, context_id: str) -> Any:
+	def get_realtime_data(self, context_id: str) -> Dict[str, Any]:
 		...

@@ -17,17 +17,6 @@ class AbstractChromeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	"""
 	
 	@abstractmethod
-	def _create_driver(self) -> None:
-		"""
-		Creates the Chrome webdriver instance.
-
-		This method initializes and sets up the Selenium Chrome WebDriver using ChromeDriver with configured options and service.
-		It also sets the window position, size, implicit wait time, and page load timeout.
-		"""
-		
-		...
-	
-	@abstractmethod
 	def restart_webdriver(
 			self,
 			flags: Optional[ChromeFlags] = None,

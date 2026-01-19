@@ -67,32 +67,52 @@ class FingerprintMixin(LoggingMixin):
 			BaseException: If any other error occurs.
 		"""
 		
-		if self._fingerprint_settings:
+		if self._fingerprint_injection_script:
 			try:
 				await execute_cdp_command(
 						self=self,
-						error_mode="log",
-						function=self.devtools_package.get("page.enable")
+						cdp_error_mode="pass"
+						if not self._is_main_target
+						else "log",
+						error_mode="pass"
+						if not self._is_main_target
+						else "log",
+						function=self.devtools_package.get("page.enable"),
 				)
 				await execute_cdp_command(
 						self=self,
-						error_mode="log",
-						function=self.devtools_package.get("runtime.enable")
+						cdp_error_mode="pass"
+						if not self._is_main_target
+						else "log",
+						error_mode="pass"
+						if not self._is_main_target
+						else "log",
+						function=self.devtools_package.get("runtime.enable"),
 				)
 		
 				await execute_cdp_command(
 						self=self,
-						error_mode="log",
+						cdp_error_mode="pass"
+						if not self._is_main_target
+						else "log",
+						error_mode="pass"
+						if not self._is_main_target
+						else "log",
 						function=self.devtools_package.get("runtime.add_binding"),
-						name="__osn_fingerprint_report__"
+						name="__osn_fingerprint_report__",
 				)
 		
 				await execute_cdp_command(
 						self=self,
-						error_mode="log",
+						cdp_error_mode="pass"
+						if not self._is_main_target
+						else "log_without_args",
+						error_mode="pass"
+						if not self._is_main_target
+						else "log_without_args",
 						function=self.devtools_package.get("page.add_script_to_evaluate_on_new_document"),
-						source=self._fingerprint_settings.generate_js(),
-						run_immediately=True
+						source=self._fingerprint_injection_script,
+						run_immediately=True,
 				)
 		
 				self._nursery_object.start_soon(self._run_fingerprint_detect_listener, ready_event)

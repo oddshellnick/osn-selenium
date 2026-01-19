@@ -5,14 +5,12 @@ from typing import (
 	TypeVar
 )
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WebDriverWaitInputType
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
+from osn_selenium.instances.unified.web_driver_wait import UnifiedWebDriverWait
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
 )
@@ -24,7 +22,7 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 OUTPUT = TypeVar("OUTPUT")
 
 
-class WebDriverWait(TrioThreadMixin, AbstractWebDriverWait):
+class WebDriverWait(UnifiedWebDriverWait, TrioThreadMixin, AbstractWebDriverWait):
 	"""
 	Wrapper for the legacy Selenium WebDriverWait instance.
 
@@ -47,48 +45,38 @@ class WebDriverWait(TrioThreadMixin, AbstractWebDriverWait):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedWebDriverWait.__init__(self, selenium_webdriver_wait=selenium_webdriver_wait)
 		
-		if not isinstance(selenium_webdriver_wait, legacyWebDriverWait):
-			raise ExpectedTypeError(
-					expected_class=legacyWebDriverWait,
-					received_instance=selenium_webdriver_wait
-			)
-		
-		self._selenium_webdriver_wait = selenium_webdriver_wait
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_webdriver_wait: legacyWebDriverWait,
+			legacy_object: legacyWebDriverWait,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
-		legacy_wait_obj = get_legacy_instance(selenium_webdriver_wait)
+		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):
-			raise TypesConvertError(from_=legacyWebDriverWait, to_=selenium_webdriver_wait)
+			raise TypesConvertError(from_=legacyWebDriverWait, to_=legacy_object)
 		
 		return cls(selenium_webdriver_wait=legacy_wait_obj, lock=lock, limiter=limiter)
 	
 	@property
 	def legacy(self) -> legacyWebDriverWait:
-		return self._selenium_webdriver_wait
+		return self._legacy_impl
 	
 	async def until(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._sync_to_trio(self._selenium_webdriver_wait.until, method=method, message=message)
+		return await self.sync_to_trio(sync_function=self._until_impl)(method=method, message=message)
 	
 	async def until_not(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._sync_to_trio(
-				self._selenium_webdriver_wait.until_not,
-				method=method,
-				message=message
-		)
+		return await self.sync_to_trio(sync_function=self._until_not_impl)(method=method, message=message)

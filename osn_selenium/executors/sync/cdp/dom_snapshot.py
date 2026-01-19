@@ -6,14 +6,17 @@ from typing import (
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.dom_snapshot import (
+	UnifiedDomSnapshotCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.dom_snapshot import (
 	AbstractDomSnapshotCDPExecutor
 )
 
 
-class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
+class DomSnapshotCDPExecutor(UnifiedDomSnapshotCDPExecutor, AbstractDomSnapshotCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedDomSnapshotCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def capture_snapshot(
 			self,
@@ -22,14 +25,20 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_dom_rects: Optional[bool] = None,
 			include_blended_background_colors: Optional[bool] = None,
 			include_text_color_opacities: Optional[bool] = None
-	) -> Tuple[List[Any], List[str]]:
-		return self._execute_function("DOMSnapshot.captureSnapshot", locals())
+	) -> Tuple[List[Dict[str, Any]], List[str]]:
+		return self._capture_snapshot_impl(
+				computed_styles=computed_styles,
+				include_paint_order=include_paint_order,
+				include_dom_rects=include_dom_rects,
+				include_blended_background_colors=include_blended_background_colors,
+				include_text_color_opacities=include_text_color_opacities
+		)
 	
 	def disable(self) -> None:
-		return self._execute_function("DOMSnapshot.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("DOMSnapshot.enable", locals())
+		return self._enable_impl()
 	
 	def get_snapshot(
 			self,
@@ -37,5 +46,10 @@ class DomSnapshotCDPExecutor(AbstractDomSnapshotCDPExecutor):
 			include_event_listeners: Optional[bool] = None,
 			include_paint_order: Optional[bool] = None,
 			include_user_agent_shadow_tree: Optional[bool] = None
-	) -> Tuple[List[Any], List[Any], List[Any]]:
-		return self._execute_function("DOMSnapshot.getSnapshot", locals())
+	) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+		return self._get_snapshot_impl(
+				computed_style_whitelist=computed_style_whitelist,
+				include_event_listeners=include_event_listeners,
+				include_paint_order=include_paint_order,
+				include_user_agent_shadow_tree=include_user_agent_shadow_tree
+		)

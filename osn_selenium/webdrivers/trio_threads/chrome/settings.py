@@ -2,13 +2,20 @@ import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.chrome import ChromeFlags
-from osn_selenium.webdrivers.trio_threads.chrome.base import ChromeBaseMixin
+from osn_selenium.webdrivers.trio_threads.blink import BlinkSettingsMixin
+from osn_selenium.webdrivers.unified.chrome.settings import (
+	UnifiedChromeSettingsMixin
+)
 from osn_selenium.abstract.webdriver.chrome.settings import (
 	AbstractChromeSettingsMixin
 )
 
 
-class ChromeSettingsMixin(ChromeBaseMixin, AbstractChromeSettingsMixin):
+class ChromeSettingsMixin(
+		UnifiedChromeSettingsMixin,
+		BlinkSettingsMixin,
+		AbstractChromeSettingsMixin
+):
 	"""
 	Mixin for configuring and updating settings of the Chrome WebDriver.
 
@@ -25,7 +32,7 @@ class ChromeSettingsMixin(ChromeBaseMixin, AbstractChromeSettingsMixin):
 			start_page_url: str = "",
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await super().reset_settings(
+		await self.sync_to_trio(sync_function=self._reset_settings_impl)(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -43,7 +50,7 @@ class ChromeSettingsMixin(ChromeBaseMixin, AbstractChromeSettingsMixin):
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await super().update_settings(
+		await self.sync_to_trio(sync_function=self._update_settings_impl)(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
