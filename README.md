@@ -1,6 +1,6 @@
-# osn-selenium: Advanced Selenium wrapper with Trio support and CDP integration
+# osn-selenium: Advanced Selenium Wrapper with Async Support and Fingerprinting Protection
 
-osn-selenium is a comprehensive Python library that extends standard Selenium WebDriver capabilities by offering both synchronous and asynchronous (Trio-based) execution modes. It provides robust tools for managing browser flags via Pydantic models, advanced Chrome DevTools Protocol (CDP) interaction for network interception and event handling, and human-like input simulation to mimic natural user behavior.
+osn-selenium is a robust wrapper around Selenium WebDriver designed for automation of Blink-based browsers (Chrome, Edge, Yandex). It extends standard Selenium capabilities by providing native asynchronous support via Trio, deep integration with the Chrome DevTools Protocol (CDP), sophisticated browser fingerprint spoofing, and human-like user interaction simulation.
 
 ## Technologies
 
@@ -16,36 +16,34 @@ osn-selenium is a comprehensive Python library that extends standard Selenium We
 
 ## Key Features
 
-*   **Dual Execution Modes:**
-    *   **Sync:** Enhanced synchronous WebDrivers compatible with standard Selenium usage.
-    *   **Trio Threads:** Fully asynchronous WebDrivers using Trio, enabling non-blocking operations and concurrent browser management.
-*   **Advanced CDP Integration:**
-    *   Direct access to Chrome DevTools Protocol commands via `driver.cdp`.
-    *   Dedicated `DevTools` manager for event listening (e.g., `Fetch`, `Network` domains).
-    *   Support for request interception, modification, and authentication handling.
-*   **Typed Flag Management:**
-    *   Pydantic-based configuration for Chrome, Edge, and Yandex browsers.
-    *   Structured access to arguments, experimental options, and attributes.
+*   **Dual Operation Modes:**
+    *   **Synchronous:** Standard blocking execution similar to vanilla Selenium.
+    *   **Asynchronous (Trio):** Fully async implementation allowing concurrent control of browser targets using the Trio library.
+*   **Deep CDP Integration:**
+    *   Direct access to Chrome DevTools Protocol domains (Network, Page, DOM, Security, etc.).
+    *   Event listening and handling (e.g., intercepting network requests, console logs).
+*   **Advanced Fingerprint Spoofing:**
+    *   `FingerprintSettings` module to inject scripts detecting and modifying browser fingerprints.
+    *   Spoofing capabilities for Canvas, WebGL, AudioContext, Fonts, Screen properties, and more.
+    *   Configurable noise generation (static or random) to evade anti-bot detection.
 *   **Human-Like Interactions:**
-    *   `HumanLikeActionChains` for natural mouse movements (Bezier-like curves).
-    *   Variable typing speeds and randomized scrolling patterns.
+    *   `HumanLikeActionChains` simulating natural mouse movements (Bezier curves, deviations) and typing speeds.
+    *   Smooth scrolling algorithms.
 *   **Browser Lifecycle Management:**
-    *   Auto-detection of browser binaries on Windows and Linux.
-    *   Smart port finding and process cleanup.
-*   **Fingerprint Detection:**
-    *   Built-in scripts and logging to detect if the target website is probing browser fingerprints.
+    *   Auto-detection of installed browsers (Chrome, Edge, Yandex).
+    *   Robust handling of browser processes, including zombie process cleanup and port management.
+    *   Structured management of browser flags, arguments, and experimental options.
+*   **Enhanced Element Interaction:**
+    *   Wrappers for WebElements, ShadowRoots, and Alerts with additional utility methods.
+    *   Built-in JavaScript execution helpers for viewport checks and geometry retrieval.
 
 ## Installation
 
-1. Install library:
+1.  **Install library:**
+
     *   **With pip:**
         ```bash
         pip install osn-selenium
-        ```
-
-        **With pip (beta versions):**
-        ```bash
-        pip install -i https://test.pypi.org/simple/ osn-selenium
         ```
 
     *   **With git:**
@@ -54,7 +52,7 @@ osn-selenium is a comprehensive Python library that extends standard Selenium We
         ```
         *(Ensure you have git installed)*
 
-2. **Install the required Python packages using pip:**
+2.  **Install the required Python packages using pip:**
 
     ```bash
     pip install -r requirements.txt
@@ -64,78 +62,71 @@ osn-selenium is a comprehensive Python library that extends standard Selenium We
 
 Here are some examples of how to use `osn-selenium`:
 
-### Synchronous Chrome Driver with Typed Flags
+### Synchronous Chrome with Human-Like Actions
 
 ```python
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
-from osn_selenium.flags.models.chrome import ChromeFlags, ChromeArguments
+from osn_selenium.types import WindowRect
 
-# Configure typed flags using Pydantic models
-flags = ChromeFlags(
-    argument=ChromeArguments(
-        headless_mode=False,
-        mute_audio=True,
-        no_first_run=True
-    )
-)
-
-# Initialize driver (auto-detects binary)
+# Initialize driver with specific window size
 driver = ChromeWebDriver(
-    webdriver_path="path/to/chromedriver.exe",
-    flags=flags
+    webdriver_path="webdriver.exe",
+    window_rect=WindowRect(width=1280, height=720)
 )
 
 try:
     driver.start_webdriver()
-    driver.get("https://www.google.com")
+    driver.get("https://google.com")
     
-    # Use Human-like actions
-    search_box = driver.find_element(by="name", value="q")
+    # Locate search bar
+    search_bar = driver.find_element(by="name", value="q")
+    
+    # Use HumanLikeActionChains for natural typing
     actions = driver.hm_action_chain()
-    actions.hm_move_to_element(search_box)
+    actions.hm_move_to_element(search_bar)
     actions.click()
-    actions.hm_text_input("Selenium automation") # Types with variable delay
+    actions.hm_text_input("Selenium automation")
     actions.perform()
     
 finally:
-    driver.close_webdriver()
+    driver.quit()
 ```
 
-### Asynchronous (Trio) with CDP Interception
+### Asynchronous (Trio) with Fingerprint Spoofing
 
 ```python
 import trio
 from osn_selenium.webdrivers.trio_threads.chrome import ChromeWebDriver
 from osn_selenium.dev_tools.settings import DevToolsSettings
-from osn_selenium.dev_tools.domains import DomainsSettings
-from osn_selenium.dev_tools.domains.fetch import FetchSettings, FetchEnableKwargsSettings
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 
 async def main():
-    # Configure DevTools to intercept specific requests
+    # Configure fingerprint spoofing
+    fp_settings = FingerprintSettings(
+        optimize_events=True,
+        # Detect and spoof specific APIs
+        use_preset_registry=True
+    )
+    
+    # Configure DevTools
     dt_settings = DevToolsSettings(
-        domains_settings=DomainsSettings(
-            fetch=FetchSettings(
-                enable_func_kwargs=FetchEnableKwargsSettings(
-                    patterns=[{"urlPattern": "*api*", "requestStage": "Request"}]
-                )
-            )
-        )
+        fingerprint_settings=fp_settings
     )
 
     driver = ChromeWebDriver(
-        webdriver_path="path/to/chromedriver.exe",
         devtools_settings=dt_settings
     )
 
-    await driver.start_webdriver()
-
-    # Async context manager starts CDP listeners
-    async with driver.devtools:
-        await driver.get("https://example.com")
-        # Logic for handling intercepted requests runs in background tasks
-        await trio.sleep(5)
-
-    await driver.close_webdriver()
+    try:
+        await driver.start_webdriver()
+        
+        # Start DevTools session to inject spoofing scripts
+        async with driver.devtools:
+            await driver.get("https://browserleaks.com/canvas")
+            await trio.sleep(10) # Let the page load and scripts run
+            
+    finally:
+        await driver.quit()
 
 trio.run(main)
 ```
@@ -144,56 +135,73 @@ trio.run(main)
 
 ### WebDrivers (`osn_selenium.webdrivers`)
 
-This package contains the main entry points for browser automation, split into synchronous and asynchronous implementations.
+This package contains the main entry points for initializing browser automation. It is split into `sync` and `trio_threads` subpackages.
 
-#### Sync (`osn_selenium.webdrivers.sync`)
-*   `chrome.ChromeWebDriver` - Implementation for Google Chrome with synchronous methods.
-*   `edge.EdgeWebDriver` - Implementation for Microsoft Edge with synchronous methods.
-*   `yandex.YandexWebDriver` - Implementation for Yandex Browser with synchronous methods.
-*   `core.CoreWebDriver` - The base class aggregating all mixins (Actions, Capture, Navigation, etc.).
+*   `CoreWebDriver`
+    *   Base class aggregating all mixins (Actions, Auth, Capture, CDP, Elements, File, Lifecycle, Navigation, Script, Settings, Storage, Timeouts, Window).
+*   `ChromeWebDriver` (Available in `sync` and `trio_threads`)
+    *   `__init__(...)`: Initializes the Chrome driver with paths, flags managers, and timeout settings.
+    *   `start_webdriver(...)`: Starts the browser process and the WebDriver session.
+    *   `quit()`: Closes the browser and session.
+*   `EdgeWebDriver` (Available in `sync` and `trio_threads`)
+    *   Specialized WebDriver for Microsoft Edge.
+*   `YandexWebDriver` (Available in `sync` and `trio_threads`)
+    *   Specialized WebDriver for Yandex Browser.
 
-#### Trio (`osn_selenium.webdrivers.trio_threads`)
-*   `chrome.ChromeWebDriver` - Asynchronous implementation for Google Chrome. All interaction methods are awaitable.
-*   `edge.EdgeWebDriver` - Asynchronous implementation for Microsoft Edge.
-*   `yandex.YandexWebDriver` - Asynchronous implementation for Yandex Browser.
+### Browser Flags (`osn_selenium.flags`)
 
-### Flags Management (`osn_selenium.flags`)
+Manages configuration for browser launch arguments and capabilities.
 
-Provides Pydantic models for type-safe browser configuration.
-
-*   `models.chrome.ChromeFlags` - Comprehensive model for Chrome (arguments, experimental options, attributes).
-*   `models.blink.BlinkArguments` - Typed model for common Blink-engine arguments (e.g., `headless_mode`, `user_agent`, `proxy_server`).
-*   `models.blink.BlinkFeatures` - Typed model for specific Blink features (e.g., `automation_controlled`).
-*   `base.BrowserFlagsManager` - Manages the application of flags to the WebDriver options instance.
+*   `BrowserFlagsManager`
+    *   `set_argument(argument, value)`: Sets a command-line argument.
+    *   `set_experimental_option(option, value)`: Sets a WebDriver experimental option.
+    *   `build_options_arguments(options)`: Applies arguments to the Selenium Options object.
+*   `ChromeFlagsManager` / `EdgeFlagsManager` / `YandexFlagsManager`
+    *   Subclasses with specific default flags and binary detection logic for their respective browsers.
 
 ### DevTools Protocol (`osn_selenium.dev_tools`)
 
-Manages the connection and interaction with the Chrome DevTools Protocol.
+Manages the connection to Chrome DevTools Protocol for low-level control.
 
-*   `manager.DevTools` - The main coordinator for CDP sessions, handling WebSocket connections and Trio nurseries.
-*   `target.DevToolsTarget` - Represents a specific browser target (page, iframe, worker) with its own CDP session.
-*   `settings.DevToolsSettings` - Configuration for the manager, including logging paths and target filters.
-*   `domains.fetch.FetchSettings` - Configuration for the Fetch domain to intercept/modify network requests.
+*   `DevTools`
+    *   `run()`: Initializes the BiDi connection and starts event listeners.
+    *   `stop(...)`: Cleans up resources and closes connections.
+*   `DevToolsTarget`
+    *   Represents a specific target (tab/page) being controlled.
+*   `CDPExecutor` (Available in `executors.sync.cdp` and `executors.trio_threads.cdp`)
+    *   `execute(cmd, cmd_args)`: Sends a raw CDP command.
+    *   `network`: Access to `Network` domain commands (cookies, cache, interception).
+    *   `page`: Access to `Page` domain commands (navigation, printing, screenshots).
+    *   `dom`: Access to `DOM` domain commands.
+    *   `emulation`: Access to `Emulation` domain (device metrics, user agent, sensors).
+    *   *(Includes accessors for all mapped CDP domains like Fetch, Storage, Runtime, etc.)*
 
-### Instances & Interaction (`osn_selenium.instances`)
+### Instances Wrappers (`osn_selenium.instances`)
 
-Wrappers around standard Selenium objects providing additional functionality and `trio` compatibility.
+Wrappers around standard Selenium objects to provide enhanced functionality or async compatibility.
 
-*   `web_element.WebElement` - Wrapper for `selenium.webdriver.remote.webelement.WebElement`.
-*   `action_chains.ActionChains` - Wrapper for `selenium.webdriver.common.action_chains.ActionChains`.
-*   `action_chains.HumanLikeActionChains` - Extends `ActionChains` with:
-    *   `hm_move(...)` - Moves mouse in a realistic curve.
-    *   `hm_text_input(...)` - Types text with realistic delays.
-    *   `hm_scroll_to_element(...)` - Smooth scrolling logic.
-*   `alert.Alert` - Wrapper for handling alerts.
-*   `shadow_root.ShadowRoot` - Wrapper for Shadow DOM roots.
+*   `WebElement`
+    *   `click()`: Clicks the element.
+    *   `send_keys(...)`: Types into the element.
+    *   `screenshot(filename)`: Takes a screenshot of the specific element.
+    *   `find_element(...)`: Finds a child element.
+*   `ActionChains` / `HumanLikeActionChains`
+    *   `hm_move_to_element(...)`: Moves mouse to element using human-like curves.
+    *   `hm_text_input(...)`: Types text with random delays between keystrokes.
+    *   `hm_scroll(...)`: Scrolls the page smoothly.
+*   `ShadowRoot`
+    *   `find_element(...)`: Finds elements inside a Shadow DOM.
 
-### Executors (`osn_selenium.executors`)
+### Javascript & Fingerprinting (`osn_selenium.javascript`)
 
-Backend logic for executing commands.
+Utilities for executing JS and managing browser fingerprints.
 
-*   `javascript.JSExecutor` - Helper for executing common JS snippets (e.g., `check_element_in_viewport`, `get_document_scroll_size`).
-*   `cdp.CDPExecutor` - Provides typed methods for all CDP domains (Network, Page, DOM, Input, etc.).
+*   `FingerprintSettings`
+    *   `generate_js()`: Creates the injection script for fingerprint spoofing based on the registry configuration.
+*   `JSExecutor`
+    *   `execute(script, ...)`: Executes raw JavaScript.
+    *   `check_element_in_viewport(element)`: Returns True if element is visible in viewport.
+    *   `get_element_rect_in_viewport(element)`: Returns element coordinates relative to viewport.
 
 ## Notes
 
