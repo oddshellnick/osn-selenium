@@ -106,7 +106,7 @@ class DevToolsSettings(DictModel):
 		logger_settings (Optional[LoggerSettings]): Configuration settings for the internal logging system.
 			If None, default logging settings will be used (no file logging by default).
 			Defaults to None.
-        fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
+		fingerprint_settings (Optional[FingerprintSettings]): Configuration for fingerprint detection.
 		domains_settings (Optional[DomainsSettings]): Configuration settings for various DevTools domains.
 	"""
 	

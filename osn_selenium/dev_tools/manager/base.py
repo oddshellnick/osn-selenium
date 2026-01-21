@@ -116,7 +116,7 @@ class BaseMixin:
 		self._main_logger_fingerprint_send_channel: Optional[trio.MemorySendChannel[FingerprintMainLogEntry]] = None
 		self._main_logger: Optional[MainLogger] = None
 		self._fingerprint_injection_script: Optional[str] = None
-
+		
 		prepare_log_dir(logger_settings=devtools_settings.logger_settings)
 	
 	@property
