@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Dict,
 	List,
@@ -6,7 +7,6 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import FEDCM_TYPEHINT
-from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM

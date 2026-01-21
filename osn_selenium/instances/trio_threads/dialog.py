@@ -1,7 +1,7 @@
 import trio
 from typing import List, Optional, Self
-from osn_selenium.instances.types import DIALOG_TYPEHINT
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.types import DIALOG_TYPEHINT
 from selenium.webdriver.common.fedcm.account import Account
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.dialog import AbstractDialog

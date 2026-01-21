@@ -95,9 +95,3 @@ class BlinkWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 		)
-		
-		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
-	
-	@property
-	def cdp(self) -> CDPExecutor:
-		return self._cdp_executor

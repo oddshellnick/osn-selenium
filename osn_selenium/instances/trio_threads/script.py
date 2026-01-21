@@ -1,7 +1,7 @@
 import trio
 from typing import Any, Callable, Self
-from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.types import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.script import AbstractScript
 from selenium.webdriver.common.bidi.script import (

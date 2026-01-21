@@ -1,7 +1,7 @@
 import trio
 from typing import List, Self, Union
-from osn_selenium.instances.types import MOBILE_TYPEHINT
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.types import MOBILE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.mobile import AbstractMobile
 from osn_selenium.instances.errors import (

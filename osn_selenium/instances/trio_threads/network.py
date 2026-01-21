@@ -1,11 +1,11 @@
 import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Callable,
 	List,
 	Optional,
 	Self
 )
-from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.network import AbstractNetwork
