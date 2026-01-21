@@ -1,29 +1,37 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.device_access import (
+	UnifiedDeviceAccessCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.device_access import (
 	AbstractDeviceAccessCDPExecutor
 )
 
 
-class DeviceAccessCDPExecutor(AbstractDeviceAccessCDPExecutor):
+class DeviceAccessCDPExecutor(
+		UnifiedDeviceAccessCDPExecutor,
+		TrioThreadMixin,
+		AbstractDeviceAccessCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedDeviceAccessCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def cancel_prompt(self, id_: str) -> None:
-		return await self._execute_function("DeviceAccess.cancelPrompt", locals())
+		return await self._sync_to_trio(self._cancel_prompt_impl, id_=id_)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("DeviceAccess.disable", locals())
+		return await self._sync_to_trio(self._disable_impl)
 	
 	async def enable(self) -> None:
-		return await self._execute_function("DeviceAccess.enable", locals())
+		return await self._sync_to_trio(self._enable_impl)
 	
 	async def select_prompt(self, id_: str, device_id: str) -> None:
-		return await self._execute_function("DeviceAccess.selectPrompt", locals())
+		return await self._sync_to_trio(self._select_prompt_impl, id_=id_, device_id=device_id)

@@ -1,26 +1,30 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.console import (
+	UnifiedConsoleCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.console import (
 	AbstractConsoleCDPExecutor
 )
 
 
-class ConsoleCDPExecutor(AbstractConsoleCDPExecutor):
+class ConsoleCDPExecutor(UnifiedConsoleCDPExecutor, TrioThreadMixin, AbstractConsoleCDPExecutor):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedConsoleCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear_messages(self) -> None:
-		return await self._execute_function("Console.clearMessages", locals())
+		return await self._sync_to_trio(self._clear_messages_impl)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("Console.disable", locals())
+		return await self._sync_to_trio(self._disable_impl)
 	
 	async def enable(self) -> None:
-		return await self._execute_function("Console.enable", locals())
+		return await self._sync_to_trio(self._enable_impl)

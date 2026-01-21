@@ -1,9 +1,6 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
-)
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
 from osn_selenium.executors.trio_threads.cdp.io import IoCDPExecutor
 from osn_selenium.executors.trio_threads.cdp.css import CssCDPExecutor
@@ -96,125 +93,334 @@ from osn_selenium.executors.trio_threads.cdp.headless_experimental import (
 )
 
 
-class CDPExecutor(AbstractCDPExecutor):
+class CDPExecutor(TrioThreadMixin, AbstractCDPExecutor):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
+		super().__init__(lock=lock, limiter=limiter)
+		
 		self._execute_function = execute_function
 		
-		self._accessibility = AccessibilityCDPExecutor(execute_function=self._prepare_and_execute)
+		self._accessibility = AccessibilityCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._animation = AnimationCDPExecutor(execute_function=self._prepare_and_execute)
+		self._animation = AnimationCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._audits = AuditsCDPExecutor(execute_function=self._prepare_and_execute)
+		self._audits = AuditsCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._autofill = AutofillCDPExecutor(execute_function=self._prepare_and_execute)
+		self._autofill = AutofillCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._background_service = BackgroundServiceCDPExecutor(execute_function=self._prepare_and_execute)
+		self._background_service = BackgroundServiceCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._bluetooth_emulation = BluetoothEmulationCDPExecutor(execute_function=self._prepare_and_execute)
+		self._bluetooth_emulation = BluetoothEmulationCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._browser = BrowserCDPExecutor(execute_function=self._prepare_and_execute)
+		self._browser = BrowserCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._css = CssCDPExecutor(execute_function=self._prepare_and_execute)
+		self._css = CssCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._cache_storage = CacheStorageCDPExecutor(execute_function=self._prepare_and_execute)
+		self._cache_storage = CacheStorageCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._cast = CastCDPExecutor(execute_function=self._prepare_and_execute)
+		self._cast = CastCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._console = ConsoleCDPExecutor(execute_function=self._prepare_and_execute)
+		self._console = ConsoleCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._dom = DomCDPExecutor(execute_function=self._prepare_and_execute)
+		self._dom = DomCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._dom_debugger = DomDebuggerCDPExecutor(execute_function=self._prepare_and_execute)
+		self._dom_debugger = DomDebuggerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._dom_snapshot = DomSnapshotCDPExecutor(execute_function=self._prepare_and_execute)
+		self._dom_snapshot = DomSnapshotCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._dom_storage = DomStorageCDPExecutor(execute_function=self._prepare_and_execute)
+		self._dom_storage = DomStorageCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._debugger = DebuggerCDPExecutor(execute_function=self._prepare_and_execute)
+		self._debugger = DebuggerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._device_access = DeviceAccessCDPExecutor(execute_function=self._prepare_and_execute)
+		self._device_access = DeviceAccessCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._device_orientation = DeviceOrientationCDPExecutor(execute_function=self._prepare_and_execute)
+		self._device_orientation = DeviceOrientationCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._emulation = EmulationCDPExecutor(execute_function=self._prepare_and_execute)
+		self._emulation = EmulationCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._event_breakpoints = EventBreakpointsCDPExecutor(execute_function=self._prepare_and_execute)
+		self._event_breakpoints = EventBreakpointsCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._extensions = ExtensionsCDPExecutor(execute_function=self._prepare_and_execute)
+		self._extensions = ExtensionsCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._fed_cm = FedCmCDPExecutor(execute_function=self._prepare_and_execute)
+		self._fed_cm = FedCmCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._fetch = FetchCDPExecutor(execute_function=self._prepare_and_execute)
+		self._fetch = FetchCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._file_system = FileSystemCDPExecutor(execute_function=self._prepare_and_execute)
+		self._file_system = FileSystemCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._headless_experimental = HeadlessExperimentalCDPExecutor(execute_function=self._prepare_and_execute)
+		self._headless_experimental = HeadlessExperimentalCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._heap_profiler = HeapProfilerCDPExecutor(execute_function=self._prepare_and_execute)
+		self._heap_profiler = HeapProfilerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._io = IoCDPExecutor(execute_function=self._prepare_and_execute)
+		self._io = IoCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._indexed_db = IndexedDbCDPExecutor(execute_function=self._prepare_and_execute)
+		self._indexed_db = IndexedDbCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._input = InputCDPExecutor(execute_function=self._prepare_and_execute)
+		self._input = InputCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._inspector = InspectorCDPExecutor(execute_function=self._prepare_and_execute)
+		self._inspector = InspectorCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._layer_tree = LayerTreeCDPExecutor(execute_function=self._prepare_and_execute)
+		self._layer_tree = LayerTreeCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._log = LogCDPExecutor(execute_function=self._prepare_and_execute)
+		self._log = LogCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._media = MediaCDPExecutor(execute_function=self._prepare_and_execute)
+		self._media = MediaCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._memory = MemoryCDPExecutor(execute_function=self._prepare_and_execute)
+		self._memory = MemoryCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._network = NetworkCDPExecutor(execute_function=self._prepare_and_execute)
+		self._network = NetworkCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._overlay = OverlayCDPExecutor(execute_function=self._prepare_and_execute)
+		self._overlay = OverlayCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._pwa = PwaCDPExecutor(execute_function=self._prepare_and_execute)
+		self._pwa = PwaCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._page = PageCDPExecutor(execute_function=self._prepare_and_execute)
+		self._page = PageCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._performance = PerformanceCDPExecutor(execute_function=self._prepare_and_execute)
+		self._performance = PerformanceCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._performance_timeline = PerformanceTimelineCDPExecutor(execute_function=self._prepare_and_execute)
+		self._performance_timeline = PerformanceTimelineCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._preload = PreloadCDPExecutor(execute_function=self._prepare_and_execute)
+		self._preload = PreloadCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._profiler = ProfilerCDPExecutor(execute_function=self._prepare_and_execute)
+		self._profiler = ProfilerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._runtime = RuntimeCDPExecutor(execute_function=self._prepare_and_execute)
+		self._runtime = RuntimeCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._schema = SchemaCDPExecutor(execute_function=self._prepare_and_execute)
+		self._schema = SchemaCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._security = SecurityCDPExecutor(execute_function=self._prepare_and_execute)
+		self._security = SecurityCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._service_worker = ServiceWorkerCDPExecutor(execute_function=self._prepare_and_execute)
+		self._service_worker = ServiceWorkerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._storage = StorageCDPExecutor(execute_function=self._prepare_and_execute)
+		self._storage = StorageCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._system_info = SystemInfoCDPExecutor(execute_function=self._prepare_and_execute)
+		self._system_info = SystemInfoCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._target = TargetCDPExecutor(execute_function=self._prepare_and_execute)
+		self._target = TargetCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._tethering = TetheringCDPExecutor(execute_function=self._prepare_and_execute)
+		self._tethering = TetheringCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._tracing = TracingCDPExecutor(execute_function=self._prepare_and_execute)
+		self._tracing = TracingCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._web_audio = WebAudioCDPExecutor(execute_function=self._prepare_and_execute)
+		self._web_audio = WebAudioCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
-		self._web_authn = WebAuthnCDPExecutor(execute_function=self._prepare_and_execute)
-	
-	async def execute(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
-		return await self._execute_function(cmd, cmd_args)
-	
-	async def _prepare_and_execute(self, command_name: str, locals_: Dict[str, Any]) -> Any:
-		locals_.pop("self")
-		return await self.execute(cmd=command_name, cmd_args=locals_)
+		self._web_authn = WebAuthnCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 	
 	@property
 	def accessibility(self) -> AccessibilityCDPExecutor:
@@ -295,6 +501,9 @@ class CDPExecutor(AbstractCDPExecutor):
 	@property
 	def event_breakpoints(self) -> EventBreakpointsCDPExecutor:
 		return self._event_breakpoints
+	
+	async def execute(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
+		return (await self._execute_function(cmd, cmd_args))["value"]
 	
 	@property
 	def extensions(self) -> ExtensionsCDPExecutor:

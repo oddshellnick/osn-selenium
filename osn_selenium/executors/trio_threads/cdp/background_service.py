@@ -1,29 +1,37 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.background_service import (
+	UnifiedBackgroundServiceCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.background_service import (
 	AbstractBackgroundServiceCDPExecutor
 )
 
 
-class BackgroundServiceCDPExecutor(AbstractBackgroundServiceCDPExecutor):
+class BackgroundServiceCDPExecutor(
+		UnifiedBackgroundServiceCDPExecutor,
+		TrioThreadMixin,
+		AbstractBackgroundServiceCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedBackgroundServiceCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear_events(self, service: str) -> None:
-		return await self._execute_function("BackgroundService.clearEvents", locals())
+		return await self._sync_to_trio(self._clear_events_impl, service=service)
 	
 	async def set_recording(self, should_record: bool, service: str) -> None:
-		return await self._execute_function("BackgroundService.setRecording", locals())
+		return await self._sync_to_trio(self._set_recording_impl, should_record=should_record, service=service)
 	
 	async def start_observing(self, service: str) -> None:
-		return await self._execute_function("BackgroundService.startObserving", locals())
+		return await self._sync_to_trio(self._start_observing_impl, service=service)
 	
 	async def stop_observing(self, service: str) -> None:
-		return await self._execute_function("BackgroundService.stopObserving", locals())
+		return await self._sync_to_trio(self._stop_observing_impl, service=service)

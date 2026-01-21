@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -29,7 +30,7 @@ class AbstractDomCDPExecutor(ABC):
 			object_id: Optional[str] = None,
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
-	) -> Any:
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -71,7 +72,7 @@ class AbstractDomCDPExecutor(ABC):
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
-	) -> Any:
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -92,15 +93,15 @@ class AbstractDomCDPExecutor(ABC):
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
-	) -> List[List[Any]]:
+	) -> List[List[float]]:
 		...
 	
 	@abstractmethod
-	def get_detached_dom_nodes(self) -> List[Any]:
+	def get_detached_dom_nodes(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Any:
+	def get_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -112,7 +113,7 @@ class AbstractDomCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Any]:
+	def get_flattened_document(self, depth: Optional[int] = None, pierce: Optional[bool] = None) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -130,14 +131,14 @@ class AbstractDomCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_node_stack_traces(self, node_id: int) -> Optional[Any]:
+	def get_node_stack_traces(self, node_id: int) -> Optional[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
 	def get_nodes_for_subtree_by_style(
 			self,
 			node_id: int,
-			computed_styles: List[Any],
+			computed_styles: List[Dict[str, Any]],
 			pierce: Optional[bool] = None
 	) -> List[int]:
 		...
@@ -245,7 +246,7 @@ class AbstractDomCDPExecutor(ABC):
 			backend_node_id: Optional[int] = None,
 			object_group: Optional[str] = None,
 			execution_context_id: Optional[int] = None
-	) -> Any:
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -254,7 +255,7 @@ class AbstractDomCDPExecutor(ABC):
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None,
-			rect: Optional[Any] = None
+			rect: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	

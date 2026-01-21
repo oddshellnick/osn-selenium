@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -35,7 +36,7 @@ class AbstractPageCDPExecutor(ABC):
 			self,
 			format_: Optional[str] = None,
 			quality: Optional[int] = None,
-			clip: Optional[Any] = None,
+			clip: Optional[Dict[str, Any]] = None,
 			from_surface: Optional[bool] = None,
 			capture_beyond_viewport: Optional[bool] = None,
 			optimize_for_speed: Optional[bool] = None
@@ -96,7 +97,7 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Any]:
+	def get_ad_script_ancestry(self, frame_id: str) -> Optional[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -104,19 +105,26 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Any], Optional[str], Optional[Any], Any]:
+	def get_app_manifest(self, manifest_id: Optional[str] = None) -> Tuple[str, List[Dict[str, Any]], Optional[str], Optional[Dict[str, Any]], Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_frame_tree(self) -> Any:
+	def get_frame_tree(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_installability_errors(self) -> List[Any]:
+	def get_installability_errors(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_layout_metrics(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
+	def get_layout_metrics(self) -> Tuple[
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any],
+		Dict[str, Any]
+	]:
 		...
 	
 	@abstractmethod
@@ -124,15 +132,15 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_navigation_history(self) -> Tuple[int, List[Any]]:
+	def get_navigation_history(self) -> Tuple[int, List[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
-	def get_origin_trials(self, frame_id: str) -> List[Any]:
+	def get_origin_trials(self, frame_id: str) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_permissions_policy_state(self, frame_id: str) -> List[Any]:
+	def get_permissions_policy_state(self, frame_id: str) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -140,7 +148,7 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_resource_tree(self) -> Any:
+	def get_resource_tree(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -186,7 +194,7 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def produce_compilation_cache(self, scripts: List[Any]) -> None:
+	def produce_compilation_cache(self, scripts: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -222,7 +230,7 @@ class AbstractPageCDPExecutor(ABC):
 			query: str,
 			case_sensitive: Optional[bool] = None,
 			is_regex: Optional[bool] = None
-	) -> List[Any]:
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -246,8 +254,8 @@ class AbstractPageCDPExecutor(ABC):
 			position_x: Optional[int] = None,
 			position_y: Optional[int] = None,
 			dont_set_visible_size: Optional[bool] = None,
-			screen_orientation: Optional[Any] = None,
-			viewport: Optional[Any] = None
+			screen_orientation: Optional[Dict[str, Any]] = None,
+			viewport: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
@@ -264,11 +272,15 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_font_families(self, font_families: Any, for_scripts: Optional[List[Any]] = None) -> None:
+	def set_font_families(
+			self,
+			font_families: Dict[str, Any],
+			for_scripts: Optional[List[Dict[str, Any]]] = None
+	) -> None:
 		...
 	
 	@abstractmethod
-	def set_font_sizes(self, font_sizes: Any) -> None:
+	def set_font_sizes(self, font_sizes: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod

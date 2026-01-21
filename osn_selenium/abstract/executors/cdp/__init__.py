@@ -162,10 +162,6 @@ from osn_selenium.abstract.executors.cdp.headless_experimental import (
 
 
 class AbstractCDPExecutor(ABC):
-	@abstractmethod
-	def _prepare_and_execute(self, command_name: str, locals_: Dict[str, Any]) -> Any:
-		...
-	
 	@property
 	@abstractmethod
 	def accessibility(self) -> AbstractAccessibilityCDPExecutor:

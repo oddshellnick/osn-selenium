@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -17,7 +18,7 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_best_effort_coverage(self) -> List[Any]:
+	def get_best_effort_coverage(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -38,7 +39,7 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def stop(self) -> Any:
+	def stop(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -46,5 +47,5 @@ class AbstractProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def take_precise_coverage(self) -> Tuple[List[Any], float]:
+	def take_precise_coverage(self) -> Tuple[List[Dict[str, Any]], float]:
 		...

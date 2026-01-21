@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -9,7 +10,7 @@ from typing import (
 
 class AbstractDebuggerCDPExecutor(ABC):
 	@abstractmethod
-	def continue_to_location(self, location: Any, target_call_frames: Optional[str] = None) -> None:
+	def continue_to_location(self, location: Dict[str, Any], target_call_frames: Optional[str] = None) -> None:
 		...
 	
 	@abstractmethod
@@ -17,7 +18,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str], int, List[int], Any]:
+	def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str], int, List[int], Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -36,16 +37,16 @@ class AbstractDebuggerCDPExecutor(ABC):
 			generate_preview: Optional[bool] = None,
 			throw_on_side_effect: Optional[bool] = None,
 			timeout: Optional[float] = None
-	) -> Tuple[Any, Optional[Any]]:
+	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
 	def get_possible_breakpoints(
 			self,
-			start: Any,
-			end: Optional[Any] = None,
+			start: Dict[str, Any],
+			end: Optional[Dict[str, Any]] = None,
 			restrict_to_function: Optional[bool] = None
-	) -> List[Any]:
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -53,7 +54,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_stack_trace(self, stack_trace_id: Any) -> Any:
+	def get_stack_trace(self, stack_trace_id: Dict[str, Any]) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -61,7 +62,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def next_wasm_disassembly_chunk(self, stream_id: str) -> Any:
+	def next_wasm_disassembly_chunk(self, stream_id: str) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -69,7 +70,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def pause_on_async_call(self, parent_stack_trace_id: Any) -> None:
+	def pause_on_async_call(self, parent_stack_trace_id: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -77,7 +78,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Any], Optional[Any], Optional[Any]]:
+	def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Dict[str, Any]], Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -91,7 +92,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 			query: str,
 			case_sensitive: Optional[bool] = None,
 			is_regex: Optional[bool] = None
-	) -> List[Any]:
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -107,11 +108,11 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_blackboxed_ranges(self, script_id: str, positions: List[Any]) -> None:
+	def set_blackboxed_ranges(self, script_id: str, positions: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
-	def set_breakpoint(self, location: Any, condition: Optional[str] = None) -> Tuple[str, Any]:
+	def set_breakpoint(self, location: Dict[str, Any], condition: Optional[str] = None) -> Tuple[str, Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -123,7 +124,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 			script_hash: Optional[str] = None,
 			column_number: Optional[int] = None,
 			condition: Optional[str] = None
-	) -> Tuple[str, List[Any]]:
+	) -> Tuple[str, List[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -143,7 +144,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_return_value(self, new_value: Any) -> None:
+	def set_return_value(self, new_value: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -154,12 +155,12 @@ class AbstractDebuggerCDPExecutor(ABC):
 			dry_run: Optional[bool] = None,
 			allow_top_frame_editing: Optional[bool] = None
 	) -> Tuple[
-		Optional[List[Any]],
+		Optional[List[Dict[str, Any]]],
 		Optional[bool],
-		Optional[Any],
-		Optional[Any],
+		Optional[Dict[str, Any]],
+		Optional[Dict[str, Any]],
 		str,
-		Optional[Any]
+		Optional[Dict[str, Any]]
 	]:
 		...
 	
@@ -172,7 +173,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 			self,
 			scope_number: int,
 			variable_name: str,
-			new_value: Any,
+			new_value: Dict[str, Any],
 			call_frame_id: str
 	) -> None:
 		...
@@ -181,7 +182,7 @@ class AbstractDebuggerCDPExecutor(ABC):
 	def step_into(
 			self,
 			break_on_async_call: Optional[bool] = None,
-			skip_list: Optional[List[Any]] = None
+			skip_list: Optional[List[Dict[str, Any]]] = None
 	) -> None:
 		...
 	
@@ -190,5 +191,5 @@ class AbstractDebuggerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def step_over(self, skip_list: Optional[List[Any]] = None) -> None:
+	def step_over(self, skip_list: Optional[List[Dict[str, Any]]] = None) -> None:
 		...

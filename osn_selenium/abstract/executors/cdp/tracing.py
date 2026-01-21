@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -37,7 +38,7 @@ class AbstractTracingCDPExecutor(ABC):
 			transfer_mode: Optional[str] = None,
 			stream_format: Optional[str] = None,
 			stream_compression: Optional[str] = None,
-			trace_config: Optional[Any] = None,
+			trace_config: Optional[Dict[str, Any]] = None,
 			perfetto_config: Optional[str] = None,
 			tracing_backend: Optional[str] = None
 	) -> None:

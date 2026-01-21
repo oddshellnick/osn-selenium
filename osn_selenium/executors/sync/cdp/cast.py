@@ -4,29 +4,32 @@ from typing import (
 	Dict,
 	Optional
 )
+from osn_selenium.executors.unified.cdp.cast import (
+	UnifiedCastCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.cast import (
 	AbstractCastCDPExecutor
 )
 
 
-class CastCDPExecutor(AbstractCastCDPExecutor):
+class CastCDPExecutor(UnifiedCastCDPExecutor, AbstractCastCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedCastCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("Cast.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self, presentation_url: Optional[str] = None) -> None:
-		return self._execute_function("Cast.enable", locals())
+		return self._enable_impl(presentation_url=presentation_url)
 	
 	def set_sink_to_use(self, sink_name: str) -> None:
-		return self._execute_function("Cast.setSinkToUse", locals())
+		return self._set_sink_to_use_impl(sink_name=sink_name)
 	
 	def start_desktop_mirroring(self, sink_name: str) -> None:
-		return self._execute_function("Cast.startDesktopMirroring", locals())
+		return self._start_desktop_mirroring_impl(sink_name=sink_name)
 	
 	def start_tab_mirroring(self, sink_name: str) -> None:
-		return self._execute_function("Cast.startTabMirroring", locals())
+		return self._start_tab_mirroring_impl(sink_name=sink_name)
 	
 	def stop_casting(self, sink_name: str) -> None:
-		return self._execute_function("Cast.stopCasting", locals())
+		return self._stop_casting_impl(sink_name=sink_name)

@@ -1,15 +1,18 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.tethering import (
+	UnifiedTetheringCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.tethering import (
 	AbstractTetheringCDPExecutor
 )
 
 
-class TetheringCDPExecutor(AbstractTetheringCDPExecutor):
+class TetheringCDPExecutor(UnifiedTetheringCDPExecutor, AbstractTetheringCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedTetheringCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def bind(self, port: int) -> None:
-		return self._execute_function("Tethering.bind", locals())
+		return self._bind_impl(port=port)
 	
 	def unbind(self, port: int) -> None:
-		return self._execute_function("Tethering.unbind", locals())
+		return self._unbind_impl(port=port)

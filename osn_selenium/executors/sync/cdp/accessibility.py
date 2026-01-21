@@ -5,34 +5,37 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.executors.unified.cdp.accessibility import (
+	UnifiedAccessibilityCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.accessibility import (
 	AbstractAccessibilityCDPExecutor
 )
 
 
-class AccessibilityCDPExecutor(AbstractAccessibilityCDPExecutor):
+class AccessibilityCDPExecutor(UnifiedAccessibilityCDPExecutor, AbstractAccessibilityCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedAccessibilityCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("Accessibility.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("Accessibility.enable", locals())
+		return self._enable_impl()
 	
 	def get_ax_node_and_ancestors(
 			self,
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
-	) -> List[Any]:
-		return self._execute_function("Accessibility.getAXNodeAndAncestors", locals())
+	) -> List[Dict[str, Any]]:
+		return self._get_ax_node_and_ancestors_impl(node_id=node_id, backend_node_id=backend_node_id, object_id=object_id)
 	
-	def get_child_ax_nodes(self, id_: str, frame_id: Optional[str] = None) -> List[Any]:
-		return self._execute_function("Accessibility.getChildAXNodes", locals())
+	def get_child_ax_nodes(self, id_: str, frame_id: Optional[str] = None) -> List[Dict[str, Any]]:
+		return self._get_child_ax_nodes_impl(id_=id_, frame_id=frame_id)
 	
-	def get_full_ax_tree(self, depth: Optional[int] = None, frame_id: Optional[str] = None) -> List[Any]:
-		return self._execute_function("Accessibility.getFullAXTree", locals())
+	def get_full_ax_tree(self, depth: Optional[int] = None, frame_id: Optional[str] = None) -> List[Dict[str, Any]]:
+		return self._get_full_ax_tree_impl(depth=depth, frame_id=frame_id)
 	
 	def get_partial_ax_tree(
 			self,
@@ -40,11 +43,16 @@ class AccessibilityCDPExecutor(AbstractAccessibilityCDPExecutor):
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None,
 			fetch_relatives: Optional[bool] = None
-	) -> List[Any]:
-		return self._execute_function("Accessibility.getPartialAXTree", locals())
+	) -> List[Dict[str, Any]]:
+		return self._get_partial_ax_tree_impl(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id,
+				fetch_relatives=fetch_relatives
+		)
 	
-	def get_root_ax_node(self, frame_id: Optional[str] = None) -> Any:
-		return self._execute_function("Accessibility.getRootAXNode", locals())
+	def get_root_ax_node(self, frame_id: Optional[str] = None) -> Dict[str, Any]:
+		return self._get_root_ax_node_impl(frame_id=frame_id)
 	
 	def query_ax_tree(
 			self,
@@ -53,5 +61,11 @@ class AccessibilityCDPExecutor(AbstractAccessibilityCDPExecutor):
 			object_id: Optional[str] = None,
 			accessible_name: Optional[str] = None,
 			role: Optional[str] = None
-	) -> List[Any]:
-		return self._execute_function("Accessibility.queryAXTree", locals())
+	) -> List[Dict[str, Any]]:
+		return self._query_ax_tree_impl(
+				node_id=node_id,
+				backend_node_id=backend_node_id,
+				object_id=object_id,
+				accessible_name=accessible_name,
+				role=role
+		)

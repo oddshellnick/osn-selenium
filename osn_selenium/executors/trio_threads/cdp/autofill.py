@@ -1,37 +1,55 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional
+)
+from osn_selenium.executors.unified.cdp.autofill import (
+	UnifiedAutofillCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.autofill import (
 	AbstractAutofillCDPExecutor
 )
 
 
-class AutofillCDPExecutor(AbstractAutofillCDPExecutor):
+class AutofillCDPExecutor(
+		UnifiedAutofillCDPExecutor,
+		TrioThreadMixin,
+		AbstractAutofillCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedAutofillCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("Autofill.disable", locals())
+		return await self._sync_to_trio(self._disable_impl)
 	
 	async def enable(self) -> None:
-		return await self._execute_function("Autofill.enable", locals())
+		return await self._sync_to_trio(self._enable_impl)
 	
-	async def set_addresses(self, addresses: List[Any]) -> None:
-		return await self._execute_function("Autofill.setAddresses", locals())
+	async def set_addresses(self, addresses: List[Dict[str, Any]]) -> None:
+		return await self._sync_to_trio(self._set_addresses_impl, addresses=addresses)
 	
 	async def trigger(
 			self,
 			field_id: int,
 			frame_id: Optional[str] = None,
-			card: Optional[Any] = None,
-			address: Optional[Any] = None
+			card: Optional[Dict[str, Any]] = None,
+			address: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._execute_function("Autofill.trigger", locals())
+		return await self._sync_to_trio(
+				self._trigger_impl,
+				field_id=field_id,
+				frame_id=frame_id,
+				card=card,
+				address=address
+		)

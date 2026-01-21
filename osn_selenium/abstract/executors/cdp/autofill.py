@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractAutofillCDPExecutor(ABC):
@@ -12,7 +17,7 @@ class AbstractAutofillCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_addresses(self, addresses: List[Any]) -> None:
+	def set_addresses(self, addresses: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -20,7 +25,7 @@ class AbstractAutofillCDPExecutor(ABC):
 			self,
 			field_id: int,
 			frame_id: Optional[str] = None,
-			card: Optional[Any] = None,
-			address: Optional[Any] = None
+			card: Optional[Dict[str, Any]] = None,
+			address: Optional[Dict[str, Any]] = None
 	) -> None:
 		...

@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Dict, List
 from abc import ABC, abstractmethod
 
 
@@ -24,7 +24,7 @@ class AbstractAnimationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def resolve_animation(self, animation_id: str) -> Any:
+	def resolve_animation(self, animation_id: str) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod

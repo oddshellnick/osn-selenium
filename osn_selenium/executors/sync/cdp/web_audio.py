@@ -1,18 +1,21 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.web_audio import (
+	UnifiedWebAudioCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.web_audio import (
 	AbstractWebAudioCDPExecutor
 )
 
 
-class WebAudioCDPExecutor(AbstractWebAudioCDPExecutor):
+class WebAudioCDPExecutor(UnifiedWebAudioCDPExecutor, AbstractWebAudioCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedWebAudioCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("WebAudio.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("WebAudio.enable", locals())
+		return self._enable_impl()
 	
-	def get_realtime_data(self, context_id: str) -> Any:
-		return self._execute_function("WebAudio.getRealtimeData", locals())
+	def get_realtime_data(self, context_id: str) -> Dict[str, Any]:
+		return self._get_realtime_data_impl(context_id=context_id)

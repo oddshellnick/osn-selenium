@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -23,7 +24,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			promise_object_id: str,
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None
-	) -> Tuple[Any, Optional[Any]]:
+	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -31,7 +32,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			self,
 			function_declaration: str,
 			object_id: Optional[str] = None,
-			arguments: Optional[List[Any]] = None,
+			arguments: Optional[List[Dict[str, Any]]] = None,
 			silent: Optional[bool] = None,
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
@@ -41,8 +42,8 @@ class AbstractRuntimeCDPExecutor(ABC):
 			object_group: Optional[str] = None,
 			throw_on_side_effect: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
-			serialization_options: Optional[Any] = None
-	) -> Tuple[Any, Optional[Any]]:
+			serialization_options: Optional[Dict[str, Any]] = None
+	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -52,7 +53,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			source_url: str,
 			persist_script: bool,
 			execution_context_id: Optional[int] = None
-	) -> Tuple[Optional[str], Optional[Any]]:
+	) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -85,12 +86,12 @@ class AbstractRuntimeCDPExecutor(ABC):
 			repl_mode: Optional[bool] = None,
 			allow_unsafe_eval_blocked_by_csp: Optional[bool] = None,
 			unique_context_id: Optional[str] = None,
-			serialization_options: Optional[Any] = None
-	) -> Tuple[Any, Optional[Any]]:
+			serialization_options: Optional[Dict[str, Any]] = None
+	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
-	def get_exception_details(self, error_object_id: str) -> Optional[Any]:
+	def get_exception_details(self, error_object_id: str) -> Optional[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -109,7 +110,12 @@ class AbstractRuntimeCDPExecutor(ABC):
 			accessor_properties_only: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			non_indexed_properties_only: Optional[bool] = None
-	) -> Tuple[List[Any], Optional[List[Any]], Optional[List[Any]], Optional[Any]]:
+	) -> Tuple[
+		List[Dict[str, Any]],
+		Optional[List[Dict[str, Any]]],
+		Optional[List[Dict[str, Any]]],
+		Optional[Dict[str, Any]]
+	]:
 		...
 	
 	@abstractmethod
@@ -117,7 +123,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def query_objects(self, prototype_object_id: str, object_group: Optional[str] = None) -> Any:
+	def query_objects(self, prototype_object_id: str, object_group: Optional[str] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -147,7 +153,7 @@ class AbstractRuntimeCDPExecutor(ABC):
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None,
 			await_promise: Optional[bool] = None
-	) -> Tuple[Any, Optional[Any]]:
+	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod

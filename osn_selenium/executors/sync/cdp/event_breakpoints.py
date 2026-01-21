@@ -1,18 +1,24 @@
 from typing import Any, Callable, Dict
+from osn_selenium.executors.unified.cdp.event_breakpoints import (
+	UnifiedEventBreakpointsCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.event_breakpoints import (
 	AbstractEventBreakpointsCDPExecutor
 )
 
 
-class EventBreakpointsCDPExecutor(AbstractEventBreakpointsCDPExecutor):
+class EventBreakpointsCDPExecutor(
+		UnifiedEventBreakpointsCDPExecutor,
+		AbstractEventBreakpointsCDPExecutor
+):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedEventBreakpointsCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def disable(self) -> None:
-		return self._execute_function("EventBreakpoints.disable", locals())
+		return self._disable_impl()
 	
 	def remove_instrumentation_breakpoint(self, event_name: str) -> None:
-		return self._execute_function("EventBreakpoints.removeInstrumentationBreakpoint", locals())
+		return self._remove_instrumentation_breakpoint_impl(event_name=event_name)
 	
 	def set_instrumentation_breakpoint(self, event_name: str) -> None:
-		return self._execute_function("EventBreakpoints.setInstrumentationBreakpoint", locals())
+		return self._set_instrumentation_breakpoint_impl(event_name=event_name)

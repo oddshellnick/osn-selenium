@@ -1,35 +1,50 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional
+)
+from osn_selenium.executors.unified.cdp.input import (
+	UnifiedInputCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.input import (
 	AbstractInputCDPExecutor
 )
 
 
-class InputCDPExecutor(AbstractInputCDPExecutor):
+class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCDPExecutor):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedInputCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def cancel_dragging(self) -> None:
-		return await self._execute_function("Input.cancelDragging", locals())
+		return await self._sync_to_trio(self._cancel_dragging_impl)
 	
 	async def dispatch_drag_event(
 			self,
 			type_: str,
 			x: float,
 			y: float,
-			data: Any,
+			data: Dict[str, Any],
 			modifiers: Optional[int] = None
 	) -> None:
-		return await self._execute_function("Input.dispatchDragEvent", locals())
+		return await self._sync_to_trio(
+				self._dispatch_drag_event_impl,
+				type_=type_,
+				x=x,
+				y=y,
+				data=data,
+				modifiers=modifiers
+		)
 	
 	async def dispatch_key_event(
 			self,
@@ -49,7 +64,24 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			location: Optional[int] = None,
 			commands: Optional[List[str]] = None
 	) -> None:
-		return await self._execute_function("Input.dispatchKeyEvent", locals())
+		return await self._sync_to_trio(
+				self._dispatch_key_event_impl,
+				type_=type_,
+				modifiers=modifiers,
+				timestamp=timestamp,
+				text=text,
+				unmodified_text=unmodified_text,
+				key_identifier=key_identifier,
+				code=code,
+				key=key,
+				windows_virtual_key_code=windows_virtual_key_code,
+				native_virtual_key_code=native_virtual_key_code,
+				auto_repeat=auto_repeat,
+				is_keypad=is_keypad,
+				is_system_key=is_system_key,
+				location=location,
+				commands=commands
+		)
 	
 	async def dispatch_mouse_event(
 			self,
@@ -70,16 +102,40 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			delta_y: Optional[float] = None,
 			pointer_type: Optional[str] = None
 	) -> None:
-		return await self._execute_function("Input.dispatchMouseEvent", locals())
+		return await self._sync_to_trio(
+				self._dispatch_mouse_event_impl,
+				type_=type_,
+				x=x,
+				y=y,
+				modifiers=modifiers,
+				timestamp=timestamp,
+				button=button,
+				buttons=buttons,
+				click_count=click_count,
+				force=force,
+				tangential_pressure=tangential_pressure,
+				tilt_x=tilt_x,
+				tilt_y=tilt_y,
+				twist=twist,
+				delta_x=delta_x,
+				delta_y=delta_y,
+				pointer_type=pointer_type
+		)
 	
 	async def dispatch_touch_event(
 			self,
 			type_: str,
-			touch_points: List[Any],
+			touch_points: List[Dict[str, Any]],
 			modifiers: Optional[int] = None,
 			timestamp: Optional[float] = None
 	) -> None:
-		return await self._execute_function("Input.dispatchTouchEvent", locals())
+		return await self._sync_to_trio(
+				self._dispatch_touch_event_impl,
+				type_=type_,
+				touch_points=touch_points,
+				modifiers=modifiers,
+				timestamp=timestamp
+		)
 	
 	async def emulate_touch_from_mouse_event(
 			self,
@@ -93,7 +149,18 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			modifiers: Optional[int] = None,
 			click_count: Optional[int] = None
 	) -> None:
-		return await self._execute_function("Input.emulateTouchFromMouseEvent", locals())
+		return await self._sync_to_trio(
+				self._emulate_touch_from_mouse_event_impl,
+				type_=type_,
+				x=x,
+				y=y,
+				button=button,
+				timestamp=timestamp,
+				delta_x=delta_x,
+				delta_y=delta_y,
+				modifiers=modifiers,
+				click_count=click_count
+		)
 	
 	async def ime_set_composition(
 			self,
@@ -103,16 +170,23 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			replacement_start: Optional[int] = None,
 			replacement_end: Optional[int] = None
 	) -> None:
-		return await self._execute_function("Input.imeSetComposition", locals())
+		return await self._sync_to_trio(
+				self._ime_set_composition_impl,
+				text=text,
+				selection_start=selection_start,
+				selection_end=selection_end,
+				replacement_start=replacement_start,
+				replacement_end=replacement_end
+		)
 	
 	async def insert_text(self, text: str) -> None:
-		return await self._execute_function("Input.insertText", locals())
+		return await self._sync_to_trio(self._insert_text_impl, text=text)
 	
 	async def set_ignore_input_events(self, ignore: bool) -> None:
-		return await self._execute_function("Input.setIgnoreInputEvents", locals())
+		return await self._sync_to_trio(self._set_ignore_input_events_impl, ignore=ignore)
 	
 	async def set_intercept_drags(self, enabled: bool) -> None:
-		return await self._execute_function("Input.setInterceptDrags", locals())
+		return await self._sync_to_trio(self._set_intercept_drags_impl, enabled=enabled)
 	
 	async def synthesize_pinch_gesture(
 			self,
@@ -122,7 +196,14 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			relative_speed: Optional[int] = None,
 			gesture_source_type: Optional[str] = None
 	) -> None:
-		return await self._execute_function("Input.synthesizePinchGesture", locals())
+		return await self._sync_to_trio(
+				self._synthesize_pinch_gesture_impl,
+				x=x,
+				y=y,
+				scale_factor=scale_factor,
+				relative_speed=relative_speed,
+				gesture_source_type=gesture_source_type
+		)
 	
 	async def synthesize_scroll_gesture(
 			self,
@@ -139,7 +220,21 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			repeat_delay_ms: Optional[int] = None,
 			interaction_marker_name: Optional[str] = None
 	) -> None:
-		return await self._execute_function("Input.synthesizeScrollGesture", locals())
+		return await self._sync_to_trio(
+				self._synthesize_scroll_gesture_impl,
+				x=x,
+				y=y,
+				x_distance=x_distance,
+				y_distance=y_distance,
+				x_overscroll=x_overscroll,
+				y_overscroll=y_overscroll,
+				prevent_fling=prevent_fling,
+				speed=speed,
+				gesture_source_type=gesture_source_type,
+				repeat_count=repeat_count,
+				repeat_delay_ms=repeat_delay_ms,
+				interaction_marker_name=interaction_marker_name
+		)
 	
 	async def synthesize_tap_gesture(
 			self,
@@ -149,4 +244,11 @@ class InputCDPExecutor(AbstractInputCDPExecutor):
 			tap_count: Optional[int] = None,
 			gesture_source_type: Optional[str] = None
 	) -> None:
-		return await self._execute_function("Input.synthesizeTapGesture", locals())
+		return await self._sync_to_trio(
+				self._synthesize_tap_gesture_impl,
+				x=x,
+				y=y,
+				duration=duration,
+				tap_count=tap_count,
+				gesture_source_type=gesture_source_type
+		)

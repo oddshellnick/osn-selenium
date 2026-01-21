@@ -1,5 +1,5 @@
-from typing import Any, Optional
 from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
 
 
 class AbstractHeapProfilerCDPExecutor(ABC):
@@ -24,11 +24,11 @@ class AbstractHeapProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_object_by_heap_object_id(self, object_id: str, object_group: Optional[str] = None) -> Any:
+	def get_object_by_heap_object_id(self, object_id: str, object_group: Optional[str] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_sampling_profile(self) -> Any:
+	def get_sampling_profile(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -46,7 +46,7 @@ class AbstractHeapProfilerCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def stop_sampling(self) -> Any:
+	def stop_sampling(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod

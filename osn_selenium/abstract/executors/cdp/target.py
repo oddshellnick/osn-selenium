@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractTargetCDPExecutor(ABC):
@@ -20,7 +25,7 @@ class AbstractTargetCDPExecutor(ABC):
 			self,
 			target_id: str,
 			wait_for_debugger_on_start: bool,
-			filter_: Optional[List[Any]] = None
+			filter_: Optional[List[Dict[str, Any]]] = None
 	) -> None:
 		...
 	
@@ -78,11 +83,11 @@ class AbstractTargetCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_target_info(self, target_id: Optional[str] = None) -> Any:
+	def get_target_info(self, target_id: Optional[str] = None) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_targets(self, filter_: Optional[List[Any]] = None) -> List[Any]:
+	def get_targets(self, filter_: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
@@ -104,14 +109,14 @@ class AbstractTargetCDPExecutor(ABC):
 			auto_attach: bool,
 			wait_for_debugger_on_start: bool,
 			flatten: Optional[bool] = None,
-			filter_: Optional[List[Any]] = None
+			filter_: Optional[List[Dict[str, Any]]] = None
 	) -> None:
 		...
 	
 	@abstractmethod
-	def set_discover_targets(self, discover: bool, filter_: Optional[List[Any]] = None) -> None:
+	def set_discover_targets(self, discover: bool, filter_: Optional[List[Dict[str, Any]]] = None) -> None:
 		...
 	
 	@abstractmethod
-	def set_remote_locations(self, locations: List[Any]) -> None:
+	def set_remote_locations(self, locations: List[Dict[str, Any]]) -> None:
 		...

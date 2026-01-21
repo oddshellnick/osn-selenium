@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -33,7 +34,7 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def delete_storage_bucket(self, bucket: Any) -> None:
+	def delete_storage_bucket(self, bucket: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -41,23 +42,23 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_cookies(self, browser_context_id: Optional[str] = None) -> List[Any]:
+	def get_cookies(self, browser_context_id: Optional[str] = None) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_interest_group_details(self, owner_origin: str, name: str) -> dict:
+	def get_interest_group_details(self, owner_origin: str, name: str) -> Any:
 		...
 	
 	@abstractmethod
-	def get_related_website_sets(self) -> List[Any]:
+	def get_related_website_sets(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_shared_storage_entries(self, owner_origin: str) -> List[Any]:
+	def get_shared_storage_entries(self, owner_origin: str) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_shared_storage_metadata(self, owner_origin: str) -> Any:
+	def get_shared_storage_metadata(self, owner_origin: str) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -69,11 +70,11 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_trust_tokens(self) -> List[Any]:
+	def get_trust_tokens(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_usage_and_quota(self, origin: str) -> Tuple[float, float, bool, List[Any]]:
+	def get_usage_and_quota(self, origin: str) -> Tuple[float, float, bool, List[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod
@@ -101,7 +102,11 @@ class AbstractStorageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_cookies(self, cookies: List[Any], browser_context_id: Optional[str] = None) -> None:
+	def set_cookies(
+			self,
+			cookies: List[Dict[str, Any]],
+			browser_context_id: Optional[str] = None
+	) -> None:
 		...
 	
 	@abstractmethod

@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractPerformanceCDPExecutor(ABC):
@@ -12,7 +17,7 @@ class AbstractPerformanceCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_metrics(self) -> List[Any]:
+	def get_metrics(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod

@@ -1,23 +1,36 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.device_orientation import (
+	UnifiedDeviceOrientationCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.device_orientation import (
 	AbstractDeviceOrientationCDPExecutor
 )
 
 
-class DeviceOrientationCDPExecutor(AbstractDeviceOrientationCDPExecutor):
+class DeviceOrientationCDPExecutor(
+		UnifiedDeviceOrientationCDPExecutor,
+		TrioThreadMixin,
+		AbstractDeviceOrientationCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedDeviceOrientationCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear_device_orientation_override(self) -> None:
-		return await self._execute_function("DeviceOrientation.clearDeviceOrientationOverride", locals())
+		return await self._sync_to_trio(self._clear_device_orientation_override_impl)
 	
 	async def set_device_orientation_override(self, alpha: float, beta: float, gamma: float) -> None:
-		return await self._execute_function("DeviceOrientation.setDeviceOrientationOverride", locals())
+		return await self._sync_to_trio(
+				self._set_device_orientation_override_impl,
+				alpha=alpha,
+				beta=beta,
+				gamma=gamma
+		)

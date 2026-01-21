@@ -1,35 +1,43 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional,
 	Tuple
+)
+from osn_selenium.executors.unified.cdp.audits import (
+	UnifiedAuditsCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.audits import (
 	AbstractAuditsCDPExecutor
 )
 
 
-class AuditsCDPExecutor(AbstractAuditsCDPExecutor):
+class AuditsCDPExecutor(UnifiedAuditsCDPExecutor, TrioThreadMixin, AbstractAuditsCDPExecutor):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedAuditsCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def check_contrast(self, report_aaa: Optional[bool] = None) -> None:
-		return await self._execute_function("Audits.checkContrast", locals())
+		return await self._sync_to_trio(self._check_contrast_impl, report_aaa=report_aaa)
 	
-	async def check_forms_issues(self) -> List[Any]:
-		return await self._execute_function("Audits.checkFormsIssues", locals())
+	async def check_forms_issues(self) -> List[Dict[str, Any]]:
+		return await self._sync_to_trio(self._check_forms_issues_impl)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("Audits.disable", locals())
+		return await self._sync_to_trio(self._disable_impl)
 	
 	async def enable(self) -> None:
-		return await self._execute_function("Audits.enable", locals())
+		return await self._sync_to_trio(self._enable_impl)
 	
 	async def get_encoded_response(
 			self,
@@ -38,4 +46,10 @@ class AuditsCDPExecutor(AbstractAuditsCDPExecutor):
 			quality: Optional[float] = None,
 			size_only: Optional[bool] = None
 	) -> Tuple[Optional[str], int, int]:
-		return await self._execute_function("Audits.getEncodedResponse", locals())
+		return await self._sync_to_trio(
+				self._get_encoded_response_impl,
+				request_id=request_id,
+				encoding=encoding,
+				quality=quality,
+				size_only=size_only
+		)

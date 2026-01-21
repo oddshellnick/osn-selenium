@@ -1,54 +1,79 @@
+import trio
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Callable,
-	Coroutine,
 	Dict,
 	List,
 	Optional
+)
+from osn_selenium.executors.unified.cdp.dom_debugger import (
+	UnifiedDomDebuggerCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.dom_debugger import (
 	AbstractDomDebuggerCDPExecutor
 )
 
 
-class DomDebuggerCDPExecutor(AbstractDomDebuggerCDPExecutor):
+class DomDebuggerCDPExecutor(
+		UnifiedDomDebuggerCDPExecutor,
+		TrioThreadMixin,
+		AbstractDomDebuggerCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedDomDebuggerCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def get_event_listeners(
 			self,
 			object_id: str,
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
-	) -> List[Any]:
-		return await self._execute_function("DOMDebugger.getEventListeners", locals())
+	) -> List[Dict[str, Any]]:
+		return await self._sync_to_trio(
+				self._get_event_listeners_impl,
+				object_id=object_id,
+				depth=depth,
+				pierce=pierce
+		)
 	
 	async def remove_dom_breakpoint(self, node_id: int, type_: str) -> None:
-		return await self._execute_function("DOMDebugger.removeDOMBreakpoint", locals())
+		return await self._sync_to_trio(self._remove_dom_breakpoint_impl, node_id=node_id, type_=type_)
 	
 	async def remove_event_listener_breakpoint(self, event_name: str, target_name: Optional[str] = None) -> None:
-		return await self._execute_function("DOMDebugger.removeEventListenerBreakpoint", locals())
+		return await self._sync_to_trio(
+				self._remove_event_listener_breakpoint_impl,
+				event_name=event_name,
+				target_name=target_name
+		)
 	
 	async def remove_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._execute_function("DOMDebugger.removeInstrumentationBreakpoint", locals())
+		return await self._sync_to_trio(self._remove_instrumentation_breakpoint_impl, event_name=event_name)
 	
 	async def remove_xhr_breakpoint(self, url: str) -> None:
-		return await self._execute_function("DOMDebugger.removeXHRBreakpoint", locals())
+		return await self._sync_to_trio(self._remove_xhr_breakpoint_impl, url=url)
 	
 	async def set_break_on_csp_violation(self, violation_types: List[str]) -> None:
-		return await self._execute_function("DOMDebugger.setBreakOnCSPViolation", locals())
+		return await self._sync_to_trio(self._set_break_on_csp_violation_impl, violation_types=violation_types)
 	
 	async def set_dom_breakpoint(self, node_id: int, type_: str) -> None:
-		return await self._execute_function("DOMDebugger.setDOMBreakpoint", locals())
+		return await self._sync_to_trio(self._set_dom_breakpoint_impl, node_id=node_id, type_=type_)
 	
 	async def set_event_listener_breakpoint(self, event_name: str, target_name: Optional[str] = None) -> None:
-		return await self._execute_function("DOMDebugger.setEventListenerBreakpoint", locals())
+		return await self._sync_to_trio(
+				self._set_event_listener_breakpoint_impl,
+				event_name=event_name,
+				target_name=target_name
+		)
 	
 	async def set_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._execute_function("DOMDebugger.setInstrumentationBreakpoint", locals())
+		return await self._sync_to_trio(self._set_instrumentation_breakpoint_impl, event_name=event_name)
 	
 	async def set_xhr_breakpoint(self, url: str) -> None:
-		return await self._execute_function("DOMDebugger.setXHRBreakpoint", locals())
+		return await self._sync_to_trio(self._set_xhr_breakpoint_impl, url=url)

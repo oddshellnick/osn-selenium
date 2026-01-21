@@ -6,26 +6,29 @@ from typing import (
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.audits import (
+	UnifiedAuditsCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.audits import (
 	AbstractAuditsCDPExecutor
 )
 
 
-class AuditsCDPExecutor(AbstractAuditsCDPExecutor):
+class AuditsCDPExecutor(UnifiedAuditsCDPExecutor, AbstractAuditsCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedAuditsCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def check_contrast(self, report_aaa: Optional[bool] = None) -> None:
-		return self._execute_function("Audits.checkContrast", locals())
+		return self._check_contrast_impl(report_aaa=report_aaa)
 	
-	def check_forms_issues(self) -> List[Any]:
-		return self._execute_function("Audits.checkFormsIssues", locals())
+	def check_forms_issues(self) -> List[Dict[str, Any]]:
+		return self._check_forms_issues_impl()
 	
 	def disable(self) -> None:
-		return self._execute_function("Audits.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("Audits.enable", locals())
+		return self._enable_impl()
 	
 	def get_encoded_response(
 			self,
@@ -34,4 +37,9 @@ class AuditsCDPExecutor(AbstractAuditsCDPExecutor):
 			quality: Optional[float] = None,
 			size_only: Optional[bool] = None
 	) -> Tuple[Optional[str], int, int]:
-		return self._execute_function("Audits.getEncodedResponse", locals())
+		return self._get_encoded_response_impl(
+				request_id=request_id,
+				encoding=encoding,
+				quality=quality,
+				size_only=size_only
+		)

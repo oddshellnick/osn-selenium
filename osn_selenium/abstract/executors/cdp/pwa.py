@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -18,7 +19,7 @@ class AbstractPwaCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_os_app_state(self, manifest_id: str) -> Tuple[int, List[Any]]:
+	def get_os_app_state(self, manifest_id: str) -> Tuple[int, List[Dict[str, Any]]]:
 		...
 	
 	@abstractmethod

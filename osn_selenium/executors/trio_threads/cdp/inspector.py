@@ -1,23 +1,31 @@
-from typing import (
-	Any,
-	Callable,
-	Coroutine,
-	Dict
+import trio
+from typing import Any, Callable, Dict
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.executors.unified.cdp.inspector import (
+	UnifiedInspectorCDPExecutor
 )
 from osn_selenium.abstract.executors.cdp.inspector import (
 	AbstractInspectorCDPExecutor
 )
 
 
-class InspectorCDPExecutor(AbstractInspectorCDPExecutor):
+class InspectorCDPExecutor(
+		UnifiedInspectorCDPExecutor,
+		TrioThreadMixin,
+		AbstractInspectorCDPExecutor
+):
 	def __init__(
 			self,
-			execute_function: Callable[[str, Dict[str, Any]], Coroutine[Any, Any, Any]]
+			execute_function: Callable[[str, Dict[str, Any]], Any],
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
 	):
-		self._execute_function = execute_function
+		UnifiedInspectorCDPExecutor.__init__(self, execute_function=execute_function)
+		
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._execute_function("Inspector.disable", locals())
+		return await self._sync_to_trio(self._disable_impl)
 	
 	async def enable(self) -> None:
-		return await self._execute_function("Inspector.enable", locals())
+		return await self._sync_to_trio(self._enable_impl)

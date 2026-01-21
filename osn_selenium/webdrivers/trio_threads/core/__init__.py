@@ -7,7 +7,6 @@ from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.executors.trio_threads.cdp import CDPExecutor
-from osn_selenium.webdrivers._functions import execute_js_bridge
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
@@ -23,6 +22,10 @@ from osn_selenium.webdrivers.trio_threads.core.devtools import CoreDevToolsMixin
 from osn_selenium.webdrivers.trio_threads.core.lifecycle import CoreLifecycleMixin
 from osn_selenium.webdrivers.trio_threads.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationMixin
+from osn_selenium.webdrivers._functions import (
+	execute_cmd_bridge,
+	execute_js_bridge
+)
 
 
 class CoreWebDriver(
@@ -96,7 +99,12 @@ class CoreWebDriver(
 		
 		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
 		
-		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
+		self._cdp_executor = CDPExecutor(
+				execute_function=lambda cmd,
+				cmd_args: execute_cmd_bridge(self.driver, cmd, cmd_args),
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 		
 		self._js_executor = JSExecutor(
 				execute_function=lambda script,

@@ -1,10 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractBluetoothEmulationCDPExecutor(ABC):
 	@abstractmethod
-	def add_characteristic(self, service_id: str, characteristic_uuid: str, properties: Any) -> str:
+	def add_characteristic(
+			self,
+			service_id: str,
+			characteristic_uuid: str,
+			properties: Dict[str, Any]
+	) -> str:
 		...
 	
 	@abstractmethod
@@ -40,7 +50,7 @@ class AbstractBluetoothEmulationCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def simulate_advertisement(self, entry: Any) -> None:
+	def simulate_advertisement(self, entry: Dict[str, Any]) -> None:
 		...
 	
 	@abstractmethod
@@ -76,7 +86,7 @@ class AbstractBluetoothEmulationCDPExecutor(ABC):
 			self,
 			address: str,
 			name: str,
-			manufacturer_data: List[Any],
+			manufacturer_data: List[Dict[str, Any]],
 			known_service_uuids: List[str]
 	) -> None:
 		...

@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional
+from typing import (
+	Any,
+	Dict,
+	List,
+	Optional
+)
 
 
 class AbstractOverlayCDPExecutor(ABC):
@@ -12,7 +17,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_grid_highlight_objects_for_test(self, node_ids: List[int]) -> dict:
+	def get_grid_highlight_objects_for_test(self, node_ids: List[int]) -> Any:
 		...
 	
 	@abstractmethod
@@ -23,11 +28,11 @@ class AbstractOverlayCDPExecutor(ABC):
 			include_style: Optional[bool] = None,
 			color_format: Optional[str] = None,
 			show_accessibility_info: Optional[bool] = None
-	) -> dict:
+	) -> Any:
 		...
 	
 	@abstractmethod
-	def get_source_order_highlight_object_for_test(self, node_id: int) -> dict:
+	def get_source_order_highlight_object_for_test(self, node_id: int) -> Any:
 		...
 	
 	@abstractmethod
@@ -38,15 +43,15 @@ class AbstractOverlayCDPExecutor(ABC):
 	def highlight_frame(
 			self,
 			frame_id: str,
-			content_color: Optional[Any] = None,
-			content_outline_color: Optional[Any] = None
+			content_color: Optional[Dict[str, Any]] = None,
+			content_outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
 	@abstractmethod
 	def highlight_node(
 			self,
-			highlight_config: Any,
+			highlight_config: Dict[str, Any],
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None,
@@ -57,9 +62,9 @@ class AbstractOverlayCDPExecutor(ABC):
 	@abstractmethod
 	def highlight_quad(
 			self,
-			quad: List[Any],
-			color: Optional[Any] = None,
-			outline_color: Optional[Any] = None
+			quad: List[float],
+			color: Optional[Dict[str, Any]] = None,
+			outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
@@ -70,15 +75,15 @@ class AbstractOverlayCDPExecutor(ABC):
 			y: int,
 			width: int,
 			height: int,
-			color: Optional[Any] = None,
-			outline_color: Optional[Any] = None
+			color: Optional[Dict[str, Any]] = None,
+			outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
 		...
 	
 	@abstractmethod
 	def highlight_source_order(
 			self,
-			source_order_config: Any,
+			source_order_config: Dict[str, Any],
 			node_id: Optional[int] = None,
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
@@ -86,7 +91,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_inspect_mode(self, mode: str, highlight_config: Optional[Any] = None) -> None:
+	def set_inspect_mode(self, mode: str, highlight_config: Optional[Dict[str, Any]] = None) -> None:
 		...
 	
 	@abstractmethod
@@ -98,7 +103,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_container_query_overlays(self, container_query_highlight_configs: List[Any]) -> None:
+	def set_show_container_query_overlays(self, container_query_highlight_configs: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -106,7 +111,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_flex_overlays(self, flex_node_highlight_configs: List[Any]) -> None:
+	def set_show_flex_overlays(self, flex_node_highlight_configs: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -114,11 +119,11 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_grid_overlays(self, grid_node_highlight_configs: List[Any]) -> None:
+	def set_show_grid_overlays(self, grid_node_highlight_configs: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
-	def set_show_hinge(self, hinge_config: Optional[Any] = None) -> None:
+	def set_show_hinge(self, hinge_config: Optional[Dict[str, Any]] = None) -> None:
 		...
 	
 	@abstractmethod
@@ -126,7 +131,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_isolated_elements(self, isolated_element_highlight_configs: List[Any]) -> None:
+	def set_show_isolated_elements(self, isolated_element_highlight_configs: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -142,7 +147,7 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_scroll_snap_overlays(self, scroll_snap_highlight_configs: List[Any]) -> None:
+	def set_show_scroll_snap_overlays(self, scroll_snap_highlight_configs: List[Dict[str, Any]]) -> None:
 		...
 	
 	@abstractmethod
@@ -154,5 +159,5 @@ class AbstractOverlayCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def set_show_window_controls_overlay(self, window_controls_overlay_config: Optional[Any] = None) -> None:
+	def set_show_window_controls_overlay(self, window_controls_overlay_config: Optional[Dict[str, Any]] = None) -> None:
 		...

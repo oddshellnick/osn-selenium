@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Tuple
+from typing import (
+	Any,
+	Dict,
+	Optional,
+	Tuple
+)
 
 
 class AbstractHeadlessExperimentalCDPExecutor(ABC):
@@ -9,7 +14,7 @@ class AbstractHeadlessExperimentalCDPExecutor(ABC):
 			frame_time_ticks: Optional[float] = None,
 			interval: Optional[float] = None,
 			no_display_updates: Optional[bool] = None,
-			screenshot: Optional[Any] = None
+			screenshot: Optional[Dict[str, Any]] = None
 	) -> Tuple[bool, Optional[str]]:
 		...
 	

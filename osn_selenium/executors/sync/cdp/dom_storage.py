@@ -4,29 +4,32 @@ from typing import (
 	Dict,
 	List
 )
+from osn_selenium.executors.unified.cdp.dom_storage import (
+	UnifiedDomStorageCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.dom_storage import (
 	AbstractDomStorageCDPExecutor
 )
 
 
-class DomStorageCDPExecutor(AbstractDomStorageCDPExecutor):
+class DomStorageCDPExecutor(UnifiedDomStorageCDPExecutor, AbstractDomStorageCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedDomStorageCDPExecutor.__init__(self, execute_function=execute_function)
 	
-	def clear(self, storage_id: Any) -> None:
-		return self._execute_function("DOMStorage.clear", locals())
+	def clear(self, storage_id: Dict[str, Any]) -> None:
+		return self._clear_impl(storage_id=storage_id)
 	
 	def disable(self) -> None:
-		return self._execute_function("DOMStorage.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("DOMStorage.enable", locals())
+		return self._enable_impl()
 	
-	def get_dom_storage_items(self, storage_id: Any) -> List[List[Any]]:
-		return self._execute_function("DOMStorage.getDOMStorageItems", locals())
+	def get_dom_storage_items(self, storage_id: Dict[str, Any]) -> List[List[str]]:
+		return self._get_dom_storage_items_impl(storage_id=storage_id)
 	
-	def remove_dom_storage_item(self, storage_id: Any, key: str) -> None:
-		return self._execute_function("DOMStorage.removeDOMStorageItem", locals())
+	def remove_dom_storage_item(self, storage_id: Dict[str, Any], key: str) -> None:
+		return self._remove_dom_storage_item_impl(storage_id=storage_id, key=key)
 	
-	def set_dom_storage_item(self, storage_id: Any, key: str, value: str) -> None:
-		return self._execute_function("DOMStorage.setDOMStorageItem", locals())
+	def set_dom_storage_item(self, storage_id: Dict[str, Any], key: str, value: str) -> None:
+		return self._set_dom_storage_item_impl(storage_id=storage_id, key=key, value=value)

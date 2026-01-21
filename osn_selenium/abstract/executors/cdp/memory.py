@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -13,11 +14,11 @@ class AbstractMemoryCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_all_time_sampling_profile(self) -> Any:
+	def get_all_time_sampling_profile(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
-	def get_browser_sampling_profile(self) -> Any:
+	def get_browser_sampling_profile(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -25,11 +26,11 @@ class AbstractMemoryCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_dom_counters_for_leak_detection(self) -> List[Any]:
+	def get_dom_counters_for_leak_detection(self) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def get_sampling_profile(self) -> Any:
+	def get_sampling_profile(self) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod

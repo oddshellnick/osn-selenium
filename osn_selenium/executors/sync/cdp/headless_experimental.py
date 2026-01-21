@@ -5,26 +5,37 @@ from typing import (
 	Optional,
 	Tuple
 )
+from osn_selenium.executors.unified.cdp.headless_experimental import (
+	UnifiedHeadlessExperimentalCDPExecutor
+)
 from osn_selenium.abstract.executors.cdp.headless_experimental import (
 	AbstractHeadlessExperimentalCDPExecutor
 )
 
 
-class HeadlessExperimentalCDPExecutor(AbstractHeadlessExperimentalCDPExecutor):
+class HeadlessExperimentalCDPExecutor(
+		UnifiedHeadlessExperimentalCDPExecutor,
+		AbstractHeadlessExperimentalCDPExecutor
+):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
-		self._execute_function = execute_function
+		UnifiedHeadlessExperimentalCDPExecutor.__init__(self, execute_function=execute_function)
 	
 	def begin_frame(
 			self,
 			frame_time_ticks: Optional[float] = None,
 			interval: Optional[float] = None,
 			no_display_updates: Optional[bool] = None,
-			screenshot: Optional[Any] = None
+			screenshot: Optional[Dict[str, Any]] = None
 	) -> Tuple[bool, Optional[str]]:
-		return self._execute_function("HeadlessExperimental.beginFrame", locals())
+		return self._begin_frame_impl(
+				frame_time_ticks=frame_time_ticks,
+				interval=interval,
+				no_display_updates=no_display_updates,
+				screenshot=screenshot
+		)
 	
 	def disable(self) -> None:
-		return self._execute_function("HeadlessExperimental.disable", locals())
+		return self._disable_impl()
 	
 	def enable(self) -> None:
-		return self._execute_function("HeadlessExperimental.enable", locals())
+		return self._enable_impl()

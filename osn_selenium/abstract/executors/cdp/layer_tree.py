@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -21,7 +22,7 @@ class AbstractLayerTreeCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def load_snapshot(self, tiles: List[Any]) -> str:
+	def load_snapshot(self, tiles: List[Dict[str, Any]]) -> str:
 		...
 	
 	@abstractmethod
@@ -34,8 +35,8 @@ class AbstractLayerTreeCDPExecutor(ABC):
 			snapshot_id: str,
 			min_repeat_count: Optional[int] = None,
 			min_duration: Optional[float] = None,
-			clip_rect: Optional[Any] = None
-	) -> List[List[Any]]:
+			clip_rect: Optional[Dict[str, Any]] = None
+	) -> List[List[float]]:
 		...
 	
 	@abstractmethod
@@ -53,5 +54,5 @@ class AbstractLayerTreeCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def snapshot_command_log(self, snapshot_id: str) -> List[dict]:
+	def snapshot_command_log(self, snapshot_id: str) -> List[Any]:
 		...

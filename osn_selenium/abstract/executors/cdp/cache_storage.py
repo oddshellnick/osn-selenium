@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import (
 	Any,
+	Dict,
 	List,
 	Optional,
 	Tuple
@@ -21,12 +22,17 @@ class AbstractCacheStorageCDPExecutor(ABC):
 			self,
 			security_origin: Optional[str] = None,
 			storage_key: Optional[str] = None,
-			storage_bucket: Optional[Any] = None
-	) -> List[Any]:
+			storage_bucket: Optional[Dict[str, Any]] = None
+	) -> List[Dict[str, Any]]:
 		...
 	
 	@abstractmethod
-	def request_cached_response(self, cache_id: str, request_url: str, request_headers: List[Any]) -> Any:
+	def request_cached_response(
+			self,
+			cache_id: str,
+			request_url: str,
+			request_headers: List[Dict[str, Any]]
+	) -> Dict[str, Any]:
 		...
 	
 	@abstractmethod
@@ -36,5 +42,5 @@ class AbstractCacheStorageCDPExecutor(ABC):
 			skip_count: Optional[int] = None,
 			page_size: Optional[int] = None,
 			path_filter: Optional[str] = None
-	) -> Tuple[List[Any], float]:
+	) -> Tuple[List[Dict[str, Any]], float]:
 		...

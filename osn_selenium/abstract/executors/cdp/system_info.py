@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Tuple
+from typing import (
+	Any,
+	Dict,
+	List,
+	Tuple
+)
 
 
 class AbstractSystemInfoCDPExecutor(ABC):
@@ -8,9 +13,9 @@ class AbstractSystemInfoCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_info(self) -> Tuple[Any, str, str, str]:
+	def get_info(self) -> Tuple[Dict[str, Any], str, str, str]:
 		...
 	
 	@abstractmethod
-	def get_process_info(self) -> List[Any]:
+	def get_process_info(self) -> List[Dict[str, Any]]:
 		...
