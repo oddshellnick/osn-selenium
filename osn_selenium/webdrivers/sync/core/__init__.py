@@ -1,8 +1,11 @@
 from typing import Optional, Type
 from osn_selenium.types import WindowRect
+from osn_selenium.executors.sync.cdp import CDPExecutor
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.executors.sync.javascript import JSExecutor
+from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._functions import execute_js_bridge
 from osn_selenium.webdrivers.sync.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.sync.core.file import CoreFileMixin
 from osn_selenium.webdrivers.sync.core.window import CoreWindowMixin
@@ -79,7 +82,16 @@ class CoreWebDriver(
 				window_rect=window_rect,
 		)
 		
-		self._js_executor = JSExecutor(execute_function=self.execute_script)
+		self._cdp_executor = CDPExecutor(execute_function=self.execute_cdp_cmd)
+		
+		self._js_executor = JSExecutor(
+				execute_function=lambda script,
+				args: execute_js_bridge(self.driver, script, *args)
+		)
+	
+	@property
+	def cdp(self) -> CDPExecutor:
+		return self._cdp_executor
 	
 	@property
 	def javascript(self) -> JSExecutor:

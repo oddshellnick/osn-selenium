@@ -3,7 +3,9 @@ import psutil
 import pathlib
 from pandas import DataFrame, Series
 from osn_system_utils.api._utils import LOCALHOST_IPS
+from selenium.webdriver.remote.webdriver import WebDriver
 from typing import (
+	Any,
 	Dict,
 	List,
 	Optional,
@@ -126,6 +128,14 @@ def find_browser_previous_session(
 			return int(re.search(pattern=ip_pattern, string=row["Local Address"]).group(1))
 	
 	return None
+
+
+def execute_js_bridge(driver: WebDriver, script: str, *args) -> Any:
+	return driver.execute_script(script, *args)
+
+
+def execute_cmd_bridge(driver: WebDriver, cmd: str, cmd_args: Dict[str, Any]) -> Any:
+	return driver.execute_cdp_cmd(cmd, cmd_args)
 
 
 def build_cdp_kwargs(**kwargs):

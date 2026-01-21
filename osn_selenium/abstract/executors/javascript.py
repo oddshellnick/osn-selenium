@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
-
-from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.javascript.types import JS_Scripts
 from selenium.webdriver.remote.webelement import WebElement
+from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.types import (
 	Point,
 	Position,
@@ -92,7 +91,7 @@ class AbstractJSExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_random_element_point(self, element: WebElement) -> Point:
+	def get_random_element_point(self, element: WebElement) -> Optional[Point]:
 		"""
 		Gets a random point within an element, relative to the viewport.
 
@@ -100,8 +99,8 @@ class AbstractJSExecutor(ABC):
 			element (WebElement): The element to find a point in.
 
 		Returns:
-			Point: An object with the x and y coordinates of the random
-				point relative to the viewport.
+			Optional[Point]: An object with the x and y coordinates of the random
+				point relative to the viewport, or None if no point is found.
 		"""
 		
 		...
@@ -183,6 +182,13 @@ class AbstractJSExecutor(ABC):
 	
 	@abstractmethod
 	def start_fingerprint_detection(self, fingerprint_settings: FingerprintSettings) -> None:
+		"""
+		Initiate fingerprint detection based on the provided settings.
+
+		Args:
+			fingerprint_settings (FingerprintSettings): The settings used for fingerprint detection.
+		"""
+		
 		...
 	
 	@abstractmethod

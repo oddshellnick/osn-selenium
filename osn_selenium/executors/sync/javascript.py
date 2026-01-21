@@ -5,7 +5,6 @@ from typing import (
 	Dict,
 	Optional
 )
-from osn_selenium.javascript.functions import read_js_scripts
 from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.javascript.fingerprint import FingerprintSettings
 from osn_selenium.types import (
@@ -14,75 +13,64 @@ from osn_selenium.types import (
 	Rectangle,
 	Size
 )
+from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 
 
-class JSExecutor(AbstractJSExecutor):
-	def __init__(self, execute_function: Callable[[str, Any], Any]):
-		self._execute_function = execute_function
-		self._scripts = read_js_scripts()
+class JSExecutor(UnifiedJSExecutor, AbstractJSExecutor):
+	"""
+	A synchronous JavaScript executor that provides unified access to browser-side script execution.
+	"""
 	
-	def execute(self, script: str, *args: Any) -> Any:
-		return self._execute_function(script, *args)
+	def __init__(self, execute_function: Callable[[str, Any], Any]):
+		"""
+		Initialize the JSExecutor with a synchronous execution function.
+
+		Args:
+			execute_function (Callable[[str, Any], Any]): The function used to run JavaScript code.
+		"""
+		
+		UnifiedJSExecutor.__init__(self, execute_function=execute_function)
 	
 	def check_element_in_viewport(self, element: WebElement) -> bool:
-		return self.execute(self._scripts.check_element_in_viewport, element)
+		return self._check_element_in_viewport_impl(element=element)
+	
+	def execute(self, script: str, *args: Any) -> Any:
+		return self._execute_impl(script, *args)
 	
 	def get_document_scroll_size(self) -> Size:
-		size = self.execute(self._scripts.get_document_scroll_size)
-		
-		return Size.model_validate(size)
+		return self._get_document_scroll_size_impl()
 	
 	def get_element_css_style(self, element: WebElement) -> Dict[str, str]:
-		return self.execute(self._scripts.get_element_css, element)
+		return self._get_element_css_style_impl(element=element)
 	
 	def get_element_rect_in_viewport(self, element: WebElement) -> Rectangle:
-		rectangle = self.execute(self._scripts.get_element_rect_in_viewport, element)
-		
-		return Rectangle.model_validate(rectangle)
+		return self._get_element_rect_in_viewport_impl(element=element)
+	
+	def get_random_element_point(self, element: WebElement) -> Optional[Point]:
+		return self._get_random_element_point_impl(element=element)
 	
 	def get_random_element_point_in_viewport(self, element: WebElement, step: int = 1) -> Optional[Position]:
-		position = self.execute(self._scripts.get_random_element_point_in_viewport, element, step)
-		
-		if position is not None:
-			return Position.model_validate(position)
-		
-		return None
-	
-	def get_random_element_point(self, element: WebElement) -> Point:
-		point_in_viewport = self.get_random_element_point_in_viewport(element=element, step=1)
-		
-		element_viewport_pos = self.get_element_rect_in_viewport(element=element)
-		
-		x = int(element_viewport_pos.x + point_in_viewport.x)
-		y = int(element_viewport_pos.y + point_in_viewport.y)
-		
-		return Point(x=x, y=y)
+		return self._get_random_element_point_in_viewport_impl(element=element, step=step)
 	
 	def get_viewport_position(self) -> Position:
-		position = self.execute(self._scripts.get_viewport_position)
-		
-		return Position.model_validate(position)
+		return self._get_viewport_position_impl()
 	
 	def get_viewport_rect(self) -> Rectangle:
-		rectangle = self.execute(self._scripts.get_viewport_rect)
-		
-		return Rectangle.model_validate(rectangle)
+		return self._get_viewport_rect_impl()
 	
 	def get_viewport_size(self) -> Size:
-		size = self.execute(self._scripts.get_viewport_size)
-		
-		return Size.model_validate(size)
+		return self._get_viewport_size_impl()
 	
 	def open_new_tab(self, link: str = "") -> None:
-		self.execute(self._scripts.open_new_tab, link)
+		self._open_new_tab_impl(link=link)
 	
 	@property
 	def scripts(self) -> JS_Scripts:
-		return self._scripts
+		return self._scripts_impl
 	
 	def start_fingerprint_detection(self, fingerprint_settings: FingerprintSettings) -> None:
-		self.execute(fingerprint_settings.generate_js())
+		self._start_fingerprint_detection_impl(fingerprint_settings=fingerprint_settings)
 	
 	def stop_window_loading(self) -> None:
-		self.execute(self._scripts.stop_window_loading)
+		self._stop_window_loading_impl()

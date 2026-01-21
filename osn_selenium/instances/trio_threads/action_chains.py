@@ -230,7 +230,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 	
 	def __init__(
 			self,
-			execute_script_function: Callable[[str, Any], Coroutine[Any, Any, Any]],
+			execute_script_function: Callable[[str, Any], Any],
 			selenium_action_chains: legacyActionChains,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
@@ -239,7 +239,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 		Initializes the HumanLikeActionChains wrapper.
 
 		Args:
-			execute_script_function (Callable[[str, Any], Coroutine[Any, Any, Any]]): Function to execute JavaScript in the browser.
+			execute_script_function (Callable[[str, Any], Any]): Function to execute JavaScript in the browser.
 			selenium_action_chains (legacyActionChains): The legacy Selenium ActionChains instance.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
@@ -251,7 +251,7 @@ class HumanLikeActionChains(ActionChains, AbstractHumanLikeActionChains):
 				limiter=limiter
 		)
 		
-		self._js_executor = JSExecutor(execute_function=execute_script_function)
+		self._js_executor = JSExecutor(execute_function=execute_script_function, lock=lock, limiter=limiter)
 	
 	async def hm_move(self, start_position: Point, end_position: Point) -> Self:
 		parts = await self._sync_to_trio(

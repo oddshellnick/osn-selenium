@@ -5,6 +5,7 @@ from typing import (
 	Optional
 )
 from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._functions import execute_js_bridge
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from selenium.webdriver import (
@@ -47,7 +48,8 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> HumanLikeActionChains:
 		return HumanLikeActionChains(
-				execute_script_function=self.execute_script,
+				execute_script_function=lambda script,
+				args: execute_js_bridge(self.driver, script, *args),
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 		)
 	
