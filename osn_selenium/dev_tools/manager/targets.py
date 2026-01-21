@@ -49,7 +49,7 @@ class TargetsMixin(LoggingMixin):
 		except BaseException as error:
 			log_exception(error)
 	
-	async def _add_target(self, target_event: Any) -> Optional[bool]:
+	async def _add_target(self, target_event: Any, is_main_target: bool = False) -> Optional[bool]:
 		"""
 		Adds a new browser target to the manager based on a target event.
 
@@ -96,6 +96,7 @@ class TargetsMixin(LoggingMixin):
 									browser_context_id=target_info.browser_context_id,
 									subtype=target_info.subtype,
 							),
+							is_main_target=is_main_target,
 							logger_settings=self._logger_settings,
 							domains_settings=self._domains_settings,
 							devtools_package=self._devtools_package,

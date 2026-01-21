@@ -50,6 +50,7 @@ class BaseMixin:
 		about_to_stop_event (trio.Event): Event set when the target is about to stop.
 		stopped_event (trio.Event): Event set when the target handling has fully stopped.
 		background_task_ended (Optional[trio.Event]): Event set when the background task completes.
+		_is_main_target (bool): Whether this is the primary target.
 		_logger_settings ("LoggerSettings"): Configuration for logging.
 		_domains_settings (Optional["DomainsSettings"]): Configuration for enabled domains and handlers.
 		_new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
@@ -77,6 +78,7 @@ class BaseMixin:
 	def __init__(
 			self,
 			target_data: TargetData,
+			is_main_target: bool,
 			logger_settings: "LoggerSettings",
 			domains_settings: Optional["DomainsSettings"],
 			devtools_package: DevToolsPackage,
@@ -97,6 +99,7 @@ class BaseMixin:
 
 		Args:
 			target_data (TargetData): Information about the target.
+			is_main_target (bool): Whether this is the primary target.
 			logger_settings ("LoggerSettings"): Configuration for logging.
 			domains_settings (Optional["DomainsSettings"]): Configuration for enabled domains and handlers.
 			devtools_package (DevToolsPackage): Access to CDP commands and events.
@@ -114,6 +117,7 @@ class BaseMixin:
 		"""
 		
 		self.target_data = target_data
+		self._is_main_target = is_main_target
 		self._logger_settings = logger_settings
 		self._domains_settings = domains_settings
 		self.devtools_package = devtools_package
@@ -128,6 +132,7 @@ class BaseMixin:
 		self._add_cdp_log_func = add_cdp_log_func
 		self._add_fingerprint_log_func = add_fingerprint_log_func
 		self._fingerprint_injection_script = fingerprint_injection_script
+		
 		self._new_targets_events_filters = validate_target_event_filter(filter_=new_targets_filter_list)
 		
 		self._cdp_target_type_log_accepted = validate_type_filter(
