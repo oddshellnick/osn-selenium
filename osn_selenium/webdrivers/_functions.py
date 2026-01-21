@@ -53,19 +53,16 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 
 	This function uses platform-specific methods to fetch network connection information
 	and filters it to find entries associated with the provided browser executable
-	that are in a "LISTENING" state on localhost. Currently, only Windows platform is supported.
+	that are in a "LISTENING" state on localhost.
 
 	Args:
 		browser_exe (Union[str, pathlib.Path]): The path to the browser executable.
-			It can be a string or a pathlib.Path object.
+											   It can be a string or a pathlib.Path object.
 
 	Returns:
 		DataFrame: A Pandas DataFrame containing rows of active executable connections
-			that match the browser executable and listening criteria.
-			Returns an empty DataFrame if no matching executables are found.
-
-	Raises:
-		PlatformNotSupportedError: If the platform is not supported.
+				   that match the browser executable and listening criteria.
+				   Returns an empty DataFrame if no matching executables are found.
 	"""
 	
 	target_name = browser_exe if isinstance(browser_exe, str) else browser_exe.name
@@ -111,7 +108,8 @@ def find_browser_previous_session(
 
 	Args:
 		browser_exe (Union[str, pathlib.Path]): Path to the browser executable or just the executable name.
-		profile_dir_command (str): Command line pattern to find the profile directory argument in the process command line. Should use `{value}` as a placeholder for the directory path.
+		profile_dir_command (str): Command line pattern to find the profile directory argument.
+								   Should use `{value}` as a placeholder for the directory path.
 		profile_dir (Optional[str]): The expected profile directory path to match against.
 
 	Returns:
@@ -130,15 +128,49 @@ def find_browser_previous_session(
 	return None
 
 
-def execute_js_bridge(driver: WebDriver, script: str, *args) -> Any:
+def execute_js_bridge(driver: WebDriver, script: str, *args: Any) -> Any:
+	"""
+	Executes a JavaScript script through the WebDriver.
+
+	Args:
+		driver (WebDriver): The Selenium WebDriver instance.
+		script (str): The JavaScript code to execute.
+		*args (Any): Variable length argument list for the script.
+
+	Returns:
+		Any: The return value of the JavaScript script.
+	"""
+	
 	return driver.execute_script(script, *args)
 
 
 def execute_cmd_bridge(driver: WebDriver, cmd: str, cmd_args: Dict[str, Any]) -> Any:
+	"""
+	Executes a Chrome DevTools Protocol command through the WebDriver.
+
+	Args:
+		driver (WebDriver): The Selenium WebDriver instance.
+		cmd (str): The CDP command to execute.
+		cmd_args (Dict[str, Any]): The arguments for the CDP command.
+
+	Returns:
+		Any: The result of the CDP command execution.
+	"""
+	
 	return driver.execute_cdp_cmd(cmd, cmd_args)
 
 
-def build_cdp_kwargs(**kwargs):
+def build_cdp_kwargs(**kwargs: Any) -> Dict[str, Any]:
+	"""
+	Builds a dictionary of keyword arguments for a CDP command, excluding None values.
+
+	Args:
+		**kwargs (Any): Keyword arguments to filter.
+
+	Returns:
+		Dict[str, Any]: A dictionary containing only the non-None keyword arguments.
+	"""
+	
 	dict_ = {}
 	
 	for key, value in kwargs.items():
