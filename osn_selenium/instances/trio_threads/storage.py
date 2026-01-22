@@ -6,12 +6,10 @@ from typing import (
 )
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import STORAGE_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.storage import UnifiedStorage
 from osn_selenium.abstract.instances.storage import AbstractStorage
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -24,7 +22,7 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
-class Storage(TrioThreadMixin, AbstractStorage):
+class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 	"""
 	Wrapper for the legacy Selenium BiDi Storage instance.
 
@@ -47,19 +45,16 @@ class Storage(TrioThreadMixin, AbstractStorage):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedStorage.__init__(self, selenium_storage=selenium_storage)
 		
-		if not isinstance(selenium_storage, legacyStorage):
-			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
-		
-		self._selenium_storage = selenium_storage
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def delete_cookies(
 			self,
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> DeleteCookiesResult:
-		return await self._sync_to_trio(self.legacy.delete_cookies, filter=filter, partition=partition)
+		return await self._sync_to_trio(self._delete_cookies_impl, filter=filter, partition=partition)
 	
 	@classmethod
 	def from_legacy(
@@ -95,15 +90,15 @@ class Storage(TrioThreadMixin, AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> GetCookiesResult:
-		return await self._sync_to_trio(self.legacy.get_cookies, filter=filter, partition=partition)
+		return await self._sync_to_trio(self._get_cookies_impl, filter=filter, partition=partition)
 	
 	@property
 	def legacy(self) -> legacyStorage:
-		return self._selenium_storage
+		return self._legacy_impl
 	
 	async def set_cookie(
 			self,
 			cookie: PartialCookie,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> SetCookieResult:
-		return await self._sync_to_trio(self.legacy.set_cookie, cookie=cookie, partition=partition)
+		return await self._sync_to_trio(self._set_cookie_impl, cookie=cookie, partition=partition)

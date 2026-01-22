@@ -93,7 +93,7 @@ class CoreBaseMixin(AbstractCoreBaseMixin):
 	
 	def _unwrap_args(self, arg: Any) -> Any:
 		if isinstance(arg, WebElement):
-			return arg.legacy
+			return arg._legacy_impl
 		
 		if isinstance(arg, list):
 			return [self._unwrap_args(item) for item in arg]

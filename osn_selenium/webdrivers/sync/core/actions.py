@@ -6,6 +6,7 @@ from typing import (
 )
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers._functions import execute_js_bridge
+from osn_selenium.instances.sync.action_chains import ActionChains
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from selenium.webdriver import (
@@ -16,10 +17,6 @@ from selenium.webdriver.support.wait import (
 )
 from osn_selenium.abstract.webdriver.core.actions import (
 	AbstractCoreActionsMixin
-)
-from osn_selenium.instances.sync.action_chains import (
-	ActionChains,
-	HumanLikeActionChains
 )
 
 
@@ -32,25 +29,15 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 	"""
 	
 	@requires_driver
-	def action_chain(
+	def action_chains(
 			self,
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
 		return ActionChains(
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
-		)
-	
-	@requires_driver
-	def hm_action_chain(
-			self,
-			duration: int = 250,
-			devices: Optional[List[DEVICES_TYPEHINT]] = None,
-	) -> HumanLikeActionChains:
-		return HumanLikeActionChains(
-				execute_script_function=lambda script,
+				execute_js_script_function=lambda script,
 				args: execute_js_bridge(self.driver, script, *args),
-				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 		)
 	
 	@requires_driver

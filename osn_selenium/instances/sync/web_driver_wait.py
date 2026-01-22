@@ -3,14 +3,12 @@ from typing import (
 	Self,
 	TypeVar
 )
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WebDriverWaitInputType
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
+from osn_selenium.instances.unified.web_driver_wait import UnifiedWebDriverWait
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
 )
@@ -22,7 +20,7 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 OUTPUT = TypeVar("OUTPUT")
 
 
-class WebDriverWait(AbstractWebDriverWait):
+class WebDriverWait(UnifiedWebDriverWait, AbstractWebDriverWait):
 	"""
 	Wrapper for the legacy Selenium WebDriverWait instance.
 
@@ -38,13 +36,7 @@ class WebDriverWait(AbstractWebDriverWait):
 			selenium_webdriver_wait (legacyWebDriverWait): The legacy Selenium WebDriverWait instance to wrap.
 		"""
 		
-		if not isinstance(selenium_webdriver_wait, legacyWebDriverWait):
-			raise ExpectedTypeError(
-					expected_class=legacyWebDriverWait,
-					received_instance=selenium_webdriver_wait
-			)
-		
-		self._selenium_webdriver_wait = selenium_webdriver_wait
+		UnifiedWebDriverWait.__init__(self, selenium_webdriver_wait=selenium_webdriver_wait)
 	
 	@classmethod
 	def from_legacy(cls, selenium_webdriver_wait: legacyWebDriverWait) -> Self:
@@ -57,18 +49,18 @@ class WebDriverWait(AbstractWebDriverWait):
 	
 	@property
 	def legacy(self) -> legacyWebDriverWait:
-		return self._selenium_webdriver_wait
+		return self._legacy_impl
 	
 	def until(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return self._selenium_webdriver_wait.until(method=method, message=message)
+		return self._until_impl(method=method, message=message)
 	
 	def until_not(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return self._selenium_webdriver_wait.until_not(method=method, message=message)
+		return self._until_not_impl(method=method, message=message)

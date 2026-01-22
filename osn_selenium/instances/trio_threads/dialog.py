@@ -3,18 +3,16 @@ from typing import List, Optional, Self
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import DIALOG_TYPEHINT
 from selenium.webdriver.common.fedcm.account import Account
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.dialog import UnifiedDialog
 from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Dialog(TrioThreadMixin, AbstractDialog):
+class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 	"""
 	Wrapper for the legacy Selenium FedCM Dialog instance.
 
@@ -37,18 +35,15 @@ class Dialog(TrioThreadMixin, AbstractDialog):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedDialog.__init__(self, selenium_dialog=selenium_dialog)
 		
-		if not isinstance(selenium_dialog, legacyDialog):
-			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
-		
-		self._selenium_dialog = selenium_dialog
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self.legacy.accept)
+		await self._sync_to_trio(self._accept_impl)
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self.legacy.dismiss)
+		await self._sync_to_trio(self._dismiss_impl)
 	
 	@classmethod
 	def from_legacy(
@@ -80,20 +75,20 @@ class Dialog(TrioThreadMixin, AbstractDialog):
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	
 	async def get_accounts(self) -> List[Account]:
-		return await self._sync_to_trio(self.legacy.get_accounts)
+		return await self._sync_to_trio(self._get_accounts_impl)
 	
 	@property
 	def legacy(self) -> legacyDialog:
-		return self._selenium_dialog
+		return self._legacy_impl
 	
 	async def select_account(self, index: int) -> None:
-		await self._sync_to_trio(self.legacy.select_account, index=index)
+		await self._sync_to_trio(self._select_account_impl, index=index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._sync_to_trio(lambda: self.legacy.subtitle)
+		return await self._sync_to_trio(self._subtitle_impl)
 	
 	async def title(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.title)
+		return await self._sync_to_trio(self._title_impl)
 	
 	async def type(self) -> Optional[str]:
-		return await self._sync_to_trio(lambda: self.legacy.type)
+		return await self._sync_to_trio(self._type_impl)

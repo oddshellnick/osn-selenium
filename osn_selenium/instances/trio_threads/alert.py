@@ -2,16 +2,14 @@ import trio
 from typing import Optional, Self
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.types import ALERT_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.unified.alert import UnifiedAlert
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Alert(TrioThreadMixin, AbstractAlert):
+class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 	"""
 	Wrapper for the legacy Selenium Alert instance.
 
@@ -34,18 +32,15 @@ class Alert(TrioThreadMixin, AbstractAlert):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedAlert.__init__(self, selenium_alert=selenium_alert)
 		
-		if not isinstance(selenium_alert, legacyAlert):
-			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
-		
-		self._selenium_alert = selenium_alert
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self._selenium_alert.accept)
+		await self._sync_to_trio(self._accept_impl)
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self._selenium_alert.dismiss)
+		await self._sync_to_trio(self._dismiss_impl)
 	
 	@classmethod
 	def from_legacy(
@@ -78,10 +73,10 @@ class Alert(TrioThreadMixin, AbstractAlert):
 	
 	@property
 	def legacy(self) -> legacyAlert:
-		return self._selenium_alert
+		return self._legacy_impl
 	
 	async def send_keys(self, keysToSend: str) -> None:
-		await self._sync_to_trio(self._selenium_alert.send_keys, keysToSend=keysToSend)
+		await self._sync_to_trio(self._send_keys_impl, keysToSend=keysToSend)
 	
 	async def text(self) -> str:
-		return await self._sync_to_trio(lambda: self._selenium_alert.text)
+		return await self._sync_to_trio(self._text_impl)

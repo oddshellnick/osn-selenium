@@ -1,6 +1,7 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
 from typing import (
 	List,
@@ -9,11 +10,8 @@ from typing import (
 	TYPE_CHECKING
 )
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.shadow_root import UnifiedShadowRoot
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
@@ -23,7 +21,7 @@ if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.web_element import WebElement
 
 
-class ShadowRoot(TrioThreadMixin, AbstractShadowRoot):
+class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 	"""
 	Wrapper for the legacy Selenium ShadowRoot instance.
 
@@ -46,25 +44,19 @@ class ShadowRoot(TrioThreadMixin, AbstractShadowRoot):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedShadowRoot.__init__(self, selenium_shadow_root=selenium_shadow_root)
 		
-		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise ExpectedTypeError(
-					expected_class=legacyShadowRoot,
-					received_instance=selenium_shadow_root
-			)
-		
-		self._selenium_shadow_root = selenium_shadow_root
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
-		impl_el = await self._sync_to_trio(self.legacy.find_element, by=by, value=value)
+		impl_el = await self._sync_to_trio(self._find_element_impl, by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
-		impl_list = await self._sync_to_trio(self.legacy.find_elements, by=by, value=value)
+		impl_list = await self._sync_to_trio(self._find_elements_impl, by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
@@ -106,8 +98,8 @@ class ShadowRoot(TrioThreadMixin, AbstractShadowRoot):
 		)
 	
 	async def id(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.id)
+		return await self._sync_to_trio(self._id_impl)
 	
 	@property
 	def legacy(self) -> legacyShadowRoot:
-		return self._selenium_shadow_root
+		return self._legacy_impl

@@ -1,3 +1,4 @@
+from osn_selenium.instances.errors import TypesConvertError
 from typing import (
 	Any,
 	Dict,
@@ -7,18 +8,15 @@ from typing import (
 )
 from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.permissions import UnifiedPermissions
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
 )
 
 
-class Permissions(AbstractPermissions):
+class Permissions(UnifiedPermissions, AbstractPermissions):
 	"""
 	Wrapper for the legacy Selenium Permissions instance.
 
@@ -34,13 +32,7 @@ class Permissions(AbstractPermissions):
 			selenium_permissions (legacyPermissions): The legacy Selenium Permissions instance to wrap.
 		"""
 		
-		if not isinstance(selenium_permissions, legacyPermissions):
-			raise ExpectedTypeError(
-					expected_class=legacyPermissions,
-					received_instance=selenium_permissions
-			)
-		
-		self._selenium_permissions = selenium_permissions
+		UnifiedPermissions.__init__(self, selenium_permissions=selenium_permissions)
 	
 	@classmethod
 	def from_legacy(cls, selenium_permissions: PERMISSIONS_TYPEHINT) -> Self:
@@ -66,7 +58,7 @@ class Permissions(AbstractPermissions):
 	
 	@property
 	def legacy(self) -> legacyPermissions:
-		return self._selenium_permissions
+		return self._legacy_impl
 	
 	def set_permission(
 			self,
@@ -75,7 +67,7 @@ class Permissions(AbstractPermissions):
 			origin: str,
 			user_context: Optional[str] = None,
 	) -> None:
-		self.legacy.set_permission(
+		self._set_permission_impl(
 				descriptor=descriptor,
 				state=state,
 				origin=origin,

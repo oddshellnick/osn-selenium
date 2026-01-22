@@ -4,21 +4,19 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
+from osn_selenium.instances.unified.web_extension import UnifiedWebExtension
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
 
 
-class WebExtension(AbstractWebExtension):
+class WebExtension(UnifiedWebExtension, AbstractWebExtension):
 	"""
 	Wrapper for the legacy Selenium WebExtension instance.
 
@@ -34,13 +32,7 @@ class WebExtension(AbstractWebExtension):
 			selenium_web_extension (legacyWebExtension): The legacy Selenium WebExtension instance to wrap.
 		"""
 		
-		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise ExpectedTypeError(
-					expected_class=legacyWebExtension,
-					received_instance=selenium_web_extension
-			)
-		
-		self._selenium_web_extension = selenium_web_extension
+		UnifiedWebExtension.__init__(self, selenium_web_extension=selenium_web_extension)
 	
 	@classmethod
 	def from_legacy(cls, selenium_web_extension: WEB_EXTENSION_TYPEHINT) -> Self:
@@ -70,11 +62,11 @@ class WebExtension(AbstractWebExtension):
 			archive_path: Optional[str] = None,
 			base64_value: Optional[str] = None,
 	) -> Dict:
-		return self.legacy.install(path=path, archive_path=archive_path, base64_value=base64_value)
+		return self._install_impl(path=path, archive_path=archive_path, base64_value=base64_value)
 	
 	@property
 	def legacy(self) -> legacyWebExtension:
-		return self._selenium_web_extension
+		return self._legacy_impl
 	
 	def uninstall(self, extension_id_or_result: Union[str, Dict]) -> None:
-		self.legacy.uninstall(extension_id_or_result=extension_id_or_result)
+		self._uninstall_impl(extension_id_or_result=extension_id_or_result)

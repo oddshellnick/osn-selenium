@@ -1,7 +1,7 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
 from typing import (
 	Any,
@@ -12,24 +12,16 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
+from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
-from selenium.webdriver.support.wait import (
-	WebDriverWait as legacyWebDriverWait
-)
 
 
-class WebElement(TrioThreadMixin, AbstractWebElement):
+class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	"""
-	Wrapper for the legacy Selenium WebElement instance.
-
 	Represents an HTML element in the DOM, offering methods for interaction (click, type),
 	property retrieval, and finding child elements.
 	"""
@@ -49,50 +41,28 @@ class WebElement(TrioThreadMixin, AbstractWebElement):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedWebElement.__init__(self, selenium_web_element=selenium_web_element)
 		
-		if not isinstance(selenium_web_element, legacyWebElement):
-			raise ExpectedTypeError(
-					expected_class=legacyWebElement,
-					received_instance=selenium_web_element
-			)
-		
-		self._selenium_web_element = selenium_web_element
-	
-	def __repr__(self) -> str:
-		return self.legacy.__repr__()
-	
-	@property
-	def legacy(self) -> legacyWebElement:
-		return self._selenium_web_element
-	
-	def __eq__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy == get_legacy_instance(other)
-	
-	def __hash__(self) -> int:
-		return self.legacy.__hash__()
-	
-	def __ne__(self, other: WEB_ELEMENT_TYPEHINT) -> bool:
-		return self.legacy != get_legacy_instance(other)
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accessible_name(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.accessible_name)
+		return await self._sync_to_trio(self._accessible_name_impl)
 	
 	async def aria_role(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.aria_role)
+		return await self._sync_to_trio(self._aria_role_impl)
 	
 	async def clear(self) -> None:
-		await self._sync_to_trio(self.legacy.clear)
+		await self._sync_to_trio(self._clear_impl)
 	
 	async def click(self) -> None:
-		await self._sync_to_trio(self.legacy.click)
+		await self._sync_to_trio(self._click_impl)
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_web_element: WEB_ELEMENT_TYPEHINT,
+			selenium_web_element: Any,
 			lock: trio.Lock,
-			limiter: trio.CapacityLimiter,
+			limiter: trio.CapacityLimiter
 	) -> Self:
 		"""
 		Creates an instance from a legacy Selenium WebElement object.
@@ -117,93 +87,102 @@ class WebElement(TrioThreadMixin, AbstractWebElement):
 		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Any = None) -> Self:
-		impl_el = await self._sync_to_trio(self.legacy.find_element, by=by, value=value)
-		return self.from_legacy(
-				selenium_web_element=impl_el,
-				lock=self._lock,
-				limiter=self._capacity_limiter
-		)
+		web_element = await self._sync_to_trio(self._find_element_impl, by=by, value=value)
+		
+		return self.from_legacy(web_element, self._lock, self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Any = None) -> List[Self]:
-		impl_list = await self._sync_to_trio(self.legacy.find_elements, by=by, value=value)
+		web_elements = await self._sync_to_trio(self._find_elements_impl, by=by, value=value)
+		
 		return [
 			self.from_legacy(
-					selenium_web_element=e,
+					selenium_web_element=web_element,
 					lock=self._lock,
-					limiter=self._capacity_limiter
-			) for e in impl_list
+					limiter=self._capacity_limiter,
+			) for web_element in web_elements
 		]
 	
 	async def get_attribute(self, name: str) -> Optional[str]:
-		return await self._sync_to_trio(self.legacy.get_attribute, name=name)
+		return await self._sync_to_trio(self._get_attribute_impl, name=name)
 	
 	async def get_dom_attribute(self, name: str) -> Optional[str]:
-		return await self._sync_to_trio(self.legacy.get_dom_attribute, name=name)
+		return await self._sync_to_trio(self._get_dom_attribute_impl, name=name)
 	
 	async def get_property(self, name: str) -> Any:
-		return await self._sync_to_trio(self.legacy.get_property, name=name)
+		return await self._sync_to_trio(self._get_property_impl, name=name)
 	
 	async def id(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.id)
+		return await self._sync_to_trio(self._id_impl)
 	
 	async def is_displayed(self) -> bool:
-		return await self._sync_to_trio(self.legacy.is_displayed)
+		return await self._sync_to_trio(self._is_displayed_impl)
 	
 	async def is_enabled(self) -> bool:
-		return await self._sync_to_trio(self.legacy.is_enabled)
+		return await self._sync_to_trio(self._is_enabled_impl)
 	
 	async def is_selected(self) -> bool:
-		return await self._sync_to_trio(self.legacy.is_selected)
+		return await self._sync_to_trio(self._is_selected_impl)
+	
+	@property
+	def legacy(self) -> legacyWebElement:
+		return self._legacy_impl
 	
 	async def location(self) -> Dict:
-		return await self._sync_to_trio(lambda: self.legacy.location)
+		return await self._sync_to_trio(self._location_impl)
 	
 	async def location_once_scrolled_into_view(self) -> Dict:
-		return await self._sync_to_trio(lambda: self.legacy.location_once_scrolled_into_view)
+		return await self._sync_to_trio(self._location_once_scrolled_into_view_impl)
 	
 	async def parent(self) -> Self:
-		impl_parent = await self._sync_to_trio(lambda: self.legacy.parent)
-		return self.from_legacy(impl_parent, lock=self._lock, limiter=self._capacity_limiter)
+		parent = await self._sync_to_trio(self._parent_impl)
+		
+		return self.from_legacy(
+				selenium_web_element=parent,
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
 	
 	async def rect(self) -> Dict:
-		return await self._sync_to_trio(lambda: self.legacy.rect)
+		return await self._sync_to_trio(self._rect_impl)
 	
 	async def screenshot(self, filename: str) -> bool:
-		return await self._sync_to_trio(self.legacy.screenshot, filename=filename)
+		return await self._sync_to_trio(self._screenshot_impl, filename=filename)
 	
 	async def screenshot_as_base64(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.screenshot_as_base64)
+		return await self._sync_to_trio(self._screenshot_as_base64_impl)
 	
 	async def screenshot_as_png(self) -> bytes:
-		return await self._sync_to_trio(lambda: self.legacy.screenshot_as_png)
+		return await self._sync_to_trio(self._screenshot_as_png_impl)
 	
 	async def send_keys(self, *value: str) -> None:
-		await self._sync_to_trio(self.legacy.send_keys, *value)
+		await self._sync_to_trio(self._send_keys_impl, *value)
 	
 	async def session_id(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.session_id)
+		return await self._sync_to_trio(self._session_id_impl)
 	
 	async def shadow_root(self) -> ShadowRoot:
-		return ShadowRoot(
-				await self._sync_to_trio(lambda: self.legacy.shadow_root),
+		shadow_root = await self._sync_to_trio(self._shadow_root_impl)
+		
+		return ShadowRoot.from_legacy(
+				selenium_shadow_root=shadow_root,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
 	async def size(self) -> Dict:
-		return await self._sync_to_trio(lambda: self.legacy.size)
+		return await self._sync_to_trio(self._size_impl)
 	
 	async def submit(self) -> None:
-		await self._sync_to_trio(self.legacy.submit)
+		await self._sync_to_trio(self._submit_impl)
 	
 	async def tag_name(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.tag_name)
+		return await self._sync_to_trio(self._tag_name_impl)
 	
 	async def text(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.text)
+		return await self._sync_to_trio(self._text_impl)
 	
 	async def value_of_css_property(self, property_name: str) -> str:
-		return await self._sync_to_trio(self.legacy.value_of_css_property, property_name=property_name)
+		return await self._sync_to_trio(self._value_of_css_property_impl, property_name=property_name)
 	
 	def web_driver_wait(
 			self,
@@ -211,13 +190,14 @@ class WebElement(TrioThreadMixin, AbstractWebElement):
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Optional[Iterable[BaseException]] = None,
 	) -> WebDriverWait:
-		return WebDriverWait(
-				selenium_webdriver_wait=legacyWebDriverWait(
-						driver=self.legacy,
-						timeout=timeout,
-						poll_frequency=poll_frequency,
-						ignored_exceptions=ignored_exceptions,
-				),
+		web_driver_wait = self._web_driver_wait_impl(
+				timeout=timeout,
+				poll_frequency=poll_frequency,
+				ignored_exceptions=ignored_exceptions,
+		)
+		
+		return WebDriverWait.from_legacy(
+				selenium_webdriver_wait=web_driver_wait,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

@@ -1,5 +1,6 @@
 import trio
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.instances.errors import TypesConvertError
 from typing import (
 	Any,
 	Dict,
@@ -9,18 +10,15 @@ from typing import (
 )
 from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.permissions import UnifiedPermissions
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
 )
 
 
-class Permissions(TrioThreadMixin, AbstractPermissions):
+class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 	"""
 	Wrapper for the legacy Selenium Permissions instance.
 
@@ -43,15 +41,9 @@ class Permissions(TrioThreadMixin, AbstractPermissions):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedPermissions.__init__(self, selenium_permissions=selenium_permissions)
 		
-		if not isinstance(selenium_permissions, legacyPermissions):
-			raise ExpectedTypeError(
-					expected_class=legacyPermissions,
-					received_instance=selenium_permissions
-			)
-		
-		self._selenium_permissions = selenium_permissions
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	@classmethod
 	def from_legacy(
@@ -88,7 +80,7 @@ class Permissions(TrioThreadMixin, AbstractPermissions):
 	
 	@property
 	def legacy(self) -> legacyPermissions:
-		return self._selenium_permissions
+		return self._legacy_impl
 	
 	async def set_permission(
 			self,
@@ -98,7 +90,7 @@ class Permissions(TrioThreadMixin, AbstractPermissions):
 			user_context: Optional[str] = None,
 	) -> None:
 		await self._sync_to_trio(
-				self.legacy.set_permission,
+				self._set_permission_impl,
 				descriptor=descriptor,
 				state=state,
 				origin=origin,

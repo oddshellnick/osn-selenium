@@ -7,18 +7,16 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import NETWORK_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.network import UnifiedNetwork
 from osn_selenium.abstract.instances.network import AbstractNetwork
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Network(TrioThreadMixin, AbstractNetwork):
+class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 	"""
 	Wrapper for the legacy Selenium BiDi Network instance.
 
@@ -41,15 +39,12 @@ class Network(TrioThreadMixin, AbstractNetwork):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedNetwork.__init__(self, selenium_network=selenium_network)
 		
-		if not isinstance(selenium_network, legacyNetwork):
-			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
-		
-		self._selenium_network = selenium_network
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def add_auth_handler(self, username: str, password: str) -> int:
-		return await self._sync_to_trio(self.legacy.add_auth_handler, username=username, password=password)
+		return await self._sync_to_trio(self._add_auth_handler_impl, username=username, password=password)
 	
 	async def add_request_handler(
 			self,
@@ -59,7 +54,7 @@ class Network(TrioThreadMixin, AbstractNetwork):
 			contexts: Optional[List[str]] = None,
 	) -> int:
 		return await self._sync_to_trio(
-				self.legacy.add_request_handler,
+				self._add_request_handler_impl,
 				event=event,
 				callback=callback,
 				url_patterns=url_patterns,
@@ -67,7 +62,7 @@ class Network(TrioThreadMixin, AbstractNetwork):
 		)
 	
 	async def clear_request_handlers(self) -> None:
-		await self._sync_to_trio(self.legacy.clear_request_handlers)
+		await self._sync_to_trio(self._clear_request_handlers_impl)
 	
 	@classmethod
 	def from_legacy(
@@ -100,14 +95,14 @@ class Network(TrioThreadMixin, AbstractNetwork):
 	
 	@property
 	def legacy(self) -> legacyNetwork:
-		return self._selenium_network
+		return self._legacy_impl
 	
 	async def remove_auth_handler(self, callback_id: int) -> None:
-		await self._sync_to_trio(self.legacy.remove_auth_handler, callback_id=callback_id)
+		await self._sync_to_trio(self._remove_auth_handler_impl, callback_id=callback_id)
 	
 	async def remove_request_handler(self, event: str, callback_id: int) -> None:
 		await self._sync_to_trio(
-				self.legacy.remove_request_handler,
+				self._remove_request_handler_impl,
 				event=event,
 				callback_id=callback_id
 		)

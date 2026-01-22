@@ -7,16 +7,14 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.types import FEDCM_TYPEHINT
+from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class FedCM(TrioThreadMixin, AbstractFedCM):
+class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 	"""
 	Wrapper for the legacy Selenium FedCM instance.
 
@@ -39,30 +37,27 @@ class FedCM(TrioThreadMixin, AbstractFedCM):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedFedCM.__init__(self, selenium_fedcm=selenium_fedcm)
 		
-		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise ExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
-		
-		self._selenium_fedcm = selenium_fedcm
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self.legacy.accept)
+		await self._sync_to_trio(self._accept_impl)
 	
 	async def account_list(self) -> List[Dict]:
-		return await self._sync_to_trio(lambda: self.legacy.account_list)
+		return await self._sync_to_trio(self._account_list_impl)
 	
 	async def dialog_type(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.dialog_type)
+		return await self._sync_to_trio(self._dialog_type_impl)
 	
 	async def disable_delay(self) -> None:
-		await self._sync_to_trio(self.legacy.disable_delay)
+		await self._sync_to_trio(self._disable_delay_impl)
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self.legacy.dismiss)
+		await self._sync_to_trio(self._dismiss_impl)
 	
 	async def enable_delay(self) -> None:
-		await self._sync_to_trio(self.legacy.enable_delay)
+		await self._sync_to_trio(self._enable_delay_impl)
 	
 	@classmethod
 	def from_legacy(
@@ -95,16 +90,16 @@ class FedCM(TrioThreadMixin, AbstractFedCM):
 	
 	@property
 	def legacy(self) -> legacyFedCM:
-		return self._selenium_fedcm
+		return self._legacy_impl
 	
 	async def reset_cooldown(self) -> None:
-		await self._sync_to_trio(self.legacy.reset_cooldown)
+		await self._sync_to_trio(self._reset_cooldown_impl)
 	
 	async def select_account(self, index: int) -> None:
-		await self._sync_to_trio(self.legacy.select_account, index)
+		await self._sync_to_trio(self._select_account_impl, index=index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._sync_to_trio(lambda: self.legacy.subtitle)
+		return await self._sync_to_trio(self._subtitle_impl)
 	
 	async def title(self) -> str:
-		return await self._sync_to_trio(lambda: self.legacy.title)
+		return await self._sync_to_trio(self._title_impl)

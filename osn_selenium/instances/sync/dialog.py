@@ -1,20 +1,18 @@
 from typing import List, Optional, Self
 from osn_selenium.instances.types import DIALOG_TYPEHINT
 from selenium.webdriver.common.fedcm.account import Account
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances.unified.dialog import UnifiedDialog
 from osn_selenium.abstract.instances.dialog import AbstractDialog
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 
 
-class Dialog(AbstractDialog):
+class Dialog(UnifiedDialog, AbstractDialog):
 	"""
-	Wrapper for the legacy Selenium FedCM Dialog instance.
+	Wrapper for the legacy Selenium FedCM Dialog instance (Synchronous).
 
 	Handles Federated Credential Management dialogs, including account selection
 	and dismissal.
@@ -28,16 +26,13 @@ class Dialog(AbstractDialog):
 			selenium_dialog (legacyDialog): The legacy Selenium Dialog instance to wrap.
 		"""
 		
-		if not isinstance(selenium_dialog, legacyDialog):
-			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
-		
-		self._selenium_dialog = selenium_dialog
+		UnifiedDialog.__init__(self, selenium_dialog=selenium_dialog)
 	
 	def accept(self) -> None:
-		self.legacy.accept()
+		self._accept_impl()
 	
 	def dismiss(self) -> None:
-		self.legacy.dismiss()
+		self._dismiss_impl()
 	
 	@classmethod
 	def from_legacy(cls, selenium_dialog: DIALOG_TYPEHINT) -> Self:
@@ -62,20 +57,20 @@ class Dialog(AbstractDialog):
 		return cls(selenium_dialog=legacy_dialog_obj)
 	
 	def get_accounts(self) -> List[Account]:
-		return self.legacy.get_accounts()
+		return self._get_accounts_impl()
 	
 	@property
 	def legacy(self) -> legacyDialog:
-		return self._selenium_dialog
+		return self._legacy_impl
 	
 	def select_account(self, index: int) -> None:
-		self.legacy.select_account(index=index)
+		self._select_account_impl(index=index)
 	
 	def subtitle(self) -> Optional[str]:
-		return self.legacy.subtitle
+		return self._subtitle_impl()
 	
 	def title(self) -> str:
-		return self.legacy.title
+		return self._title_impl()
 	
 	def type(self) -> Optional[str]:
-		return self.legacy.type
+		return self._type_impl()

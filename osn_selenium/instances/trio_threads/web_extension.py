@@ -6,21 +6,19 @@ from typing import (
 	Self,
 	Union
 )
+from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.types import (
 	WEB_EXTENSION_TYPEHINT
 )
+from osn_selenium.instances.unified.web_extension import UnifiedWebExtension
 from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
-from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypesConvertError
-)
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
 
 
-class WebExtension(TrioThreadMixin, AbstractWebExtension):
+class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
 	"""
 	Wrapper for the legacy Selenium WebExtension instance.
 
@@ -43,15 +41,9 @@ class WebExtension(TrioThreadMixin, AbstractWebExtension):
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 		"""
 		
-		super().__init__(lock=lock, limiter=limiter)
+		UnifiedWebExtension.__init__(self, selenium_web_extension=selenium_web_extension)
 		
-		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise ExpectedTypeError(
-					expected_class=legacyWebExtension,
-					received_instance=selenium_web_extension
-			)
-		
-		self._selenium_web_extension = selenium_web_extension
+		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	@classmethod
 	def from_legacy(
@@ -93,7 +85,7 @@ class WebExtension(TrioThreadMixin, AbstractWebExtension):
 			base64_value: Optional[str] = None,
 	) -> Dict:
 		return await self._sync_to_trio(
-				self.legacy.install,
+				self._install_impl,
 				path=path,
 				archive_path=archive_path,
 				base64_value=base64_value
@@ -101,7 +93,7 @@ class WebExtension(TrioThreadMixin, AbstractWebExtension):
 	
 	@property
 	def legacy(self) -> legacyWebExtension:
-		return self._selenium_web_extension
+		return self._legacy_impl
 	
 	async def uninstall(self, extension_id_or_result: Union[str, Dict]) -> None:
-		await self._sync_to_trio(self.legacy.uninstall, extension_id_or_result=extension_id_or_result)
+		await self._sync_to_trio(self._uninstall_impl, extension_id_or_result=extension_id_or_result)

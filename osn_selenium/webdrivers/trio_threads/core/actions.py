@@ -9,6 +9,7 @@ from osn_selenium.webdrivers._functions import execute_js_bridge
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
+from osn_selenium.instances.trio_threads.action_chains import ActionChains
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
 from selenium.webdriver.support.wait import (
@@ -16,10 +17,6 @@ from selenium.webdriver.support.wait import (
 )
 from osn_selenium.abstract.webdriver.core.actions import (
 	AbstractCoreActionsMixin
-)
-from osn_selenium.instances.trio_threads.action_chains import (
-	ActionChains,
-	HumanLikeActionChains
 )
 
 
@@ -32,27 +29,15 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 	"""
 	
 	@requires_driver
-	async def action_chain(
+	def action_chains(
 			self,
 			duration: int = 250,
 			devices: Optional[List[DEVICES_TYPEHINT]] = None,
 	) -> ActionChains:
 		return ActionChains(
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
-				lock=self._lock,
-				limiter=self._capacity_limiter,
-		)
-	
-	@requires_driver
-	async def hm_action_chain(
-			self,
-			duration: int = 250,
-			devices: Optional[List[DEVICES_TYPEHINT]] = None,
-	) -> HumanLikeActionChains:
-		return HumanLikeActionChains(
-				execute_script_function=lambda script,
+				execute_js_script_function=lambda script,
 				args: execute_js_bridge(self.driver, script, *args),
-				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
