@@ -49,7 +49,9 @@ class StorageCDPExecutor(UnifiedStorageCDPExecutor, TrioThreadMixin, AbstractSto
 		return await self.sync_to_trio(sync_function=self._delete_storage_bucket_impl)(bucket=bucket)
 	
 	async def get_affected_urls_for_third_party_cookie_metadata(self, first_party_url: str, third_party_urls: List[str]) -> List[str]:
-		return await self.sync_to_trio(sync_function=self._get_affected_urls_for_third_party_cookie_metadata_impl)(first_party_url=first_party_url, third_party_urls=third_party_urls)
+		return await self.sync_to_trio(
+				sync_function=self._get_affected_urls_for_third_party_cookie_metadata_impl
+		)(first_party_url=first_party_url, third_party_urls=third_party_urls)
 	
 	async def get_cookies(self, browser_context_id: Optional[str] = None) -> List[Dict[str, Any]]:
 		return await self.sync_to_trio(sync_function=self._get_cookies_impl)(browser_context_id=browser_context_id)
