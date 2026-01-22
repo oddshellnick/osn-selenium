@@ -1,17 +1,19 @@
 from typing import List, Optional
 from selenium.webdriver.common.by import By
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.web_element import WebElement
-from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.instances.convert import (
 	get_trio_thread_instance_wrapper
+)
+from osn_selenium.webdrivers.unified.core.element import (
+	UnifiedCoreElementMixin
 )
 from osn_selenium.abstract.webdriver.core.element import (
 	AbstractCoreElementMixin
 )
 
 
-class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
+class CoreElementMixin(UnifiedCoreElementMixin, TrioThreadMixin, AbstractCoreElementMixin):
 	"""
 	Mixin for DOM element retrieval in Core WebDrivers.
 
@@ -19,9 +21,8 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	the current page context.
 	"""
 	
-	@requires_driver
 	async def create_web_element(self, element_id: str) -> WebElement:
-		legacy = await self.sync_to_trio(sync_function=self.driver.create_web_element)(element_id=element_id)
+		legacy = await self.sync_to_trio(sync_function=self._create_web_element_impl)(element_id=element_id)
 		
 		return get_trio_thread_instance_wrapper(
 				wrapper_class=WebElement,
@@ -30,20 +31,18 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 				limiter=self._capacity_limiter,
 		)
 	
-	@requires_driver
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> WebElement:
-		element = await self.sync_to_trio(sync_function=self.driver.find_element)(by=by, value=value)
+		legacy = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
 		
 		return get_trio_thread_instance_wrapper(
 				wrapper_class=WebElement,
-				legacy_object=element,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
 	
-	@requires_driver
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List[WebElement]:
-		elements = await self.sync_to_trio(sync_function=self.driver.find_elements)(by=by, value=value)
+		legacy_elements = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
 		
 		return [
 			get_trio_thread_instance_wrapper(
@@ -52,5 +51,5 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 					lock=self._lock,
 					limiter=self._capacity_limiter,
 			)
-			for element in elements
+			for element in legacy_elements
 		]

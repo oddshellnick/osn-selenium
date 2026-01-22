@@ -6,11 +6,10 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.sync.dialog import Dialog
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper
 )
+from osn_selenium.webdrivers.unified.core.auth import UnifiedCoreAuthMixin
 from osn_selenium.abstract.webdriver.core.auth import (
 	AbstractCoreAuthMixin
 )
@@ -20,7 +19,7 @@ from selenium.webdriver.common.virtual_authenticator import (
 )
 
 
-class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
+class CoreAuthMixin(UnifiedCoreAuthMixin, AbstractCoreAuthMixin):
 	"""
 	Mixin handling authentication and credential management for Core WebDrivers.
 
@@ -28,28 +27,24 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 	authenticators, and handling Federated Credential Management (FedCM) dialogs.
 	"""
 	
-	@requires_driver
 	def add_credential(self, credential: Credential) -> None:
-		self.driver.add_credential(credential=credential)
+		self._add_credential_impl(credential=credential)
 	
-	@requires_driver
 	def add_virtual_authenticator(self, options: VirtualAuthenticatorOptions) -> None:
-		self.driver.add_virtual_authenticator(options=options)
+		self._add_virtual_authenticator_impl(options=options)
 	
-	@requires_driver
 	def fedcm(self) -> FedCM:
-		legacy = self.driver.fedcm
+		legacy = self._fedcm_impl()
 		
 		return get_sync_instance_wrapper(wrapper_class=FedCM, legacy_object=legacy)
 	
-	@requires_driver
 	def fedcm_dialog(
 			self,
 			timeout: int = 5,
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Any = None,
 	) -> Dialog:
-		legacy = self.driver.fedcm_dialog(
+		legacy = self._fedcm_dialog_impl(
 				timeout=timeout,
 				poll_frequency=poll_frequency,
 				ignored_exceptions=ignored_exceptions,
@@ -57,30 +52,23 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 		
 		return get_sync_instance_wrapper(wrapper_class=Dialog, legacy_object=legacy)
 	
-	@requires_driver
 	def get_credentials(self) -> List[Credential]:
-		return self.driver.get_credentials()
+		return self._get_credentials_impl()
 	
-	@requires_driver
 	def remove_all_credentials(self) -> None:
-		self.driver.remove_all_credentials()
+		self._remove_all_credentials_impl()
 	
-	@requires_driver
 	def remove_credential(self, credential_id: Union[str, bytearray]) -> None:
-		self.driver.remove_credential(credential_id=credential_id)
+		self._remove_credential_impl(credential_id=credential_id)
 	
-	@requires_driver
 	def remove_virtual_authenticator(self) -> None:
-		self.driver.remove_virtual_authenticator()
+		self._remove_virtual_authenticator_impl()
 	
-	@requires_driver
 	def set_user_verified(self, verified: bool) -> None:
-		self.driver.set_user_verified(verified=verified)
+		self._set_user_verified_impl(verified=verified)
 	
-	@requires_driver
 	def supports_fedcm(self) -> bool:
-		return self.driver.supports_fedcm
+		return self._supports_fedcm_impl()
 	
-	@requires_driver
 	def virtual_authenticator_id(self) -> Optional[str]:
-		return self.driver.virtual_authenticator_id
+		return self._virtual_authenticator_id_impl()

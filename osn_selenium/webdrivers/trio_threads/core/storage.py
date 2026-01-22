@@ -1,21 +1,23 @@
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
 	List,
 	Optional
 )
-from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.trio_threads.storage import Storage
-from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.instances.convert import (
 	get_trio_thread_instance_wrapper
+)
+from osn_selenium.webdrivers.unified.core.storage import (
+	UnifiedCoreStorageMixin
 )
 from osn_selenium.abstract.webdriver.core.storage import (
 	AbstractCoreStorageMixin
 )
 
 
-class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
+class CoreStorageMixin(UnifiedCoreStorageMixin, TrioThreadMixin, AbstractCoreStorageMixin):
 	"""
 	Mixin for managing browser storage and cookies in Core WebDrivers.
 
@@ -23,29 +25,23 @@ class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
 	other storage mechanisms.
 	"""
 	
-	@requires_driver
 	async def add_cookie(self, cookie_dict: Dict[str, Any]) -> None:
-		await self.sync_to_trio(sync_function=self.driver.add_cookie)(cookie_dict=cookie_dict)
+		await self.sync_to_trio(sync_function=self._add_cookie_impl)(cookie_dict=cookie_dict)
 	
-	@requires_driver
 	async def delete_all_cookies(self) -> None:
-		await self.sync_to_trio(sync_function=self.driver.delete_all_cookies)()
+		await self.sync_to_trio(sync_function=self._delete_all_cookies_impl)()
 	
-	@requires_driver
 	async def delete_cookie(self, name: str) -> None:
-		await self.sync_to_trio(sync_function=self.driver.delete_cookie)(name=name)
+		await self.sync_to_trio(sync_function=self._delete_cookie_impl)(name=name)
 	
-	@requires_driver
 	async def get_cookie(self, name: str) -> Optional[Dict[str, Any]]:
-		return await self.sync_to_trio(sync_function=self.driver.get_cookie)(name=name)
+		return await self.sync_to_trio(sync_function=self._get_cookie_impl)(name=name)
 	
-	@requires_driver
 	async def get_cookies(self) -> List[Dict[str, Any]]:
-		return await self.sync_to_trio(sync_function=self.driver.get_cookies)()
+		return await self.sync_to_trio(sync_function=self._get_cookies_impl)()
 	
-	@requires_driver
 	async def storage(self) -> Storage:
-		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.storage)()
+		legacy = await self.sync_to_trio(sync_function=self._storage_impl)()
 		
 		return get_trio_thread_instance_wrapper(
 				wrapper_class=Storage,

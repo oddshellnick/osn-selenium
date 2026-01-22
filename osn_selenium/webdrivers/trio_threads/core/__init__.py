@@ -9,15 +9,19 @@ from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
+from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.abstract.webdriver.core import (
 	AbstractCoreWebDriver
 )
 from osn_selenium.webdrivers.trio_threads.core.window import CoreWindowMixin
+from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.webdrivers.trio_threads.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.trio_threads.core.capture import CoreCaptureMixin
 from osn_selenium.webdrivers.trio_threads.core.element import CoreElementMixin
 from osn_selenium.webdrivers.trio_threads.core.storage import CoreStorageMixin
 from osn_selenium.webdrivers.trio_threads.core.devtools import CoreDevToolsMixin
+from osn_selenium.webdrivers.trio_threads.core.settings import CoreSettingsMixin
+from osn_selenium.webdrivers.trio_threads.core.timeouts import CoreTimeoutsMixin
 from osn_selenium.webdrivers.trio_threads.core.lifecycle import CoreLifecycleMixin
 from osn_selenium.webdrivers.trio_threads.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationMixin
@@ -30,6 +34,7 @@ from osn_selenium.webdrivers._functions import (
 class CoreWebDriver(
 		CoreActionsMixin,
 		CoreAuthMixin,
+		CoreBaseMixin,
 		CoreCaptureMixin,
 		CoreComponentsMixin,
 		CoreDevToolsMixin,
@@ -37,7 +42,10 @@ class CoreWebDriver(
 		CoreFileMixin,
 		CoreLifecycleMixin,
 		CoreNavigationMixin,
+		CoreScriptMixin,
+		CoreSettingsMixin,
 		CoreStorageMixin,
+		CoreTimeoutsMixin,
 		CoreWindowMixin,
 		AbstractCoreWebDriver
 ):

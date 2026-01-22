@@ -1,11 +1,12 @@
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.webdrivers.unified.core.navigation import (
+	UnifiedCoreNavigationMixin
+)
 from osn_selenium.abstract.webdriver.core.navigation import (
 	AbstractCoreNavigationMixin
 )
 
 
-class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
+class CoreNavigationMixin(UnifiedCoreNavigationMixin, AbstractCoreNavigationMixin):
 	"""
 	Mixin controlling browser navigation for Core WebDrivers.
 
@@ -13,26 +14,20 @@ class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
 	traversal (back/forward), and page refreshing.
 	"""
 	
-	@requires_driver
 	def back(self) -> None:
-		self.driver.back()
+		self._back_impl()
 	
-	@requires_driver
 	def current_url(self) -> str:
-		return self.driver.current_url
+		return self._current_url_impl()
 	
-	@requires_driver
 	def forward(self) -> None:
-		self.driver.forward()
+		self._forward_impl()
 	
-	@requires_driver
 	def get(self, url: str) -> None:
-		self.driver.get(url=url)
+		self._get_impl(url=url)
 	
-	@requires_driver
 	def refresh(self) -> None:
-		self.driver.refresh()
+		self._refresh_impl()
 	
-	@requires_driver
 	def title(self) -> str:
-		return self.driver.title
+		return self._title_impl()

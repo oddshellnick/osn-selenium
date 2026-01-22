@@ -1,12 +1,13 @@
 from typing import Any, Optional
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.webdrivers.unified.core.capture import (
+	UnifiedCoreCaptureMixin
+)
 from osn_selenium.abstract.webdriver.core.capture import (
 	AbstractCoreCaptureMixin
 )
 
 
-class CoreCaptureMixin(CoreBaseMixin, AbstractCoreCaptureMixin):
+class CoreCaptureMixin(UnifiedCoreCaptureMixin, AbstractCoreCaptureMixin):
 	"""
 	Mixin enabling screen capture and page source retrieval for Core WebDrivers.
 
@@ -14,26 +15,20 @@ class CoreCaptureMixin(CoreBaseMixin, AbstractCoreCaptureMixin):
 	and extract the current DOM source.
 	"""
 	
-	@requires_driver
 	def get_screenshot_as_base64(self) -> str:
-		return self.driver.get_screenshot_as_base64()
+		return self._get_screenshot_as_base64_impl()
 	
-	@requires_driver
 	def get_screenshot_as_file(self, filename: str) -> bool:
-		return self.driver.get_screenshot_as_file(filename=filename)
+		return self._get_screenshot_as_file_impl(filename=filename)
 	
-	@requires_driver
 	def get_screenshot_as_png(self) -> bytes:
-		return self.driver.get_screenshot_as_png()
+		return self._get_screenshot_as_png_impl()
 	
-	@requires_driver
 	def page_source(self) -> str:
-		return self.driver.page_source
+		return self._page_source_impl()
 	
-	@requires_driver
 	def print_page(self, print_options: Optional[Any] = None) -> str:
-		return self.driver.print_page(print_options=print_options)
+		return self._print_page_impl(print_options=print_options)
 	
-	@requires_driver
 	def save_screenshot(self, filename: str) -> bool:
-		return self.driver.save_screenshot(filename=filename)
+		return self._save_screenshot_impl(filename=filename)

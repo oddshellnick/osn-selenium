@@ -6,20 +6,20 @@ from typing import (
 	Dict,
 	Tuple
 )
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers._functions import build_cdp_kwargs
-from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper
 )
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
+from osn_selenium.webdrivers.unified.core.devtools import (
+	UnifiedCoreDevToolsMixin
+)
 from osn_selenium.abstract.webdriver.core.devtools import (
 	AbstractCoreDevToolsMixin
 )
 
 
-class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
+class CoreDevToolsMixin(UnifiedCoreDevToolsMixin, AbstractCoreDevToolsMixin):
 	"""
 	Mixin for Chrome DevTools Protocol (CDP) and BiDi interactions in Core WebDrivers.
 
@@ -28,21 +28,17 @@ class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
 	"""
 	
 	@asynccontextmanager
-	@requires_driver
 	async def bidi_connection(self) -> AsyncGenerator[BidiConnection, Any]:
-		async with self.driver.bidi_connection() as bidi_connection:
-			yield bidi_connection
+		async with self._bidi_connection_impl() as bidi:
+			yield bidi
 	
-	@requires_driver
 	def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
-		return self.driver.execute_cdp_cmd(cmd=cmd, cmd_args=build_cdp_kwargs(**cmd_args))
+		return self._execute_cdp_cmd_impl(cmd=cmd, cmd_args=cmd_args)
 	
-	@requires_driver
 	def network(self) -> Network:
-		legacy = self.driver.network
+		legacy = self._network_impl()
 		
 		return get_sync_instance_wrapper(wrapper_class=Network, legacy_object=legacy)
 	
-	@requires_driver
 	def start_devtools(self) -> Tuple[Any, WebSocketConnection]:
-		return self.driver.start_devtools()
+		return self._start_devtools_impl()

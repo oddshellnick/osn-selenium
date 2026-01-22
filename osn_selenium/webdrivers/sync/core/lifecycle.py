@@ -6,19 +6,16 @@ from typing import (
 	Union
 )
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.sync.core.settings import CoreSettingsMixin
-from osn_selenium.webdrivers.sync.core.timeouts import CoreTimeoutsMixin
 from selenium.webdriver.remote.remote_connection import RemoteConnection
-from selenium.webdriver.remote.webdriver import (
-	WebDriver as legacyWebDriver
+from osn_selenium.webdrivers.unified.core.lifecycle import (
+	UnifiedCoreLifecycleMixin
 )
 from osn_selenium.abstract.webdriver.core.lifecycle import (
 	AbstractCoreLifecycleMixin
 )
 
 
-class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifecycleMixin):
+class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, AbstractCoreLifecycleMixin):
 	"""
 	Mixin for managing the lifecycle of the Core WebDriver.
 
@@ -26,59 +23,37 @@ class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifec
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
-		self._driver = legacyWebDriver(
-				command_executor=command_executor,
-				options=self._webdriver_flags_manager.options,
-		)
-		
-		self.set_driver_timeouts(
-				page_load_timeout=self._base_page_load_timeout,
-				implicit_wait_timeout=self._base_implicitly_wait,
-				script_timeout=self._base_script_timeout,
-		)
-		
-		self._is_active = True
+	def _create_driver(self) -> None:
+		self._create_driver_impl()
 	
-	def _create_driver(self):
-		raise NotImplementedError("This function must be implemented in child classes.")
-	
-	def start_webdriver(
-			self,
-			flags: Optional[BrowserFlags] = None,
-			window_rect: Optional[WindowRect] = None,
-	) -> None:
-		if self.driver is None:
-			self.update_settings(flags=flags, window_rect=window_rect)
-		
-			self._create_driver()
-	
-	@requires_driver
-	def quit(self) -> None:
-		self.driver.quit()
-	
-	@requires_driver
 	def close_webdriver(self) -> None:
-		if self.driver is not None:
-			self.quit()
-			self._driver = None
+		self._close_webdriver_impl()
+	
+	def quit(self) -> None:
+		self._quit_impl()
+	
+	def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
+		self._remote_connect_driver_impl(command_executor=command_executor)
 	
 	def restart_webdriver(
 			self,
 			flags: Optional[BrowserFlags] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		self.close_webdriver()
-		self.start_webdriver(flags=flags, window_rect=window_rect)
+		self._restart_webdriver_impl(flags=flags, window_rect=window_rect)
 	
-	@requires_driver
 	def start_client(self) -> None:
-		self.driver.start_client()
+		self._start_client_impl()
 	
-	@requires_driver
 	def start_session(self, capabilities: Dict[str, Any]) -> None:
-		self.driver.start_session(capabilities=capabilities)
+		self._start_session_impl(capabilities=capabilities)
 	
-	@requires_driver
+	def start_webdriver(
+			self,
+			flags: Optional[BrowserFlags] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		self._start_webdriver_impl(flags=flags, window_rect=window_rect)
+	
 	def stop_client(self) -> None:
-		self.driver.stop_client()
+		self._stop_client_impl()

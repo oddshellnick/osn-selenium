@@ -1,4 +1,5 @@
 from osn_selenium.types import WindowRect
+from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
@@ -6,19 +7,16 @@ from typing import (
 	Union
 )
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.webdrivers.decorators import requires_driver
 from selenium.webdriver.remote.remote_connection import RemoteConnection
-from osn_selenium.webdrivers.trio_threads.core.settings import CoreSettingsMixin
-from osn_selenium.webdrivers.trio_threads.core.timeouts import CoreTimeoutsMixin
-from selenium.webdriver.remote.webdriver import (
-	WebDriver as legacyWebDriver
+from osn_selenium.webdrivers.unified.core.lifecycle import (
+	UnifiedCoreLifecycleMixin
 )
 from osn_selenium.abstract.webdriver.core.lifecycle import (
 	AbstractCoreLifecycleMixin
 )
 
 
-class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifecycleMixin):
+class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, TrioThreadMixin, AbstractCoreLifecycleMixin):
 	"""
 	Mixin for managing the lifecycle of the Core WebDriver.
 
@@ -26,62 +24,37 @@ class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifec
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	async def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
-		def _make() -> legacyWebDriver:
-			return legacyWebDriver(
-					command_executor=command_executor,
-					options=self._webdriver_flags_manager.options,
-			)
-		
-		self._driver = await self.sync_to_trio(sync_function=_make)()
-		
-		await self.set_driver_timeouts(
-				page_load_timeout=self._base_page_load_timeout,
-				implicit_wait_timeout=self._base_implicitly_wait,
-				script_timeout=self._base_script_timeout,
-		)
-		
-		self._is_active = True
+	async def _create_driver(self) -> None:
+		await self.sync_to_trio(sync_function=self._create_driver_impl)()
 	
-	async def _create_driver(self):
-		raise NotImplementedError("This function must be implemented in child classes.")
-	
-	async def start_webdriver(
-			self,
-			flags: Optional[BrowserFlags] = None,
-			window_rect: Optional[WindowRect] = None,
-	) -> None:
-		if self.driver is None:
-			await self.update_settings(flags=flags, window_rect=window_rect)
-		
-			await self._create_driver()
-	
-	@requires_driver
-	async def quit(self) -> None:
-		await self.sync_to_trio(sync_function=self.driver.quit)()
-	
-	@requires_driver
 	async def close_webdriver(self) -> None:
-		if self.driver is not None:
-			await self.quit()
-			self._driver = None
+		await self.sync_to_trio(sync_function=self._close_webdriver_impl)()
+	
+	async def quit(self) -> None:
+		await self.sync_to_trio(sync_function=self._quit_impl)()
+	
+	async def remote_connect_driver(self, command_executor: Union[str, RemoteConnection]) -> None:
+		await self.sync_to_trio(sync_function=self._remote_connect_driver_impl)(command_executor=command_executor)
 	
 	async def restart_webdriver(
 			self,
 			flags: Optional[BrowserFlags] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await self.close_webdriver()
-		await self.start_webdriver(flags=flags, window_rect=window_rect)
+		await self.sync_to_trio(sync_function=self._restart_webdriver_impl)(flags=flags, window_rect=window_rect)
 	
-	@requires_driver
 	async def start_client(self) -> None:
-		await self.sync_to_trio(sync_function=self.driver.start_client)()
+		await self.sync_to_trio(sync_function=self._start_client_impl)()
 	
-	@requires_driver
 	async def start_session(self, capabilities: Dict[str, Any]) -> None:
-		await self.sync_to_trio(sync_function=self.driver.start_session)(capabilities=capabilities)
+		await self.sync_to_trio(sync_function=self._start_session_impl)(capabilities=capabilities)
 	
-	@requires_driver
+	async def start_webdriver(
+			self,
+			flags: Optional[BrowserFlags] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		await self.sync_to_trio(sync_function=self._start_webdriver_impl)(flags=flags, window_rect=window_rect)
+	
 	async def stop_client(self) -> None:
-		await self.sync_to_trio(sync_function=self.driver.stop_client)()
+		await self.sync_to_trio(sync_function=self._stop_client_impl)()
