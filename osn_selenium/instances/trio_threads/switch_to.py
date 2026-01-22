@@ -48,7 +48,7 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def active_element(self) -> WebElement:
-		legacy_element = await self._sync_to_trio(self._active_element_impl)
+		legacy_element = await self.sync_to_trio(sync_function=self._active_element_impl)()
 		
 		return WebElement.from_legacy(
 				selenium_web_element=legacy_element,
@@ -57,7 +57,7 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		)
 	
 	async def alert(self) -> Alert:
-		legacy_alert_instance = await self._sync_to_trio(self._alert_impl)
+		legacy_alert_instance = await self.sync_to_trio(sync_function=self._alert_impl)()
 		
 		return Alert(
 				selenium_alert=legacy_alert_instance,
@@ -66,10 +66,10 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		)
 	
 	async def default_content(self) -> None:
-		await self._sync_to_trio(self._default_content_impl)
+		await self.sync_to_trio(sync_function=self._default_content_impl)()
 	
 	async def frame(self, frame_reference: Union[str, int, WEB_ELEMENT_TYPEHINT]) -> None:
-		await self._sync_to_trio(self._frame_impl, frame_reference=frame_reference)
+		await self.sync_to_trio(sync_function=self._frame_impl)(frame_reference=frame_reference)
 	
 	@classmethod
 	def from_legacy(
@@ -104,10 +104,10 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		return self._legacy_impl
 	
 	async def new_window(self, type_hint: Optional[str] = None) -> None:
-		await self._sync_to_trio(self._new_window_impl, type_hint=type_hint)
+		await self.sync_to_trio(sync_function=self._new_window_impl)(type_hint=type_hint)
 	
 	async def parent_frame(self) -> None:
-		await self._sync_to_trio(self._parent_frame_impl)
+		await self.sync_to_trio(sync_function=self._parent_frame_impl)()
 	
 	async def window(self, window_name: str) -> None:
-		await self._sync_to_trio(self._window_impl, window_name=window_name)
+		await self.sync_to_trio(sync_function=self._window_impl)(window_name=window_name)

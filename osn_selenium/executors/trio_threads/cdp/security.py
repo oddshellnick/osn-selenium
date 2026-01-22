@@ -25,16 +25,16 @@ class SecurityCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def handle_certificate_error(self, event_id: int, action: str) -> None:
-		return await self._sync_to_trio(self._handle_certificate_error_impl, event_id=event_id, action=action)
+		return await self.sync_to_trio(sync_function=self._handle_certificate_error_impl)(event_id=event_id, action=action)
 	
 	async def set_ignore_certificate_errors(self, ignore: bool) -> None:
-		return await self._sync_to_trio(self._set_ignore_certificate_errors_impl, ignore=ignore)
+		return await self.sync_to_trio(sync_function=self._set_ignore_certificate_errors_impl)(ignore=ignore)
 	
 	async def set_override_certificate_errors(self, override: bool) -> None:
-		return await self._sync_to_trio(self._set_override_certificate_errors_impl, override=override)
+		return await self.sync_to_trio(sync_function=self._set_override_certificate_errors_impl)(override=override)

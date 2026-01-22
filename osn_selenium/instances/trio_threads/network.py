@@ -44,7 +44,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def add_auth_handler(self, username: str, password: str) -> int:
-		return await self._sync_to_trio(self._add_auth_handler_impl, username=username, password=password)
+		return await self.sync_to_trio(sync_function=self._add_auth_handler_impl)(username=username, password=password)
 	
 	async def add_request_handler(
 			self,
@@ -53,8 +53,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 			url_patterns: Optional[List[str]] = None,
 			contexts: Optional[List[str]] = None,
 	) -> int:
-		return await self._sync_to_trio(
-				self._add_request_handler_impl,
+		return await self.sync_to_trio(sync_function=self._add_request_handler_impl)(
 				event=event,
 				callback=callback,
 				url_patterns=url_patterns,
@@ -62,7 +61,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 		)
 	
 	async def clear_request_handlers(self) -> None:
-		await self._sync_to_trio(self._clear_request_handlers_impl)
+		await self.sync_to_trio(sync_function=self._clear_request_handlers_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -98,11 +97,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 		return self._legacy_impl
 	
 	async def remove_auth_handler(self, callback_id: int) -> None:
-		await self._sync_to_trio(self._remove_auth_handler_impl, callback_id=callback_id)
+		await self.sync_to_trio(sync_function=self._remove_auth_handler_impl)(callback_id=callback_id)
 	
 	async def remove_request_handler(self, event: str, callback_id: int) -> None:
-		await self._sync_to_trio(
-				self._remove_request_handler_impl,
-				event=event,
-				callback_id=callback_id
-		)
+		await self.sync_to_trio(sync_function=self._remove_request_handler_impl)(event=event, callback_id=callback_id)

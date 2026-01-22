@@ -40,7 +40,7 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def create_user_context(self) -> str:
-		return await self._sync_to_trio(self._create_user_context_impl)
+		return await self.sync_to_trio(sync_function=self._create_user_context_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -72,14 +72,14 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	
 	async def get_client_windows(self) -> List[ClientWindowInfo]:
-		return await self._sync_to_trio(self._get_client_windows_impl)
+		return await self.sync_to_trio(sync_function=self._get_client_windows_impl)()
 	
 	async def get_user_contexts(self) -> List[str]:
-		return await self._sync_to_trio(self._get_user_contexts_impl)
+		return await self.sync_to_trio(sync_function=self._get_user_contexts_impl)()
 	
 	@property
 	def legacy(self) -> legacyBrowser:
 		return self._legacy_impl
 	
 	async def remove_user_context(self, user_context_id: str) -> None:
-		await self._sync_to_trio(self._remove_user_context_impl, user_context_id=user_context_id)
+		await self.sync_to_trio(sync_function=self._remove_user_context_impl)(user_context_id=user_context_id)

@@ -36,44 +36,31 @@ class DomDebuggerCDPExecutor(
 			depth: Optional[int] = None,
 			pierce: Optional[bool] = None
 	) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(
-				self._get_event_listeners_impl,
-				object_id=object_id,
-				depth=depth,
-				pierce=pierce
-		)
+		return await self.sync_to_trio(sync_function=self._get_event_listeners_impl)(object_id=object_id, depth=depth, pierce=pierce)
 	
 	async def remove_dom_breakpoint(self, node_id: int, type_: str) -> None:
-		return await self._sync_to_trio(self._remove_dom_breakpoint_impl, node_id=node_id, type_=type_)
+		return await self.sync_to_trio(sync_function=self._remove_dom_breakpoint_impl)(node_id=node_id, type_=type_)
 	
 	async def remove_event_listener_breakpoint(self, event_name: str, target_name: Optional[str] = None) -> None:
-		return await self._sync_to_trio(
-				self._remove_event_listener_breakpoint_impl,
-				event_name=event_name,
-				target_name=target_name
-		)
+		return await self.sync_to_trio(sync_function=self._remove_event_listener_breakpoint_impl)(event_name=event_name, target_name=target_name)
 	
 	async def remove_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._sync_to_trio(self._remove_instrumentation_breakpoint_impl, event_name=event_name)
+		return await self.sync_to_trio(sync_function=self._remove_instrumentation_breakpoint_impl)(event_name=event_name)
 	
 	async def remove_xhr_breakpoint(self, url: str) -> None:
-		return await self._sync_to_trio(self._remove_xhr_breakpoint_impl, url=url)
+		return await self.sync_to_trio(sync_function=self._remove_xhr_breakpoint_impl)(url=url)
 	
 	async def set_break_on_csp_violation(self, violation_types: List[str]) -> None:
-		return await self._sync_to_trio(self._set_break_on_csp_violation_impl, violation_types=violation_types)
+		return await self.sync_to_trio(sync_function=self._set_break_on_csp_violation_impl)(violation_types=violation_types)
 	
 	async def set_dom_breakpoint(self, node_id: int, type_: str) -> None:
-		return await self._sync_to_trio(self._set_dom_breakpoint_impl, node_id=node_id, type_=type_)
+		return await self.sync_to_trio(sync_function=self._set_dom_breakpoint_impl)(node_id=node_id, type_=type_)
 	
 	async def set_event_listener_breakpoint(self, event_name: str, target_name: Optional[str] = None) -> None:
-		return await self._sync_to_trio(
-				self._set_event_listener_breakpoint_impl,
-				event_name=event_name,
-				target_name=target_name
-		)
+		return await self.sync_to_trio(sync_function=self._set_event_listener_breakpoint_impl)(event_name=event_name, target_name=target_name)
 	
 	async def set_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._sync_to_trio(self._set_instrumentation_breakpoint_impl, event_name=event_name)
+		return await self.sync_to_trio(sync_function=self._set_instrumentation_breakpoint_impl)(event_name=event_name)
 	
 	async def set_xhr_breakpoint(self, url: str) -> None:
-		return await self._sync_to_trio(self._set_xhr_breakpoint_impl, url=url)
+		return await self.sync_to_trio(sync_function=self._set_xhr_breakpoint_impl)(url=url)

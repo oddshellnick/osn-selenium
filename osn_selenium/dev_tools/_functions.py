@@ -293,7 +293,7 @@ async def execute_cdp_command(
 		for i in range(command_retries):
 			try:
 				return await self.cdp_session.execute(function(*args, **kwargs))
-			except* (BaseException,):
+			except* (BaseException):
 				await trio.sleep(1.0)
 	
 		return await self.cdp_session.execute(function(*args, **kwargs))

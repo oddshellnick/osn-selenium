@@ -27,13 +27,13 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def activate_target(self, target_id: str) -> None:
-		return await self._sync_to_trio(self._activate_target_impl, target_id=target_id)
+		return await self.sync_to_trio(sync_function=self._activate_target_impl)(target_id=target_id)
 	
 	async def attach_to_browser_target(self) -> str:
-		return await self._sync_to_trio(self._attach_to_browser_target_impl)
+		return await self.sync_to_trio(sync_function=self._attach_to_browser_target_impl)()
 	
 	async def attach_to_target(self, target_id: str, flatten: Optional[bool] = None) -> str:
-		return await self._sync_to_trio(self._attach_to_target_impl, target_id=target_id, flatten=flatten)
+		return await self.sync_to_trio(sync_function=self._attach_to_target_impl)(target_id=target_id, flatten=flatten)
 	
 	async def auto_attach_related(
 			self,
@@ -41,15 +41,14 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			wait_for_debugger_on_start: bool,
 			filter_: Optional[List[Dict[str, Any]]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._auto_attach_related_impl,
+		return await self.sync_to_trio(sync_function=self._auto_attach_related_impl)(
 				target_id=target_id,
 				wait_for_debugger_on_start=wait_for_debugger_on_start,
 				filter_=filter_
 		)
 	
 	async def close_target(self, target_id: str) -> bool:
-		return await self._sync_to_trio(self._close_target_impl, target_id=target_id)
+		return await self.sync_to_trio(sync_function=self._close_target_impl)(target_id=target_id)
 	
 	async def create_browser_context(
 			self,
@@ -58,8 +57,7 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			proxy_bypass_list: Optional[str] = None,
 			origins_with_universal_network_access: Optional[List[str]] = None
 	) -> str:
-		return await self._sync_to_trio(
-				self._create_browser_context_impl,
+		return await self.sync_to_trio(sync_function=self._create_browser_context_impl)(
 				dispose_on_detach=dispose_on_detach,
 				proxy_server=proxy_server,
 				proxy_bypass_list=proxy_bypass_list,
@@ -81,8 +79,7 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			for_tab: Optional[bool] = None,
 			hidden: Optional[bool] = None
 	) -> str:
-		return await self._sync_to_trio(
-				self._create_target_impl,
+		return await self.sync_to_trio(sync_function=self._create_target_impl)(
 				url=url,
 				left=left,
 				top=top,
@@ -98,17 +95,10 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 		)
 	
 	async def detach_from_target(self, session_id: Optional[str] = None, target_id: Optional[str] = None) -> None:
-		return await self._sync_to_trio(
-				self._detach_from_target_impl,
-				session_id=session_id,
-				target_id=target_id
-		)
+		return await self.sync_to_trio(sync_function=self._detach_from_target_impl)(session_id=session_id, target_id=target_id)
 	
 	async def dispose_browser_context(self, browser_context_id: str) -> None:
-		return await self._sync_to_trio(
-				self._dispose_browser_context_impl,
-				browser_context_id=browser_context_id
-		)
+		return await self.sync_to_trio(sync_function=self._dispose_browser_context_impl)(browser_context_id=browser_context_id)
 	
 	async def expose_dev_tools_protocol(
 			self,
@@ -116,24 +106,23 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			binding_name: Optional[str] = None,
 			inherit_permissions: Optional[bool] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._expose_dev_tools_protocol_impl,
+		return await self.sync_to_trio(sync_function=self._expose_dev_tools_protocol_impl)(
 				target_id=target_id,
 				binding_name=binding_name,
 				inherit_permissions=inherit_permissions
 		)
 	
 	async def get_browser_contexts(self) -> List[str]:
-		return await self._sync_to_trio(self._get_browser_contexts_impl)
+		return await self.sync_to_trio(sync_function=self._get_browser_contexts_impl)()
 	
 	async def get_target_info(self, target_id: Optional[str] = None) -> Dict[str, Any]:
-		return await self._sync_to_trio(self._get_target_info_impl, target_id=target_id)
+		return await self.sync_to_trio(sync_function=self._get_target_info_impl)(target_id=target_id)
 	
 	async def get_targets(self, filter_: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(self._get_targets_impl, filter_=filter_)
+		return await self.sync_to_trio(sync_function=self._get_targets_impl)(filter_=filter_)
 	
 	async def open_dev_tools(self, target_id: str) -> str:
-		return await self._sync_to_trio(self._open_dev_tools_impl, target_id=target_id)
+		return await self.sync_to_trio(sync_function=self._open_dev_tools_impl)(target_id=target_id)
 	
 	async def send_message_to_target(
 			self,
@@ -141,12 +130,7 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			session_id: Optional[str] = None,
 			target_id: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._send_message_to_target_impl,
-				message=message,
-				session_id=session_id,
-				target_id=target_id
-		)
+		return await self.sync_to_trio(sync_function=self._send_message_to_target_impl)(message=message, session_id=session_id, target_id=target_id)
 	
 	async def set_auto_attach(
 			self,
@@ -155,8 +139,7 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 			flatten: Optional[bool] = None,
 			filter_: Optional[List[Dict[str, Any]]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._set_auto_attach_impl,
+		return await self.sync_to_trio(sync_function=self._set_auto_attach_impl)(
 				auto_attach=auto_attach,
 				wait_for_debugger_on_start=wait_for_debugger_on_start,
 				flatten=flatten,
@@ -164,7 +147,7 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 		)
 	
 	async def set_discover_targets(self, discover: bool, filter_: Optional[List[Dict[str, Any]]] = None) -> None:
-		return await self._sync_to_trio(self._set_discover_targets_impl, discover=discover, filter_=filter_)
+		return await self.sync_to_trio(sync_function=self._set_discover_targets_impl)(discover=discover, filter_=filter_)
 	
 	async def set_remote_locations(self, locations: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(self._set_remote_locations_impl, locations=locations)
+		return await self.sync_to_trio(sync_function=self._set_remote_locations_impl)(locations=locations)

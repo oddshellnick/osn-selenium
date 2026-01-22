@@ -90,7 +90,7 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	
 	@requires_driver
 	def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:
-		self.driver.set_window_size(width=width, height=height, windowHandle=windowHandle,)
+		self.driver.set_window_size(width=width, height=height, windowHandle=windowHandle)
 	
 	@requires_driver
 	def window_handles(self) -> List[str]:

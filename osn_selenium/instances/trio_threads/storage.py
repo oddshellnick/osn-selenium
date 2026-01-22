@@ -54,7 +54,7 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> DeleteCookiesResult:
-		return await self._sync_to_trio(self._delete_cookies_impl, filter=filter, partition=partition)
+		return await self.sync_to_trio(sync_function=self._delete_cookies_impl)(filter=filter, partition=partition)
 	
 	@classmethod
 	def from_legacy(
@@ -90,7 +90,7 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 			filter: Optional[CookieFilter] = None,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> GetCookiesResult:
-		return await self._sync_to_trio(self._get_cookies_impl, filter=filter, partition=partition)
+		return await self.sync_to_trio(sync_function=self._get_cookies_impl)(filter=filter, partition=partition)
 	
 	@property
 	def legacy(self) -> legacyStorage:
@@ -101,4 +101,4 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 			cookie: PartialCookie,
 			partition: Optional[Union[BrowsingContextPartitionDescriptor, StorageKeyPartitionDescriptor]] = None,
 	) -> SetCookieResult:
-		return await self._sync_to_trio(self._set_cookie_impl, cookie=cookie, partition=partition)
+		return await self.sync_to_trio(sync_function=self._set_cookie_impl)(cookie=cookie, partition=partition)

@@ -89,8 +89,7 @@ class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 			origin: str,
 			user_context: Optional[str] = None,
 	) -> None:
-		await self._sync_to_trio(
-				self._set_permission_impl,
+		await self.sync_to_trio(sync_function=self._set_permission_impl)(
 				descriptor=descriptor,
 				state=state,
 				origin=origin,

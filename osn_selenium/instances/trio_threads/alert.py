@@ -37,10 +37,10 @@ class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self._accept_impl)
+		await self.sync_to_trio(sync_function=self._accept_impl)()
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self._dismiss_impl)
+		await self.sync_to_trio(sync_function=self._dismiss_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -76,7 +76,7 @@ class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 		return self._legacy_impl
 	
 	async def send_keys(self, keysToSend: str) -> None:
-		await self._sync_to_trio(self._send_keys_impl, keysToSend=keysToSend)
+		await self.sync_to_trio(sync_function=self._send_keys_impl)(keysToSend=keysToSend)
 	
 	async def text(self) -> str:
-		return await self._sync_to_trio(self._text_impl)
+		return await self.sync_to_trio(sync_function=self._text_impl)()

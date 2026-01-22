@@ -84,7 +84,7 @@ class AbstractBrowsingContext(ABC):
 		...
 	
 	@abstractmethod
-	def close(self, context: str, prompt_unload: bool = False,) -> None:
+	def close(self, context: str, prompt_unload: bool = False) -> None:
 		"""
 		Closes a browsing context.
 
@@ -119,7 +119,7 @@ class AbstractBrowsingContext(ABC):
 		...
 	
 	@abstractmethod
-	def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None,) -> Sequence[BrowsingContextInfo]:
+	def get_tree(self, max_depth: Optional[int] = None, root: Optional[str] = None) -> Sequence[BrowsingContextInfo]:
 		"""
 		Retrieves the tree of browsing contexts.
 
@@ -192,7 +192,7 @@ class AbstractBrowsingContext(ABC):
 		...
 	
 	@abstractmethod
-	def navigate(self, context: str, url: str, wait: Optional[str] = None,) -> Mapping:
+	def navigate(self, context: str, url: str, wait: Optional[str] = None) -> Mapping:
 		"""
 		Navigates a browsing context to a new URL.
 
@@ -260,7 +260,7 @@ class AbstractBrowsingContext(ABC):
 		...
 	
 	@abstractmethod
-	def remove_event_handler(self, event: str, callback_id: int,) -> None:
+	def remove_event_handler(self, event: str, callback_id: int) -> None:
 		"""
 		Removes an event handler.
 
@@ -292,7 +292,7 @@ class AbstractBrowsingContext(ABC):
 		...
 	
 	@abstractmethod
-	def traverse_history(self, context: str, delta: int,) -> Mapping:
+	def traverse_history(self, context: str, delta: int) -> Mapping:
 		"""
 		Traverses the browsing history by a given delta.
 

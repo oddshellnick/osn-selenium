@@ -120,7 +120,7 @@ class TargetsMixin(LoggingMixin):
 		
 					await self._add_main_cdp_log()
 		
-					self._nursery_object.start_soon(self._handling_targets[target_id].run,)
+					self._nursery_object.start_soon(self._handling_targets[target_id].run)
 		
 					return True
 				else:

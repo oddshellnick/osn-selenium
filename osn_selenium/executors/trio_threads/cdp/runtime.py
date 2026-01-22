@@ -33,8 +33,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			execution_context_id: Optional[int] = None,
 			execution_context_name: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._add_binding_impl,
+		return await self.sync_to_trio(sync_function=self._add_binding_impl)(
 				name=name,
 				execution_context_id=execution_context_id,
 				execution_context_name=execution_context_name
@@ -46,8 +45,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			return_by_value: Optional[bool] = None,
 			generate_preview: Optional[bool] = None
 	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._await_promise_impl,
+		return await self.sync_to_trio(sync_function=self._await_promise_impl)(
 				promise_object_id=promise_object_id,
 				return_by_value=return_by_value,
 				generate_preview=generate_preview
@@ -69,8 +67,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Dict[str, Any]] = None
 	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._call_function_on_impl,
+		return await self.sync_to_trio(sync_function=self._call_function_on_impl)(
 				function_declaration=function_declaration,
 				object_id=object_id,
 				arguments=arguments,
@@ -93,8 +90,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			persist_script: bool,
 			execution_context_id: Optional[int] = None
 	) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._compile_script_impl,
+		return await self.sync_to_trio(sync_function=self._compile_script_impl)(
 				expression=expression,
 				source_url=source_url,
 				persist_script=persist_script,
@@ -102,13 +98,13 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 		)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def discard_console_entries(self) -> None:
-		return await self._sync_to_trio(self._discard_console_entries_impl)
+		return await self.sync_to_trio(sync_function=self._discard_console_entries_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def evaluate(
 			self,
@@ -129,8 +125,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			unique_context_id: Optional[str] = None,
 			serialization_options: Optional[Dict[str, Any]] = None
 	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._evaluate_impl,
+		return await self.sync_to_trio(sync_function=self._evaluate_impl)(
 				expression=expression,
 				object_group=object_group,
 				include_command_line_api=include_command_line_api,
@@ -150,13 +145,13 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 		)
 	
 	async def get_exception_details(self, error_object_id: str) -> Optional[Dict[str, Any]]:
-		return await self._sync_to_trio(self._get_exception_details_impl, error_object_id=error_object_id)
+		return await self.sync_to_trio(sync_function=self._get_exception_details_impl)(error_object_id=error_object_id)
 	
 	async def get_heap_usage(self) -> Tuple[float, float, float, float]:
-		return await self._sync_to_trio(self._get_heap_usage_impl)
+		return await self.sync_to_trio(sync_function=self._get_heap_usage_impl)()
 	
 	async def get_isolate_id(self) -> str:
-		return await self._sync_to_trio(self._get_isolate_id_impl)
+		return await self.sync_to_trio(sync_function=self._get_isolate_id_impl)()
 	
 	async def get_properties(
 			self,
@@ -171,8 +166,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 		Optional[List[Dict[str, Any]]],
 		Optional[Dict[str, Any]]
 	]:
-		return await self._sync_to_trio(
-				self._get_properties_impl,
+		return await self.sync_to_trio(sync_function=self._get_properties_impl)(
 				object_id=object_id,
 				own_properties=own_properties,
 				accessor_properties_only=accessor_properties_only,
@@ -181,29 +175,22 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 		)
 	
 	async def global_lexical_scope_names(self, execution_context_id: Optional[int] = None) -> List[str]:
-		return await self._sync_to_trio(
-				self._global_lexical_scope_names_impl,
-				execution_context_id=execution_context_id
-		)
+		return await self.sync_to_trio(sync_function=self._global_lexical_scope_names_impl)(execution_context_id=execution_context_id)
 	
 	async def query_objects(self, prototype_object_id: str, object_group: Optional[str] = None) -> Dict[str, Any]:
-		return await self._sync_to_trio(
-				self._query_objects_impl,
-				prototype_object_id=prototype_object_id,
-				object_group=object_group
-		)
+		return await self.sync_to_trio(sync_function=self._query_objects_impl)(prototype_object_id=prototype_object_id, object_group=object_group)
 	
 	async def release_object(self, object_id: str) -> None:
-		return await self._sync_to_trio(self._release_object_impl, object_id=object_id)
+		return await self.sync_to_trio(sync_function=self._release_object_impl)(object_id=object_id)
 	
 	async def release_object_group(self, object_group: str) -> None:
-		return await self._sync_to_trio(self._release_object_group_impl, object_group=object_group)
+		return await self.sync_to_trio(sync_function=self._release_object_group_impl)(object_group=object_group)
 	
 	async def remove_binding(self, name: str) -> None:
-		return await self._sync_to_trio(self._remove_binding_impl, name=name)
+		return await self.sync_to_trio(sync_function=self._remove_binding_impl)(name=name)
 	
 	async def run_if_waiting_for_debugger(self) -> None:
-		return await self._sync_to_trio(self._run_if_waiting_for_debugger_impl)
+		return await self.sync_to_trio(sync_function=self._run_if_waiting_for_debugger_impl)()
 	
 	async def run_script(
 			self,
@@ -216,8 +203,7 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 			generate_preview: Optional[bool] = None,
 			await_promise: Optional[bool] = None
 	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._run_script_impl,
+		return await self.sync_to_trio(sync_function=self._run_script_impl)(
 				script_id=script_id,
 				execution_context_id=execution_context_id,
 				object_group=object_group,
@@ -229,13 +215,13 @@ class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, TrioThreadMixin, AbstractRun
 		)
 	
 	async def set_async_call_stack_depth(self, max_depth: int) -> None:
-		return await self._sync_to_trio(self._set_async_call_stack_depth_impl, max_depth=max_depth)
+		return await self.sync_to_trio(sync_function=self._set_async_call_stack_depth_impl)(max_depth=max_depth)
 	
 	async def set_custom_object_formatter_enabled(self, enabled: bool) -> None:
-		return await self._sync_to_trio(self._set_custom_object_formatter_enabled_impl, enabled=enabled)
+		return await self.sync_to_trio(sync_function=self._set_custom_object_formatter_enabled_impl)(enabled=enabled)
 	
 	async def set_max_call_stack_size_to_capture(self, size: int) -> None:
-		return await self._sync_to_trio(self._set_max_call_stack_size_to_capture_impl, size=size)
+		return await self.sync_to_trio(sync_function=self._set_max_call_stack_size_to_capture_impl)(size=size)
 	
 	async def terminate_execution(self) -> None:
-		return await self._sync_to_trio(self._terminate_execution_impl)
+		return await self.sync_to_trio(sync_function=self._terminate_execution_impl)()

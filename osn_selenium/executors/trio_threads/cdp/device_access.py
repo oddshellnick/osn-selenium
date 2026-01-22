@@ -25,13 +25,13 @@ class DeviceAccessCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def cancel_prompt(self, id_: str) -> None:
-		return await self._sync_to_trio(self._cancel_prompt_impl, id_=id_)
+		return await self.sync_to_trio(sync_function=self._cancel_prompt_impl)(id_=id_)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def select_prompt(self, id_: str, device_id: str) -> None:
-		return await self._sync_to_trio(self._select_prompt_impl, id_=id_, device_id=device_id)
+		return await self.sync_to_trio(sync_function=self._select_prompt_impl)(id_=id_, device_id=device_id)

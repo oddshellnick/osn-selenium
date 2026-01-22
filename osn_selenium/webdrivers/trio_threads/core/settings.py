@@ -23,12 +23,12 @@ class CoreSettingsMixin(CoreBaseMixin, AbstractCoreSettingsMixin):
 	) -> None:
 		if not self.is_active:
 			if window_rect is None:
-				window_rect = await self._sync_to_trio(WindowRect)
+				window_rect = await self.sync_to_trio(sync_function=WindowRect)()
 		
 			if flags is not None:
-				await self._sync_to_trio(self._webdriver_flags_manager.set_flags, flags=flags)
+				await self.sync_to_trio(sync_function=self._webdriver_flags_manager.set_flags)(flags=flags)
 			else:
-				await self._sync_to_trio(self._webdriver_flags_manager.clear_flags)
+				await self.sync_to_trio(sync_function=self._webdriver_flags_manager.clear_flags)()
 		
 			self._window_rect = window_rect
 		else:
@@ -40,7 +40,7 @@ class CoreSettingsMixin(CoreBaseMixin, AbstractCoreSettingsMixin):
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
 		if flags is not None:
-			await self._sync_to_trio(self._webdriver_flags_manager.update_flags, flags=flags)
+			await self.sync_to_trio(sync_function=self._webdriver_flags_manager.update_flags)(flags=flags)
 		
 		if window_rect is not None:
 			self._window_rect = window_rect

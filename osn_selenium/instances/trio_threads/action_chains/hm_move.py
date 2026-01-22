@@ -16,11 +16,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 	"""
 	
 	async def hm_move(self, start_position: Point, end_position: Point) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._hm_move_impl,
-				start_position=start_position,
-				end_position=end_position,
-		)
+		action_chains = await self.sync_to_trio(sync_function=self._hm_move_impl)(start_position=start_position, end_position=end_position)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -30,12 +26,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		)
 	
 	async def hm_move_by_offset(self, start_position: Point, xoffset: int, yoffset: int) -> Tuple["ActionChains", Point]:
-		action_chains, point = await self._sync_to_trio(
-				self._hm_move_by_offset_impl,
-				start_position=start_position,
-				xoffset=xoffset,
-				yoffset=yoffset,
-		)
+		action_chains, point = await self.sync_to_trio(sync_function=self._hm_move_by_offset_impl)(start_position=start_position, xoffset=xoffset, yoffset=yoffset)
 		
 		return (
 				self.from_legacy(
@@ -48,11 +39,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		)
 	
 	async def hm_move_to_element(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple["ActionChains", Point]:
-		action_chains, point = await self._sync_to_trio(
-				self._hm_move_to_element_impl,
-				start_position=start_position,
-				element=element,
-		)
+		action_chains, point = await self.sync_to_trio(sync_function=self._hm_move_to_element_impl)(start_position=start_position, element=element)
 		
 		return (
 				self.from_legacy(
@@ -71,8 +58,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 			xoffset: int,
 			yoffset: int
 	) -> Tuple["ActionChains", Point]:
-		action_chains, point = await self._sync_to_trio(
-				self._hm_move_to_element_with_offset_impl,
+		action_chains, point = await self.sync_to_trio(sync_function=self._hm_move_to_element_with_offset_impl)(
 				start_position=start_position,
 				element=element,
 				xoffset=xoffset,
@@ -90,11 +76,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		)
 	
 	async def hm_move_to_element_with_random_offset(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple["ActionChains", Point]:
-		action_chains, point = await self._sync_to_trio(
-				self._hm_move_to_element_with_random_offset_impl,
-				start_position=start_position,
-				element=element,
-		)
+		action_chains, point = await self.sync_to_trio(sync_function=self._hm_move_to_element_with_random_offset_impl)(start_position=start_position, element=element)
 		
 		return (
 				self.from_legacy(

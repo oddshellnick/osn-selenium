@@ -36,8 +36,7 @@ class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCD
 			headers: Optional[List[Dict[str, Any]]] = None,
 			intercept_response: Optional[bool] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._continue_request_impl,
+		return await self.sync_to_trio(sync_function=self._continue_request_impl)(
 				request_id=request_id,
 				url=url,
 				method=method,
@@ -54,8 +53,7 @@ class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCD
 			response_headers: Optional[List[Dict[str, Any]]] = None,
 			binary_response_headers: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._continue_response_impl,
+		return await self.sync_to_trio(sync_function=self._continue_response_impl)(
 				request_id=request_id,
 				response_code=response_code,
 				response_phrase=response_phrase,
@@ -64,32 +62,20 @@ class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCD
 		)
 	
 	async def continue_with_auth(self, request_id: str, auth_challenge_response: Dict[str, Any]) -> None:
-		return await self._sync_to_trio(
-				self._continue_with_auth_impl,
-				request_id=request_id,
-				auth_challenge_response=auth_challenge_response
-		)
+		return await self.sync_to_trio(sync_function=self._continue_with_auth_impl)(request_id=request_id, auth_challenge_response=auth_challenge_response)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(
 			self,
 			patterns: Optional[List[Dict[str, Any]]] = None,
 			handle_auth_requests: Optional[bool] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._enable_impl,
-				patterns=patterns,
-				handle_auth_requests=handle_auth_requests
-		)
+		return await self.sync_to_trio(sync_function=self._enable_impl)(patterns=patterns, handle_auth_requests=handle_auth_requests)
 	
 	async def fail_request(self, request_id: str, error_reason: str) -> None:
-		return await self._sync_to_trio(
-				self._fail_request_impl,
-				request_id=request_id,
-				error_reason=error_reason
-		)
+		return await self.sync_to_trio(sync_function=self._fail_request_impl)(request_id=request_id, error_reason=error_reason)
 	
 	async def fulfill_request(
 			self,
@@ -100,8 +86,7 @@ class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCD
 			body: Optional[str] = None,
 			response_phrase: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._fulfill_request_impl,
+		return await self.sync_to_trio(sync_function=self._fulfill_request_impl)(
 				request_id=request_id,
 				response_code=response_code,
 				response_headers=response_headers,
@@ -111,7 +96,7 @@ class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCD
 		)
 	
 	async def get_response_body(self, request_id: str) -> Tuple[str, bool]:
-		return await self._sync_to_trio(self._get_response_body_impl, request_id=request_id)
+		return await self.sync_to_trio(sync_function=self._get_response_body_impl)(request_id=request_id)
 	
 	async def take_response_body_as_stream(self, request_id: str) -> str:
-		return await self._sync_to_trio(self._take_response_body_as_stream_impl, request_id=request_id)
+		return await self.sync_to_trio(sync_function=self._take_response_body_as_stream_impl)(request_id=request_id)

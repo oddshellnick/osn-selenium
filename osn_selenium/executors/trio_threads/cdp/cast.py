@@ -26,19 +26,19 @@ class CastCDPExecutor(UnifiedCastCDPExecutor, TrioThreadMixin, AbstractCastCDPEx
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self, presentation_url: Optional[str] = None) -> None:
-		return await self._sync_to_trio(self._enable_impl, presentation_url=presentation_url)
+		return await self.sync_to_trio(sync_function=self._enable_impl)(presentation_url=presentation_url)
 	
 	async def set_sink_to_use(self, sink_name: str) -> None:
-		return await self._sync_to_trio(self._set_sink_to_use_impl, sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._set_sink_to_use_impl)(sink_name=sink_name)
 	
 	async def start_desktop_mirroring(self, sink_name: str) -> None:
-		return await self._sync_to_trio(self._start_desktop_mirroring_impl, sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._start_desktop_mirroring_impl)(sink_name=sink_name)
 	
 	async def start_tab_mirroring(self, sink_name: str) -> None:
-		return await self._sync_to_trio(self._start_tab_mirroring_impl, sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._start_tab_mirroring_impl)(sink_name=sink_name)
 	
 	async def stop_casting(self, sink_name: str) -> None:
-		return await self._sync_to_trio(self._stop_casting_impl, sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._stop_casting_impl)(sink_name=sink_name)

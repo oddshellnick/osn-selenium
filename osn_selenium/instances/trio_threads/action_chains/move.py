@@ -16,7 +16,7 @@ class MoveMixin(BaseMixin, UnifiedMoveMixin, AbstractMoveMixin):
 	"""
 	
 	async def move_by_offset(self, xoffset: int, yoffset: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._move_by_offset_impl, xoffset=xoffset, yoffset=yoffset)
+		action_chains = await self.sync_to_trio(sync_function=self._move_by_offset_impl)(xoffset=xoffset, yoffset=yoffset)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -26,7 +26,7 @@ class MoveMixin(BaseMixin, UnifiedMoveMixin, AbstractMoveMixin):
 		)
 	
 	async def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._move_to_element_impl, to_element=get_legacy_instance(to_element))
+		action_chains = await self.sync_to_trio(sync_function=self._move_to_element_impl)(to_element=get_legacy_instance(to_element))
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -36,8 +36,7 @@ class MoveMixin(BaseMixin, UnifiedMoveMixin, AbstractMoveMixin):
 		)
 	
 	async def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._move_to_element_with_offset_impl,
+		action_chains = await self.sync_to_trio(sync_function=self._move_to_element_with_offset_impl)(
 				to_element=get_legacy_instance(to_element),
 				xoffset=xoffset,
 				yoffset=yoffset,

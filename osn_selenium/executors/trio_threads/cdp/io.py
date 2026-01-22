@@ -25,7 +25,7 @@ class IoCDPExecutor(UnifiedIoCDPExecutor, TrioThreadMixin, AbstractIoCDPExecutor
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def close(self, handle: str) -> None:
-		return await self._sync_to_trio(self._close_impl, handle=handle)
+		return await self.sync_to_trio(sync_function=self._close_impl)(handle=handle)
 	
 	async def read(
 			self,
@@ -33,7 +33,7 @@ class IoCDPExecutor(UnifiedIoCDPExecutor, TrioThreadMixin, AbstractIoCDPExecutor
 			offset: Optional[int] = None,
 			size: Optional[int] = None
 	) -> Tuple[Optional[bool], str, bool]:
-		return await self._sync_to_trio(self._read_impl, handle=handle, offset=offset, size=size)
+		return await self.sync_to_trio(sync_function=self._read_impl)(handle=handle, offset=offset, size=size)
 	
 	async def resolve_blob(self, object_id: str) -> str:
-		return await self._sync_to_trio(self._resolve_blob_impl, object_id=object_id)
+		return await self.sync_to_trio(sync_function=self._resolve_blob_impl)(object_id=object_id)

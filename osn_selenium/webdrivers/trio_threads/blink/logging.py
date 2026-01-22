@@ -16,8 +16,8 @@ class BlinkLoggingMixin(BlinkBaseMixin, AbstractBlinkLoggingMixin):
 	
 	@requires_driver
 	async def get_log(self, log_type: str) -> Any:
-		return await self._sync_to_trio(self.driver.get_log, log_type=log_type)
+		return await self.sync_to_trio(sync_function=self.driver.get_log)(log_type=log_type)
 	
 	@requires_driver
 	async def log_types(self) -> List[str]:
-		return await self._sync_to_trio(lambda: self.driver.log_types)
+		return await self.sync_to_trio(sync_function=lambda: self.driver.log_types)()

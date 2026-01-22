@@ -32,20 +32,16 @@ class DebuggerCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def continue_to_location(self, location: Dict[str, Any], target_call_frames: Optional[str] = None) -> None:
-		return await self._sync_to_trio(
-				self._continue_to_location_impl,
-				location=location,
-				target_call_frames=target_call_frames
-		)
+		return await self.sync_to_trio(sync_function=self._continue_to_location_impl)(location=location, target_call_frames=target_call_frames)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def disassemble_wasm_module(self, script_id: str) -> Tuple[Optional[str], int, List[int], Dict[str, Any]]:
-		return await self._sync_to_trio(self._disassemble_wasm_module_impl, script_id=script_id)
+		return await self.sync_to_trio(sync_function=self._disassemble_wasm_module_impl)(script_id=script_id)
 	
 	async def enable(self, max_scripts_cache_size: Optional[float] = None) -> str:
-		return await self._sync_to_trio(self._enable_impl, max_scripts_cache_size=max_scripts_cache_size)
+		return await self.sync_to_trio(sync_function=self._enable_impl)(max_scripts_cache_size=max_scripts_cache_size)
 	
 	async def evaluate_on_call_frame(
 			self,
@@ -59,8 +55,7 @@ class DebuggerCDPExecutor(
 			throw_on_side_effect: Optional[bool] = None,
 			timeout: Optional[float] = None
 	) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._evaluate_on_call_frame_impl,
+		return await self.sync_to_trio(sync_function=self._evaluate_on_call_frame_impl)(
 				call_frame_id=call_frame_id,
 				expression=expression,
 				object_group=object_group,
@@ -78,42 +73,34 @@ class DebuggerCDPExecutor(
 			end: Optional[Dict[str, Any]] = None,
 			restrict_to_function: Optional[bool] = None
 	) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(
-				self._get_possible_breakpoints_impl,
-				start=start,
-				end=end,
-				restrict_to_function=restrict_to_function
-		)
+		return await self.sync_to_trio(sync_function=self._get_possible_breakpoints_impl)(start=start, end=end, restrict_to_function=restrict_to_function)
 	
 	async def get_script_source(self, script_id: str) -> Tuple[str, Optional[str]]:
-		return await self._sync_to_trio(self._get_script_source_impl, script_id=script_id)
+		return await self.sync_to_trio(sync_function=self._get_script_source_impl)(script_id=script_id)
 	
 	async def get_stack_trace(self, stack_trace_id: Dict[str, Any]) -> Dict[str, Any]:
-		return await self._sync_to_trio(self._get_stack_trace_impl, stack_trace_id=stack_trace_id)
+		return await self.sync_to_trio(sync_function=self._get_stack_trace_impl)(stack_trace_id=stack_trace_id)
 	
 	async def get_wasm_bytecode(self, script_id: str) -> str:
-		return await self._sync_to_trio(self._get_wasm_bytecode_impl, script_id=script_id)
+		return await self.sync_to_trio(sync_function=self._get_wasm_bytecode_impl)(script_id=script_id)
 	
 	async def next_wasm_disassembly_chunk(self, stream_id: str) -> Dict[str, Any]:
-		return await self._sync_to_trio(self._next_wasm_disassembly_chunk_impl, stream_id=stream_id)
+		return await self.sync_to_trio(sync_function=self._next_wasm_disassembly_chunk_impl)(stream_id=stream_id)
 	
 	async def pause(self) -> None:
-		return await self._sync_to_trio(self._pause_impl)
+		return await self.sync_to_trio(sync_function=self._pause_impl)()
 	
 	async def pause_on_async_call(self, parent_stack_trace_id: Dict[str, Any]) -> None:
-		return await self._sync_to_trio(
-				self._pause_on_async_call_impl,
-				parent_stack_trace_id=parent_stack_trace_id
-		)
+		return await self.sync_to_trio(sync_function=self._pause_on_async_call_impl)(parent_stack_trace_id=parent_stack_trace_id)
 	
 	async def remove_breakpoint(self, breakpoint_id: str) -> None:
-		return await self._sync_to_trio(self._remove_breakpoint_impl, breakpoint_id=breakpoint_id)
+		return await self.sync_to_trio(sync_function=self._remove_breakpoint_impl)(breakpoint_id=breakpoint_id)
 	
 	async def restart_frame(self, call_frame_id: str, mode: Optional[str] = None) -> Tuple[List[Dict[str, Any]], Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
-		return await self._sync_to_trio(self._restart_frame_impl, call_frame_id=call_frame_id, mode=mode)
+		return await self.sync_to_trio(sync_function=self._restart_frame_impl)(call_frame_id=call_frame_id, mode=mode)
 	
 	async def resume(self, terminate_on_resume: Optional[bool] = None) -> None:
-		return await self._sync_to_trio(self._resume_impl, terminate_on_resume=terminate_on_resume)
+		return await self.sync_to_trio(sync_function=self._resume_impl)(terminate_on_resume=terminate_on_resume)
 	
 	async def search_in_content(
 			self,
@@ -122,8 +109,7 @@ class DebuggerCDPExecutor(
 			case_sensitive: Optional[bool] = None,
 			is_regex: Optional[bool] = None
 	) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(
-				self._search_in_content_impl,
+		return await self.sync_to_trio(sync_function=self._search_in_content_impl)(
 				script_id=script_id,
 				query=query,
 				case_sensitive=case_sensitive,
@@ -131,27 +117,19 @@ class DebuggerCDPExecutor(
 		)
 	
 	async def set_async_call_stack_depth(self, max_depth: int) -> None:
-		return await self._sync_to_trio(self._set_async_call_stack_depth_impl, max_depth=max_depth)
+		return await self.sync_to_trio(sync_function=self._set_async_call_stack_depth_impl)(max_depth=max_depth)
 	
 	async def set_blackbox_execution_contexts(self, unique_ids: List[str]) -> None:
-		return await self._sync_to_trio(self._set_blackbox_execution_contexts_impl, unique_ids=unique_ids)
+		return await self.sync_to_trio(sync_function=self._set_blackbox_execution_contexts_impl)(unique_ids=unique_ids)
 	
 	async def set_blackbox_patterns(self, patterns: List[str], skip_anonymous: Optional[bool] = None) -> None:
-		return await self._sync_to_trio(
-				self._set_blackbox_patterns_impl,
-				patterns=patterns,
-				skip_anonymous=skip_anonymous
-		)
+		return await self.sync_to_trio(sync_function=self._set_blackbox_patterns_impl)(patterns=patterns, skip_anonymous=skip_anonymous)
 	
 	async def set_blackboxed_ranges(self, script_id: str, positions: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_blackboxed_ranges_impl,
-				script_id=script_id,
-				positions=positions
-		)
+		return await self.sync_to_trio(sync_function=self._set_blackboxed_ranges_impl)(script_id=script_id, positions=positions)
 	
 	async def set_breakpoint(self, location: Dict[str, Any], condition: Optional[str] = None) -> Tuple[str, Dict[str, Any]]:
-		return await self._sync_to_trio(self._set_breakpoint_impl, location=location, condition=condition)
+		return await self.sync_to_trio(sync_function=self._set_breakpoint_impl)(location=location, condition=condition)
 	
 	async def set_breakpoint_by_url(
 			self,
@@ -162,8 +140,7 @@ class DebuggerCDPExecutor(
 			column_number: Optional[int] = None,
 			condition: Optional[str] = None
 	) -> Tuple[str, List[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._set_breakpoint_by_url_impl,
+		return await self.sync_to_trio(sync_function=self._set_breakpoint_by_url_impl)(
 				line_number=line_number,
 				url=url,
 				url_regex=url_regex,
@@ -173,26 +150,19 @@ class DebuggerCDPExecutor(
 		)
 	
 	async def set_breakpoint_on_function_call(self, object_id: str, condition: Optional[str] = None) -> str:
-		return await self._sync_to_trio(
-				self._set_breakpoint_on_function_call_impl,
-				object_id=object_id,
-				condition=condition
-		)
+		return await self.sync_to_trio(sync_function=self._set_breakpoint_on_function_call_impl)(object_id=object_id, condition=condition)
 	
 	async def set_breakpoints_active(self, active: bool) -> None:
-		return await self._sync_to_trio(self._set_breakpoints_active_impl, active=active)
+		return await self.sync_to_trio(sync_function=self._set_breakpoints_active_impl)(active=active)
 	
 	async def set_instrumentation_breakpoint(self, instrumentation: str) -> str:
-		return await self._sync_to_trio(
-				self._set_instrumentation_breakpoint_impl,
-				instrumentation=instrumentation
-		)
+		return await self.sync_to_trio(sync_function=self._set_instrumentation_breakpoint_impl)(instrumentation=instrumentation)
 	
 	async def set_pause_on_exceptions(self, state: str) -> None:
-		return await self._sync_to_trio(self._set_pause_on_exceptions_impl, state=state)
+		return await self.sync_to_trio(sync_function=self._set_pause_on_exceptions_impl)(state=state)
 	
 	async def set_return_value(self, new_value: Dict[str, Any]) -> None:
-		return await self._sync_to_trio(self._set_return_value_impl, new_value=new_value)
+		return await self.sync_to_trio(sync_function=self._set_return_value_impl)(new_value=new_value)
 	
 	async def set_script_source(
 			self,
@@ -208,8 +178,7 @@ class DebuggerCDPExecutor(
 		str,
 		Optional[Dict[str, Any]]
 	]:
-		return await self._sync_to_trio(
-				self._set_script_source_impl,
+		return await self.sync_to_trio(sync_function=self._set_script_source_impl)(
 				script_id=script_id,
 				script_source=script_source,
 				dry_run=dry_run,
@@ -217,7 +186,7 @@ class DebuggerCDPExecutor(
 		)
 	
 	async def set_skip_all_pauses(self, skip: bool) -> None:
-		return await self._sync_to_trio(self._set_skip_all_pauses_impl, skip=skip)
+		return await self.sync_to_trio(sync_function=self._set_skip_all_pauses_impl)(skip=skip)
 	
 	async def set_variable_value(
 			self,
@@ -226,8 +195,7 @@ class DebuggerCDPExecutor(
 			new_value: Dict[str, Any],
 			call_frame_id: str
 	) -> None:
-		return await self._sync_to_trio(
-				self._set_variable_value_impl,
+		return await self.sync_to_trio(sync_function=self._set_variable_value_impl)(
 				scope_number=scope_number,
 				variable_name=variable_name,
 				new_value=new_value,
@@ -239,14 +207,10 @@ class DebuggerCDPExecutor(
 			break_on_async_call: Optional[bool] = None,
 			skip_list: Optional[List[Dict[str, Any]]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._step_into_impl,
-				break_on_async_call=break_on_async_call,
-				skip_list=skip_list
-		)
+		return await self.sync_to_trio(sync_function=self._step_into_impl)(break_on_async_call=break_on_async_call, skip_list=skip_list)
 	
 	async def step_out(self) -> None:
-		return await self._sync_to_trio(self._step_out_impl)
+		return await self.sync_to_trio(sync_function=self._step_out_impl)()
 	
 	async def step_over(self, skip_list: Optional[List[Dict[str, Any]]] = None) -> None:
-		return await self._sync_to_trio(self._step_over_impl, skip_list=skip_list)
+		return await self.sync_to_trio(sync_function=self._step_over_impl)(skip_list=skip_list)

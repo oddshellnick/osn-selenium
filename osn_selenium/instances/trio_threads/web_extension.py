@@ -84,16 +84,11 @@ class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
 			archive_path: Optional[str] = None,
 			base64_value: Optional[str] = None,
 	) -> Dict:
-		return await self._sync_to_trio(
-				self._install_impl,
-				path=path,
-				archive_path=archive_path,
-				base64_value=base64_value
-		)
+		return await self.sync_to_trio(sync_function=self._install_impl)(path=path, archive_path=archive_path, base64_value=base64_value)
 	
 	@property
 	def legacy(self) -> legacyWebExtension:
 		return self._legacy_impl
 	
 	async def uninstall(self, extension_id_or_result: Union[str, Dict]) -> None:
-		await self._sync_to_trio(self._uninstall_impl, extension_id_or_result=extension_id_or_result)
+		await self.sync_to_trio(sync_function=self._uninstall_impl)(extension_id_or_result=extension_id_or_result)

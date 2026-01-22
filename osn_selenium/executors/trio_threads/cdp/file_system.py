@@ -25,7 +25,4 @@ class FileSystemCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def get_directory(self, bucket_file_system_locator: Dict[str, Any]) -> Dict[str, Any]:
-		return await self._sync_to_trio(
-				self._get_directory_impl,
-				bucket_file_system_locator=bucket_file_system_locator
-		)
+		return await self.sync_to_trio(sync_function=self._get_directory_impl)(bucket_file_system_locator=bucket_file_system_locator)

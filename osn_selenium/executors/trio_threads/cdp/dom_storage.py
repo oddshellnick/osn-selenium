@@ -30,24 +30,19 @@ class DomStorageCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear(self, storage_id: Dict[str, Any]) -> None:
-		return await self._sync_to_trio(self._clear_impl, storage_id=storage_id)
+		return await self.sync_to_trio(sync_function=self._clear_impl)(storage_id=storage_id)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_dom_storage_items(self, storage_id: Dict[str, Any]) -> List[List[str]]:
-		return await self._sync_to_trio(self._get_dom_storage_items_impl, storage_id=storage_id)
+		return await self.sync_to_trio(sync_function=self._get_dom_storage_items_impl)(storage_id=storage_id)
 	
 	async def remove_dom_storage_item(self, storage_id: Dict[str, Any], key: str) -> None:
-		return await self._sync_to_trio(self._remove_dom_storage_item_impl, storage_id=storage_id, key=key)
+		return await self.sync_to_trio(sync_function=self._remove_dom_storage_item_impl)(storage_id=storage_id, key=key)
 	
 	async def set_dom_storage_item(self, storage_id: Dict[str, Any], key: str, value: str) -> None:
-		return await self._sync_to_trio(
-				self._set_dom_storage_item_impl,
-				storage_id=storage_id,
-				key=key,
-				value=value
-		)
+		return await self.sync_to_trio(sync_function=self._set_dom_storage_item_impl)(storage_id=storage_id, key=key, value=value)

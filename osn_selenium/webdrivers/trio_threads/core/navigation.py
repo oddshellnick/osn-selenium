@@ -15,24 +15,24 @@ class CoreNavigationMixin(CoreBaseMixin, AbstractCoreNavigationMixin):
 	
 	@requires_driver
 	async def back(self) -> None:
-		await self._sync_to_trio(self.driver.back)
+		await self.sync_to_trio(sync_function=self.driver.back)()
 	
 	@requires_driver
 	async def current_url(self) -> str:
-		return await self._sync_to_trio(lambda: self.driver.current_url)
+		return await self.sync_to_trio(sync_function=lambda: self.driver.current_url)()
 	
 	@requires_driver
 	async def forward(self) -> None:
-		await self._sync_to_trio(self.driver.forward)
+		await self.sync_to_trio(sync_function=self.driver.forward)()
 	
 	@requires_driver
 	async def get(self, url: str) -> None:
-		await self._sync_to_trio(self.driver.get, url=url)
+		await self.sync_to_trio(sync_function=self.driver.get)(url=url)
 	
 	@requires_driver
 	async def refresh(self) -> None:
-		await self._sync_to_trio(self.driver.refresh)
+		await self.sync_to_trio(sync_function=self.driver.refresh)()
 	
 	@requires_driver
 	async def title(self) -> str:
-		return await self._sync_to_trio(lambda: self.driver.title)
+		return await self.sync_to_trio(sync_function=lambda: self.driver.title)()

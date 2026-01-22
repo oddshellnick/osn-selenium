@@ -27,7 +27,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def cancel_dragging(self) -> None:
-		return await self._sync_to_trio(self._cancel_dragging_impl)
+		return await self.sync_to_trio(sync_function=self._cancel_dragging_impl)()
 	
 	async def dispatch_drag_event(
 			self,
@@ -37,14 +37,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			data: Dict[str, Any],
 			modifiers: Optional[int] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_drag_event_impl,
-				type_=type_,
-				x=x,
-				y=y,
-				data=data,
-				modifiers=modifiers
-		)
+		return await self.sync_to_trio(sync_function=self._dispatch_drag_event_impl)(type_=type_, x=x, y=y, data=data, modifiers=modifiers)
 	
 	async def dispatch_key_event(
 			self,
@@ -64,8 +57,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			location: Optional[int] = None,
 			commands: Optional[List[str]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_key_event_impl,
+		return await self.sync_to_trio(sync_function=self._dispatch_key_event_impl)(
 				type_=type_,
 				modifiers=modifiers,
 				timestamp=timestamp,
@@ -102,8 +94,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			delta_y: Optional[float] = None,
 			pointer_type: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_mouse_event_impl,
+		return await self.sync_to_trio(sync_function=self._dispatch_mouse_event_impl)(
 				type_=type_,
 				x=x,
 				y=y,
@@ -129,8 +120,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			modifiers: Optional[int] = None,
 			timestamp: Optional[float] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_touch_event_impl,
+		return await self.sync_to_trio(sync_function=self._dispatch_touch_event_impl)(
 				type_=type_,
 				touch_points=touch_points,
 				modifiers=modifiers,
@@ -149,8 +139,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			modifiers: Optional[int] = None,
 			click_count: Optional[int] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._emulate_touch_from_mouse_event_impl,
+		return await self.sync_to_trio(sync_function=self._emulate_touch_from_mouse_event_impl)(
 				type_=type_,
 				x=x,
 				y=y,
@@ -170,8 +159,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			replacement_start: Optional[int] = None,
 			replacement_end: Optional[int] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._ime_set_composition_impl,
+		return await self.sync_to_trio(sync_function=self._ime_set_composition_impl)(
 				text=text,
 				selection_start=selection_start,
 				selection_end=selection_end,
@@ -180,13 +168,13 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 		)
 	
 	async def insert_text(self, text: str) -> None:
-		return await self._sync_to_trio(self._insert_text_impl, text=text)
+		return await self.sync_to_trio(sync_function=self._insert_text_impl)(text=text)
 	
 	async def set_ignore_input_events(self, ignore: bool) -> None:
-		return await self._sync_to_trio(self._set_ignore_input_events_impl, ignore=ignore)
+		return await self.sync_to_trio(sync_function=self._set_ignore_input_events_impl)(ignore=ignore)
 	
 	async def set_intercept_drags(self, enabled: bool) -> None:
-		return await self._sync_to_trio(self._set_intercept_drags_impl, enabled=enabled)
+		return await self.sync_to_trio(sync_function=self._set_intercept_drags_impl)(enabled=enabled)
 	
 	async def synthesize_pinch_gesture(
 			self,
@@ -196,8 +184,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			relative_speed: Optional[int] = None,
 			gesture_source_type: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._synthesize_pinch_gesture_impl,
+		return await self.sync_to_trio(sync_function=self._synthesize_pinch_gesture_impl)(
 				x=x,
 				y=y,
 				scale_factor=scale_factor,
@@ -220,8 +207,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			repeat_delay_ms: Optional[int] = None,
 			interaction_marker_name: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._synthesize_scroll_gesture_impl,
+		return await self.sync_to_trio(sync_function=self._synthesize_scroll_gesture_impl)(
 				x=x,
 				y=y,
 				x_distance=x_distance,
@@ -244,8 +230,7 @@ class InputCDPExecutor(UnifiedInputCDPExecutor, TrioThreadMixin, AbstractInputCD
 			tap_count: Optional[int] = None,
 			gesture_source_type: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._synthesize_tap_gesture_impl,
+		return await self.sync_to_trio(sync_function=self._synthesize_tap_gesture_impl)(
 				x=x,
 				y=y,
 				duration=duration,

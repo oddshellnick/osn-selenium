@@ -39,8 +39,7 @@ class DomSnapshotCDPExecutor(
 			include_blended_background_colors: Optional[bool] = None,
 			include_text_color_opacities: Optional[bool] = None
 	) -> Tuple[List[Dict[str, Any]], List[str]]:
-		return await self._sync_to_trio(
-				self._capture_snapshot_impl,
+		return await self.sync_to_trio(sync_function=self._capture_snapshot_impl)(
 				computed_styles=computed_styles,
 				include_paint_order=include_paint_order,
 				include_dom_rects=include_dom_rects,
@@ -49,10 +48,10 @@ class DomSnapshotCDPExecutor(
 		)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_snapshot(
 			self,
@@ -61,8 +60,7 @@ class DomSnapshotCDPExecutor(
 			include_paint_order: Optional[bool] = None,
 			include_user_agent_shadow_tree: Optional[bool] = None
 	) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
-		return await self._sync_to_trio(
-				self._get_snapshot_impl,
+		return await self.sync_to_trio(sync_function=self._get_snapshot_impl)(
 				computed_style_whitelist=computed_style_whitelist,
 				include_event_listeners=include_event_listeners,
 				include_paint_order=include_paint_order,

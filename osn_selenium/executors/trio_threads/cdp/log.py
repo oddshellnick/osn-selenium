@@ -26,16 +26,16 @@ class LogCDPExecutor(UnifiedLogCDPExecutor, TrioThreadMixin, AbstractLogCDPExecu
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear(self) -> None:
-		return await self._sync_to_trio(self._clear_impl)
+		return await self.sync_to_trio(sync_function=self._clear_impl)()
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def start_violations_report(self, config: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(self._start_violations_report_impl, config=config)
+		return await self.sync_to_trio(sync_function=self._start_violations_report_impl)(config=config)
 	
 	async def stop_violations_report(self) -> None:
-		return await self._sync_to_trio(self._stop_violations_report_impl)
+		return await self.sync_to_trio(sync_function=self._stop_violations_report_impl)()

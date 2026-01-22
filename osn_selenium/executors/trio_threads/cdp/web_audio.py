@@ -25,10 +25,10 @@ class WebAudioCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_realtime_data(self, context_id: str) -> Dict[str, Any]:
-		return await self._sync_to_trio(self._get_realtime_data_impl, context_id=context_id)
+		return await self.sync_to_trio(sync_function=self._get_realtime_data_impl)(context_id=context_id)

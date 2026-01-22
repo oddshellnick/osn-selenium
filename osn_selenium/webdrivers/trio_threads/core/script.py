@@ -25,7 +25,7 @@ class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
 		args = self._unwrap_args(args)
 		
 		return self._wrap_result(
-				result=await self._sync_to_trio(self.driver.execute_async_script, script, *args)
+				result=await self.sync_to_trio(sync_function=self.driver.execute_async_script)(script, *args)
 		)
 	
 	@requires_driver
@@ -33,20 +33,20 @@ class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
 		args = self._unwrap_args(args)
 		
 		return self._wrap_result(
-				result=await self._sync_to_trio(self.driver.execute_script, script, *args)
+				result=await self.sync_to_trio(sync_function=self.driver.execute_script)(script, *args)
 		)
 	
 	@requires_driver
 	async def get_pinned_scripts(self) -> List[str]:
-		return await self._sync_to_trio(self.driver.get_pinned_scripts)
+		return await self.sync_to_trio(sync_function=self.driver.get_pinned_scripts)()
 	
 	@requires_driver
 	async def pin_script(self, script: str, script_key: Optional[Any] = None) -> Any:
-		return await self._sync_to_trio(self.driver.pin_script, script=script, script_key=script_key)
+		return await self.sync_to_trio(sync_function=self.driver.pin_script)(script=script, script_key=script_key)
 	
 	@requires_driver
 	async def script(self) -> Script:
-		legacy = await self._sync_to_trio(lambda: self.driver.script)
+		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.script)()
 		
 		return Script(
 				selenium_script=legacy,
@@ -56,4 +56,4 @@ class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
 	
 	@requires_driver
 	async def unpin(self, script_key: Any) -> None:
-		await self._sync_to_trio(self.driver.unpin, script_key=script_key)
+		await self.sync_to_trio(sync_function=self.driver.unpin)(script_key=script_key)

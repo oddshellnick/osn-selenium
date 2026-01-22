@@ -39,8 +39,7 @@ class IndexedDbCDPExecutor(
 			database_name: str = None,
 			object_store_name: str = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._clear_object_store_impl,
+		return await self.sync_to_trio(sync_function=self._clear_object_store_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -55,8 +54,7 @@ class IndexedDbCDPExecutor(
 			storage_bucket: Optional[Dict[str, Any]] = None,
 			database_name: str = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._delete_database_impl,
+		return await self.sync_to_trio(sync_function=self._delete_database_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -72,8 +70,7 @@ class IndexedDbCDPExecutor(
 			object_store_name: str = None,
 			key_range: Dict[str, Any] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._delete_object_store_entries_impl,
+		return await self.sync_to_trio(sync_function=self._delete_object_store_entries_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -83,10 +80,10 @@ class IndexedDbCDPExecutor(
 		)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_metadata(
 			self,
@@ -96,8 +93,7 @@ class IndexedDbCDPExecutor(
 			database_name: str = None,
 			object_store_name: str = None
 	) -> Tuple[float, float]:
-		return await self._sync_to_trio(
-				self._get_metadata_impl,
+		return await self.sync_to_trio(sync_function=self._get_metadata_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -117,8 +113,7 @@ class IndexedDbCDPExecutor(
 			page_size: int = None,
 			key_range: Optional[Dict[str, Any]] = None
 	) -> Tuple[List[Dict[str, Any]], bool]:
-		return await self._sync_to_trio(
-				self._request_data_impl,
+		return await self.sync_to_trio(sync_function=self._request_data_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -137,8 +132,7 @@ class IndexedDbCDPExecutor(
 			storage_bucket: Optional[Dict[str, Any]] = None,
 			database_name: str = None
 	) -> Dict[str, Any]:
-		return await self._sync_to_trio(
-				self._request_database_impl,
+		return await self.sync_to_trio(sync_function=self._request_database_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket,
@@ -151,8 +145,7 @@ class IndexedDbCDPExecutor(
 			storage_key: Optional[str] = None,
 			storage_bucket: Optional[Dict[str, Any]] = None
 	) -> List[str]:
-		return await self._sync_to_trio(
-				self._request_database_names_impl,
+		return await self.sync_to_trio(sync_function=self._request_database_names_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket

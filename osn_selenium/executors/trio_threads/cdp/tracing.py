@@ -28,24 +28,20 @@ class TracingCDPExecutor(UnifiedTracingCDPExecutor, TrioThreadMixin, AbstractTra
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def end(self) -> None:
-		return await self._sync_to_trio(self._end_impl)
+		return await self.sync_to_trio(sync_function=self._end_impl)()
 	
 	async def get_categories(self) -> List[str]:
-		return await self._sync_to_trio(self._get_categories_impl)
+		return await self.sync_to_trio(sync_function=self._get_categories_impl)()
 	
 	async def record_clock_sync_marker(self, sync_id: str) -> None:
-		return await self._sync_to_trio(self._record_clock_sync_marker_impl, sync_id=sync_id)
+		return await self.sync_to_trio(sync_function=self._record_clock_sync_marker_impl)(sync_id=sync_id)
 	
 	async def request_memory_dump(
 			self,
 			deterministic: Optional[bool] = None,
 			level_of_detail: Optional[str] = None
 	) -> Tuple[str, bool]:
-		return await self._sync_to_trio(
-				self._request_memory_dump_impl,
-				deterministic=deterministic,
-				level_of_detail=level_of_detail
-		)
+		return await self.sync_to_trio(sync_function=self._request_memory_dump_impl)(deterministic=deterministic, level_of_detail=level_of_detail)
 	
 	async def start(
 			self,
@@ -59,8 +55,7 @@ class TracingCDPExecutor(UnifiedTracingCDPExecutor, TrioThreadMixin, AbstractTra
 			perfetto_config: Optional[str] = None,
 			tracing_backend: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._start_impl,
+		return await self.sync_to_trio(sync_function=self._start_impl)(
 				categories=categories,
 				options=options,
 				buffer_usage_reporting_interval=buffer_usage_reporting_interval,

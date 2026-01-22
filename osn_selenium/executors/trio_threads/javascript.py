@@ -44,51 +44,44 @@ class JSExecutor(UnifiedJSExecutor, TrioThreadMixin, AbstractJSExecutor):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def check_element_in_viewport(self, element: WebElement) -> bool:
-		return await self._sync_to_trio(self._check_element_in_viewport_impl, element=element)
+		return await self.sync_to_trio(sync_function=self._check_element_in_viewport_impl)(element=element)
 	
 	async def execute(self, script: str, *args: Any) -> Any:
-		return await self._sync_to_trio(self._execute_impl, script, *args)
+		return await self.sync_to_trio(sync_function=self._execute_impl)(script, *args)
 	
 	async def get_document_scroll_size(self) -> Size:
-		return await self._sync_to_trio(self._get_document_scroll_size_impl)
+		return await self.sync_to_trio(sync_function=self._get_document_scroll_size_impl)()
 	
 	async def get_element_css_style(self, element: WebElement) -> Dict[str, str]:
-		return await self._sync_to_trio(self._get_element_css_style_impl, element=element)
+		return await self.sync_to_trio(sync_function=self._get_element_css_style_impl)(element=element)
 	
 	async def get_element_rect_in_viewport(self, element: WebElement) -> Optional[Rectangle]:
-		return await self._sync_to_trio(self._get_element_rect_in_viewport_impl, element=element)
+		return await self.sync_to_trio(sync_function=self._get_element_rect_in_viewport_impl)(element=element)
 	
 	async def get_random_element_point(self, element: WebElement) -> Optional[Point]:
-		return await self._sync_to_trio(self._get_random_element_point_impl, element=element)
+		return await self.sync_to_trio(sync_function=self._get_random_element_point_impl)(element=element)
 	
 	async def get_random_element_point_in_viewport(self, element: WebElement, step: int = 1) -> Optional[Position]:
-		return await self._sync_to_trio(
-				self._get_random_element_point_in_viewport_impl,
-				element=element,
-				step=step
-		)
+		return await self.sync_to_trio(sync_function=self._get_random_element_point_in_viewport_impl)(element=element, step=step)
 	
 	async def get_viewport_position(self) -> Position:
-		return await self._sync_to_trio(self._get_viewport_position_impl)
+		return await self.sync_to_trio(sync_function=self._get_viewport_position_impl)()
 	
 	async def get_viewport_rect(self) -> Rectangle:
-		return await self._sync_to_trio(self._get_viewport_rect_impl)
+		return await self.sync_to_trio(sync_function=self._get_viewport_rect_impl)()
 	
 	async def get_viewport_size(self) -> Size:
-		return await self._sync_to_trio(self._get_viewport_size_impl)
+		return await self.sync_to_trio(sync_function=self._get_viewport_size_impl)()
 	
 	async def open_new_tab(self, link: str = "") -> None:
-		await self._sync_to_trio(self._open_new_tab_impl, link=link)
+		await self.sync_to_trio(sync_function=self._open_new_tab_impl)(link=link)
 	
 	@property
 	def scripts(self) -> JS_Scripts:
 		return self._scripts_impl
 	
 	async def start_fingerprint_detection(self, fingerprint_settings: FingerprintSettings) -> None:
-		await self._sync_to_trio(
-				self._start_fingerprint_detection_impl,
-				fingerprint_settings=fingerprint_settings
-		)
+		await self.sync_to_trio(sync_function=self._start_fingerprint_detection_impl)(fingerprint_settings=fingerprint_settings)
 	
 	async def stop_window_loading(self) -> None:
-		await self._sync_to_trio(self._stop_window_loading_impl)
+		await self.sync_to_trio(sync_function=self._stop_window_loading_impl)()

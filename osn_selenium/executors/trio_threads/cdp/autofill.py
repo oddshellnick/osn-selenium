@@ -31,13 +31,13 @@ class AutofillCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def set_addresses(self, addresses: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(self._set_addresses_impl, addresses=addresses)
+		return await self.sync_to_trio(sync_function=self._set_addresses_impl)(addresses=addresses)
 	
 	async def trigger(
 			self,
@@ -46,10 +46,4 @@ class AutofillCDPExecutor(
 			card: Optional[Dict[str, Any]] = None,
 			address: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._trigger_impl,
-				field_id=field_id,
-				frame_id=frame_id,
-				card=card,
-				address=address
-		)
+		return await self.sync_to_trio(sync_function=self._trigger_impl)(field_id=field_id, frame_id=frame_id, card=card, address=address)

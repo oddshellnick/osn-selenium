@@ -32,10 +32,10 @@ class CacheStorageCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def delete_cache(self, cache_id: str) -> None:
-		return await self._sync_to_trio(self._delete_cache_impl, cache_id=cache_id)
+		return await self.sync_to_trio(sync_function=self._delete_cache_impl)(cache_id=cache_id)
 	
 	async def delete_entry(self, cache_id: str, request: str) -> None:
-		return await self._sync_to_trio(self._delete_entry_impl, cache_id=cache_id, request=request)
+		return await self.sync_to_trio(sync_function=self._delete_entry_impl)(cache_id=cache_id, request=request)
 	
 	async def request_cache_names(
 			self,
@@ -43,8 +43,7 @@ class CacheStorageCDPExecutor(
 			storage_key: Optional[str] = None,
 			storage_bucket: Optional[Dict[str, Any]] = None
 	) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(
-				self._request_cache_names_impl,
+		return await self.sync_to_trio(sync_function=self._request_cache_names_impl)(
 				security_origin=security_origin,
 				storage_key=storage_key,
 				storage_bucket=storage_bucket
@@ -56,8 +55,7 @@ class CacheStorageCDPExecutor(
 			request_url: str,
 			request_headers: List[Dict[str, Any]]
 	) -> Dict[str, Any]:
-		return await self._sync_to_trio(
-				self._request_cached_response_impl,
+		return await self.sync_to_trio(sync_function=self._request_cached_response_impl)(
 				cache_id=cache_id,
 				request_url=request_url,
 				request_headers=request_headers
@@ -70,8 +68,7 @@ class CacheStorageCDPExecutor(
 			page_size: Optional[int] = None,
 			path_filter: Optional[str] = None
 	) -> Tuple[List[Dict[str, Any]], float]:
-		return await self._sync_to_trio(
-				self._request_entries_impl,
+		return await self.sync_to_trio(sync_function=self._request_entries_impl)(
 				cache_id=cache_id,
 				skip_count=skip_count,
 				page_size=page_size,

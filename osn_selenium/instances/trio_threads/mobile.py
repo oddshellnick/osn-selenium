@@ -40,10 +40,10 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def context(self) -> str:
-		return await self._sync_to_trio(self._context_impl)
+		return await self.sync_to_trio(sync_function=self._context_impl)()
 	
 	async def contexts(self) -> List[str]:
-		return await self._sync_to_trio(self._contexts_impl)
+		return await self.sync_to_trio(sync_function=self._contexts_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -79,10 +79,10 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 		return self._legacy_impl
 	
 	async def network_connection(self) -> _ConnectionType:
-		return await self._sync_to_trio(self._network_connection_impl)
+		return await self.sync_to_trio(sync_function=self._network_connection_impl)()
 	
 	async def set_context(self, new_context: str) -> None:
-		await self._sync_to_trio(self._set_context_impl, new_context=new_context)
+		await self.sync_to_trio(sync_function=self._set_context_impl)(new_context=new_context)
 	
 	async def set_network_connection(self, network: Union[int, _ConnectionType]) -> _ConnectionType:
-		return await self._sync_to_trio(self._set_network_connection_impl, network=network)
+		return await self.sync_to_trio(sync_function=self._set_network_connection_impl)(network=network)

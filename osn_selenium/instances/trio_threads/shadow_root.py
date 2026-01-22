@@ -49,14 +49,14 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
-		impl_el = await self._sync_to_trio(self._find_element_impl, by=by, value=value)
+		impl_el = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
 		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
-		impl_list = await self._sync_to_trio(self._find_elements_impl, by=by, value=value)
+		impl_list = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
@@ -98,7 +98,7 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 		)
 	
 	async def id(self) -> str:
-		return await self._sync_to_trio(self._id_impl)
+		return await self.sync_to_trio(sync_function=self._id_impl)()
 	
 	@property
 	def legacy(self) -> legacyShadowRoot:

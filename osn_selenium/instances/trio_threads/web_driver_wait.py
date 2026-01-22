@@ -72,11 +72,11 @@ class WebDriverWait(UnifiedWebDriverWait, TrioThreadMixin, AbstractWebDriverWait
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._sync_to_trio(self._until_impl, method=method, message=message)
+		return await self.sync_to_trio(sync_function=self._until_impl)(method=method, message=message)
 	
 	async def until_not(
 			self,
 			method: Callable[[WebDriverWaitInputType], OUTPUT],
 			message: str = ""
 	) -> OUTPUT:
-		return await self._sync_to_trio(self._until_not_impl, method=method, message=message)
+		return await self.sync_to_trio(sync_function=self._until_not_impl)(method=method, message=message)

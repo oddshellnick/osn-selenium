@@ -28,7 +28,7 @@ class BlinkSettingsMixin(BlinkBaseMixin, AbstractBlinkSettingsMixin):
 	) -> None:
 		if not self.is_active:
 			if flags is not None:
-				await self._sync_to_trio(self._webdriver_flags_manager.set_flags, flags)
+				await self.sync_to_trio(sync_function=self._webdriver_flags_manager.set_flags)(flags)
 			else:
 				self._webdriver_flags_manager.clear_flags()
 		
@@ -38,14 +38,13 @@ class BlinkSettingsMixin(BlinkBaseMixin, AbstractBlinkSettingsMixin):
 			self.set_start_page_url(start_page_url=start_page_url)
 		
 			if use_browser_exe is not None and browser_name_in_system is not None:
-				await self._sync_to_trio(
-						self._detect_browser_exe,
+				await self.sync_to_trio(sync_function=self._detect_browser_exe)(
 						browser_name_in_system=browser_name_in_system,
 						use_browser_exe=use_browser_exe,
 				)
 		
 			if self.browser_exe is not None and self.debugging_port is not None or self.debugging_ip is not None:
-				await self._set_debugging_port(await self._find_debugging_port(self.debugging_port), self.debugging_ip,)
+				await self._set_debugging_port(await self._find_debugging_port(self.debugging_port), self.debugging_ip)
 		else:
 			warnings.warn("Browser is already running.")
 	
@@ -59,7 +58,7 @@ class BlinkSettingsMixin(BlinkBaseMixin, AbstractBlinkSettingsMixin):
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
 		if flags is not None:
-			await self._sync_to_trio(self._webdriver_flags_manager.update_flags, flags)
+			await self.sync_to_trio(sync_function=self._webdriver_flags_manager.update_flags)(flags)
 		
 		if browser_exe is not None:
 			self._webdriver_flags_manager.browser_exe = browser_exe

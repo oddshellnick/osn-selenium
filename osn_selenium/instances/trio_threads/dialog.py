@@ -40,10 +40,10 @@ class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accept(self) -> None:
-		await self._sync_to_trio(self._accept_impl)
+		await self.sync_to_trio(sync_function=self._accept_impl)()
 	
 	async def dismiss(self) -> None:
-		await self._sync_to_trio(self._dismiss_impl)
+		await self.sync_to_trio(sync_function=self._dismiss_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -75,20 +75,20 @@ class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	
 	async def get_accounts(self) -> List[Account]:
-		return await self._sync_to_trio(self._get_accounts_impl)
+		return await self.sync_to_trio(sync_function=self._get_accounts_impl)()
 	
 	@property
 	def legacy(self) -> legacyDialog:
 		return self._legacy_impl
 	
 	async def select_account(self, index: int) -> None:
-		await self._sync_to_trio(self._select_account_impl, index=index)
+		await self.sync_to_trio(sync_function=self._select_account_impl)(index=index)
 	
 	async def subtitle(self) -> Optional[str]:
-		return await self._sync_to_trio(self._subtitle_impl)
+		return await self.sync_to_trio(sync_function=self._subtitle_impl)()
 	
 	async def title(self) -> str:
-		return await self._sync_to_trio(self._title_impl)
+		return await self.sync_to_trio(sync_function=self._title_impl)()
 	
 	async def type(self) -> Optional[str]:
-		return await self._sync_to_trio(self._type_impl)
+		return await self.sync_to_trio(sync_function=self._type_impl)()

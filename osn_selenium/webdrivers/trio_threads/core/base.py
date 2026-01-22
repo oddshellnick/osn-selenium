@@ -104,7 +104,7 @@ class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
 	
 	@requires_driver
 	async def _session(self) -> Session:
-		return await self._sync_to_trio(lambda: self.driver._session)
+		return await self.sync_to_trio(sync_function=lambda: self.driver._session)()
 	
 	def _unwrap_args(self, arg: Any) -> Any:
 		if isinstance(arg, WebElement):
@@ -190,7 +190,7 @@ class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
 	
 	@requires_driver
 	async def execute(self, driver_command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-		return await self._sync_to_trio(self.driver.execute, driver_command=driver_command, params=params)
+		return await self.sync_to_trio(sync_function=self.driver.execute)(driver_command=driver_command, params=params)
 	
 	@property
 	def is_active(self) -> bool:

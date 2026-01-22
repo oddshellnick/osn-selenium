@@ -25,7 +25,7 @@ class TetheringCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def bind(self, port: int) -> None:
-		return await self._sync_to_trio(self._bind_impl, port=port)
+		return await self.sync_to_trio(sync_function=self._bind_impl)(port=port)
 	
 	async def unbind(self, port: int) -> None:
-		return await self._sync_to_trio(self._unbind_impl, port=port)
+		return await self.sync_to_trio(sync_function=self._unbind_impl)(port=port)

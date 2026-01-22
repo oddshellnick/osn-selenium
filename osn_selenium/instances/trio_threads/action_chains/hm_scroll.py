@@ -21,7 +21,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 	"""
 	
 	async def hm_scroll_by_amount(self, delta_x: int, delta_y: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._hm_scroll_by_amount_impl, delta_x=delta_x, delta_y=delta_y)
+		action_chains = await self.sync_to_trio(sync_function=self._hm_scroll_by_amount_impl)(delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -31,12 +31,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 		)
 	
 	async def hm_scroll_from_origin(self, delta_x: int, delta_y: int, origin: Optional[ScrollOrigin] = None) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._hm_scroll_from_origin_impl,
-				delta_x=delta_x,
-				delta_y=delta_y,
-				origin=origin,
-		)
+		action_chains = await self.sync_to_trio(sync_function=self._hm_scroll_from_origin_impl)(delta_x=delta_x, delta_y=delta_y, origin=origin)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -53,8 +48,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 			additional_right_x_offset: int = 0,
 			additional_left_x_offset: int = 0,
 	) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._hm_scroll_to_element_impl,
+		action_chains = await self.sync_to_trio(sync_function=self._hm_scroll_to_element_impl)(
 				element=element,
 				additional_lower_y_offset=additional_lower_y_offset,
 				additional_upper_y_offset=additional_upper_y_offset,

@@ -14,7 +14,7 @@ class UtilsMixin(BaseMixin, UnifiedUtilsMixin, AbstractUtilsMixin):
 	"""
 	
 	async def pause(self, seconds: Union[float, int]) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._pause_impl, seconds=seconds)
+		action_chains = await self.sync_to_trio(sync_function=self._pause_impl)(seconds=seconds)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -24,7 +24,7 @@ class UtilsMixin(BaseMixin, UnifiedUtilsMixin, AbstractUtilsMixin):
 		)
 	
 	async def perform(self) -> None:
-		await self._sync_to_trio(self._perform_impl)
+		await self.sync_to_trio(sync_function=self._perform_impl)()
 	
 	async def reset_actions(self) -> None:
-		await self._sync_to_trio(self._reset_actions_impl)
+		await self.sync_to_trio(sync_function=self._reset_actions_impl)()

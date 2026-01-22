@@ -22,27 +22,27 @@ class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
 	
 	@requires_driver
 	async def add_cookie(self, cookie_dict: Dict[str, Any]) -> None:
-		await self._sync_to_trio(self.driver.add_cookie, cookie_dict=cookie_dict)
+		await self.sync_to_trio(sync_function=self.driver.add_cookie)(cookie_dict=cookie_dict)
 	
 	@requires_driver
 	async def delete_all_cookies(self) -> None:
-		await self._sync_to_trio(self.driver.delete_all_cookies)
+		await self.sync_to_trio(sync_function=self.driver.delete_all_cookies)()
 	
 	@requires_driver
 	async def delete_cookie(self, name: str) -> None:
-		await self._sync_to_trio(self.driver.delete_cookie, name=name)
+		await self.sync_to_trio(sync_function=self.driver.delete_cookie)(name=name)
 	
 	@requires_driver
 	async def get_cookie(self, name: str) -> Optional[Dict[str, Any]]:
-		return await self._sync_to_trio(self.driver.get_cookie, name=name)
+		return await self.sync_to_trio(sync_function=self.driver.get_cookie)(name=name)
 	
 	@requires_driver
 	async def get_cookies(self) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(self.driver.get_cookies)
+		return await self.sync_to_trio(sync_function=self.driver.get_cookies)()
 	
 	@requires_driver
 	async def storage(self) -> Storage:
-		legacy = await self._sync_to_trio(lambda: self.driver.storage)
+		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.storage)()
 		
 		return Storage(
 				selenium_storage=legacy,

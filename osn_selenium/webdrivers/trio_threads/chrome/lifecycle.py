@@ -33,7 +33,7 @@ class ChromeLifecycleMixin(ChromeSettingsMixin, AbstractChromeLifecycleMixin):
 			
 			return legacyWebDriver(options=webdriver_options, service=webdriver_service)
 		
-		self._driver = await self._sync_to_trio(_create)
+		self._driver = await self.sync_to_trio(sync_function=_create)()
 		
 		if self._window_rect is not None:
 			await self.set_window_rect(

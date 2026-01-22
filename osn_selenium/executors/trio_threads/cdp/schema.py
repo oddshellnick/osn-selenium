@@ -26,4 +26,4 @@ class SchemaCDPExecutor(UnifiedSchemaCDPExecutor, TrioThreadMixin, AbstractSchem
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def get_domains(self) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(self._get_domains_impl)
+		return await self.sync_to_trio(sync_function=self._get_domains_impl)()

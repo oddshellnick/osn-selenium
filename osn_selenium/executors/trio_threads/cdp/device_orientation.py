@@ -25,12 +25,7 @@ class DeviceOrientationCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def clear_device_orientation_override(self) -> None:
-		return await self._sync_to_trio(self._clear_device_orientation_override_impl)
+		return await self.sync_to_trio(sync_function=self._clear_device_orientation_override_impl)()
 	
 	async def set_device_orientation_override(self, alpha: float, beta: float, gamma: float) -> None:
-		return await self._sync_to_trio(
-				self._set_device_orientation_override_impl,
-				alpha=alpha,
-				beta=beta,
-				gamma=gamma
-		)
+		return await self.sync_to_trio(sync_function=self._set_device_orientation_override_impl)(alpha=alpha, beta=beta, gamma=gamma)

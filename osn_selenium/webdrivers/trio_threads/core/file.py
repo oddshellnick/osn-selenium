@@ -21,15 +21,11 @@ class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
 	
 	@requires_driver
 	async def delete_downloadable_files(self) -> None:
-		await self._sync_to_trio(self.driver.delete_downloadable_files)
+		await self.sync_to_trio(sync_function=self.driver.delete_downloadable_files)()
 	
 	@requires_driver
 	async def download_file(self, file_name: str, target_directory: str) -> None:
-		await self._sync_to_trio(
-				self.driver.download_file,
-				file_name=file_name,
-				target_directory=target_directory,
-		)
+		await self.sync_to_trio(sync_function=self.driver.download_file)(file_name=file_name, target_directory=target_directory)
 	
 	@property
 	@requires_driver
@@ -43,15 +39,10 @@ class CoreFileMixin(CoreBaseMixin, AbstractCoreFileMixin):
 	
 	@asynccontextmanager
 	@requires_driver
-	async def file_detector_context(self, file_detector_class: Any, *args: Any, **kwargs: Any) -> AsyncGenerator[Any, None]:
-		async with self._sync_to_trio_context(
-				self.driver.file_detector_context,
-				file_detector_class,
-				*args,
-				**kwargs
-		) as file_detector:
+	async def file_detector_context(self, file_detector_class: Any, *args: Any, **kwargs: Any) -> AsyncGenerator[Any, Any]:
+		async with self.sync_to_trio_context(context_manager_factory=self.driver.file_detector_context)(file_detector_class, *args, **kwargs) as file_detector:
 			yield file_detector
 	
 	@requires_driver
 	async def get_downloadable_files(self) -> List[str]:
-		return await self._sync_to_trio(self.driver.get_downloadable_files)
+		return await self.sync_to_trio(sync_function=self.driver.get_downloadable_files)()

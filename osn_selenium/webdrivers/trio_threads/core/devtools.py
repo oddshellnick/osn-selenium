@@ -32,15 +32,11 @@ class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
 	
 	@requires_driver
 	async def execute_cdp_cmd(self, cmd: str, cmd_args: Dict[str, Any]) -> Any:
-		return await self._sync_to_trio(
-				self.driver.execute_cdp_cmd,
-				cmd=cmd,
-				cmd_args=build_cdp_kwargs(**cmd_args)
-		)
+		return await self.sync_to_trio(sync_function=self.driver.execute_cdp_cmd)(cmd=cmd, cmd_args=build_cdp_kwargs(**cmd_args))
 	
 	@requires_driver
 	async def network(self) -> Network:
-		legacy = await self._sync_to_trio(lambda: self.driver.network)
+		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.network)()
 		
 		return Network(
 				selenium_network=legacy,
@@ -50,4 +46,4 @@ class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
 	
 	@requires_driver
 	async def start_devtools(self) -> Tuple[Any, WebSocketConnection]:
-		return await self._sync_to_trio(self.driver.start_devtools)
+		return await self.sync_to_trio(sync_function=self.driver.start_devtools)()

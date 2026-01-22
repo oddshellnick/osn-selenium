@@ -39,13 +39,13 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def add_console_message_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._sync_to_trio(self._add_console_message_handler_impl, handler=handler)
+		return await self.sync_to_trio(sync_function=self._add_console_message_handler_impl)(handler=handler)
 	
 	async def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
-		return await self._sync_to_trio(self._add_javascript_error_handler_impl, handler=handler)
+		return await self.sync_to_trio(sync_function=self._add_javascript_error_handler_impl)(handler=handler)
 	
 	async def execute(self, script: str, *args: Any) -> Any:
-		return await self._sync_to_trio(self._execute_impl, script, *args)
+		return await self.sync_to_trio(sync_function=self._execute_impl)(script, *args)
 	
 	@classmethod
 	def from_legacy(
@@ -81,10 +81,10 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 		return self._legacy_impl
 	
 	async def pin(self, script: str) -> str:
-		return await self._sync_to_trio(self._pin_impl, script=script)
+		return await self.sync_to_trio(sync_function=self._pin_impl)(script=script)
 	
 	async def remove_console_message_handler(self, id: int) -> None:
-		await self._sync_to_trio(self._remove_console_message_handler_impl, id=id)
+		await self.sync_to_trio(sync_function=self._remove_console_message_handler_impl)(id=id)
 	
 	async def unpin(self, script_id: str) -> None:
-		await self._sync_to_trio(self._unpin_impl, script_id=script_id)
+		await self.sync_to_trio(sync_function=self._unpin_impl)(script_id=script_id)

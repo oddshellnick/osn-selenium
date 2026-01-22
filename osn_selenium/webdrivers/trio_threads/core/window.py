@@ -34,45 +34,45 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	
 	@requires_driver
 	async def fullscreen_window(self) -> None:
-		await self._sync_to_trio(self.driver.fullscreen_window)
+		await self.sync_to_trio(sync_function=self.driver.fullscreen_window)()
 	
 	@requires_driver
 	async def get_window_position(self, windowHandle: str = "current") -> Position:
-		position = await self._sync_to_trio(self.driver.get_window_position, windowHandle=windowHandle)
+		position = await self.sync_to_trio(sync_function=self.driver.get_window_position)(windowHandle=windowHandle)
 		
 		return Position.model_validate(position)
 	
 	@requires_driver
 	async def get_window_rect(self) -> Rectangle:
-		rectangle = await self._sync_to_trio(self.driver.get_window_rect)
+		rectangle = await self.sync_to_trio(sync_function=self.driver.get_window_rect)()
 		
 		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	async def get_window_size(self, windowHandle: str = "current") -> Size:
-		size = await self._sync_to_trio(self.driver.get_window_size, windowHandle=windowHandle)
+		size = await self.sync_to_trio(sync_function=self.driver.get_window_size)(windowHandle=windowHandle)
 		
 		return Size.model_validate(size)
 	
 	@requires_driver
 	async def maximize_window(self) -> None:
-		await self._sync_to_trio(self.driver.maximize_window)
+		await self.sync_to_trio(sync_function=self.driver.maximize_window)()
 	
 	@requires_driver
 	async def minimize_window(self) -> None:
-		await self._sync_to_trio(self.driver.minimize_window)
+		await self.sync_to_trio(sync_function=self.driver.minimize_window)()
 	
 	@requires_driver
 	async def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
-		return (await self._sync_to_trio(lambda: self.driver.orientation))["orientation"]
+		return (await self.sync_to_trio(sync_function=lambda: self.driver.orientation)())["orientation"]
 	
 	@requires_driver
 	async def set_orientation(self, value: Literal["LANDSCAPE", "PORTRAIT"]) -> None:
-		await self._sync_to_trio(lambda: setattr(self.driver, "orientation", value))
+		await self.sync_to_trio(sync_function=lambda: setattr(self.driver)("orientation", value))
 	
 	@requires_driver
 	async def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Position:
-		position = await self._sync_to_trio(self.driver.set_window_position, x=x, y=y, windowHandle=windowHandle)
+		position = await self.sync_to_trio(sync_function=self.driver.set_window_position)(x=x, y=y, windowHandle=windowHandle)
 		
 		return Position.model_validate(position)
 	
@@ -84,30 +84,25 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 			width: Optional[int] = None,
 			height: Optional[int] = None,
 	) -> Rectangle:
-		rectangle = await self._sync_to_trio(self.driver.set_window_rect, x=x, y=y, width=width, height=height)
+		rectangle = await self.sync_to_trio(sync_function=self.driver.set_window_rect)(x=x, y=y, width=width, height=height)
 		
 		return Rectangle.model_validate(rectangle)
 	
 	@requires_driver
 	async def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:
-		await self._sync_to_trio(
-				self.driver.set_window_size,
-				width=width,
-				height=height,
-				windowHandle=windowHandle,
-		)
+		await self.sync_to_trio(sync_function=self.driver.set_window_size)(width=width, height=height, windowHandle=windowHandle)
 	
 	@requires_driver
 	async def window_handles(self) -> List[str]:
-		return await self._sync_to_trio(lambda: self.driver.window_handles)
+		return await self.sync_to_trio(sync_function=lambda: self.driver.window_handles)()
 	
 	@requires_driver
 	async def close(self) -> None:
-		await self._sync_to_trio(self.driver.close)
+		await self.sync_to_trio(sync_function=self.driver.close)()
 	
 	@requires_driver
 	async def switch_to(self) -> SwitchTo:
-		legacy = await self._sync_to_trio(lambda: self.driver.switch_to)
+		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.switch_to)()
 		
 		return SwitchTo(
 				selenium_switch_to=legacy,
@@ -117,7 +112,7 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	
 	@requires_driver
 	async def current_window_handle(self) -> str:
-		return await self._sync_to_trio(lambda: self.driver.current_window_handle)
+		return await self.sync_to_trio(sync_function=lambda: self.driver.current_window_handle)()
 	
 	async def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		if isinstance(window, str):

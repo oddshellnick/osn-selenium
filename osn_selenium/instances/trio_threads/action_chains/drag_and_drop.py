@@ -20,11 +20,7 @@ class DragAndDropMixin(BaseMixin, UnifiedDragAndDropMixin, AbstractDragAndDropMi
 	"""
 	
 	async def drag_and_drop(self, source: WEB_ELEMENT_TYPEHINT, target: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._drag_and_drop_impl,
-				source=get_legacy_instance(source),
-				target=get_legacy_instance(target),
-		)
+		action_chains = await self.sync_to_trio(sync_function=self._drag_and_drop_impl)(source=get_legacy_instance(source), target=get_legacy_instance(target))
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -34,12 +30,7 @@ class DragAndDropMixin(BaseMixin, UnifiedDragAndDropMixin, AbstractDragAndDropMi
 		)
 	
 	async def drag_and_drop_by_offset(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._drag_and_drop_by_offset_impl,
-				source=get_legacy_instance(source),
-				xoffset=xoffset,
-				yoffset=yoffset,
-		)
+		action_chains = await self.sync_to_trio(sync_function=self._drag_and_drop_by_offset_impl)(source=get_legacy_instance(source), xoffset=xoffset, yoffset=yoffset)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,

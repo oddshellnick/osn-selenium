@@ -25,10 +25,10 @@ class EventBreakpointsCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def remove_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._sync_to_trio(self._remove_instrumentation_breakpoint_impl, event_name=event_name)
+		return await self.sync_to_trio(sync_function=self._remove_instrumentation_breakpoint_impl)(event_name=event_name)
 	
 	async def set_instrumentation_breakpoint(self, event_name: str) -> None:
-		return await self._sync_to_trio(self._set_instrumentation_breakpoint_impl, event_name=event_name)
+		return await self.sync_to_trio(sync_function=self._set_instrumentation_breakpoint_impl)(event_name=event_name)

@@ -33,7 +33,7 @@ class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifec
 					options=self._webdriver_flags_manager.options,
 			)
 		
-		self._driver = await self._sync_to_trio(_make)
+		self._driver = await self.sync_to_trio(sync_function=_make)()
 		
 		await self.set_driver_timeouts(
 				page_load_timeout=self._base_page_load_timeout,
@@ -58,7 +58,7 @@ class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifec
 	
 	@requires_driver
 	async def quit(self) -> None:
-		await self._sync_to_trio(self.driver.quit)
+		await self.sync_to_trio(sync_function=self.driver.quit)()
 	
 	@requires_driver
 	async def close_webdriver(self) -> None:
@@ -76,12 +76,12 @@ class CoreLifecycleMixin(CoreSettingsMixin, CoreTimeoutsMixin, AbstractCoreLifec
 	
 	@requires_driver
 	async def start_client(self) -> None:
-		await self._sync_to_trio(self.driver.start_client)
+		await self.sync_to_trio(sync_function=self.driver.start_client)()
 	
 	@requires_driver
 	async def start_session(self, capabilities: Dict[str, Any]) -> None:
-		await self._sync_to_trio(self.driver.start_session, capabilities=capabilities)
+		await self.sync_to_trio(sync_function=self.driver.start_session)(capabilities=capabilities)
 	
 	@requires_driver
 	async def stop_client(self) -> None:
-		await self._sync_to_trio(self.driver.stop_client)
+		await self.sync_to_trio(sync_function=self.driver.stop_client)()

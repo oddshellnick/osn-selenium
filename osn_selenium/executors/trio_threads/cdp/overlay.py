@@ -27,13 +27,13 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def get_grid_highlight_objects_for_test(self, node_ids: List[int]) -> Any:
-		return await self._sync_to_trio(self._get_grid_highlight_objects_for_test_impl, node_ids=node_ids)
+		return await self.sync_to_trio(sync_function=self._get_grid_highlight_objects_for_test_impl)(node_ids=node_ids)
 	
 	async def get_highlight_object_for_test(
 			self,
@@ -43,8 +43,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			color_format: Optional[str] = None,
 			show_accessibility_info: Optional[bool] = None
 	) -> Any:
-		return await self._sync_to_trio(
-				self._get_highlight_object_for_test_impl,
+		return await self.sync_to_trio(sync_function=self._get_highlight_object_for_test_impl)(
 				node_id=node_id,
 				include_distance=include_distance,
 				include_style=include_style,
@@ -53,10 +52,10 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 		)
 	
 	async def get_source_order_highlight_object_for_test(self, node_id: int) -> Any:
-		return await self._sync_to_trio(self._get_source_order_highlight_object_for_test_impl, node_id=node_id)
+		return await self.sync_to_trio(sync_function=self._get_source_order_highlight_object_for_test_impl)(node_id=node_id)
 	
 	async def hide_highlight(self) -> None:
-		return await self._sync_to_trio(self._hide_highlight_impl)
+		return await self.sync_to_trio(sync_function=self._hide_highlight_impl)()
 	
 	async def highlight_frame(
 			self,
@@ -64,8 +63,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			content_color: Optional[Dict[str, Any]] = None,
 			content_outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._highlight_frame_impl,
+		return await self.sync_to_trio(sync_function=self._highlight_frame_impl)(
 				frame_id=frame_id,
 				content_color=content_color,
 				content_outline_color=content_outline_color
@@ -79,8 +77,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			object_id: Optional[str] = None,
 			selector: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._highlight_node_impl,
+		return await self.sync_to_trio(sync_function=self._highlight_node_impl)(
 				highlight_config=highlight_config,
 				node_id=node_id,
 				backend_node_id=backend_node_id,
@@ -94,12 +91,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			color: Optional[Dict[str, Any]] = None,
 			outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._highlight_quad_impl,
-				quad=quad,
-				color=color,
-				outline_color=outline_color
-		)
+		return await self.sync_to_trio(sync_function=self._highlight_quad_impl)(quad=quad, color=color, outline_color=outline_color)
 	
 	async def highlight_rect(
 			self,
@@ -110,8 +102,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			color: Optional[Dict[str, Any]] = None,
 			outline_color: Optional[Dict[str, Any]] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._highlight_rect_impl,
+		return await self.sync_to_trio(sync_function=self._highlight_rect_impl)(
 				x=x,
 				y=y,
 				width=width,
@@ -127,8 +118,7 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 			backend_node_id: Optional[int] = None,
 			object_id: Optional[str] = None
 	) -> None:
-		return await self._sync_to_trio(
-				self._highlight_source_order_impl,
+		return await self.sync_to_trio(sync_function=self._highlight_source_order_impl)(
 				source_order_config=source_order_config,
 				node_id=node_id,
 				backend_node_id=backend_node_id,
@@ -136,77 +126,55 @@ class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOve
 		)
 	
 	async def set_inspect_mode(self, mode: str, highlight_config: Optional[Dict[str, Any]] = None) -> None:
-		return await self._sync_to_trio(
-				self._set_inspect_mode_impl,
-				mode=mode,
-				highlight_config=highlight_config
-		)
+		return await self.sync_to_trio(sync_function=self._set_inspect_mode_impl)(mode=mode, highlight_config=highlight_config)
 	
 	async def set_paused_in_debugger_message(self, message: Optional[str] = None) -> None:
-		return await self._sync_to_trio(self._set_paused_in_debugger_message_impl, message=message)
+		return await self.sync_to_trio(sync_function=self._set_paused_in_debugger_message_impl)(message=message)
 	
 	async def set_show_ad_highlights(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_ad_highlights_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_ad_highlights_impl)(show=show)
 	
 	async def set_show_container_query_overlays(self, container_query_highlight_configs: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_show_container_query_overlays_impl,
-				container_query_highlight_configs=container_query_highlight_configs
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_container_query_overlays_impl)(container_query_highlight_configs=container_query_highlight_configs)
 	
 	async def set_show_debug_borders(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_debug_borders_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_debug_borders_impl)(show=show)
 	
 	async def set_show_flex_overlays(self, flex_node_highlight_configs: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_show_flex_overlays_impl,
-				flex_node_highlight_configs=flex_node_highlight_configs
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_flex_overlays_impl)(flex_node_highlight_configs=flex_node_highlight_configs)
 	
 	async def set_show_fps_counter(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_fps_counter_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_fps_counter_impl)(show=show)
 	
 	async def set_show_grid_overlays(self, grid_node_highlight_configs: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_show_grid_overlays_impl,
-				grid_node_highlight_configs=grid_node_highlight_configs
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_grid_overlays_impl)(grid_node_highlight_configs=grid_node_highlight_configs)
 	
 	async def set_show_hinge(self, hinge_config: Optional[Dict[str, Any]] = None) -> None:
-		return await self._sync_to_trio(self._set_show_hinge_impl, hinge_config=hinge_config)
+		return await self.sync_to_trio(sync_function=self._set_show_hinge_impl)(hinge_config=hinge_config)
 	
 	async def set_show_hit_test_borders(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_hit_test_borders_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_hit_test_borders_impl)(show=show)
 	
 	async def set_show_isolated_elements(self, isolated_element_highlight_configs: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_show_isolated_elements_impl,
-				isolated_element_highlight_configs=isolated_element_highlight_configs
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_isolated_elements_impl)(isolated_element_highlight_configs=isolated_element_highlight_configs)
 	
 	async def set_show_layout_shift_regions(self, result: bool) -> None:
-		return await self._sync_to_trio(self._set_show_layout_shift_regions_impl, result=result)
+		return await self.sync_to_trio(sync_function=self._set_show_layout_shift_regions_impl)(result=result)
 	
 	async def set_show_paint_rects(self, result: bool) -> None:
-		return await self._sync_to_trio(self._set_show_paint_rects_impl, result=result)
+		return await self.sync_to_trio(sync_function=self._set_show_paint_rects_impl)(result=result)
 	
 	async def set_show_scroll_bottleneck_rects(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_scroll_bottleneck_rects_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_scroll_bottleneck_rects_impl)(show=show)
 	
 	async def set_show_scroll_snap_overlays(self, scroll_snap_highlight_configs: List[Dict[str, Any]]) -> None:
-		return await self._sync_to_trio(
-				self._set_show_scroll_snap_overlays_impl,
-				scroll_snap_highlight_configs=scroll_snap_highlight_configs
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_scroll_snap_overlays_impl)(scroll_snap_highlight_configs=scroll_snap_highlight_configs)
 	
 	async def set_show_viewport_size_on_resize(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_viewport_size_on_resize_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_viewport_size_on_resize_impl)(show=show)
 	
 	async def set_show_web_vitals(self, show: bool) -> None:
-		return await self._sync_to_trio(self._set_show_web_vitals_impl, show=show)
+		return await self.sync_to_trio(sync_function=self._set_show_web_vitals_impl)(show=show)
 	
 	async def set_show_window_controls_overlay(self, window_controls_overlay_config: Optional[Dict[str, Any]] = None) -> None:
-		return await self._sync_to_trio(
-				self._set_show_window_controls_overlay_impl,
-				window_controls_overlay_config=window_controls_overlay_config
-		)
+		return await self.sync_to_trio(sync_function=self._set_show_window_controls_overlay_impl)(window_controls_overlay_config=window_controls_overlay_config)

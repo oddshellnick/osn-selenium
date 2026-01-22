@@ -30,4 +30,4 @@ class PerformanceTimelineCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def enable(self, event_types: List[str]) -> None:
-		return await self._sync_to_trio(self._enable_impl, event_types=event_types)
+		return await self.sync_to_trio(sync_function=self._enable_impl)(event_types=event_types)

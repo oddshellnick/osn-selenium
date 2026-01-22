@@ -141,25 +141,16 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 			user_data_dir = None if user_data_dir_command is None else user_data_dir_value.value if user_data_dir_value is not None else None
 		
 			if user_data_dir_command is not None:
-				previous_session = await self._sync_to_trio(
-						find_browser_previous_session,
-						self.browser_exe,
-						user_data_dir_command.command,
-						user_data_dir,
-				)
+				previous_session = await self.sync_to_trio(sync_function=find_browser_previous_session)(self.browser_exe, user_data_dir_command.command, user_data_dir)
 		
 				if previous_session is not None:
 					return previous_session
 		
 		if debugging_port is not None:
-			return await self._sync_to_trio(
-					get_localhost_free_port_of,
-					ports_to_check=debugging_port,
-					on_candidates="min",
-			)
+			return await self.sync_to_trio(sync_function=get_localhost_free_port_of)(ports_to_check=debugging_port, on_candidates="min")
 		
 		if self.debugging_port is None or self.debugging_port == 0:
-			return await self._sync_to_trio(get_random_localhost_free_port)
+			return await self.sync_to_trio(sync_function=get_random_localhost_free_port)()
 		
 		return self.debugging_port
 	
@@ -168,8 +159,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 			_debugging_address = "127.0.0.1" if debugging_address is None else debugging_address
 			_debugging_port = 0 if debugging_port is None else debugging_port
 		
-			await self._sync_to_trio(
-					self._webdriver_flags_manager.update_flags,
+			await self.sync_to_trio(sync_function=self._webdriver_flags_manager.update_flags)(
 					BlinkFlags(
 							argument=BlinkArguments(
 									remote_debugging_port=debugging_port,

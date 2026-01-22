@@ -17,7 +17,7 @@ class ScrollMixin(BaseMixin, UnifiedScrollMixin, AbstractScrollMixin):
 	"""
 	
 	async def scroll_by_amount(self, delta_x: int, delta_y: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._scroll_by_amount_impl, delta_x=delta_x, delta_y=delta_y)
+		action_chains = await self.sync_to_trio(sync_function=self._scroll_by_amount_impl)(delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -27,12 +27,7 @@ class ScrollMixin(BaseMixin, UnifiedScrollMixin, AbstractScrollMixin):
 		)
 	
 	async def scroll_from_origin(self, scroll_origin: ScrollOrigin, delta_x: int, delta_y: int) -> "ActionChains":
-		action_chains = await self._sync_to_trio(
-				self._scroll_from_origin_impl,
-				scroll_origin=scroll_origin,
-				delta_x=delta_x,
-				delta_y=delta_y,
-		)
+		action_chains = await self.sync_to_trio(sync_function=self._scroll_from_origin_impl)(scroll_origin=scroll_origin, delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,
@@ -42,7 +37,7 @@ class ScrollMixin(BaseMixin, UnifiedScrollMixin, AbstractScrollMixin):
 		)
 	
 	async def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = await self._sync_to_trio(self._scroll_to_element_impl, element=get_legacy_instance(element))
+		action_chains = await self.sync_to_trio(sync_function=self._scroll_to_element_impl)(element=get_legacy_instance(element))
 		
 		return self.from_legacy(
 				selenium_action_chains=action_chains,

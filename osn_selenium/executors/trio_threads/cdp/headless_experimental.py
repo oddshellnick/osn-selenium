@@ -37,8 +37,7 @@ class HeadlessExperimentalCDPExecutor(
 			no_display_updates: Optional[bool] = None,
 			screenshot: Optional[Dict[str, Any]] = None
 	) -> Tuple[bool, Optional[str]]:
-		return await self._sync_to_trio(
-				self._begin_frame_impl,
+		return await self.sync_to_trio(sync_function=self._begin_frame_impl)(
 				frame_time_ticks=frame_time_ticks,
 				interval=interval,
 				no_display_updates=no_display_updates,
@@ -46,7 +45,7 @@ class HeadlessExperimentalCDPExecutor(
 		)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()

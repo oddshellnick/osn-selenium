@@ -31,10 +31,10 @@ class SystemInfoCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def get_feature_state(self, feature_state: str) -> bool:
-		return await self._sync_to_trio(self._get_feature_state_impl, feature_state=feature_state)
+		return await self.sync_to_trio(sync_function=self._get_feature_state_impl)(feature_state=feature_state)
 	
 	async def get_info(self) -> Tuple[Dict[str, Any], str, str, str]:
-		return await self._sync_to_trio(self._get_info_impl)
+		return await self.sync_to_trio(sync_function=self._get_info_impl)()
 	
 	async def get_process_info(self) -> List[Dict[str, Any]]:
-		return await self._sync_to_trio(self._get_process_info_impl)
+		return await self.sync_to_trio(sync_function=self._get_process_info_impl)()

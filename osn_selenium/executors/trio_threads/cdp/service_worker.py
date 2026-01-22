@@ -25,27 +25,16 @@ class ServiceWorkerCDPExecutor(
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def deliver_push_message(self, origin: str, registration_id: str, data: str) -> None:
-		return await self._sync_to_trio(
-				self._deliver_push_message_impl,
-				origin=origin,
-				registration_id=registration_id,
-				data=data
-		)
+		return await self.sync_to_trio(sync_function=self._deliver_push_message_impl)(origin=origin, registration_id=registration_id, data=data)
 	
 	async def disable(self) -> None:
-		return await self._sync_to_trio(self._disable_impl)
+		return await self.sync_to_trio(sync_function=self._disable_impl)()
 	
 	async def dispatch_periodic_sync_event(self, origin: str, registration_id: str, tag: str) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_periodic_sync_event_impl,
-				origin=origin,
-				registration_id=registration_id,
-				tag=tag
-		)
+		return await self.sync_to_trio(sync_function=self._dispatch_periodic_sync_event_impl)(origin=origin, registration_id=registration_id, tag=tag)
 	
 	async def dispatch_sync_event(self, origin: str, registration_id: str, tag: str, last_chance: bool) -> None:
-		return await self._sync_to_trio(
-				self._dispatch_sync_event_impl,
+		return await self.sync_to_trio(sync_function=self._dispatch_sync_event_impl)(
 				origin=origin,
 				registration_id=registration_id,
 				tag=tag,
@@ -53,28 +42,25 @@ class ServiceWorkerCDPExecutor(
 		)
 	
 	async def enable(self) -> None:
-		return await self._sync_to_trio(self._enable_impl)
+		return await self.sync_to_trio(sync_function=self._enable_impl)()
 	
 	async def set_force_update_on_page_load(self, force_update_on_page_load: bool) -> None:
-		return await self._sync_to_trio(
-				self._set_force_update_on_page_load_impl,
-				force_update_on_page_load=force_update_on_page_load
-		)
+		return await self.sync_to_trio(sync_function=self._set_force_update_on_page_load_impl)(force_update_on_page_load=force_update_on_page_load)
 	
 	async def skip_waiting(self, scope_url: str) -> None:
-		return await self._sync_to_trio(self._skip_waiting_impl, scope_url=scope_url)
+		return await self.sync_to_trio(sync_function=self._skip_waiting_impl)(scope_url=scope_url)
 	
 	async def start_worker(self, scope_url: str) -> None:
-		return await self._sync_to_trio(self._start_worker_impl, scope_url=scope_url)
+		return await self.sync_to_trio(sync_function=self._start_worker_impl)(scope_url=scope_url)
 	
 	async def stop_all_workers(self) -> None:
-		return await self._sync_to_trio(self._stop_all_workers_impl)
+		return await self.sync_to_trio(sync_function=self._stop_all_workers_impl)()
 	
 	async def stop_worker(self, version_id: str) -> None:
-		return await self._sync_to_trio(self._stop_worker_impl, version_id=version_id)
+		return await self.sync_to_trio(sync_function=self._stop_worker_impl)(version_id=version_id)
 	
 	async def unregister(self, scope_url: str) -> None:
-		return await self._sync_to_trio(self._unregister_impl, scope_url=scope_url)
+		return await self.sync_to_trio(sync_function=self._unregister_impl)(scope_url=scope_url)
 	
 	async def update_registration(self, scope_url: str) -> None:
-		return await self._sync_to_trio(self._update_registration_impl, scope_url=scope_url)
+		return await self.sync_to_trio(sync_function=self._update_registration_impl)(scope_url=scope_url)

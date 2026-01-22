@@ -87,7 +87,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		
 			self._nursery_object.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
 			self._nursery_object.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
-			self._nursery_object.start_soon(self._run_detach_checking,)
+			self._nursery_object.start_soon(self._run_detach_checking)
 		
 			if self._domains_settings:
 				for domain_name, domain_config in self._domains_settings.model_dump(exclude_none=True).items():

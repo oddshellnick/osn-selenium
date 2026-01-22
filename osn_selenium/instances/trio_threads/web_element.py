@@ -46,16 +46,16 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def accessible_name(self) -> str:
-		return await self._sync_to_trio(self._accessible_name_impl)
+		return await self.sync_to_trio(sync_function=self._accessible_name_impl)()
 	
 	async def aria_role(self) -> str:
-		return await self._sync_to_trio(self._aria_role_impl)
+		return await self.sync_to_trio(sync_function=self._aria_role_impl)()
 	
 	async def clear(self) -> None:
-		await self._sync_to_trio(self._clear_impl)
+		await self.sync_to_trio(sync_function=self._clear_impl)()
 	
 	async def click(self) -> None:
-		await self._sync_to_trio(self._click_impl)
+		await self.sync_to_trio(sync_function=self._click_impl)()
 	
 	@classmethod
 	def from_legacy(
@@ -87,12 +87,12 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Any = None) -> Self:
-		web_element = await self._sync_to_trio(self._find_element_impl, by=by, value=value)
+		web_element = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
 		
 		return self.from_legacy(web_element, self._lock, self._capacity_limiter)
 	
 	async def find_elements(self, by: str = By.ID, value: Any = None) -> List[Self]:
-		web_elements = await self._sync_to_trio(self._find_elements_impl, by=by, value=value)
+		web_elements = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
 		
 		return [
 			self.from_legacy(
@@ -103,38 +103,38 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		]
 	
 	async def get_attribute(self, name: str) -> Optional[str]:
-		return await self._sync_to_trio(self._get_attribute_impl, name=name)
+		return await self.sync_to_trio(sync_function=self._get_attribute_impl)(name=name)
 	
 	async def get_dom_attribute(self, name: str) -> Optional[str]:
-		return await self._sync_to_trio(self._get_dom_attribute_impl, name=name)
+		return await self.sync_to_trio(sync_function=self._get_dom_attribute_impl)(name=name)
 	
 	async def get_property(self, name: str) -> Any:
-		return await self._sync_to_trio(self._get_property_impl, name=name)
+		return await self.sync_to_trio(sync_function=self._get_property_impl)(name=name)
 	
 	async def id(self) -> str:
-		return await self._sync_to_trio(self._id_impl)
+		return await self.sync_to_trio(sync_function=self._id_impl)()
 	
 	async def is_displayed(self) -> bool:
-		return await self._sync_to_trio(self._is_displayed_impl)
+		return await self.sync_to_trio(sync_function=self._is_displayed_impl)()
 	
 	async def is_enabled(self) -> bool:
-		return await self._sync_to_trio(self._is_enabled_impl)
+		return await self.sync_to_trio(sync_function=self._is_enabled_impl)()
 	
 	async def is_selected(self) -> bool:
-		return await self._sync_to_trio(self._is_selected_impl)
+		return await self.sync_to_trio(sync_function=self._is_selected_impl)()
 	
 	@property
 	def legacy(self) -> legacyWebElement:
 		return self._legacy_impl
 	
 	async def location(self) -> Dict:
-		return await self._sync_to_trio(self._location_impl)
+		return await self.sync_to_trio(sync_function=self._location_impl)()
 	
 	async def location_once_scrolled_into_view(self) -> Dict:
-		return await self._sync_to_trio(self._location_once_scrolled_into_view_impl)
+		return await self.sync_to_trio(sync_function=self._location_once_scrolled_into_view_impl)()
 	
 	async def parent(self) -> Self:
-		parent = await self._sync_to_trio(self._parent_impl)
+		parent = await self.sync_to_trio(sync_function=self._parent_impl)()
 		
 		return self.from_legacy(
 				selenium_web_element=parent,
@@ -143,25 +143,25 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		)
 	
 	async def rect(self) -> Dict:
-		return await self._sync_to_trio(self._rect_impl)
+		return await self.sync_to_trio(sync_function=self._rect_impl)()
 	
 	async def screenshot(self, filename: str) -> bool:
-		return await self._sync_to_trio(self._screenshot_impl, filename=filename)
+		return await self.sync_to_trio(sync_function=self._screenshot_impl)(filename=filename)
 	
 	async def screenshot_as_base64(self) -> str:
-		return await self._sync_to_trio(self._screenshot_as_base64_impl)
+		return await self.sync_to_trio(sync_function=self._screenshot_as_base64_impl)()
 	
 	async def screenshot_as_png(self) -> bytes:
-		return await self._sync_to_trio(self._screenshot_as_png_impl)
+		return await self.sync_to_trio(sync_function=self._screenshot_as_png_impl)()
 	
 	async def send_keys(self, *value: str) -> None:
-		await self._sync_to_trio(self._send_keys_impl, *value)
+		await self.sync_to_trio(sync_function=self._send_keys_impl)(*value)
 	
 	async def session_id(self) -> str:
-		return await self._sync_to_trio(self._session_id_impl)
+		return await self.sync_to_trio(sync_function=self._session_id_impl)()
 	
 	async def shadow_root(self) -> ShadowRoot:
-		shadow_root = await self._sync_to_trio(self._shadow_root_impl)
+		shadow_root = await self.sync_to_trio(sync_function=self._shadow_root_impl)()
 		
 		return ShadowRoot.from_legacy(
 				selenium_shadow_root=shadow_root,
@@ -170,19 +170,19 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		)
 	
 	async def size(self) -> Dict:
-		return await self._sync_to_trio(self._size_impl)
+		return await self.sync_to_trio(sync_function=self._size_impl)()
 	
 	async def submit(self) -> None:
-		await self._sync_to_trio(self._submit_impl)
+		await self.sync_to_trio(sync_function=self._submit_impl)()
 	
 	async def tag_name(self) -> str:
-		return await self._sync_to_trio(self._tag_name_impl)
+		return await self.sync_to_trio(sync_function=self._tag_name_impl)()
 	
 	async def text(self) -> str:
-		return await self._sync_to_trio(self._text_impl)
+		return await self.sync_to_trio(sync_function=self._text_impl)()
 	
 	async def value_of_css_property(self, property_name: str) -> str:
-		return await self._sync_to_trio(self._value_of_css_property_impl, property_name=property_name)
+		return await self.sync_to_trio(sync_function=self._value_of_css_property_impl)(property_name=property_name)
 	
 	def web_driver_wait(
 			self,
