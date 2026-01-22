@@ -92,7 +92,7 @@ class CoreWebDriver(
 		
 		self._js_executor = JSExecutor(
 				execute_function=lambda script,
-				args: execute_js_bridge(self.driver, script, *args)
+				*args: execute_js_bridge(self.driver, script, *args)
 		)
 	
 	@property
