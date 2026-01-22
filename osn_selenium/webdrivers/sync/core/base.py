@@ -8,6 +8,9 @@ from osn_selenium.instances.sync.web_element import WebElement
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.base import (
 	AbstractCoreBaseMixin
 )
@@ -118,7 +121,7 @@ class CoreBaseMixin(AbstractCoreBaseMixin):
 		Any,
 	]:
 		if isinstance(result, legacyWebElement):
-			return WebElement.from_legacy(selenium_web_element=result)
+			return get_sync_instance_wrapper(wrapper_class=WebElement, legacy_object=result)
 		
 		if isinstance(result, list):
 			return [self._wrap_result(item) for item in result]

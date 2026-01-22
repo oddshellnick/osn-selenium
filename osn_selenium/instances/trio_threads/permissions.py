@@ -48,7 +48,7 @@ class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_permissions: PERMISSIONS_TYPEHINT,
+			legacy_object: PERMISSIONS_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -59,7 +59,7 @@ class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 		instance into the new interface.
 
 		Args:
-			selenium_permissions (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
+			legacy_object (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -67,10 +67,10 @@ class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 			Self: A new instance of a class implementing Permissions.
 		"""
 		
-		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
+		legacy_permissions_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
+			raise TypesConvertError(from_=legacyPermissions, to_=legacy_object)
 		
 		return cls(
 				selenium_permissions=legacy_permissions_obj,

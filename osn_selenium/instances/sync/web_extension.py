@@ -35,7 +35,7 @@ class WebExtension(UnifiedWebExtension, AbstractWebExtension):
 		UnifiedWebExtension.__init__(self, selenium_web_extension=selenium_web_extension)
 	
 	@classmethod
-	def from_legacy(cls, selenium_web_extension: WEB_EXTENSION_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: WEB_EXTENSION_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium WebExtension object.
 
@@ -43,16 +43,16 @@ class WebExtension(UnifiedWebExtension, AbstractWebExtension):
 		instance into the new interface.
 
 		Args:
-			selenium_web_extension (WEB_EXTENSION_TYPEHINT): The legacy Selenium WebExtension instance or its wrapper.
+			legacy_object (WEB_EXTENSION_TYPEHINT): The legacy Selenium WebExtension instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing WebExtension.
 		"""
 		
-		legacy_web_extension_obj = get_legacy_instance(selenium_web_extension)
+		legacy_web_extension_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
-			raise TypesConvertError(from_=legacyWebExtension, to_=selenium_web_extension)
+			raise TypesConvertError(from_=legacyWebExtension, to_=legacy_object)
 		
 		return cls(selenium_web_extension=legacy_web_extension_obj)
 	

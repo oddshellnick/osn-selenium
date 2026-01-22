@@ -59,7 +59,7 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_storage: STORAGE_TYPEHINT,
+			legacy_object: STORAGE_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -70,7 +70,7 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 		instance into the new interface.
 
 		Args:
-			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
+			legacy_object (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -78,10 +78,10 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 			Self: A new instance of a class implementing Storage.
 		"""
 		
-		legacy_storage_obj = get_legacy_instance(selenium_storage)
+		legacy_storage_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypesConvertError(from_=legacyStorage, to_=selenium_storage)
+			raise TypesConvertError(from_=legacyStorage, to_=legacy_object)
 		
 		return cls(selenium_storage=legacy_storage_obj, lock=lock, limiter=limiter)
 	

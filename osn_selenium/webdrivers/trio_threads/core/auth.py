@@ -8,6 +8,9 @@ from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.auth import (
 	AbstractCoreAuthMixin
 )
@@ -37,7 +40,12 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 	async def fedcm(self) -> FedCM:
 		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.fedcm)()
 		
-		return FedCM(selenium_fedcm=legacy, lock=self._lock, limiter=self._capacity_limiter)
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=FedCM,
+				legacy_object=legacy,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 	
 	@requires_driver
 	async def fedcm_dialog(
@@ -52,8 +60,9 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 				ignored_exceptions=ignored_exceptions,
 		)
 		
-		return Dialog(
-				selenium_dialog=legacy,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=Dialog,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

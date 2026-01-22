@@ -4,7 +4,7 @@ from typing import (
 	Any,
 	Callable,
 	ParamSpec,
-	TypeVar,
+	TypeVar
 )
 
 

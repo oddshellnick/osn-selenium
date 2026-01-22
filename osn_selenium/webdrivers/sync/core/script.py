@@ -7,6 +7,9 @@ from typing import (
 from osn_selenium.instances.sync.script import Script
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.script import (
 	AbstractCoreScriptMixin
 )
@@ -44,7 +47,7 @@ class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
 	def script(self) -> Script:
 		legacy = self.driver.script
 		
-		return Script(selenium_script=legacy)
+		return get_sync_instance_wrapper(wrapper_class=Script, legacy_object=legacy)
 	
 	@requires_driver
 	def unpin(self, script_key: Any) -> None:

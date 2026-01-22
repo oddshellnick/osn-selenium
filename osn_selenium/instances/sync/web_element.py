@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 from osn_selenium.instances.errors import TypesConvertError
-from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.sync.shadow_root import ShadowRoot
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from typing import (
@@ -15,6 +14,10 @@ from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
+)
+from osn_selenium.instances.convert import (
+	get_legacy_instance,
+	get_sync_instance_wrapper
 )
 
 
@@ -46,38 +49,17 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 	def click(self) -> None:
 		self._click_impl()
 	
-	@classmethod
-	def from_legacy(cls, selenium_web_element: Any) -> Self:
-		"""
-		Creates an instance from a legacy Selenium WebElement object.
-
-		This factory method is used to wrap an existing Selenium WebElement
-		instance into the new interface.
-
-		Args:
-			selenium_web_element (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
-
-		Returns:
-			Self: A new instance of a class implementing WebElement.
-		"""
-		
-		legacy_element_obj = get_legacy_instance(selenium_web_element)
-		
-		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypesConvertError(from_=legacyWebElement, to_=selenium_web_element)
-		
-		return cls(selenium_web_element=legacy_element_obj)
-	
 	def find_element(self, by: str = By.ID, value: Any = None) -> Self:
 		web_element = self._find_element_impl(by=by, value=value)
 		
-		return self.from_legacy(selenium_web_element=web_element)
+		return get_sync_instance_wrapper(wrapper_class=self.__class__, legacy_object=web_element)
 	
 	def find_elements(self, by: str = By.ID, value: Any = None) -> List[Self]:
 		web_elements = self._find_elements_impl(by=by, value=value)
 		
 		return [
-			self.from_legacy(selenium_web_element=web_element) for web_element in web_elements
+			get_sync_instance_wrapper(wrapper_class=self.__class__, legacy_object=web_element)
+			for web_element in web_elements
 		]
 	
 	def get_attribute(self, name: str) -> Optional[str]:
@@ -111,10 +93,32 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 	def location_once_scrolled_into_view(self) -> Dict:
 		return self._location_once_scrolled_into_view_impl()
 	
+	@classmethod
+	def from_legacy(cls, legacy_object: Any) -> Self:
+		"""
+		Creates an instance from a legacy Selenium WebElement object.
+
+		This factory method is used to wrap an existing Selenium WebElement
+		instance into the new interface.
+
+		Args:
+			legacy_object (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
+
+		Returns:
+			Self: A new instance of a class implementing WebElement.
+		"""
+		
+		legacy_element_obj = get_legacy_instance(instance=legacy_object)
+		
+		if not isinstance(legacy_element_obj, legacyWebElement):
+			raise TypesConvertError(from_=legacyWebElement, to_=legacy_object)
+		
+		return cls(selenium_web_element=legacy_element_obj)
+	
 	def parent(self) -> Self:
 		web_element = self._parent_impl()
 		
-		return self.from_legacy(selenium_web_element=web_element)
+		return self.from_legacy(legacy_object=web_element)
 	
 	def rect(self) -> Dict:
 		return self._rect_impl()
@@ -137,7 +141,7 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 	def shadow_root(self) -> ShadowRoot:
 		shadow_root = self._shadow_root_impl()
 		
-		return ShadowRoot.from_legacy(selenium_shadow_root=shadow_root)
+		return get_sync_instance_wrapper(wrapper_class=ShadowRoot, legacy_object=shadow_root)
 	
 	def size(self) -> Dict:
 		return self._size_impl()
@@ -166,4 +170,4 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 				ignored_exceptions=ignored_exceptions,
 		)
 		
-		return WebDriverWait.from_legacy(selenium_webdriver_wait=web_driver_wait)
+		return get_sync_instance_wrapper(wrapper_class=WebDriverWait, legacy_object=web_driver_wait)

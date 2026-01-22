@@ -49,7 +49,7 @@ class FedCM(UnifiedFedCM, AbstractFedCM):
 		self._enable_delay_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_fedcm: FEDCM_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: FEDCM_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium FedCM object.
 
@@ -57,16 +57,16 @@ class FedCM(UnifiedFedCM, AbstractFedCM):
 		instance into the new interface.
 
 		Args:
-			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+			legacy_object (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing FedCM.
 		"""
 		
-		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
+		legacy_fedcm_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
+			raise TypesConvertError(from_=legacyFedCM, to_=legacy_object)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj)
 	

@@ -20,17 +20,24 @@ class DragAndDropMixin(BaseMixin, UnifiedDragAndDropMixin, AbstractDragAndDropMi
 	"""
 	
 	def drag_and_drop(self, source: WEB_ELEMENT_TYPEHINT, target: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = self._drag_and_drop_impl(source=get_legacy_instance(source), target=get_legacy_instance(target))
+		action_chains = self._drag_and_drop_impl(
+				source=get_legacy_instance(instance=source),
+				target=get_legacy_instance(instance=target)
+		)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)
 	
 	def drag_and_drop_by_offset(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> "ActionChains":
-		action_chains = self._drag_and_drop_by_offset_impl(source=get_legacy_instance(source), xoffset=xoffset, yoffset=yoffset)
+		action_chains = self._drag_and_drop_by_offset_impl(
+				source=get_legacy_instance(instance=source),
+				xoffset=xoffset,
+				yoffset=yoffset
+		)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)

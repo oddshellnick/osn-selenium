@@ -20,7 +20,7 @@ class ScrollMixin(BaseMixin, UnifiedScrollMixin, AbstractScrollMixin):
 		action_chains = self._scroll_by_amount_impl(delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)
 	
@@ -28,14 +28,14 @@ class ScrollMixin(BaseMixin, UnifiedScrollMixin, AbstractScrollMixin):
 		action_chains = self._scroll_from_origin_impl(scroll_origin=scroll_origin, delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)
 	
 	def scroll_to_element(self, element: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = self._scroll_to_element_impl(element=get_legacy_instance(element))
+		action_chains = self._scroll_to_element_impl(element=get_legacy_instance(instance=element))
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)

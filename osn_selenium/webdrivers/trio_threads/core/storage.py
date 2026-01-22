@@ -7,6 +7,9 @@ from typing import (
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.trio_threads.storage import Storage
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.storage import (
 	AbstractCoreStorageMixin
 )
@@ -44,8 +47,9 @@ class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
 	async def storage(self) -> Storage:
 		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.storage)()
 		
-		return Storage(
-				selenium_storage=legacy,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=Storage,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

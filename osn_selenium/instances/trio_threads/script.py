@@ -50,7 +50,7 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_script: SCRIPT_TYPEHINT,
+			legacy_object: SCRIPT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -61,7 +61,7 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 		instance into the new interface.
 
 		Args:
-			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+			legacy_object (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -69,10 +69,10 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 			Self: A new instance of a class implementing Script.
 		"""
 		
-		legacy_script_obj = get_legacy_instance(selenium_script)
+		legacy_script_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
+			raise TypesConvertError(from_=legacyScript, to_=legacy_object)
 		
 		return cls(selenium_script=legacy_script_obj, lock=lock, limiter=limiter)
 	

@@ -48,7 +48,7 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_mobile: MOBILE_TYPEHINT,
+			legacy_object: MOBILE_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -59,7 +59,7 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 		instance into the new interface.
 
 		Args:
-			selenium_mobile (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
+			legacy_object (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -67,10 +67,10 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 			Self: A new instance of a class implementing Mobile.
 		"""
 		
-		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
+		legacy_mobile_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypesConvertError(from_=legacyMobile, to_=selenium_mobile)
+			raise TypesConvertError(from_=legacyMobile, to_=legacy_object)
 		
 		return cls(selenium_mobile=legacy_mobile_obj, lock=lock, limiter=limiter)
 	

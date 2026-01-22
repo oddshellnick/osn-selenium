@@ -53,7 +53,7 @@ class Network(UnifiedNetwork, AbstractNetwork):
 		self._clear_request_handlers_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_network: NETWORK_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: NETWORK_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Network object.
 
@@ -61,16 +61,16 @@ class Network(UnifiedNetwork, AbstractNetwork):
 		instance into the new interface.
 
 		Args:
-			selenium_network (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
+			legacy_object (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Network.
 		"""
 		
-		legacy_network_obj = get_legacy_instance(selenium_network)
+		legacy_network_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypesConvertError(from_=legacyNetwork, to_=selenium_network)
+			raise TypesConvertError(from_=legacyNetwork, to_=legacy_object)
 		
 		return cls(selenium_network=legacy_network_obj)
 	

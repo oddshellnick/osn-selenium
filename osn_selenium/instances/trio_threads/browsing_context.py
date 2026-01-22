@@ -96,7 +96,7 @@ class BrowsingContext(UnifiedBrowsingContext, TrioThreadMixin, AbstractBrowsingC
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_browsing_context: BROWSING_CONTEXT_TYPEHINT,
+			legacy_object: BROWSING_CONTEXT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -107,7 +107,7 @@ class BrowsingContext(UnifiedBrowsingContext, TrioThreadMixin, AbstractBrowsingC
 		instance into the new interface.
 
 		Args:
-			selenium_browsing_context (BROWSING_CONTEXT_TYPEHINT): The legacy Selenium BrowsingContext instance or its wrapper.
+			legacy_object (BROWSING_CONTEXT_TYPEHINT): The legacy Selenium BrowsingContext instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -115,10 +115,10 @@ class BrowsingContext(UnifiedBrowsingContext, TrioThreadMixin, AbstractBrowsingC
 			Self: A new instance of a class implementing BrowsingContext.
 		"""
 		
-		legacy_browsing_context_obj = get_legacy_instance(selenium_browsing_context)
+		legacy_browsing_context_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
-			raise TypesConvertError(from_=legacyBrowsingContext, to_=selenium_browsing_context)
+			raise TypesConvertError(from_=legacyBrowsingContext, to_=legacy_object)
 		
 		return cls(
 				selenium_browsing_context=legacy_browsing_context_obj,

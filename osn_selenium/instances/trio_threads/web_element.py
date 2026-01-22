@@ -2,7 +2,6 @@ import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.errors import TypesConvertError
-from osn_selenium.instances.convert import get_legacy_instance
 from typing import (
 	Any,
 	Dict,
@@ -17,6 +16,10 @@ from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
+)
+from osn_selenium.instances.convert import (
+	get_legacy_instance,
+	get_trio_thread_instance_wrapper
 )
 
 
@@ -57,49 +60,27 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	async def click(self) -> None:
 		await self.sync_to_trio(sync_function=self._click_impl)()
 	
-	@classmethod
-	def from_legacy(
-			cls,
-			selenium_web_element: Any,
-			lock: trio.Lock,
-			limiter: trio.CapacityLimiter
-	) -> Self:
-		"""
-		Creates an instance from a legacy Selenium WebElement object.
-
-		This factory method is used to wrap an existing Selenium WebElement
-		instance into the new interface.
-
-		Args:
-			selenium_web_element (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
-			lock (trio.Lock): A Trio lock for managing concurrent access.
-			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
-
-		Returns:
-			Self: A new instance of a class implementing WebElement.
-		"""
-		
-		legacy_element_obj = get_legacy_instance(selenium_web_element)
-		
-		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypesConvertError(from_=legacyWebElement, to_=selenium_web_element)
-		
-		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
-	
 	async def find_element(self, by: str = By.ID, value: Any = None) -> Self:
 		web_element = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
 		
-		return self.from_legacy(web_element, self._lock, self._capacity_limiter)
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=self.__class__,
+				legacy_object=web_element,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 	
 	async def find_elements(self, by: str = By.ID, value: Any = None) -> List[Self]:
 		web_elements = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
 		
 		return [
-			self.from_legacy(
-					selenium_web_element=web_element,
+			get_trio_thread_instance_wrapper(
+					wrapper_class=self.__class__,
+					legacy_object=web_element,
 					lock=self._lock,
 					limiter=self._capacity_limiter,
-			) for web_element in web_elements
+			)
+			for web_element in web_elements
 		]
 	
 	async def get_attribute(self, name: str) -> Optional[str]:
@@ -133,14 +114,39 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	async def location_once_scrolled_into_view(self) -> Dict:
 		return await self.sync_to_trio(sync_function=self._location_once_scrolled_into_view_impl)()
 	
+	@classmethod
+	def from_legacy(
+			cls,
+			legacy_object: Any,
+			lock: trio.Lock,
+			limiter: trio.CapacityLimiter
+	) -> Self:
+		"""
+		Creates an instance from a legacy Selenium WebElement object.
+
+		This factory method is used to wrap an existing Selenium WebElement
+		instance into the new interface.
+
+		Args:
+			legacy_object (WEB_ELEMENT_TYPEHINT): The legacy Selenium WebElement instance or its wrapper.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+
+		Returns:
+			Self: A new instance of a class implementing WebElement.
+		"""
+		
+		legacy_element_obj = get_legacy_instance(instance=legacy_object)
+		
+		if not isinstance(legacy_element_obj, legacyWebElement):
+			raise TypesConvertError(from_=legacyWebElement, to_=legacy_object)
+		
+		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
+	
 	async def parent(self) -> Self:
 		parent = await self.sync_to_trio(sync_function=self._parent_impl)()
 		
-		return self.from_legacy(
-				selenium_web_element=parent,
-				lock=self._lock,
-				limiter=self._capacity_limiter,
-		)
+		return self.from_legacy(legacy_object=parent, lock=self._lock, limiter=self._capacity_limiter,)
 	
 	async def rect(self) -> Dict:
 		return await self.sync_to_trio(sync_function=self._rect_impl)()
@@ -163,8 +169,9 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	async def shadow_root(self) -> ShadowRoot:
 		shadow_root = await self.sync_to_trio(sync_function=self._shadow_root_impl)()
 		
-		return ShadowRoot.from_legacy(
-				selenium_shadow_root=shadow_root,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=ShadowRoot,
+				legacy_object=shadow_root,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
@@ -196,8 +203,9 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 				ignored_exceptions=ignored_exceptions,
 		)
 		
-		return WebDriverWait.from_legacy(
-				selenium_webdriver_wait=web_driver_wait,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebDriverWait,
+				legacy_object=web_driver_wait,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

@@ -10,6 +10,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers._functions import build_cdp_kwargs
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
 from selenium.webdriver.remote.bidi_connection import BidiConnection
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 from osn_selenium.abstract.webdriver.core.devtools import (
 	AbstractCoreDevToolsMixin
@@ -38,7 +41,7 @@ class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
 	def network(self) -> Network:
 		legacy = self.driver.network
 		
-		return Network(selenium_network=legacy)
+		return get_sync_instance_wrapper(wrapper_class=Network, legacy_object=legacy)
 	
 	@requires_driver
 	def start_devtools(self) -> Tuple[Any, WebSocketConnection]:

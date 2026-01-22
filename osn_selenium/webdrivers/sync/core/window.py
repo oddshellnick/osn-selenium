@@ -15,6 +15,9 @@ from osn_selenium.types import (
 	Size
 )
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.window import (
 	AbstractCoreWindowMixin
 )
@@ -104,7 +107,7 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	def switch_to(self) -> SwitchTo:
 		legacy = self.driver.switch_to
 		
-		return SwitchTo(selenium_switch_to=legacy)
+		return get_sync_instance_wrapper(wrapper_class=SwitchTo, legacy_object=legacy)
 	
 	@requires_driver
 	def current_window_handle(self) -> str:

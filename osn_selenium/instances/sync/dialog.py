@@ -35,7 +35,7 @@ class Dialog(UnifiedDialog, AbstractDialog):
 		self._dismiss_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_dialog: DIALOG_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: DIALOG_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Dialog object.
 
@@ -49,10 +49,10 @@ class Dialog(UnifiedDialog, AbstractDialog):
 			Self: A new instance of a class implementing Dialog.
 		"""
 		
-		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
+		legacy_dialog_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):
-			raise TypesConvertError(from_=legacyDialog, to_=selenium_dialog)
+			raise TypesConvertError(from_=legacyDialog, to_=legacy_object)
 		
 		return cls(selenium_dialog=legacy_dialog_obj)
 	

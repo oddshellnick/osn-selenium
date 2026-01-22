@@ -45,7 +45,7 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_browser: BROWSER_TYPEHINT,
+			legacy_object: BROWSER_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -56,7 +56,7 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 		instance into the new interface.
 
 		Args:
-			selenium_browser (BROWSER_TYPEHINT): The legacy Selenium Browser instance or its wrapper.
+			legacy_object (BROWSER_TYPEHINT): The legacy Selenium Browser instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -64,10 +64,10 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 			Self: A new instance of a class implementing Browser.
 		"""
 		
-		legacy_browser_obj = get_legacy_instance(selenium_browser)
+		legacy_browser_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):
-			raise TypesConvertError(from_=legacyBrowser, to_=selenium_browser)
+			raise TypesConvertError(from_=legacyBrowser, to_=legacy_object)
 		
 		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	

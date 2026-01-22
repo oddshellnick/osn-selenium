@@ -62,7 +62,7 @@ class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_fedcm: FEDCM_TYPEHINT,
+			legacy_object: FEDCM_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -73,7 +73,7 @@ class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 		instance into the new interface.
 
 		Args:
-			selenium_fedcm (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
+			legacy_object (FEDCM_TYPEHINT): The legacy Selenium FedCM instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -81,10 +81,10 @@ class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 			Self: A new instance of a class implementing FedCM.
 		"""
 		
-		legacy_fedcm_obj = get_legacy_instance(selenium_fedcm)
+		legacy_fedcm_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypesConvertError(from_=legacyFedCM, to_=selenium_fedcm)
+			raise TypesConvertError(from_=legacyFedCM, to_=legacy_object)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	

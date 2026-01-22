@@ -39,11 +39,11 @@ class WebDriverWait(UnifiedWebDriverWait, AbstractWebDriverWait):
 		UnifiedWebDriverWait.__init__(self, selenium_webdriver_wait=selenium_webdriver_wait)
 	
 	@classmethod
-	def from_legacy(cls, selenium_webdriver_wait: legacyWebDriverWait) -> Self:
-		legacy_wait_obj = get_legacy_instance(selenium_webdriver_wait)
+	def from_legacy(cls, legacy_object: legacyWebDriverWait) -> Self:
+		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):
-			raise TypesConvertError(from_=legacyWebDriverWait, to_=selenium_webdriver_wait)
+			raise TypesConvertError(from_=legacyWebDriverWait, to_=legacy_object)
 		
 		return cls(selenium_webdriver_wait=legacy_wait_obj)
 	

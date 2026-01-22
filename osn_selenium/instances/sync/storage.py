@@ -46,7 +46,7 @@ class Storage(UnifiedStorage, AbstractStorage):
 		return self._delete_cookies_impl(filter=filter, partition=partition)
 	
 	@classmethod
-	def from_legacy(cls, selenium_storage: STORAGE_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: STORAGE_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Storage object.
 
@@ -54,16 +54,16 @@ class Storage(UnifiedStorage, AbstractStorage):
 		instance into the new interface.
 
 		Args:
-			selenium_storage (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
+			legacy_object (STORAGE_TYPEHINT): The legacy Selenium Storage instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Storage.
 		"""
 		
-		legacy_storage_obj = get_legacy_instance(selenium_storage)
+		legacy_storage_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypesConvertError(from_=legacyStorage, to_=selenium_storage)
+			raise TypesConvertError(from_=legacyStorage, to_=legacy_object)
 		
 		return cls(selenium_storage=legacy_storage_obj)
 	

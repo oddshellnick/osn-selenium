@@ -48,7 +48,7 @@ class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_dialog: DIALOG_TYPEHINT,
+			legacy_object: DIALOG_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -59,7 +59,7 @@ class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 		instance into the new interface.
 
 		Args:
-			selenium_dialog (DIALOG_TYPEHINT): The legacy Selenium Dialog instance or its wrapper.
+			legacy_object (DIALOG_TYPEHINT): The legacy Selenium Dialog instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -67,10 +67,10 @@ class Dialog(UnifiedDialog, TrioThreadMixin, AbstractDialog):
 			Self: A new instance of a class implementing Dialog.
 		"""
 		
-		legacy_dialog_obj = get_legacy_instance(selenium_dialog)
+		legacy_dialog_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_dialog_obj, legacyDialog):
-			raise TypesConvertError(from_=legacyDialog, to_=selenium_dialog)
+			raise TypesConvertError(from_=legacyDialog, to_=legacy_object)
 		
 		return cls(selenium_dialog=legacy_dialog_obj, lock=lock, limiter=limiter)
 	

@@ -37,7 +37,7 @@ class Script(UnifiedScript, AbstractScript):
 		return self._execute_impl(script, *args)
 	
 	@classmethod
-	def from_legacy(cls, selenium_script: SCRIPT_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: SCRIPT_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Script object.
 
@@ -45,16 +45,16 @@ class Script(UnifiedScript, AbstractScript):
 		instance into the new interface.
 
 		Args:
-			selenium_script (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
+			legacy_object (SCRIPT_TYPEHINT): The legacy Selenium Script instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Script.
 		"""
 		
-		legacy_script_obj = get_legacy_instance(selenium_script)
+		legacy_script_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypesConvertError(from_=legacyScript, to_=selenium_script)
+			raise TypesConvertError(from_=legacyScript, to_=legacy_object)
 		
 		return cls(selenium_script=legacy_script_obj)
 	

@@ -12,6 +12,9 @@ from selenium.webdriver import (
 from osn_selenium.instances.trio_threads.action_chains import ActionChains
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
 )
@@ -49,8 +52,9 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Optional[Iterable[BaseException]] = None,
 	) -> WebDriverWait:
-		return WebDriverWait(
-				selenium_webdriver_wait=legacyWebDriverWait(
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebDriverWait,
+				legacy_object=legacyWebDriverWait(
 						driver=self.driver,
 						timeout=timeout,
 						poll_frequency=poll_frequency,

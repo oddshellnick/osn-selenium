@@ -27,7 +27,7 @@ class UnifiedHMMoveMixin(UnifiedUtilsMixin, UnifiedMoveMixin):
 		return self._hm_move_impl(start_position=start_position, end_position=end_position), end_position
 	
 	def _hm_move_to_element_impl(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[legacyActionChains, Point]:
-		element_rect = UnifiedWebElement(selenium_web_element=get_legacy_instance(element))._rect_impl()
+		element_rect = UnifiedWebElement(selenium_web_element=get_legacy_instance(instance=element))._rect_impl()
 		end_position = Point(
 				x=element_rect["x"] +
 				element_rect["width"] //
@@ -46,12 +46,12 @@ class UnifiedHMMoveMixin(UnifiedUtilsMixin, UnifiedMoveMixin):
 			xoffset: int,
 			yoffset: int
 	) -> Tuple[legacyActionChains, Point]:
-		element_rect = UnifiedWebElement(selenium_web_element=get_legacy_instance(element))._rect_impl()
+		element_rect = UnifiedWebElement(selenium_web_element=get_legacy_instance(instance=element))._rect_impl()
 		end_position = Point(x=element_rect["x"] + xoffset, y=element_rect["y"] + yoffset)
 		
 		return self._hm_move_impl(start_position=start_position, end_position=end_position), end_position
 	
 	def _hm_move_to_element_with_random_offset_impl(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[legacyActionChains, Point]:
-		end_position = self._js_executor.get_random_element_point(element=get_legacy_instance(element))
+		end_position = self._js_executor.get_random_element_point(element=get_legacy_instance(instance=element))
 		
 		return self._hm_move_impl(start_position=start_position, end_position=end_position), end_position

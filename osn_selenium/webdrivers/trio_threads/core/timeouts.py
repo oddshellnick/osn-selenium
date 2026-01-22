@@ -28,7 +28,7 @@ class CoreTimeoutsMixin(CoreBaseMixin, AbstractCoreTimeoutsMixin):
 	
 	@requires_driver
 	async def set_timeouts(self, timeouts: Any) -> None:
-		await self.sync_to_trio(sync_function=lambda: setattr(self.driver)("timeouts", timeouts))
+		await self.sync_to_trio(sync_function=setattr)(self.driver, "timeouts", timeouts)
 	
 	@requires_driver
 	async def timeouts(self) -> Any:

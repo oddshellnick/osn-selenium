@@ -19,17 +19,17 @@ class MoveMixin(BaseMixin, UnifiedMoveMixin, AbstractMoveMixin):
 		action_chains = await self.sync_to_trio(sync_function=self._move_by_offset_impl)(xoffset=xoffset, yoffset=yoffset)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
 	
 	async def move_to_element(self, to_element: WEB_ELEMENT_TYPEHINT) -> "ActionChains":
-		action_chains = await self.sync_to_trio(sync_function=self._move_to_element_impl)(to_element=get_legacy_instance(to_element))
+		action_chains = await self.sync_to_trio(sync_function=self._move_to_element_impl)(to_element=get_legacy_instance(instance=to_element))
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -37,13 +37,13 @@ class MoveMixin(BaseMixin, UnifiedMoveMixin, AbstractMoveMixin):
 	
 	async def move_to_element_with_offset(self, to_element: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> "ActionChains":
 		action_chains = await self.sync_to_trio(sync_function=self._move_to_element_with_offset_impl)(
-				to_element=get_legacy_instance(to_element),
+				to_element=get_legacy_instance(instance=to_element),
 				xoffset=xoffset,
 				yoffset=yoffset,
 		)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,

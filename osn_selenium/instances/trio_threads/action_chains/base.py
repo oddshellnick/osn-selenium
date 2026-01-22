@@ -53,7 +53,7 @@ class BaseMixin(UnifiedBaseMixin, TrioThreadMixin, AbstractBaseMixin):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_action_chains: legacyActionChains,
+			legacy_object: legacyActionChains,
 			execute_js_script_function: Callable[[str, Any], Any],
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
@@ -62,7 +62,7 @@ class BaseMixin(UnifiedBaseMixin, TrioThreadMixin, AbstractBaseMixin):
 		Creates an ActionChains instance from a legacy Selenium ActionChains object.
 
 		Args:
-			selenium_action_chains (legacyActionChains): The legacy Selenium action chain.
+			legacy_object (legacyActionChains): The legacy Selenium action chain.
 			execute_js_script_function (Callable[[str, Any], Any]): The function used to execute JS.
 			lock (trio.Lock): A Trio Lock for synchronization.
 			limiter (trio.CapacityLimiter): A limiter to control thread pool concurrency.
@@ -74,7 +74,7 @@ class BaseMixin(UnifiedBaseMixin, TrioThreadMixin, AbstractBaseMixin):
 		return cast(
 				"ActionChains",
 				cls(
-						selenium_action_chains=selenium_action_chains,
+						selenium_action_chains=legacy_object,
 						execute_js_script_function=execute_js_script_function,
 						lock=lock,
 						limiter=limiter,

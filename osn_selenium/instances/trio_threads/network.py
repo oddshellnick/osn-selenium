@@ -66,7 +66,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_network: NETWORK_TYPEHINT,
+			legacy_object: NETWORK_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -77,7 +77,7 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 		instance into the new interface.
 
 		Args:
-			selenium_network (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
+			legacy_object (NETWORK_TYPEHINT): The legacy Selenium Network instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -85,10 +85,10 @@ class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 			Self: A new instance of a class implementing Network.
 		"""
 		
-		legacy_network_obj = get_legacy_instance(selenium_network)
+		legacy_network_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypesConvertError(from_=legacyNetwork, to_=selenium_network)
+			raise TypesConvertError(from_=legacyNetwork, to_=legacy_object)
 		
 		return cls(selenium_network=legacy_network_obj, lock=lock, limiter=limiter)
 	

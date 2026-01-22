@@ -15,4 +15,4 @@ class UnifiedScrollMixin(UnifiedBaseMixin):
 		return self._legacy_impl.scroll_from_origin(scroll_origin=scroll_origin, delta_x=delta_x, delta_y=delta_y)
 	
 	def _scroll_to_element_impl(self, element: WEB_ELEMENT_TYPEHINT) -> legacyActionChains:
-		return self._legacy_impl.scroll_to_element(element=get_legacy_instance(element))
+		return self._legacy_impl.scroll_to_element(element=get_legacy_instance(instance=element))

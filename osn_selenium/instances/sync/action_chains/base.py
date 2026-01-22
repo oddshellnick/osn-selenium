@@ -45,14 +45,14 @@ class BaseMixin(UnifiedBaseMixin, AbstractBaseMixin):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_action_chains: legacyActionChains,
+			legacy_object: legacyActionChains,
 			execute_js_script_function: Callable[[str, Any], Any],
 	) -> "ActionChains":
 		"""
 		Creates an ActionChains instance from a legacy Selenium ActionChains object.
 
 		Args:
-			selenium_action_chains (legacyActionChains): The legacy Selenium action chain.
+			legacy_object (legacyActionChains): The legacy Selenium action chain.
 			execute_js_script_function (Callable[[str, Any], Any]): The function used to execute JS.
 
 		Returns:
@@ -62,7 +62,7 @@ class BaseMixin(UnifiedBaseMixin, AbstractBaseMixin):
 		return cast(
 				"ActionChains",
 				cls(
-						selenium_action_chains=selenium_action_chains,
+						selenium_action_chains=legacy_object,
 						execute_js_script_function=execute_js_script_function,
 				)
 		)

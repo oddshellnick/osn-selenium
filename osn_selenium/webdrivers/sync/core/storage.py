@@ -7,6 +7,9 @@ from typing import (
 from osn_selenium.instances.sync.storage import Storage
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.storage import (
 	AbstractCoreStorageMixin
 )
@@ -44,4 +47,4 @@ class CoreStorageMixin(CoreBaseMixin, AbstractCoreStorageMixin):
 	def storage(self) -> Storage:
 		legacy = self.driver.storage
 		
-		return Storage(selenium_storage=legacy)
+		return get_sync_instance_wrapper(wrapper_class=Storage, legacy_object=legacy)

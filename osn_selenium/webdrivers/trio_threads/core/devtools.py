@@ -11,6 +11,9 @@ from osn_selenium.webdrivers._functions import build_cdp_kwargs
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.devtools import (
 	AbstractCoreDevToolsMixin
 )
@@ -38,8 +41,9 @@ class CoreDevToolsMixin(CoreBaseMixin, AbstractCoreDevToolsMixin):
 	async def network(self) -> Network:
 		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.network)()
 		
-		return Network(
-				selenium_network=legacy,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=Network,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

@@ -7,7 +7,6 @@ from typing import (
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
 from osn_selenium.instances.errors import TypesConvertError
-from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.switch_to import UnifiedSwitchTo
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
@@ -17,6 +16,10 @@ from selenium.webdriver.remote.switch_to import (
 from osn_selenium.instances.types import (
 	SWITCH_TO_TYPEHINT,
 	WEB_ELEMENT_TYPEHINT
+)
+from osn_selenium.instances.convert import (
+	get_legacy_instance,
+	get_trio_thread_instance_wrapper
 )
 
 
@@ -50,17 +53,19 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 	async def active_element(self) -> WebElement:
 		legacy_element = await self.sync_to_trio(sync_function=self._active_element_impl)()
 		
-		return WebElement.from_legacy(
-				selenium_web_element=legacy_element,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebElement,
+				legacy_object=legacy_element,
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 	
 	async def alert(self) -> Alert:
 		legacy_alert_instance = await self.sync_to_trio(sync_function=self._alert_impl)()
 		
-		return Alert(
-				selenium_alert=legacy_alert_instance,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=Alert,
+				legacy_object=legacy_alert_instance,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
@@ -74,7 +79,7 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_switch_to: SWITCH_TO_TYPEHINT,
+			legacy_object: SWITCH_TO_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -85,7 +90,7 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		instance into the new interface.
 
 		Args:
-			selenium_switch_to (SWITCH_TO_TYPEHINT): The legacy Selenium SwitchTo instance or its wrapper.
+			legacy_object (SWITCH_TO_TYPEHINT): The legacy Selenium SwitchTo instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -93,9 +98,10 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 			Self: A new instance of a class implementing SwitchTo.
 		"""
 		
-		legacy_switch_to_obj = get_legacy_instance(selenium_switch_to)
+		legacy_switch_to_obj = get_legacy_instance(instance=legacy_object)
+		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
-			raise TypesConvertError(from_=legacySwitchTo, to_=selenium_switch_to)
+			raise TypesConvertError(from_=legacySwitchTo, to_=legacy_object)
 		
 		return cls(selenium_switch_to=legacy_switch_to_obj, lock=lock, limiter=limiter)
 	

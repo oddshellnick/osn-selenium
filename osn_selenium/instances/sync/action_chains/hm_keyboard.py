@@ -22,7 +22,7 @@ class HMKeyboardMixin(BaseMixin, UnifiedHMKeyboardMixin, AbstractHMKeyboardMixin
 		action_chains = self._hm_send_keys_impl(text=text)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)
 	
@@ -30,6 +30,6 @@ class HMKeyboardMixin(BaseMixin, UnifiedHMKeyboardMixin, AbstractHMKeyboardMixin
 		action_chains = self._hm_send_keys_to_element_impl(element=element, text=text)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 		)

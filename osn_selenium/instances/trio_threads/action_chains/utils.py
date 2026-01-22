@@ -17,7 +17,7 @@ class UtilsMixin(BaseMixin, UnifiedUtilsMixin, AbstractUtilsMixin):
 		action_chains = await self.sync_to_trio(sync_function=self._pause_impl)(seconds=seconds)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,

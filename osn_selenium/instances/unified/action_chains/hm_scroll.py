@@ -53,7 +53,7 @@ class UnifiedHMScrollMixin(UnifiedUtilsMixin, UnifiedScrollMixin):
 			additional_left_x_offset: int = 0,
 	) -> legacyActionChains:
 		viewport_rect = self._js_executor.get_viewport_rect()
-		element_rect = self._js_executor.get_element_rect_in_viewport(element=get_legacy_instance(element))
+		element_rect = self._js_executor.get_element_rect_in_viewport(element=get_legacy_instance(instance=element))
 		
 		if element_rect.x < additional_left_x_offset:
 			delta_x = int(element_rect.x - additional_left_x_offset)

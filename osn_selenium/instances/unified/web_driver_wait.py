@@ -34,13 +34,13 @@ class UnifiedWebDriverWait:
 		return self._selenium_webdriver_wait
 	
 	def __eq__(self, other: Any) -> bool:
-		return self._legacy_impl == get_legacy_instance(other)
+		return self._legacy_impl == get_legacy_instance(instance=other)
 	
 	def __hash__(self) -> int:
 		return self._legacy_impl.__hash__()
 	
 	def __ne__(self, other: Any) -> bool:
-		return self._legacy_impl != get_legacy_instance(other)
+		return self._legacy_impl != get_legacy_instance(instance=other)
 	
 	def _until_impl(
 			self,

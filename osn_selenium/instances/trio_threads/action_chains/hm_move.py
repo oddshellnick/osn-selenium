@@ -19,7 +19,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		action_chains = await self.sync_to_trio(sync_function=self._hm_move_impl)(start_position=start_position, end_position=end_position)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -30,7 +30,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		
 		return (
 				self.from_legacy(
-						selenium_action_chains=action_chains,
+						legacy_object=action_chains,
 						execute_js_script_function=self._execute_js_script_function,
 						lock=self._lock,
 						limiter=self._capacity_limiter,
@@ -43,7 +43,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		
 		return (
 				self.from_legacy(
-						selenium_action_chains=action_chains,
+						legacy_object=action_chains,
 						execute_js_script_function=self._execute_js_script_function,
 						lock=self._lock,
 						limiter=self._capacity_limiter,
@@ -67,7 +67,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		
 		return (
 				self.from_legacy(
-						selenium_action_chains=action_chains,
+						legacy_object=action_chains,
 						execute_js_script_function=self._execute_js_script_function,
 						lock=self._lock,
 						limiter=self._capacity_limiter,
@@ -80,7 +80,7 @@ class HMMoveMixin(BaseMixin, UnifiedHMMoveMixin, AbstractHMMoveMixin):
 		
 		return (
 				self.from_legacy(
-						selenium_action_chains=action_chains,
+						legacy_object=action_chains,
 						execute_js_script_function=self._execute_js_script_function,
 						lock=self._lock,
 						limiter=self._capacity_limiter,

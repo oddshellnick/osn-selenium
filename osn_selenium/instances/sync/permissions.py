@@ -35,7 +35,7 @@ class Permissions(UnifiedPermissions, AbstractPermissions):
 		UnifiedPermissions.__init__(self, selenium_permissions=selenium_permissions)
 	
 	@classmethod
-	def from_legacy(cls, selenium_permissions: PERMISSIONS_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: PERMISSIONS_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Permissions object.
 
@@ -43,16 +43,16 @@ class Permissions(UnifiedPermissions, AbstractPermissions):
 		instance into the new interface.
 
 		Args:
-			selenium_permissions (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
+			legacy_object (PERMISSIONS_TYPEHINT): The legacy Selenium Permissions instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Permissions.
 		"""
 		
-		legacy_permissions_obj = get_legacy_instance(selenium_permissions)
+		legacy_permissions_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypesConvertError(from_=legacyPermissions, to_=selenium_permissions)
+			raise TypesConvertError(from_=legacyPermissions, to_=legacy_object)
 		
 		return cls(selenium_permissions=legacy_permissions_obj)
 	

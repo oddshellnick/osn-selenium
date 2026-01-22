@@ -24,7 +24,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 		action_chains = await self.sync_to_trio(sync_function=self._hm_scroll_by_amount_impl)(delta_x=delta_x, delta_y=delta_y)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -34,7 +34,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 		action_chains = await self.sync_to_trio(sync_function=self._hm_scroll_from_origin_impl)(delta_x=delta_x, delta_y=delta_y, origin=origin)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
@@ -57,7 +57,7 @@ class HMScrollMixin(BaseMixin, UnifiedHMScrollMixin, AbstractHMScrollMixin):
 		)
 		
 		return self.from_legacy(
-				selenium_action_chains=action_chains,
+				legacy_object=action_chains,
 				execute_js_script_function=self._execute_js_script_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter,

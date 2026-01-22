@@ -45,7 +45,7 @@ class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_alert: ALERT_TYPEHINT,
+			legacy_object: ALERT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -56,7 +56,7 @@ class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 		instance into the new interface.
 
 		Args:
-			selenium_alert (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
+			legacy_object (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -64,10 +64,10 @@ class Alert(UnifiedAlert, TrioThreadMixin, AbstractAlert):
 			Self: A new instance of a class implementing Alert.
 		"""
 		
-		legacy_alert_obj = get_legacy_instance(selenium_alert)
+		legacy_alert_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):
-			raise TypesConvertError(from_=legacyAlert, to_=selenium_alert)
+			raise TypesConvertError(from_=legacyAlert, to_=legacy_object)
 		
 		return cls(selenium_alert=legacy_alert_obj, lock=lock, limiter=limiter)
 	

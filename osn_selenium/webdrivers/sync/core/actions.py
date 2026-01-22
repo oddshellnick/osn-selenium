@@ -12,6 +12,9 @@ from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from selenium.webdriver import (
 	ActionChains as legacyActionChains
 )
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
 )
@@ -47,8 +50,9 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Optional[Iterable[BaseException]] = None,
 	) -> WebDriverWait:
-		return WebDriverWait(
-				selenium_webdriver_wait=legacyWebDriverWait(
+		return get_sync_instance_wrapper(
+				wrapper_class=WebDriverWait,
+				legacy_object=legacyWebDriverWait(
 						driver=self.driver,
 						timeout=timeout,
 						poll_frequency=poll_frequency,

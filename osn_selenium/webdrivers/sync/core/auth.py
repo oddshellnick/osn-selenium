@@ -8,6 +8,9 @@ from typing import (
 from osn_selenium.instances.sync.dialog import Dialog
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.auth import (
 	AbstractCoreAuthMixin
 )
@@ -37,7 +40,7 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 	def fedcm(self) -> FedCM:
 		legacy = self.driver.fedcm
 		
-		return FedCM(selenium_fedcm=legacy)
+		return get_sync_instance_wrapper(wrapper_class=FedCM, legacy_object=legacy)
 	
 	@requires_driver
 	def fedcm_dialog(
@@ -52,7 +55,7 @@ class CoreAuthMixin(CoreBaseMixin, AbstractCoreAuthMixin):
 				ignored_exceptions=ignored_exceptions,
 		)
 		
-		return Dialog(selenium_dialog=legacy)
+		return get_sync_instance_wrapper(wrapper_class=Dialog, legacy_object=legacy)
 	
 	@requires_driver
 	def get_credentials(self) -> List[Credential]:

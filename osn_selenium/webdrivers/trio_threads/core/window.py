@@ -15,6 +15,9 @@ from osn_selenium.types import (
 )
 from osn_selenium.instances.trio_threads.switch_to import SwitchTo
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.window import (
 	AbstractCoreWindowMixin
 )
@@ -68,7 +71,7 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	
 	@requires_driver
 	async def set_orientation(self, value: Literal["LANDSCAPE", "PORTRAIT"]) -> None:
-		await self.sync_to_trio(sync_function=lambda: setattr(self.driver)("orientation", value))
+		await self.sync_to_trio(sync_function=setattr)(self.driver, "orientation", value)
 	
 	@requires_driver
 	async def set_window_position(self, x: int, y: int, windowHandle: str = "current") -> Position:
@@ -104,8 +107,9 @@ class CoreWindowMixin(CoreBaseMixin, AbstractCoreWindowMixin):
 	async def switch_to(self) -> SwitchTo:
 		legacy = await self.sync_to_trio(sync_function=lambda: self.driver.switch_to)()
 		
-		return SwitchTo(
-				selenium_switch_to=legacy,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=SwitchTo,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

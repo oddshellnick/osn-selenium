@@ -3,6 +3,9 @@ from selenium.webdriver.common.by import By
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.element import (
 	AbstractCoreElementMixin
 )
@@ -20,8 +23,9 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	async def create_web_element(self, element_id: str) -> WebElement:
 		legacy = await self.sync_to_trio(sync_function=self.driver.create_web_element)(element_id=element_id)
 		
-		return WebElement(
-				selenium_web_element=legacy,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebElement,
+				legacy_object=legacy,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
@@ -30,8 +34,9 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> WebElement:
 		element = await self.sync_to_trio(sync_function=self.driver.find_element)(by=by, value=value)
 		
-		return WebElement(
-				selenium_web_element=element,
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebElement,
+				legacy_object=element,
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)
@@ -41,9 +46,11 @@ class CoreElementMixin(CoreBaseMixin, AbstractCoreElementMixin):
 		elements = await self.sync_to_trio(sync_function=self.driver.find_elements)(by=by, value=value)
 		
 		return [
-			WebElement(
-					selenium_web_element=element,
+			get_trio_thread_instance_wrapper(
+					wrapper_class=WebElement,
+					legacy_object=element,
 					lock=self._lock,
 					limiter=self._capacity_limiter,
-			) for element in elements
+			)
+			for element in elements
 		]

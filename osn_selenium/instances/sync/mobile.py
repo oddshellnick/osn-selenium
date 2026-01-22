@@ -35,7 +35,7 @@ class Mobile(UnifiedMobile, AbstractMobile):
 		return self._contexts_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_mobile: MOBILE_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: MOBILE_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Mobile object.
 
@@ -43,16 +43,16 @@ class Mobile(UnifiedMobile, AbstractMobile):
 		instance into the new interface.
 
 		Args:
-			selenium_mobile (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
+			legacy_object (MOBILE_TYPEHINT): The legacy Selenium Mobile instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Mobile.
 		"""
 		
-		legacy_mobile_obj = get_legacy_instance(selenium_mobile)
+		legacy_mobile_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypesConvertError(from_=legacyMobile, to_=selenium_mobile)
+			raise TypesConvertError(from_=legacyMobile, to_=legacy_object)
 		
 		return cls(selenium_mobile=legacy_mobile_obj)
 	

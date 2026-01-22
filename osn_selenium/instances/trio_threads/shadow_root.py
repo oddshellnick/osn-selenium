@@ -9,11 +9,14 @@ from typing import (
 	Self,
 	TYPE_CHECKING
 )
-from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.shadow_root import UnifiedShadowRoot
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
+)
+from osn_selenium.instances.convert import (
+	get_legacy_instance,
+	get_trio_thread_instance_wrapper
 )
 
 
@@ -49,25 +52,36 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def find_element(self, by: str = By.ID, value: Optional[str] = None) -> "WebElement":
-		impl_el = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
+		legacy_element = await self.sync_to_trio(sync_function=self._find_element_impl)(by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
-		return WebElement.from_legacy(impl_el, lock=self._lock, limiter=self._capacity_limiter)
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=WebElement,
+				legacy_object=legacy_element,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
 	
 	async def find_elements(self, by: str = By.ID, value: Optional[str] = None) -> List["WebElement"]:
-		impl_list = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
+		legacy_elements = await self.sync_to_trio(sync_function=self._find_elements_impl)(by=by, value=value)
 		
 		from osn_selenium.instances.trio_threads.web_element import WebElement
 		
 		return [
-			WebElement.from_legacy(e, lock=self._lock, limiter=self._capacity_limiter) for e in impl_list
+			get_trio_thread_instance_wrapper(
+					wrapper_class=WebElement,
+					legacy_object=legacy_element,
+					lock=self._lock,
+					limiter=self._capacity_limiter
+			)
+			for legacy_element in legacy_elements
 		]
 	
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_shadow_root: SHADOW_ROOT_TYPEHINT,
+			legacy_object: SHADOW_ROOT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
@@ -78,7 +92,7 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 		instance into the new interface.
 
 		Args:
-			selenium_shadow_root (SHADOW_ROOT_TYPEHINT): The legacy Selenium ShadowRoot instance or its wrapper.
+			legacy_object (SHADOW_ROOT_TYPEHINT): The legacy Selenium ShadowRoot instance or its wrapper.
 			lock (trio.Lock): A Trio lock for managing concurrent access.
 			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
 
@@ -86,10 +100,10 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 			Self: A new instance of a class implementing ShadowRoot.
 		"""
 		
-		legacy_shadow_root_obj = get_legacy_instance(selenium_shadow_root)
+		legacy_shadow_root_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):
-			raise TypesConvertError(from_=legacyShadowRoot, to_=selenium_shadow_root)
+			raise TypesConvertError(from_=legacyShadowRoot, to_=legacy_object)
 		
 		return cls(
 				selenium_shadow_root=legacy_shadow_root_obj,

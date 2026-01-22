@@ -52,14 +52,14 @@ class WebDriverWait(UnifiedWebDriverWait, TrioThreadMixin, AbstractWebDriverWait
 	@classmethod
 	def from_legacy(
 			cls,
-			selenium_webdriver_wait: legacyWebDriverWait,
+			legacy_object: legacyWebDriverWait,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
-		legacy_wait_obj = get_legacy_instance(selenium_webdriver_wait)
+		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):
-			raise TypesConvertError(from_=legacyWebDriverWait, to_=selenium_webdriver_wait)
+			raise TypesConvertError(from_=legacyWebDriverWait, to_=legacy_object)
 		
 		return cls(selenium_webdriver_wait=legacy_wait_obj, lock=lock, limiter=limiter)
 	

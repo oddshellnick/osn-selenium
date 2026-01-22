@@ -10,6 +10,9 @@ from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.instances.convert import (
+	get_trio_thread_instance_wrapper
+)
 from osn_selenium.abstract.webdriver.core.base import (
 	AbstractCoreBaseMixin
 )
@@ -133,8 +136,9 @@ class CoreBaseMixin(TrioThreadMixin, AbstractCoreBaseMixin):
 		Any,
 	]:
 		if isinstance(result, legacyWebElement):
-			return WebElement.from_legacy(
-					selenium_web_element=result,
+			return get_trio_thread_instance_wrapper(
+					wrapper_class=WebElement,
+					legacy_object=result,
 					lock=self._lock,
 					limiter=self._capacity_limiter
 			)

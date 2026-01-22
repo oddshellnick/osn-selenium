@@ -32,7 +32,7 @@ class Alert(UnifiedAlert, AbstractAlert):
 		self._dismiss_impl()
 	
 	@classmethod
-	def from_legacy(cls, selenium_alert: ALERT_TYPEHINT) -> Self:
+	def from_legacy(cls, legacy_object: ALERT_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium Alert object.
 
@@ -40,16 +40,16 @@ class Alert(UnifiedAlert, AbstractAlert):
 		instance into the new interface.
 
 		Args:
-			selenium_alert (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
+			legacy_object (ALERT_TYPEHINT): The legacy Selenium Alert instance or its wrapper.
 
 		Returns:
 			Self: A new instance of a class implementing Alert.
 		"""
 		
-		legacy_alert_obj = get_legacy_instance(selenium_alert)
+		legacy_alert_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_alert_obj, legacyAlert):
-			raise TypesConvertError(from_=legacyAlert, to_=selenium_alert)
+			raise TypesConvertError(from_=legacyAlert, to_=legacy_object)
 		
 		return cls(selenium_alert=legacy_alert_obj)
 	
