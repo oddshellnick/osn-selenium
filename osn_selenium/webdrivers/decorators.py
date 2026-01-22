@@ -5,7 +5,6 @@ from typing import (
 	Callable,
 	ParamSpec,
 	TypeVar,
-	cast
 )
 
 
@@ -41,11 +40,11 @@ def requires_driver(fn: _METHOD) -> _METHOD:
 
 		Args:
 			self (object): The instance on which the method is called.
-			*args (METHOD_INPUT.args): Positional arguments for the wrapped method.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
+			*args (_METHOD_INPUT.args): Positional arguments for the wrapped method.
+			**kwargs (_METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
 
 		Returns:
-			METHOD_OUTPUT: The result of the wrapped method.
+			_METHOD_OUTPUT: The result of the wrapped method.
 		"""
 		
 		getattr(self, "_ensure_driver")()
@@ -62,11 +61,11 @@ def requires_driver(fn: _METHOD) -> _METHOD:
 
 		Args:
 			self (object): The instance on which the method is called.
-			*args (METHOD_INPUT.args): Positional arguments for the wrapped method.
-			**kwargs (METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
+			*args (_METHOD_INPUT.args): Positional arguments for the wrapped method.
+			**kwargs (_METHOD_INPUT.kwargs): Keyword arguments for the wrapped method.
 
 		Returns:
-			METHOD_OUTPUT: The result of the wrapped method.
+			_METHOD_OUTPUT: The result of the wrapped method.
 		"""
 		
 		getattr(self, "_ensure_driver")()
