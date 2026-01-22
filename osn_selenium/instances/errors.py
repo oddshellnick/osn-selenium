@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Union
+from typing import Any
+from osn_selenium._functions import flatten_types
 
 
 class TypesConvertError(Exception):
@@ -42,16 +43,16 @@ class ExpectedTypeError(Exception):
 	Error raised when an object is not of the expected type.
 	"""
 	
-	def __init__(self, expected_class: Union[Any, Iterable[Any]], received_instance: Any):
+	def __init__(self, expected_class: Any, received_instance: Any):
 		"""
 		Initializes the error with expected types and the actual received instance.
 
 		Args:
-			expected_class (Union[Any, Iterable[Any]]): The type or collection of types expected.
+			expected_class (Any): The type or collection of types expected.
 			received_instance (Any): The actual instance received.
 		"""
 		
-		expected_str = ", ".join(var.__name__ for var in expected_class) if isinstance(expected_class, Iterable) else expected_class.__name__
+		expected_str = ", ".join(flatten_types(expected_class))
 		
 		super().__init__(
 				f"Expected one of [{expected_str}], got {type(received_instance).__name__}"
