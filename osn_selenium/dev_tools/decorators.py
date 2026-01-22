@@ -20,11 +20,12 @@ if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.base import BaseMixin
 	from osn_selenium.dev_tools._types import devtools_background_func_type
 
-METHOD_INPUT = ParamSpec("METHOD_INPUT")
-METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
+_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
+_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
+_METHOD = TypeVar("_METHOD", bound=Callable[..., Any])
 
 
-def warn_if_active(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
+def warn_if_active(func: _METHOD) -> _METHOD:
 	"""
 	Decorator to warn if DevTools operations are attempted while DevTools is active.
 
@@ -34,18 +35,18 @@ def warn_if_active(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METH
 	to execute the original method.
 
 	Args:
-		func (Callable[METHOD_INPUT, METHOD_OUTPUT]): The function to be wrapped. This should be a method of the DevTools class.
+		func (_METHOD): The function to be wrapped. This should be a method of the DevTools class.
 
 	Returns:
-		Callable[METHOD_INPUT, METHOD_OUTPUT]: The wrapped function. When called, it will check if DevTools is active and either
+		_METHOD: The wrapped function. When called, it will check if DevTools is active and either
 				  execute the original function or issue a warning.
 	"""
 	
 	@functools.wraps(func)
 	def sync_wrapper(
 			self: "DevTools",
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs
 	) -> Any:
 		if self.is_active:
 			warnings.warn("DevTools is active. Exit dev_tools context before changing settings.")
@@ -55,8 +56,8 @@ def warn_if_active(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METH
 	@functools.wraps(func)
 	async def async_wrapper(
 			self: "DevTools",
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs
 	) -> Any:
 		if self.is_active:
 			warnings.warn("DevTools is active. Exit dev_tools context before changing settings.")
@@ -74,7 +75,7 @@ def warn_if_active(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METH
 	)
 
 
-def log_on_error(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
+def log_on_error(func: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, _METHOD_OUTPUT]:
 	"""
 	Decorator that logs any `BaseException` raised by the decorated async function.
 
@@ -82,14 +83,14 @@ def log_on_error(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD
 	object wrapping the exception is returned instead of re-raising it.
 
 	Args:
-		func (Callable[METHOD_INPUT, METHOD_OUTPUT]): The asynchronous function to be wrapped.
+		func (_METHOD): The asynchronous function to be wrapped.
 
 	Returns:
-		Callable[METHOD_INPUT, METHOD_OUTPUT]: The wrapped asynchronous function.
+		_METHOD: The wrapped asynchronous function.
 	"""
 	
 	@functools.wraps(func)
-	def sync_wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+	def sync_wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> _METHOD_OUTPUT:
 		try:
 			return func(*args, **kwargs)
 		except BaseException as exception:
@@ -97,7 +98,7 @@ def log_on_error(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD
 			return ExceptionThrown(exception)
 	
 	@functools.wraps(func)
-	async def async_wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+	async def async_wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> _METHOD_OUTPUT:
 		try:
 			return await func(*args, **kwargs)
 		except BaseException as exception:

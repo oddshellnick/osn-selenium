@@ -1,17 +1,18 @@
 import functools
 from typing import (
-	Callable,
+	Any, Callable,
 	ParamSpec,
 	TypeVar
 )
 from osn_selenium.javascript.fingerprint.functions import add_code_level
 
 
-METHOD_INPUT = ParamSpec("METHOD_INPUT")
-METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
+_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
+_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
+_METHOD = TypeVar("_METHOD", bound=Callable[..., Any])
 
 
-def indent_code(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_INPUT, METHOD_OUTPUT]:
+def indent_code(func: _METHOD) -> _METHOD:
 	"""
 	Decorator that indents the result of a function which returns a string code block.
 
@@ -19,14 +20,14 @@ def indent_code(func: Callable[METHOD_INPUT, METHOD_OUTPUT]) -> Callable[METHOD_
 	of indentation (tab) to the result.
 
 	Args:
-		func (Callable): The function to wrap.
+		func (_METHOD): The function to wrap.
 
 	Returns:
-		Callable: The wrapped function.
+		_METHOD: The wrapped function.
 	"""
 	
 	@functools.wraps(func)
-	def wrapper(*args: METHOD_INPUT.args, **kwargs: METHOD_INPUT.kwargs) -> METHOD_OUTPUT:
+	def wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> _METHOD_OUTPUT:
 		result = func(*args, **kwargs)
 		
 		if not result:

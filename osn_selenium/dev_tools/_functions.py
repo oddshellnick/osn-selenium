@@ -226,7 +226,7 @@ async def cdp_command_error(
 	
 	if error_mode == "raise":
 		raise error
-
+	
 	if error_mode == "log":
 		await self.log_cdp_error(
 				error=error,
@@ -234,15 +234,15 @@ async def cdp_command_error(
 		)
 	
 		return ExceptionThrown(exception=error)
-
+	
 	if error_mode == "log_without_args":
 		await self.log_cdp_error(error=error, extra_data={"cdp_command": command_name})
 	
 		return ExceptionThrown(exception=error)
-
+	
 	if error_mode == "pass":
 		return ExceptionThrown(exception=error)
-
+	
 	raise ValueError(f"Wrong error_mode: {error_mode}. Expected: 'raise', 'log', 'pass'.")
 
 

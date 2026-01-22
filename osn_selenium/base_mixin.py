@@ -12,8 +12,8 @@ from typing import (
 )
 
 
-METHOD_INPUT = ParamSpec("METHOD_INPUT")
-METHOD_OUTPUT = TypeVar("METHOD_OUTPUT")
+_METHOD_INPUT = ParamSpec("_METHOD_INPUT")
+_METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
 
 
 class TrioThreadMixin:
@@ -41,10 +41,10 @@ class TrioThreadMixin:
 	
 	async def _sync_to_trio(
 			self,
-			fn: Callable[METHOD_INPUT, METHOD_OUTPUT],
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs,
-	) -> METHOD_OUTPUT:
+			fn: Callable[_METHOD_INPUT, _METHOD_OUTPUT],
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs,
+	) -> _METHOD_OUTPUT:
 		"""
 		Wraps a synchronous function to be run in a Trio thread.
 
@@ -53,7 +53,7 @@ class TrioThreadMixin:
 		the capacity limiter to control concurrency.
 
 		Args:
-			fn (Callable[METHOD_INPUT, METHOD_OUTPUT]): The synchronous function to run.
+			fn (_METHOD): The synchronous function to run.
 			*args (METHOD_INPUT.args): Positional arguments to pass to the function.
 			**kwargs (METHOD_INPUT.kwargs): Keyword arguments to pass to the function.
 
@@ -70,10 +70,10 @@ class TrioThreadMixin:
 	@asynccontextmanager
 	async def _sync_to_trio_context(
 			self,
-			cm_factory: Callable[METHOD_INPUT, ContextManager[Generator[None, METHOD_OUTPUT, None]]],
-			*args: METHOD_INPUT.args,
-			**kwargs: METHOD_INPUT.kwargs,
-	) -> AsyncGenerator[METHOD_OUTPUT, None]:
+			cm_factory: Callable[_METHOD_INPUT, ContextManager[Generator[None, _METHOD_OUTPUT, None]]],
+			*args: _METHOD_INPUT.args,
+			**kwargs: _METHOD_INPUT.kwargs,
+	) -> AsyncGenerator[_METHOD_OUTPUT, None]:
 		"""
 		Wraps a synchronous context manager to be used asynchronously with Trio.
 
