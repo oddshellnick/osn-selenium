@@ -1,20 +1,22 @@
 from abc import ABC, abstractmethod
-
-from selenium.webdriver.common.action_chains import ActionChains as legacyActionChains
+from selenium.webdriver.common.action_chains import (
+	ActionChains as legacyActionChains
+)
 
 
 class AbstractBaseMixin(ABC):
-    """
-    Base mixin class providing access to the legacy Selenium ActionChains.
-    """
+	"""
+	Base mixin class providing access to the legacy Selenium ActionChains.
+	"""
+	
+	@property
+	@abstractmethod
+	def legacy(self) -> legacyActionChains:
+		"""
+		Returns the legacy Selenium ActionChains object.
 
-    @property
-    @abstractmethod
-    def legacy(self) -> legacyActionChains:
-        """
-        Returns the legacy Selenium ActionChains object.
-
-        Returns:
-            legacyActionChains: The underlying Selenium action chain object.
-        """
-        ...
+		Returns:
+			legacyActionChains: The underlying Selenium action chain object.
+		"""
+		
+		...
