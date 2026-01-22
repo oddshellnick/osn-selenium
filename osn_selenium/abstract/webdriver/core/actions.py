@@ -5,11 +5,9 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 from osn_selenium.abstract.instances.web_driver_wait import (
 	AbstractWebDriverWait
-)
-from osn_selenium.abstract.instances.action_chains import (
-	AbstractActionChains,
 )
 
 

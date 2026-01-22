@@ -40,7 +40,7 @@ class CoreActionsMixin(CoreScriptMixin, AbstractCoreActionsMixin):
 		return ActionChains(
 				selenium_action_chains=legacyActionChains(driver=self.driver, duration=duration, devices=devices),
 				execute_js_script_function=lambda script,
-				*args: execute_js_bridge(self.driver, script, *args),
+				*args: execute_js_bridge(self, script, *args),
 		)
 	
 	@requires_driver

@@ -79,3 +79,21 @@ class SyncInstanceWrapper(Protocol):
 		"""
 		
 		...
+
+
+@runtime_checkable
+class AnyInstanceWrapper(Protocol):
+	"""
+	General protocol for any instance wrapper providing access to a legacy object.
+	"""
+	
+	@property
+	def legacy(self) -> _LEGACY_OBJECT:
+		"""
+		Returns the underlying legacy Selenium object.
+
+		Returns:
+			_LEGACY_OBJECT: The legacy Selenium instance.
+		"""
+		
+		...

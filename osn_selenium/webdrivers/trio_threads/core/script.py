@@ -1,9 +1,4 @@
-from typing import (
-	Any,
-	Dict,
-	List,
-	Optional
-)
+from typing import Any, List, Optional
 from osn_selenium.instances.trio_threads.script import Script
 from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
@@ -12,6 +7,10 @@ from osn_selenium.instances.convert import (
 )
 from osn_selenium.abstract.webdriver.core.script import (
 	AbstractCoreScriptMixin
+)
+from osn_selenium.webdrivers._functions import (
+	unwrap_args,
+	wrap_trio_thread_args
 )
 
 
@@ -25,18 +24,22 @@ class CoreScriptMixin(CoreBaseMixin, AbstractCoreScriptMixin):
 	
 	@requires_driver
 	async def execute_async_script(self, script: str, *args: Any) -> Any:
-		args = self._unwrap_args(args)
+		args = unwrap_args(args)
 		
-		return self._wrap_result(
-				result=await self.sync_to_trio(sync_function=self.driver.execute_async_script)(script, *args)
+		return wrap_trio_thread_args(
+				await self.sync_to_trio(sync_function=self.driver.execute_async_script)(script, *args),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
 		)
 	
 	@requires_driver
 	async def execute_script(self, script: str, *args: Any) -> Any:
-		args = self._unwrap_args(args)
+		args = unwrap_args(args)
 		
-		return self._wrap_result(
-				result=await self.sync_to_trio(sync_function=self.driver.execute_script)(script, *args)
+		return wrap_trio_thread_args(
+				await self.sync_to_trio(sync_function=self.driver.execute_script)(script, *args),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
 		)
 	
 	@requires_driver

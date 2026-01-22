@@ -1,16 +1,37 @@
 import re
+import trio
 import psutil
 import pathlib
 from pandas import DataFrame, Series
 from osn_system_utils.api._utils import LOCALHOST_IPS
-from selenium.webdriver.remote.webdriver import WebDriver
+from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.instances.protocols import AnyInstanceWrapper
 from typing import (
 	Any,
 	Dict,
 	List,
 	Optional,
+	TYPE_CHECKING,
 	Union
 )
+from osn_selenium.instances.sync.web_element import (
+	WebElement as SyncWebElement
+)
+from selenium.webdriver.remote.webelement import (
+	WebElement as SeleniumWebElement
+)
+from osn_selenium.instances.trio_threads.web_element import (
+	WebElement as TrioThreadWebElement
+)
+from osn_selenium.instances.convert import (
+	get_sync_instance_wrapper,
+	get_trio_thread_instance_wrapper
+)
+
+
+if TYPE_CHECKING:
+	from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin as SyncCoreWebDriver
+	from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin as TrioThreadCoreWebDriver
 
 
 def get_found_profile_dir(data: Series, profile_dir_command: str) -> Optional[str]:
@@ -128,36 +149,178 @@ def find_browser_previous_session(
 	return None
 
 
-def execute_js_bridge(driver: WebDriver, script: str, *args: Any) -> Any:
+def wrap_trio_thread_args(args: Any, lock: trio.Lock, limiter: trio.CapacityLimiter) -> Any:
 	"""
-	Executes a JavaScript script through the WebDriver.
+	Recursively wraps Selenium WebElements into TrioThreadWebElement instances.
 
 	Args:
-		driver (WebDriver): The Selenium WebDriver instance.
-		script (str): The JavaScript code to execute.
-		*args (Any): Variable length argument list for the script.
+		args (Any): Data structure containing potential Selenium WebElements.
+		lock (trio.Lock): Trio lock for synchronization.
+		limiter (trio.CapacityLimiter): Trio capacity limiter.
 
 	Returns:
-		Any: The return value of the JavaScript script.
+		Any: Data structure with wrapped elements.
 	"""
 	
-	return driver.execute_script(script, *args)
+	if isinstance(args, list):
+		return [wrap_trio_thread_args(arg, lock=lock, limiter=limiter) for arg in args]
+	
+	if isinstance(args, set):
+		return {wrap_trio_thread_args(arg, lock=lock, limiter=limiter) for arg in args}
+	
+	if isinstance(args, tuple):
+		return (wrap_trio_thread_args(arg, lock=lock, limiter=limiter) for arg in args)
+	
+	if isinstance(args, dict):
+		return {
+			wrap_trio_thread_args(key, lock=lock, limiter=limiter): wrap_trio_thread_args(value, lock=lock, limiter=limiter)
+			for key, value in args.items()
+		}
+	
+	if isinstance(args, SeleniumWebElement):
+		return get_trio_thread_instance_wrapper(
+				wrapper_class=TrioThreadWebElement,
+				legacy_object=args,
+				lock=lock,
+				limiter=limiter,
+		)
+	
+	return args
 
 
-def execute_cmd_bridge(driver: WebDriver, cmd: str, cmd_args: Dict[str, Any]) -> Any:
+def wrap_sync_args(args: Any) -> Any:
 	"""
-	Executes a Chrome DevTools Protocol command through the WebDriver.
+	Recursively wraps Selenium WebElements into SyncWebElement instances.
 
 	Args:
-		driver (WebDriver): The Selenium WebDriver instance.
-		cmd (str): The CDP command to execute.
-		cmd_args (Dict[str, Any]): The arguments for the CDP command.
+		args (Any): Data structure containing potential Selenium WebElements.
 
 	Returns:
-		Any: The result of the CDP command execution.
+		Any: Data structure with wrapped elements.
 	"""
 	
-	return driver.execute_cdp_cmd(cmd, cmd_args)
+	if isinstance(args, list):
+		return [wrap_sync_args(arg) for arg in args]
+	
+	if isinstance(args, set):
+		return {wrap_sync_args(arg) for arg in args}
+	
+	if isinstance(args, tuple):
+		return (wrap_sync_args(arg) for arg in args)
+	
+	if isinstance(args, dict):
+		return {wrap_sync_args(key): wrap_sync_args(value) for key, value in args.items()}
+	
+	if isinstance(args, SeleniumWebElement):
+		return get_sync_instance_wrapper(wrapper_class=SyncWebElement, legacy_object=args)
+	
+	return args
+
+
+def wrap_args(driver: Union["SyncCoreWebDriver", "TrioThreadCoreWebDriver"], args: Any) -> Any:
+	"""
+	Wraps arguments based on the type of the provided driver.
+
+	Args:
+		driver (Union[SyncCoreWebDriver, TrioThreadCoreWebDriver]): The driver instance.
+		args (Any): Data structure to wrap.
+
+	Returns:
+		Any: Wrapped data structure.
+
+	Raises:
+		ExpectedTypeError: If the driver is not a recognized type.
+	"""
+	
+	from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin as SyncCoreWebDriver
+	if isinstance(driver, SyncCoreWebDriver):
+		return wrap_sync_args(args)
+	
+	from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin as TrioThreadCoreWebDriver
+	if isinstance(driver, TrioThreadCoreWebDriver):
+		return wrap_trio_thread_args(args, lock=driver._lock, limiter=driver._capacity_limiter)
+	
+	raise ExpectedTypeError(
+			expected_class=(SyncCoreWebDriver, TrioThreadCoreWebDriver),
+			received_instance=driver
+	)
+
+
+def unwrap_args(args: Any) -> Any:
+	"""
+	Recursively unwraps objects by extracting the legacy Selenium object from wrappers.
+
+	Args:
+		args (Any): Data structure containing potential instance wrappers.
+
+	Returns:
+		Any: Data structure with raw Selenium objects.
+	"""
+	
+	if isinstance(args, list):
+		return [unwrap_args(arg) for arg in args]
+	
+	if isinstance(args, set):
+		return {unwrap_args(arg) for arg in args}
+	
+	if isinstance(args, tuple):
+		return (unwrap_args(arg) for arg in args)
+	
+	if isinstance(args, dict):
+		return {unwrap_args(key): unwrap_args(value) for key, value in args.items()}
+	
+	if isinstance(args, AnyInstanceWrapper):
+		return args.legacy
+	
+	return args
+
+
+def execute_js_bridge(
+		driver: Union["SyncCoreWebDriver", "TrioThreadCoreWebDriver"],
+		script: str,
+		*args: Any
+) -> Any:
+	"""
+	Executes a JavaScript script via the driver, handling wrapper conversion.
+
+	Args:
+		driver (Union[SyncCoreWebDriver, TrioThreadCoreWebDriver]): The driver instance.
+		script (str): JavaScript code.
+		*args (Any): Script arguments.
+
+	Returns:
+		Any: The result of the script execution, wrapped if necessary.
+	"""
+	
+	args = unwrap_args(args)
+	
+	result = driver.driver.execute_script(script, *args)
+	
+	return wrap_args(driver=driver, args=result)
+
+
+def execute_cmd_bridge(
+		driver: Union["SyncCoreWebDriver", "TrioThreadCoreWebDriver"],
+		cmd: str,
+		cmd_args: Dict[str, Any]
+) -> Any:
+	"""
+	Executes a CDP command via the driver, handling wrapper conversion.
+
+	Args:
+		driver (Union[SyncCoreWebDriver, TrioThreadCoreWebDriver]): The driver instance.
+		cmd (str): CDP command name.
+		cmd_args (Mapping[str, Any]): Command arguments.
+
+	Returns:
+		Any: The result of the command, wrapped if necessary.
+	"""
+	
+	cmd_args = unwrap_args(cmd_args)
+	
+	result = driver.driver.execute_cdp_cmd(cmd, cmd_args)
+	
+	return wrap_args(driver=driver, args=result)
 
 
 def build_cdp_kwargs(**kwargs: Any) -> Dict[str, Any]:

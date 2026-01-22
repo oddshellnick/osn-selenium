@@ -1,19 +1,15 @@
 from selenium import webdriver
 from abc import ABC, abstractmethod
-from selenium.webdriver.common.bidi.session import Session
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from selenium.webdriver.remote.remote_connection import RemoteConnection
-from selenium.webdriver.remote.locator_converter import LocatorConverter
 from typing import (
 	Any,
 	Dict,
-	List,
 	Optional,
-	Set,
-	Tuple,
 	Union
 )
+from selenium.webdriver.common.bidi.session import Session
+from selenium.webdriver.remote.errorhandler import ErrorHandler
+from selenium.webdriver.remote.remote_connection import RemoteConnection
+from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
@@ -45,41 +41,6 @@ class AbstractCoreBaseMixin(ABC):
 
 		Returns:
 			Session: The session object.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def _unwrap_args(self, arg: Any) -> Any:
-		"""
-		Internal method to convert local elements back into raw Selenium elements.
-
-		Args:
-			arg (Any): The argument to unwrap.
-
-		Returns:
-			Any: The raw Selenium element or object.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def _wrap_result(self, result: Any) -> Union[
-		WEB_ELEMENT_TYPEHINT,
-		List[WEB_ELEMENT_TYPEHINT],
-		Dict[Any, WEB_ELEMENT_TYPEHINT],
-		Set[WEB_ELEMENT_TYPEHINT],
-		Tuple[WEB_ELEMENT_TYPEHINT, ...],
-		Any,
-	]:
-		"""
-		Internal method to wrap raw Selenium results into local element types.
-
-		Args:
-			result (Any): The raw result from the driver.
-
-		Returns:
-			Union: The wrapped element, sequence of elements, or the original object.
 		"""
 		
 		...
