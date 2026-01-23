@@ -1,6 +1,4 @@
-from abc import ABC, abstractmethod
-from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
-from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
+from abc import ABC
 
 
 class AbstractCoreWebDriver(ABC):
@@ -12,27 +10,4 @@ class AbstractCoreWebDriver(ABC):
 	and managing various browser features.
 	"""
 	
-	@property
-	@abstractmethod
-	def cdp(self) -> AbstractCDPExecutor:
-		"""
-		Returns the CDP (Chrome DevTools Protocol) executor.
-
-		Returns:
-			AbstractCDPExecutor: The CDP executor instance used for sending
-			commands directly to the browser via the DevTools protocol.
-		"""
-		
-		...
-	
-	@property
-	@abstractmethod
-	def javascript(self) -> AbstractJSExecutor:
-		"""
-		Returns the JavaScript executor for this WebDriver instance.
-
-		Returns:
-			AbstractJSExecutor: The JavaScript executor instance.
-		"""
-		
-		...
+	pass

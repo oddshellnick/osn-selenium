@@ -1,9 +1,7 @@
 from typing import Optional, Type
 from osn_selenium.types import WindowRect
-from osn_selenium.executors.sync.cdp import CDPExecutor
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.executors.sync.javascript import JSExecutor
 from osn_selenium.webdrivers.sync.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.sync.core.file import CoreFileMixin
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
@@ -22,10 +20,6 @@ from osn_selenium.abstract.webdriver.core import (
 )
 from osn_selenium.webdrivers.sync.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.sync.core.navigation import CoreNavigationMixin
-from osn_selenium.webdrivers._functions import (
-	get_cdp_executor_bridge,
-	get_js_executor_bridge
-)
 
 
 class CoreWebDriver(
@@ -44,7 +38,7 @@ class CoreWebDriver(
 		CoreStorageMixin,
 		CoreTimeoutsMixin,
 		CoreWindowMixin,
-		AbstractCoreWebDriver
+		AbstractCoreWebDriver,
 ):
 	"""
 	Concrete Core WebDriver implementation combining all functional mixins.
@@ -82,7 +76,8 @@ class CoreWebDriver(
 				browser window. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreBaseMixin.__init__(
+				self,
 				webdriver_path=webdriver_path,
 				flags_manager_type=flags_manager_type,
 				flags=flags,
@@ -91,19 +86,3 @@ class CoreWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 		)
-		
-		self._cdp_executor = CDPExecutor(
-				execute_function=get_cdp_executor_bridge(self)
-		)
-		
-		self._js_executor = JSExecutor(
-				execute_function=get_js_executor_bridge(self)
-		)
-	
-	@property
-	def cdp(self) -> CDPExecutor:
-		return self._cdp_executor
-	
-	@property
-	def javascript(self) -> JSExecutor:
-		return self._js_executor

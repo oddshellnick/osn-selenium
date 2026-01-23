@@ -1,5 +1,4 @@
 import trio
-from osn_selenium.types import ARCHITECTURE_TYPEHINT, WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
@@ -10,7 +9,13 @@ from typing import (
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.executors.trio_threads.javascript import JSExecutor
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT,
+	WindowRect
+)
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
@@ -19,6 +24,10 @@ from osn_selenium.abstract.webdriver.core.base import (
 )
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
+)
+from osn_selenium.webdrivers._functions import (
+	get_cdp_executor_bridge,
+	get_js_executor_bridge
 )
 
 
@@ -83,7 +92,19 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 				if capacity_limiter is not None
 				else trio.CapacityLimiter(100),
 		)
-
+		
+		self._cdp_executor = CDPExecutor(
+				execute_function=get_cdp_executor_bridge(self),
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
+		
+		self._js_executor = JSExecutor(
+				execute_function=get_js_executor_bridge(self),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
+	
 	@property
 	def architecture(self) -> ARCHITECTURE_TYPEHINT:
 		return self._architecture_impl
@@ -99,6 +120,10 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 	@caps.setter
 	def caps(self, value: Dict[str, Any]) -> None:
 		self._caps_set_impl(value=value)
+	
+	@property
+	def cdp(self) -> CDPExecutor:
+		return self._cdp_executor
 	
 	@property
 	def command_executor(self) -> RemoteConnection:
@@ -126,6 +151,10 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 	@property
 	def is_active(self) -> bool:
 		return self._is_active_impl
+	
+	@property
+	def javascript(self) -> JSExecutor:
+		return self._js_executor
 	
 	@property
 	def locator_converter(self) -> LocatorConverter:

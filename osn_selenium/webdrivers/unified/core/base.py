@@ -1,4 +1,3 @@
-from osn_selenium.types import ARCHITECTURE_TYPEHINT, WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -10,6 +9,10 @@ from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.webdrivers.decorators import requires_driver
 from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT,
+	WindowRect
+)
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.remote.webdriver import (
@@ -41,7 +44,7 @@ class UnifiedCoreBaseMixin:
 		
 		if flags is not None:
 			self._webdriver_flags_manager.update_flags(flags)
-
+	
 	@property
 	def _architecture_impl(self) -> ARCHITECTURE_TYPEHINT:
 		return self._architecture
