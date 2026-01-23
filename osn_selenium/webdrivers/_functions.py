@@ -176,7 +176,7 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 	Returns:
 		Callable[[str, Any], Any]: A wrapper for execute_script.
 	"""
-	
+
 	def wrapper(script: str, *args: Any) -> Any:
 		args = unwrap_args(args)
 		

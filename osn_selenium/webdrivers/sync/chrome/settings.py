@@ -33,7 +33,7 @@ class ChromeSettingsMixin(UnifiedChromeSettingsMixin, AbstractChromeSettingsMixi
 				browser_name_in_system=browser_name_in_system,
 				use_browser_exe=use_browser_exe,
 				start_page_url=start_page_url,
-				window_rect=window_rect
+				window_rect=window_rect,
 		)
 	
 	def update_settings(
@@ -51,5 +51,5 @@ class ChromeSettingsMixin(UnifiedChromeSettingsMixin, AbstractChromeSettingsMixi
 				browser_name_in_system=browser_name_in_system,
 				use_browser_exe=use_browser_exe,
 				start_page_url=start_page_url,
-				window_rect=window_rect
+				window_rect=window_rect,
 		)

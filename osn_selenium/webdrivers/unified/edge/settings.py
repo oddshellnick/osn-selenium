@@ -1,38 +1,23 @@
 import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
-from osn_selenium.flags.models.chrome import ChromeFlags
-from osn_selenium.webdrivers.trio_threads.blink import BlinkSettingsMixin
-from osn_selenium.webdrivers.unified.chrome.settings import (
-	UnifiedChromeSettingsMixin
-)
-from osn_selenium.abstract.webdriver.chrome.settings import (
-	AbstractChromeSettingsMixin
+from osn_selenium.flags.models.edge import EdgeFlags
+from osn_selenium.webdrivers.unified.blink.settings import (
+	UnifiedBlinkSettingsMixin
 )
 
 
-class ChromeSettingsMixin(
-		UnifiedChromeSettingsMixin,
-		BlinkSettingsMixin,
-		AbstractChromeSettingsMixin
-):
-	"""
-	Mixin for configuring and updating settings of the Chrome WebDriver.
-
-	Provides methods to modify browser flags, window rectangles, and other
-	configuration parameters either before startup or during a reset.
-	"""
-	
-	async def reset_settings(
+class UnifiedEdgeSettingsMixin(UnifiedBlinkSettingsMixin):
+	def _reset_settings_impl(
 			self,
-			flags: Optional[ChromeFlags] = None,
+			flags: Optional[EdgeFlags] = None,
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await self.sync_to_trio(sync_function=self._reset_settings_impl)(
+		super()._reset_settings_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -41,16 +26,16 @@ class ChromeSettingsMixin(
 				window_rect=window_rect,
 		)
 	
-	async def update_settings(
+	def _update_settings_impl(
 			self,
-			flags: Optional[ChromeFlags] = None,
+			flags: Optional[EdgeFlags] = None,
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await self.sync_to_trio(sync_function=self._update_settings_impl)(
+		super()._update_settings_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
