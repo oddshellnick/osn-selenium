@@ -1,7 +1,5 @@
 import trio
 import pathlib
-from selenium import webdriver
-from osn_selenium.types import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -9,14 +7,23 @@ from typing import (
 )
 from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.flags.chrome import ChromeFlagsManager
-from osn_selenium.dev_tools.settings import DevToolsSettings
-from osn_selenium.webdrivers.trio_threads.blink import BlinkWebDriver
+from selenium.webdriver import (
+	Chrome as legacyChrome
+)
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT,
+	WindowRect
+)
+from osn_selenium.webdrivers.trio_threads.blink.base import BlinkBaseMixin
+from osn_selenium.webdrivers.unified.chrome.base import (
+	UnifiedChromeBaseMixin
+)
 from osn_selenium.abstract.webdriver.chrome.base import (
 	AbstractChromeBaseMixin
 )
 
 
-class ChromeBaseMixin(BlinkWebDriver, AbstractChromeBaseMixin):
+class ChromeBaseMixin(UnifiedChromeBaseMixin, BlinkBaseMixin, AbstractChromeBaseMixin):
 	"""
 	Base mixin for Chrome WebDrivers handling core initialization and state management.
 
@@ -28,24 +35,25 @@ class ChromeBaseMixin(BlinkWebDriver, AbstractChromeBaseMixin):
 	def __init__(
 			self,
 			webdriver_path: str,
+			architecture: ARCHITECTURE_TYPEHINT,
 			flags_manager_type: Type[ChromeFlagsManager] = ChromeFlagsManager,
 			use_browser_exe: bool = True,
 			browser_name_in_system: str = "Google Chrome",
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
 			flags: Optional[ChromeFlags] = None,
-			start_page_url: str = "https://www.chrome.com",
+			start_page_url: str = "about:blank",
 			implicitly_wait: int = 5,
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
-			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
-	) -> None:
+	):
 		"""
-		Initializes the asynchronous (Trio) Chrome WebDriver mixin with specified configuration.
+		Initializes the Trio-based Chrome WebDriver mixin.
 
 		Args:
 			webdriver_path (str): Path to the ChromeDriver executable.
+			architecture (ARCHITECTURE_TYPEHINT): System architecture.
 			flags_manager_type (Type[ChromeFlagsManager]): The class type used for managing Chrome flags.
 				Defaults to ChromeFlagsManager.
 			use_browser_exe (bool): Whether to use a specific browser executable path or auto-detect.
@@ -53,24 +61,22 @@ class ChromeBaseMixin(BlinkWebDriver, AbstractChromeBaseMixin):
 			browser_name_in_system (str): The name of the browser in the system registry or path.
 				Defaults to "Google Chrome".
 			browser_exe (Optional[Union[str, pathlib.Path]]): Explicit path to the Chrome browser executable.
-				If None, it may be auto-detected based on other parameters.
-			flags (Optional[ChromeFlags]): Initial set of flags to configure the Chrome instance.
-			start_page_url (str): The URL to navigate to immediately upon startup.
-				Defaults to "https://www.chrome.com".
-			implicitly_wait (int): Default implicit wait time in seconds. Defaults to 5.
-			page_load_timeout (int): Default page load timeout in seconds. Defaults to 5.
-			script_timeout (int): Default script execution timeout in seconds. Defaults to 5.
-			window_rect (Optional[WindowRect]): Initial window dimensions and position.
-				If None, browser defaults are used.
-			devtools_settings (Optional[DevToolsSettings]): Configuration for Chrome DevTools Protocol.
-			capacity_limiter (Optional[trio.CapacityLimiter]): Trio capacity limiter for concurrency control.
+			flags (Optional[ChromeFlags]): Initial set of flags.
+			start_page_url (str): The initial URL. Defaults to "about:blank".
+			implicitly_wait (int): Default implicit wait time.
+			page_load_timeout (int): Default page load timeout.
+			script_timeout (int): Default script timeout.
+			window_rect (Optional[WindowRect]): Initial window dimensions.
+			capacity_limiter (Optional[trio.CapacityLimiter]): Trio capacity limiter.
 		"""
 		
-		super().__init__(
+		BlinkBaseMixin.__init__(
+				self,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
 				use_browser_exe=use_browser_exe,
 				webdriver_path=webdriver_path,
+				architecture=architecture,
 				flags_manager_type=flags_manager_type,
 				flags=flags,
 				start_page_url=start_page_url,
@@ -78,10 +84,25 @@ class ChromeBaseMixin(BlinkWebDriver, AbstractChromeBaseMixin):
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
-				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
+		)
+		
+		UnifiedChromeBaseMixin.__init__(
+				self,
+				webdriver_path=webdriver_path,
+				architecture=architecture,
+				flags_manager_type=flags_manager_type,
+				use_browser_exe=use_browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				browser_exe=browser_exe,
+				flags=flags,
+				start_page_url=start_page_url,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
 		)
 	
 	@property
-	def driver(self) -> Optional[webdriver.Chrome]:
-		return super().driver
+	def driver(self) -> Optional[legacyChrome]:
+		return self._driver_impl

@@ -185,7 +185,7 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 		return wrapper_function(result)
 	
 	wrapper_function = get_wrap_args_function(driver=driver)
-
+	
 	return wrapper
 
 
@@ -199,14 +199,14 @@ def get_cdp_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Dict[str, An
 	Returns:
 		Callable[[str, Dict[str, Any]], Any]: A wrapper for execute_cdp_cmd.
 	"""
-	
+
 	def wrapper(cmd: str, cmd_args: Dict[str, Any]) -> Any:
 		cmd_args = unwrap_args(cmd_args)
 		
 		result = driver._driver_impl.execute_cdp_cmd(cmd, cmd_args)
 		
 		return wrapper_function(result)
-
+	
 	wrapper_function = get_wrap_args_function(driver=driver)
 	
 	return wrapper
