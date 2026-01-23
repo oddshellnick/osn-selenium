@@ -67,29 +67,27 @@ Here are some examples of how to use `osn-selenium`:
 ```python
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
 from osn_selenium.types import WindowRect
-
 # Initialize driver with specific window size
 driver = ChromeWebDriver(
-    webdriver_path="webdriver.exe",
-    window_rect=WindowRect(width=1280, height=720)
+		webdriver_path="webdriver.exe",
+		window_rect=WindowRect(width=1280, height=720)
 )
 
 try:
-    driver.start_webdriver()
-    driver.get("https://google.com")
-    
-    # Locate search bar
-    search_bar = driver.find_element(by="name", value="q")
-    
-    # Use HumanLikeActionChains for natural typing
-    actions = driver.hm_action_chain()
-    actions.hm_move_to_element(search_bar)
-    actions.click()
-    actions.hm_text_input("Selenium automation")
-    actions.perform()
-    
+	driver.start_webdriver()
+	driver.get("https://google.com")
+
+	# Locate search bar
+	search_bar = driver.find_element(by="name", value="q")
+
+	# Use HumanLikeActionChains for natural typing
+	actions = driver.action_chains()
+	actions.hm_move_to_element(search_bar)
+	actions.click()
+	actions.hm_text_input("Selenium automation")
+	actions.perform()
 finally:
-    driver.quit()
+	driver.quit()
 ```
 
 ### Asynchronous (Trio) with Fingerprint Spoofing
@@ -114,6 +112,7 @@ async def main():
     )
 
     driver = ChromeWebDriver(
+        webdriver_path="webdriver.exe",
         devtools_settings=dt_settings
     )
 
@@ -124,7 +123,6 @@ async def main():
         async with driver.devtools:
             await driver.get("https://browserleaks.com/canvas")
             await trio.sleep(10) # Let the page load and scripts run
-            
     finally:
         await driver.quit()
 
@@ -212,7 +210,6 @@ Utilities for executing JS and managing browser fingerprints.
 
 ## Future Notes
 
-*   **Advanced Fingerprinting Update:** A major global update is in development to include a sophisticated **browser fingerprinting suite**. This will enable spoofing of hardware-based identifiers (Canvas, WebGL, WebAudio, etc.) to significantly enhance evasion of advanced anti-bot systems.
 *   **Firefox (GeckoDriver) Support:** Implementation of Gecko-specific flags and full BiDi/CDP integration for Firefox.
 *   **macOS Support:** Extending browser auto-detection and lifecycle management for macOS environments.
 *   **High-Level CDP Handlers:** Expanding the `dev_tools.domains` module to include simplified event-driven logic for `Network`, `Page`, and `Runtime` domains, similar to the current `Fetch` implementation.
