@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.web_authn import (
 )
 
 
+__all__ = ["WebAuthnCDPExecutor"]
+
+
 class WebAuthnCDPExecutor(
 		UnifiedWebAuthnCDPExecutor,
 		TrioThreadMixin,

@@ -3,9 +3,9 @@ from contextlib import (
 	AbstractAsyncContextManager
 )
 from osn_selenium.dev_tools.target import DevToolsTarget
-from osn_selenium.dev_tools.utils import DevToolsPackage
 from osn_selenium.dev_tools.logger.main import MainLogger
 from osn_selenium.dev_tools.domains import DomainsSettings
+from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from typing import (
 	Any,
@@ -13,9 +13,9 @@ from typing import (
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.dev_tools.logger.functions import prepare_log_dir
+from osn_selenium.dev_tools._system_utils import prepare_log_dir
 from selenium.webdriver.remote.bidi_connection import BidiConnection
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools.logger.models import (
 	CDPLogLevelStats,
 	CDPMainLogEntry,
 	CDPTargetTypeStats,
@@ -24,6 +24,8 @@ from osn_selenium.dev_tools.logger.types import (
 	FingerprintMainLogEntry
 )
 
+
+__all__ = ["BaseMixin"]
 
 if TYPE_CHECKING:
 	from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver

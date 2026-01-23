@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractPwaCDPExecutor"]
+
+
 class AbstractPwaCDPExecutor(ABC):
 	@abstractmethod
 	def change_app_user_settings(

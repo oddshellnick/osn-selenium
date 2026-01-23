@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.profiler import (
 )
 
 
+__all__ = ["ProfilerCDPExecutor"]
+
+
 class ProfilerCDPExecutor(UnifiedProfilerCDPExecutor, AbstractProfilerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedProfilerCDPExecutor.__init__(self, execute_function=execute_function)

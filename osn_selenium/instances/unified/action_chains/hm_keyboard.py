@@ -1,10 +1,13 @@
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances._functions import text_input_to_parts
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.unified.action_chains.utils import UnifiedUtilsMixin
 from osn_selenium.instances.unified.action_chains.keyboard import UnifiedKeyboardMixin
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
 )
+
+
+__all__ = ["UnifiedHMKeyboardMixin"]
 
 
 class UnifiedHMKeyboardMixin(UnifiedUtilsMixin, UnifiedKeyboardMixin):

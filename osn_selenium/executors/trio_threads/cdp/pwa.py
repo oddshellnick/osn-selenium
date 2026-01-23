@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.pwa import (
 )
 
 
+__all__ = ["PwaCDPExecutor"]
+
+
 class PwaCDPExecutor(UnifiedPwaCDPExecutor, TrioThreadMixin, AbstractPwaCDPExecutor):
 	def __init__(
 			self,

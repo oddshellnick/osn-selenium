@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.animation import (
 )
 
 
+__all__ = ["AnimationCDPExecutor"]
+
+
 class AnimationCDPExecutor(UnifiedAnimationCDPExecutor, AbstractAnimationCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedAnimationCDPExecutor.__init__(self, execute_function=execute_function)

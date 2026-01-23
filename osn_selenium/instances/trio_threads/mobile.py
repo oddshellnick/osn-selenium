@@ -1,15 +1,20 @@
 import trio
 from typing import List, Self, Union
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.types import MOBILE_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import MOBILE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.mobile import UnifiedMobile
 from osn_selenium.abstract.instances.mobile import AbstractMobile
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
 )
+
+
+__all__ = ["Mobile"]
 
 
 class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
@@ -40,7 +45,7 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
 	async def context(self) -> str:
-		return await self.sync_to_trio(sync_function=self._context_impl)()
+		return await self.sync_to_trio(sync_function=self._get_context_impl)()
 	
 	async def contexts(self) -> List[str]:
 		return await self.sync_to_trio(sync_function=self._contexts_impl)()
@@ -70,7 +75,7 @@ class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 		legacy_mobile_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypesConvertError(from_=legacyMobile, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyMobile, to_=legacy_object)
 		
 		return cls(selenium_mobile=legacy_mobile_obj, lock=lock, limiter=limiter)
 	

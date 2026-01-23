@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.dom import (
 )
 
 
+__all__ = ["DomCDPExecutor"]
+
+
 class DomCDPExecutor(UnifiedDomCDPExecutor, TrioThreadMixin, AbstractDomCDPExecutor):
 	def __init__(
 			self,

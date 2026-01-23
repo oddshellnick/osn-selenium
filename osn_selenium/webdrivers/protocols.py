@@ -9,6 +9,9 @@ from selenium.webdriver.remote.webdriver import (
 )
 
 
+__all__ = ["SyncWebDriver", "TrioThreadWebDriver"]
+
+
 @runtime_checkable
 class TrioThreadWebDriver(Protocol):
 	"""
@@ -44,19 +47,4 @@ class SyncWebDriver(Protocol):
 	
 	@property
 	def driver(self) -> Optional[legacyWebDriver]:
-		...
-
-
-@runtime_checkable
-class AnyWebDriver(Protocol):
-	"""
-	Abstract protocol encompassing different types of WebDriver implementations.
-	"""
-	
-	@property
-	def _architecture_impl(self) -> str:
-		...
-	
-	@property
-	def _driver_impl(self) -> Optional[legacyWebDriver]:
 		...

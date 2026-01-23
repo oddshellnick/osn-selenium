@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.web_authn import (
 )
 
 
+__all__ = ["WebAuthnCDPExecutor"]
+
+
 class WebAuthnCDPExecutor(UnifiedWebAuthnCDPExecutor, AbstractWebAuthnCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedWebAuthnCDPExecutor.__init__(self, execute_function=execute_function)

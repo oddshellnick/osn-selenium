@@ -1,15 +1,11 @@
-import pathlib
-from typing import (
-	Optional,
-	Type,
-	Union
-)
+from typing import Optional, Type
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.webdrivers.sync.chrome.base import ChromeBaseMixin
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT,
+	PATH_TYPEHINT
 )
 from osn_selenium.webdrivers.unified.yandex.base import (
 	UnifiedYandexBaseMixin
@@ -17,6 +13,9 @@ from osn_selenium.webdrivers.unified.yandex.base import (
 from osn_selenium.abstract.webdriver.yandex.base import (
 	AbstractYandexBaseMixin
 )
+
+
+__all__ = ["YandexBaseMixin"]
 
 
 class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBaseMixin):
@@ -31,11 +30,11 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 	def __init__(
 			self,
 			webdriver_path: str,
-			architecture: ARCHITECTURE_TYPEHINT,
+			architecture: ARCHITECTURES_TYPEHINT,
 			flags_manager_type: Type[YandexFlagsManager] = YandexFlagsManager,
 			use_browser_exe: bool = True,
 			browser_name_in_system: str = "Yandex",
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			flags: Optional[YandexFlags] = None,
 			start_page_url: str = "about:blank",
 			implicitly_wait: int = 5,
@@ -55,7 +54,7 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 				Defaults to True.
 			browser_name_in_system (str): The name of the browser in the system registry or path.
 				Defaults to "Yandex".
-			browser_exe (Optional[Union[str, pathlib.Path]]): Explicit path to the Yandex browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): Explicit path to the Yandex browser executable.
 				If None, it may be auto-detected based on other parameters.
 			flags (Optional[YandexFlags]): Initial set of flags to configure the Yandex instance.
 			start_page_url (str): The URL to navigate to immediately upon startup.

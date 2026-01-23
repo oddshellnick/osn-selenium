@@ -1,11 +1,11 @@
-import pathlib
 from pydantic import Field
-from typing import Optional, Union
-from osn_selenium.types import ExtraDictModel
-from osn_selenium.flags._types import (
-	AutoplayPolicyType,
-	LogLevelType,
-	UseGLType
+from typing import Optional
+from osn_selenium.models import ExtraDictModel
+from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium.flags._typehints import (
+	AUTOPLAY_POLICY_TYPEHINT,
+	LOG_LEVEL_TYPEHINT,
+	USE_GL_TYPEHINT
 )
 from osn_selenium.flags.models.base import (
 	BrowserArguments,
@@ -13,6 +13,15 @@ from osn_selenium.flags.models.base import (
 	BrowserExperimentalOptions,
 	BrowserFlags
 )
+
+
+__all__ = [
+	"BlinkArguments",
+	"BlinkAttributes",
+	"BlinkExperimentalOptions",
+	"BlinkFeatures",
+	"BlinkFlags"
+]
 
 
 class BlinkFeatures(ExtraDictModel):
@@ -155,7 +164,7 @@ class BlinkArguments(BrowserArguments):
 		proxy_server (Optional[str]): Specifies a proxy server to use.
 		remote_debugging_port (Optional[int]): Specifies the remote debugging port.
 		remote_debugging_address (Optional[str]): Specifies the remote debugging address.
-		use_file_for_fake_video_capture (Optional[Union[str, pathlib.Path]]): Uses a file for fake video capture.
+		use_file_for_fake_video_capture (Optional[PATH_TYPEHINT]): Uses a file for fake video capture.
 		autoplay_policy (Optional[AutoplayPolicyType]): Sets the autoplay policy.
 		log_level (Optional[LogLevelType]): Sets the browser's log level.
 		use_gl (Optional[UseGLType]): Specifies the GL backend to use.
@@ -223,10 +232,10 @@ class BlinkArguments(BrowserArguments):
 	proxy_server: Optional[str] = None
 	remote_debugging_port: Optional[int] = None
 	remote_debugging_address: Optional[str] = None
-	use_file_for_fake_video_capture: Optional[Union[str, pathlib.Path]] = None
-	autoplay_policy: Optional[AutoplayPolicyType] = None
-	log_level: Optional[LogLevelType] = None
-	use_gl: Optional[UseGLType] = None
+	use_file_for_fake_video_capture: Optional[PATH_TYPEHINT] = None
+	autoplay_policy: Optional[AUTOPLAY_POLICY_TYPEHINT] = None
+	log_level: Optional[LOG_LEVEL_TYPEHINT] = None
+	use_gl: Optional[USE_GL_TYPEHINT] = None
 	force_color_profile: Optional[str] = None
 
 

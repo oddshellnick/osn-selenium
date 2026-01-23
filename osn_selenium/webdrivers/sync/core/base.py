@@ -1,3 +1,4 @@
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -9,11 +10,10 @@ from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.executors.sync.javascript import JSExecutor
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT
 )
+from selenium.webdriver.remote.errorhandler import ErrorHandler
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
@@ -27,6 +27,9 @@ from osn_selenium.webdrivers._functions import (
 	get_cdp_executor_bridge,
 	get_js_executor_bridge
 )
+
+
+__all__ = ["CoreBaseMixin"]
 
 
 class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
@@ -82,7 +85,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 		self._js_executor = JSExecutor(execute_function=get_js_executor_bridge(self))
 	
 	@property
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		return self._architecture_impl
 	
 	@property
@@ -152,7 +155,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 	def pinned_scripts(self, value: Dict[str, Any]) -> None:
 		self._pinned_scripts_set_impl(value)
 	
-	def _session(self) -> Session:
+	def session(self) -> Session:
 		return self._session_impl()
 	
 	@property

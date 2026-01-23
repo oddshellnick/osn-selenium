@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.models import WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
@@ -9,13 +10,12 @@ from typing import (
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
-from osn_selenium.executors.trio_threads.cdp import CDPExecutor
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.executors.trio_threads.javascript import JSExecutor
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT
 )
+from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
+from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
@@ -29,6 +29,9 @@ from osn_selenium.webdrivers._functions import (
 	get_cdp_executor_bridge,
 	get_js_executor_bridge
 )
+
+
+__all__ = ["CoreBaseMixin"]
 
 
 class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin):
@@ -106,7 +109,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 		)
 	
 	@property
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		return self._architecture_impl
 	
 	@property
@@ -176,7 +179,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 	def pinned_scripts(self, value: Dict[str, Any]) -> None:
 		self._pinned_scripts_set_impl(value=value)
 	
-	async def _session(self) -> Session:
+	async def session(self) -> Session:
 		return await self.sync_to_trio(sync_function=self._session_impl)()
 	
 	@property

@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from selenium.webdriver.common.alert import Alert as legacyAlert
 
 
+__all__ = ["AbstractAlert"]
+
+
 class AbstractAlert(ABC):
 	"""
 	Abstract base class for an alert dialog.

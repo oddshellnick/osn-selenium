@@ -12,6 +12,9 @@ from osn_selenium.abstract.webdriver.core.element import (
 )
 
 
+__all__ = ["CoreElementMixin"]
+
+
 class CoreElementMixin(UnifiedCoreElementMixin, AbstractCoreElementMixin):
 	"""
 	Mixin for DOM element retrieval in Core WebDrivers.

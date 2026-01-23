@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.target import (
 )
 
 
+__all__ = ["TargetCDPExecutor"]
+
+
 class TargetCDPExecutor(UnifiedTargetCDPExecutor, AbstractTargetCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedTargetCDPExecutor.__init__(self, execute_function=execute_function)

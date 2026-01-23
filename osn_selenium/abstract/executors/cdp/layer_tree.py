@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractLayerTreeCDPExecutor"]
+
+
 class AbstractLayerTreeCDPExecutor(ABC):
 	@abstractmethod
 	def compositing_reasons(self, layer_id: str) -> Tuple[List[str], List[str]]:

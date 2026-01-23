@@ -4,6 +4,9 @@ from osn_selenium.abstract.webdriver.chrome.base import (
 )
 
 
+__all__ = ["AbstractYandexBaseMixin"]
+
+
 class AbstractYandexBaseMixin(AbstractChromeBaseMixin, ABC):
 	"""
 	Abstract mixin defining the base interface for Yandex WebDriver.

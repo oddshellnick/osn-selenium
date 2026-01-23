@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractHeadlessExperimentalCDPExecutor"]
+
+
 class AbstractHeadlessExperimentalCDPExecutor(ABC):
 	@abstractmethod
 	def begin_frame(

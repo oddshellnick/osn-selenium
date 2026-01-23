@@ -12,6 +12,9 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
+__all__ = ["AbstractStorage"]
+
+
 class AbstractStorage(ABC):
 	"""
 	Abstract base class for interacting with browser storage.

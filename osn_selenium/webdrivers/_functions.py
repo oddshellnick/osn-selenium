@@ -1,10 +1,10 @@
 import re
 import trio
 import psutil
-import pathlib
 from pandas import DataFrame, Series
+from osn_selenium._functions import validate_path
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_system_utils.api._utils import LOCALHOST_IPS
-from osn_selenium.instances.errors import ExpectedTypeError
 from osn_selenium.instances.protocols import AnyInstanceWrapper
 from typing import (
 	Any,
@@ -14,24 +14,43 @@ from typing import (
 	Optional,
 	Union
 )
+from osn_selenium.exceptions.protocol import (
+	ProtocolComplianceError
+)
+from osn_selenium.webdrivers._typehints import (
+	ANY_WEBDRIVER_PROTOCOL_TYPEHINT
+)
 from osn_selenium.instances.sync.web_element import (
 	WebElement as SyncWebElement
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as SeleniumWebElement
 )
-from osn_selenium.instances.trio_threads.web_element import (
-	WebElement as TrioThreadWebElement
-)
 from osn_selenium.webdrivers.protocols import (
-	AnyWebDriver,
 	SyncWebDriver,
 	TrioThreadWebDriver
+)
+from osn_selenium.instances.trio_threads.web_element import (
+	WebElement as TrioThreadWebElement
 )
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper,
 	get_trio_thread_instance_wrapper
 )
+
+
+__all__ = [
+	"build_cdp_kwargs",
+	"find_browser_previous_session",
+	"get_active_executables_table",
+	"get_cdp_executor_bridge",
+	"get_found_profile_dir",
+	"get_js_executor_bridge",
+	"get_wrap_args_function",
+	"unwrap_args",
+	"wrap_sync_args",
+	"wrap_trio_thread_args"
+]
 
 
 def unwrap_args(args: Any) -> Any:
@@ -131,12 +150,12 @@ def wrap_sync_args(args: Any) -> Any:
 	return args
 
 
-def get_wrap_args_function(driver: AnyWebDriver) -> Callable[[Any], Any]:
+def get_wrap_args_function(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[[Any], Any]:
 	"""
 	Determines the appropriate argument wrapping function based on the driver's architecture.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[Any], Any]: A function to wrap elements.
@@ -157,21 +176,15 @@ def get_wrap_args_function(driver: AnyWebDriver) -> Callable[[Any], Any]:
 	
 		return wrapper
 	
-	from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin as SyncCoreWebDriver
-	from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin as TrioThreadCoreWebDriver
-	
-	raise ExpectedTypeError(
-			expected_class=(SyncCoreWebDriver, TrioThreadCoreWebDriver),
-			received_instance=driver
-	)
+	raise ProtocolComplianceError(instance=driver, expected_protocols=(SyncWebDriver, TrioThreadWebDriver))
 
 
-def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
+def get_js_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[[str, Any], Any]:
 	"""
 	Creates a bridge function for executing JavaScript in the browser.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[str, Any], Any]: A wrapper for execute_script.
@@ -189,12 +202,12 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 	return wrapper
 
 
-def get_cdp_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Dict[str, Any]], Any]:
+def get_cdp_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[[str, Dict[str, Any]], Any]:
 	"""
 	Creates a bridge function for executing CDP commands in the browser.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[str, Dict[str, Any]], Any]: A wrapper for execute_cdp_cmd.
@@ -246,7 +259,7 @@ def get_found_profile_dir(data: Series, profile_dir_command: str) -> Optional[st
 	return None
 
 
-def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataFrame:
+def get_active_executables_table(browser_exe: PATH_TYPEHINT) -> DataFrame:
 	"""
 	Retrieves a table of active executables related to a specified browser, listening on localhost.
 
@@ -255,7 +268,7 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 	that are in a "LISTENING" state on localhost.
 
 	Args:
-		browser_exe (Union[str, pathlib.Path]): The path to the browser executable.
+		browser_exe (PATH_TYPEHINT): The path to the browser executable.
 											   It can be a string or a pathlib.Path object.
 
 	Returns:
@@ -264,7 +277,7 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 				   Returns an empty DataFrame if no matching executables are found.
 	"""
 	
-	target_name = browser_exe if isinstance(browser_exe, str) else browser_exe.name
+	target_name = validate_path(path=browser_exe).name
 	rows: List[Dict[str, Union[str, int]]] = []
 	
 	for conn in psutil.net_connections(kind="inet"):
@@ -295,7 +308,7 @@ def get_active_executables_table(browser_exe: Union[str, pathlib.Path]) -> DataF
 
 
 def find_browser_previous_session(
-		browser_exe: Union[str, pathlib.Path],
+		browser_exe: PATH_TYPEHINT,
 		profile_dir_command: str,
 		profile_dir: Optional[str]
 ) -> Optional[int]:
@@ -306,7 +319,7 @@ def find_browser_previous_session(
 	It searches for listening connections associated with the given browser executable and profile directory.
 
 	Args:
-		browser_exe (Union[str, pathlib.Path]): Path to the browser executable or just the executable name.
+		browser_exe (PATH_TYPEHINT): Path to the browser executable or just the executable name.
 		profile_dir_command (str): Command line pattern to find the profile directory argument.
 								   Should use `{value}` as a placeholder for the directory path.
 		profile_dir (Optional[str]): The expected profile directory path to match against.

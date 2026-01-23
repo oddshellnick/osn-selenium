@@ -1,18 +1,23 @@
-import pathlib
-import warnings
-from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from typing import Optional
+from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.blink import BlinkFlags
+from osn_selenium.exceptions.webdriver import (
+	WebDriverAlreadyRunningError
+)
 from osn_selenium.webdrivers.unified.blink.base import (
 	UnifiedBlinkBaseMixin
 )
+
+
+__all__ = ["UnifiedBlinkSettingsMixin"]
 
 
 class UnifiedBlinkSettingsMixin(UnifiedBlinkBaseMixin):
 	def _reset_settings_impl(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
@@ -43,12 +48,12 @@ class UnifiedBlinkSettingsMixin(UnifiedBlinkBaseMixin):
 						self._debugging_ip_impl
 				)
 		else:
-			warnings.warn("Browser is already running.")
+			raise WebDriverAlreadyRunningError()
 	
 	def _update_settings_impl(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -78,4 +83,4 @@ class UnifiedBlinkSettingsMixin(UnifiedBlinkBaseMixin):
 					self._debugging_ip_impl
 			)
 		else:
-			warnings.warn("Browser is already running.")
+			raise WebDriverAlreadyRunningError()

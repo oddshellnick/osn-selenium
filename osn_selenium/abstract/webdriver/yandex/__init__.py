@@ -4,6 +4,9 @@ from osn_selenium.abstract.webdriver.chrome import (
 )
 
 
+__all__ = ["AbstractYandexWebDriver"]
+
+
 class AbstractYandexWebDriver(AbstractChromeWebDriver, ABC):
 	"""
 	Abstract composite class representing a full Yandex WebDriver.

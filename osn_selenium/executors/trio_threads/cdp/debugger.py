@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.debugger import (
 )
 
 
+__all__ = ["DebuggerCDPExecutor"]
+
+
 class DebuggerCDPExecutor(
 		UnifiedDebuggerCDPExecutor,
 		TrioThreadMixin,

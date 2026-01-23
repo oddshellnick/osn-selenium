@@ -1,14 +1,17 @@
 import trio
 from typing import Optional, Tuple
-from osn_selenium.dev_tools.utils import TargetData
+from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.settings import LoggerSettings
-from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.logger.functions import validate_log_filter
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.exceptions.devtools import TrioEndExceptions
+from osn_selenium.dev_tools._validators import validate_log_filter
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.dev_tools.logger.models import (
 	CDPTargetLogEntry,
 	FingerprintTargetLogEntry
 )
+
+
+__all__ = ["TargetLogger", "build_target_logger"]
 
 
 class TargetLogger:
@@ -153,7 +156,7 @@ class TargetLogger:
 					if self._fingerprint_log_level_filter(log_entry.level) and self._fingerprint_category_filter(log_entry.api):
 						await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
 						await file.flush()
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:
 			log_exception(error)
@@ -179,7 +182,7 @@ class TargetLogger:
 					if self._cdp_log_level_filter(log_entry.level) and self._cdp_target_type_filter(log_entry.target_data.type_):
 						await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
 						await file.flush()
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:
 			log_exception(error)
@@ -205,7 +208,7 @@ class TargetLogger:
 					self._nursery_object.start_soon(self._write_fingerprint_file)
 		
 				self._is_active = True
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			await self.close()
 		except* BaseException as error:
 			log_exception(error)

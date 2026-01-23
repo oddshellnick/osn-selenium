@@ -5,7 +5,7 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.sync.switch_to import SwitchTo
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Position,
 	Rectangle,
 	Size
@@ -19,6 +19,9 @@ from osn_selenium.webdrivers.unified.core.window import (
 from osn_selenium.abstract.webdriver.core.window import (
 	AbstractCoreWindowMixin
 )
+
+
+__all__ = ["CoreWindowMixin"]
 
 
 class CoreWindowMixin(UnifiedCoreWindowMixin, AbstractCoreWindowMixin):

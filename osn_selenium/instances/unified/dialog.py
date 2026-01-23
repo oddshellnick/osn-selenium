@@ -1,15 +1,18 @@
 from typing import List, Optional
 from selenium.webdriver.common.fedcm.account import Account
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )
 
 
+__all__ = ["UnifiedDialog"]
+
+
 class UnifiedDialog:
 	def __init__(self, selenium_dialog: legacyDialog):
 		if not isinstance(selenium_dialog, legacyDialog):
-			raise ExpectedTypeError(expected_class=legacyDialog, received_instance=selenium_dialog)
+			raise NotExpectedTypeError(expected_type=legacyDialog, received_instance=selenium_dialog)
 		
 		self._selenium_dialog = selenium_dialog
 	

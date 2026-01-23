@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.device_access import (
 )
 
 
+__all__ = ["DeviceAccessCDPExecutor"]
+
+
 class DeviceAccessCDPExecutor(UnifiedDeviceAccessCDPExecutor, AbstractDeviceAccessCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedDeviceAccessCDPExecutor.__init__(self, execute_function=execute_function)

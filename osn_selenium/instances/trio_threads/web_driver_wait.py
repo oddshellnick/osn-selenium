@@ -5,9 +5,11 @@ from typing import (
 	TypeVar
 )
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.types import (
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+from osn_selenium.instances._typehints import (
 	WebDriverWaitInputType
 )
 from osn_selenium.instances.unified.web_driver_wait import UnifiedWebDriverWait
@@ -18,6 +20,8 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 	AbstractWebDriverWait
 )
 
+
+__all__ = ["OUTPUT", "WebDriverWait"]
 
 OUTPUT = TypeVar("OUTPUT")
 
@@ -56,10 +60,25 @@ class WebDriverWait(UnifiedWebDriverWait, TrioThreadMixin, AbstractWebDriverWait
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter,
 	) -> Self:
+		"""
+		Creates a WebDriverWait wrapper instance from a legacy Selenium object.
+
+		Args:
+			legacy_object (legacyWebDriverWait): The legacy object to convert.
+			lock (trio.Lock): A Trio lock for managing concurrent access.
+			limiter (trio.CapacityLimiter): A Trio capacity limiter for rate limiting.
+
+		Returns:
+			Self: An instance of the WebDriverWait wrapper.
+
+		Raises:
+			CannotConvertTypeError: If the provided object cannot be converted to legacyWebDriverWait.
+		"""
+		
 		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):
-			raise TypesConvertError(from_=legacyWebDriverWait, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyWebDriverWait, to_=legacy_object)
 		
 		return cls(selenium_webdriver_wait=legacy_wait_obj, lock=lock, limiter=limiter)
 	

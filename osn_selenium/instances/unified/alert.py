@@ -1,11 +1,14 @@
-from osn_selenium.instances.errors import ExpectedTypeError
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.exceptions.instance import NotExpectedTypeError
+
+
+__all__ = ["UnifiedAlert"]
 
 
 class UnifiedAlert:
 	def __init__(self, selenium_alert: legacyAlert):
 		if not isinstance(selenium_alert, legacyAlert):
-			raise ExpectedTypeError(expected_class=legacyAlert, received_instance=selenium_alert)
+			raise NotExpectedTypeError(expected_type=legacyAlert, received_instance=selenium_alert)
 		
 		self._selenium_alert = selenium_alert
 	

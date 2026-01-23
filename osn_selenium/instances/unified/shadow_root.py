@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 from selenium.webdriver.common.by import By
-from osn_selenium.instances.errors import ExpectedTypeError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
@@ -10,13 +10,13 @@ from selenium.webdriver.remote.webelement import (
 )
 
 
+__all__ = ["UnifiedShadowRoot"]
+
+
 class UnifiedShadowRoot:
 	def __init__(self, selenium_shadow_root: legacyShadowRoot):
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):
-			raise ExpectedTypeError(
-					expected_class=legacyShadowRoot,
-					received_instance=selenium_shadow_root
-			)
+			raise NotExpectedTypeError(expected_type=legacyShadowRoot, received_instance=selenium_shadow_root)
 		
 		self._selenium_shadow_root = selenium_shadow_root
 	

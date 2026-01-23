@@ -2,6 +2,9 @@ from typing import Any, List
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractBlinkLoggingMixin"]
+
+
 class AbstractBlinkLoggingMixin(ABC):
 	"""
 	Abstract mixin defining the interface for accessing browser logs.

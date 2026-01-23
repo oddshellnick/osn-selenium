@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.log import (
 )
 
 
+__all__ = ["LogCDPExecutor"]
+
+
 class LogCDPExecutor(UnifiedLogCDPExecutor, AbstractLogCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedLogCDPExecutor.__init__(self, execute_function=execute_function)

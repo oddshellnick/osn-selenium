@@ -7,6 +7,9 @@ from osn_selenium.abstract.webdriver.blink.logging import (
 )
 
 
+__all__ = ["BlinkLoggingMixin"]
+
+
 class BlinkLoggingMixin(UnifiedBlinkLoggingMixin, AbstractBlinkLoggingMixin):
 	"""
 	Mixin for retrieving and managing browser logs for Blink WebDrivers.

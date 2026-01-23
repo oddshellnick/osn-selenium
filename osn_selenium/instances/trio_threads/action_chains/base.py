@@ -13,6 +13,8 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["BaseMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.action_chains import ActionChains
 

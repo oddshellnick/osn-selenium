@@ -6,12 +6,17 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.instances.types import FEDCM_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import FEDCM_TYPEHINT
 from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+
+
+__all__ = ["FedCM"]
 
 
 class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
@@ -84,7 +89,7 @@ class FedCM(UnifiedFedCM, TrioThreadMixin, AbstractFedCM):
 		legacy_fedcm_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_fedcm_obj, legacyFedCM):
-			raise TypesConvertError(from_=legacyFedCM, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyFedCM, to_=legacy_object)
 		
 		return cls(selenium_fedcm=legacy_fedcm_obj, lock=lock, limiter=limiter)
 	

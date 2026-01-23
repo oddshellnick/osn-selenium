@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.browser import (
 )
 
 
+__all__ = ["BrowserCDPExecutor"]
+
+
 class BrowserCDPExecutor(UnifiedBrowserCDPExecutor, TrioThreadMixin, AbstractBrowserCDPExecutor):
 	def __init__(
 			self,

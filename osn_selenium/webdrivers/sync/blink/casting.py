@@ -7,6 +7,9 @@ from osn_selenium.abstract.webdriver.blink.casting import (
 )
 
 
+__all__ = ["BlinkCastingMixin"]
+
+
 class BlinkCastingMixin(UnifiedBlinkCastingMixin, AbstractBlinkCastingMixin):
 	"""
 	Mixin handling object type casting and wrapping for Blink WebDrivers.

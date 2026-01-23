@@ -4,12 +4,15 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.common.virtual_authenticator import (
 	Credential,
 	VirtualAuthenticatorOptions
 )
+
+
+__all__ = ["UnifiedCoreAuthMixin"]
 
 
 class UnifiedCoreAuthMixin(UnifiedCoreBaseMixin):

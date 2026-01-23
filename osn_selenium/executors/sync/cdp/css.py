@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.css import (
 )
 
 
+__all__ = ["CssCDPExecutor"]
+
+
 class CssCDPExecutor(UnifiedCssCDPExecutor, AbstractCssCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedCssCDPExecutor.__init__(self, execute_function=execute_function)

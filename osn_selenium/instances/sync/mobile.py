@@ -1,13 +1,18 @@
 from typing import List, Self, Union
-from osn_selenium.instances.types import MOBILE_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import MOBILE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.mobile import UnifiedMobile
 from osn_selenium.abstract.instances.mobile import AbstractMobile
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
 )
+
+
+__all__ = ["Mobile"]
 
 
 class Mobile(UnifiedMobile, AbstractMobile):
@@ -29,7 +34,7 @@ class Mobile(UnifiedMobile, AbstractMobile):
 		UnifiedMobile.__init__(self, selenium_mobile=selenium_mobile)
 	
 	def context(self) -> str:
-		return self._context_impl()
+		return self._get_context_impl()
 	
 	def contexts(self) -> List[str]:
 		return self._contexts_impl()
@@ -52,7 +57,7 @@ class Mobile(UnifiedMobile, AbstractMobile):
 		legacy_mobile_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_mobile_obj, legacyMobile):
-			raise TypesConvertError(from_=legacyMobile, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyMobile, to_=legacy_object)
 		
 		return cls(selenium_mobile=legacy_mobile_obj)
 	

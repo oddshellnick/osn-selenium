@@ -2,6 +2,9 @@ from typing import Optional, Tuple
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractIoCDPExecutor"]
+
+
 class AbstractIoCDPExecutor(ABC):
 	@abstractmethod
 	def close(self, handle: str) -> None:

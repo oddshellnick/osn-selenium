@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.overlay import (
 )
 
 
+__all__ = ["OverlayCDPExecutor"]
+
+
 class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, TrioThreadMixin, AbstractOverlayCDPExecutor):
 	def __init__(
 			self,

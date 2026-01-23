@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractOverlayCDPExecutor"]
+
+
 class AbstractOverlayCDPExecutor(ABC):
 	@abstractmethod
 	def disable(self) -> None:

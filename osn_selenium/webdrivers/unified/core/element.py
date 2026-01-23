@@ -1,10 +1,13 @@
 from typing import List, Optional
 from selenium.webdriver.common.by import By
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
 )
+
+
+__all__ = ["UnifiedCoreElementMixin"]
 
 
 class UnifiedCoreElementMixin(UnifiedCoreBaseMixin):

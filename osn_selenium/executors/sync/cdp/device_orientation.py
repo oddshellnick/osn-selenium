@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.device_orientation import (
 )
 
 
+__all__ = ["DeviceOrientationCDPExecutor"]
+
+
 class DeviceOrientationCDPExecutor(
 		UnifiedDeviceOrientationCDPExecutor,
 		AbstractDeviceOrientationCDPExecutor

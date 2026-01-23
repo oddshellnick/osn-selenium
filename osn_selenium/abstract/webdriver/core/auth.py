@@ -13,6 +13,9 @@ from selenium.webdriver.common.virtual_authenticator import (
 )
 
 
+__all__ = ["AbstractCoreAuthMixin"]
+
+
 class AbstractCoreAuthMixin(ABC):
 	"""Mixin responsible for credentials, virtual authenticators, and FedCM."""
 	

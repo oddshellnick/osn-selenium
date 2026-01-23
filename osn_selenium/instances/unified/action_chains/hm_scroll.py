@@ -1,8 +1,8 @@
 from typing import Optional
-from osn_selenium.types import Point
+from osn_selenium.models import Point
 from osn_selenium.instances._functions import scroll_to_parts
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from osn_selenium.instances.unified.action_chains.utils import UnifiedUtilsMixin
 from osn_selenium.instances.unified.action_chains.scroll import UnifiedScrollMixin
@@ -11,10 +11,13 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedHMScrollMixin"]
+
+
 class UnifiedHMScrollMixin(UnifiedUtilsMixin, UnifiedScrollMixin):
 	def _hm_scroll_from_origin_impl(self, delta_x: int, delta_y: int, origin: Optional[ScrollOrigin] = None) -> legacyActionChains:
 		if origin is None:
-			viewport_size = self._js_executor.get_viewport_size()
+			viewport_size = self._js_executor._get_viewport_size_impl()
 		
 			origin_x = 0 if delta_x >= 0 else viewport_size.width
 			origin_y = 0 if delta_y >= 0 else viewport_size.height
@@ -52,8 +55,8 @@ class UnifiedHMScrollMixin(UnifiedUtilsMixin, UnifiedScrollMixin):
 			additional_right_x_offset: int = 0,
 			additional_left_x_offset: int = 0,
 	) -> legacyActionChains:
-		viewport_rect = self._js_executor.get_viewport_rect()
-		element_rect = self._js_executor.get_element_rect_in_viewport(element=get_legacy_instance(instance=element))
+		viewport_rect = self._js_executor._get_viewport_rect_impl()
+		element_rect = self._js_executor._get_element_rect_in_viewport_impl(element=get_legacy_instance(instance=element))
 		
 		if element_rect.x < additional_left_x_offset:
 			delta_x = int(element_rect.x - additional_left_x_offset)

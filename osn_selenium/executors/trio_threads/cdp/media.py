@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.media import (
 )
 
 
+__all__ = ["MediaCDPExecutor"]
+
+
 class MediaCDPExecutor(UnifiedMediaCDPExecutor, TrioThreadMixin, AbstractMediaCDPExecutor):
 	def __init__(
 			self,

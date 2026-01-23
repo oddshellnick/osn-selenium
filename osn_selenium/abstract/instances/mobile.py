@@ -5,6 +5,9 @@ from selenium.webdriver.remote.mobile import (
 )
 
 
+__all__ = ["AbstractMobile"]
+
+
 class AbstractMobile(ABC):
 	"""
 	Abstract base class for mobile-specific interactions.
@@ -13,7 +16,6 @@ class AbstractMobile(ABC):
 	in a mobile environment.
 	"""
 	
-	@property
 	@abstractmethod
 	def context(self) -> str:
 		"""
@@ -22,19 +24,6 @@ class AbstractMobile(ABC):
 		
 		...
 	
-	@context.setter
-	@abstractmethod
-	def context(self, new_context: str) -> None:
-		"""
-		Sets the current context.
-
-		Args:
-			new_context (str): The handle of the context to switch to.
-		"""
-		
-		...
-	
-	@property
 	@abstractmethod
 	def contexts(self) -> Sequence[str]:
 		"""
@@ -63,6 +52,17 @@ class AbstractMobile(ABC):
 	def network_connection(self) -> Any:
 		"""
 		The current network connection type.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def set_context(self, new_context: str) -> None:
+		"""
+		Sets the current context.
+
+		Args:
+			new_context (str): The handle of the context to switch to.
 		"""
 		
 		...

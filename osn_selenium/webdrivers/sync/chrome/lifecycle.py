@@ -1,6 +1,6 @@
-import pathlib
-from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from typing import Optional
+from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.webdrivers.sync.blink import BlinkLifecycleMixin
 from osn_selenium.webdrivers.unified.chrome.lifecycle import (
@@ -9,6 +9,9 @@ from osn_selenium.webdrivers.unified.chrome.lifecycle import (
 from osn_selenium.abstract.webdriver.chrome.lifecycle import (
 	AbstractChromeLifecycleMixin
 )
+
+
+__all__ = ["ChromeLifecycleMixin"]
 
 
 class ChromeLifecycleMixin(
@@ -26,7 +29,7 @@ class ChromeLifecycleMixin(
 	def restart_webdriver(
 			self,
 			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -44,7 +47,7 @@ class ChromeLifecycleMixin(
 	def start_webdriver(
 			self,
 			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,

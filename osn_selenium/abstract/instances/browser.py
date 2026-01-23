@@ -6,6 +6,9 @@ from selenium.webdriver.common.bidi.browser import (
 )
 
 
+__all__ = ["AbstractBrowser"]
+
+
 class AbstractBrowser(ABC):
 	"""
 	Abstract base class for browser-level interactions.

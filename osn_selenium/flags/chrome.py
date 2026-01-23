@@ -1,9 +1,5 @@
-import pathlib
-from typing import (
-	Dict,
-	Optional,
-	Union
-)
+from typing import Dict, Optional
+from osn_selenium._typehints import PATH_TYPEHINT
 from selenium.webdriver.chrome.options import Options
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFeatures
@@ -19,6 +15,9 @@ from osn_selenium.flags.models.chrome import (
 )
 
 
+__all__ = ["ChromeFlagsManager"]
+
+
 class ChromeFlagsManager(BlinkFlagsManager):
 	"""
 	Manages Chrome Browser-specific options for Selenium WebDriver.
@@ -31,7 +30,7 @@ class ChromeFlagsManager(BlinkFlagsManager):
 	
 	def __init__(
 			self,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			start_page_url: Optional[str] = None,
 			flags_types: Optional[Dict[str, FlagType]] = None,
 			flags_definitions: Optional[Dict[str, FlagDefinition]] = None
@@ -60,6 +59,58 @@ class ChromeFlagsManager(BlinkFlagsManager):
 				flags_definitions=yandex_flags_definitions,
 		)
 	
+	def _build_options_arguments(self, options: Options) -> Options:
+		"""
+		Adds configured command-line arguments to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_arguments(options)
+	
+	def _build_options_attributes(self, options: Options) -> Options:
+		"""
+		Applies configured attributes to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_attributes(options)
+	
+	def _build_options_blink_features(self, options: Options) -> Options:
+		"""
+		Adds configured Chrome features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object to modify.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_blink_features(options)
+	
+	def _build_options_experimental_options(self, options: Options) -> Options:
+		"""
+		Adds experimental options to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_experimental_options(options)
+	
 	def _renew_webdriver_options(self) -> Options:
 		"""
 		Creates and returns a new Options object.
@@ -72,58 +123,6 @@ class ChromeFlagsManager(BlinkFlagsManager):
 		"""
 		
 		return Options()
-	
-	def build_options_arguments(self, options: Options) -> Options:
-		"""
-		Adds configured command-line arguments to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_arguments(options)
-	
-	def build_options_attributes(self, options: Options) -> Options:
-		"""
-		Applies configured attributes to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_attributes(options)
-	
-	def build_options_blink_features(self, options: Options) -> Options:
-		"""
-		Adds configured Chrome features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object to modify.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_blink_features(options)
-	
-	def build_options_experimental_options(self, options: Options) -> Options:
-		"""
-		Adds experimental options to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_experimental_options(options)
 	
 	def set_arguments(self, arguments: ChromeArguments):
 		"""

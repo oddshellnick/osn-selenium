@@ -33,7 +33,7 @@ def get_description() -> str:
 
 setup(
 		name="osn-selenium",
-		version="1.0.0-beta.7",
+		version="1.0.0-beta.8",
 		author="oddshellnick",
 		author_email="oddshellnick.programming@gmail.com",
 		description=get_description(),

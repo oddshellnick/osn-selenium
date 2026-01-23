@@ -1,11 +1,6 @@
-from typing import (
-	Any,
-	Callable,
-	TypeVar
-)
-from osn_selenium.instances.errors import ExpectedTypeError
-from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.types import (
+from typing import Callable, TypeVar
+from osn_selenium.exceptions.instance import NotExpectedTypeError
+from osn_selenium.instances._typehints import (
 	WebDriverWaitInputType
 )
 from selenium.webdriver.support.wait import (
@@ -13,14 +8,16 @@ from selenium.webdriver.support.wait import (
 )
 
 
+__all__ = ["OUTPUT", "UnifiedWebDriverWait"]
+
 OUTPUT = TypeVar("OUTPUT")
 
 
 class UnifiedWebDriverWait:
 	def __init__(self, selenium_webdriver_wait: legacyWebDriverWait):
 		if not isinstance(selenium_webdriver_wait, legacyWebDriverWait):
-			raise ExpectedTypeError(
-					expected_class=legacyWebDriverWait,
+			raise NotExpectedTypeError(
+					expected_type=legacyWebDriverWait,
 					received_instance=selenium_webdriver_wait
 			)
 		

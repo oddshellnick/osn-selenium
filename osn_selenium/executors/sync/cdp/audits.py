@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.audits import (
 )
 
 
+__all__ = ["AuditsCDPExecutor"]
+
+
 class AuditsCDPExecutor(UnifiedAuditsCDPExecutor, AbstractAuditsCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedAuditsCDPExecutor.__init__(self, execute_function=execute_function)

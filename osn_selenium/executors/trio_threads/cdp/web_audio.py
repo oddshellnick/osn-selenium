@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.web_audio import (
 )
 
 
+__all__ = ["WebAudioCDPExecutor"]
+
+
 class WebAudioCDPExecutor(
 		UnifiedWebAudioCDPExecutor,
 		TrioThreadMixin,

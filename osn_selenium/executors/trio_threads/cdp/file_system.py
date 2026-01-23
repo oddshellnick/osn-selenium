@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.file_system import (
 )
 
 
+__all__ = ["FileSystemCDPExecutor"]
+
+
 class FileSystemCDPExecutor(
 		UnifiedFileSystemCDPExecutor,
 		TrioThreadMixin,

@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.css import (
 )
 
 
+__all__ = ["CssCDPExecutor"]
+
+
 class CssCDPExecutor(UnifiedCssCDPExecutor, TrioThreadMixin, AbstractCssCDPExecutor):
 	def __init__(
 			self,

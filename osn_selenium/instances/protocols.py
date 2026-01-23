@@ -7,6 +7,12 @@ from typing import (
 )
 
 
+__all__ = [
+	"AnyInstanceWrapper",
+	"SyncInstanceWrapper",
+	"TrioThreadInstanceWrapper"
+]
+
 _LEGACY_OBJECT = TypeVar("_LEGACY_OBJECT")
 
 

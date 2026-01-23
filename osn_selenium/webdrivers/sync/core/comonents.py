@@ -15,6 +15,9 @@ from osn_selenium.abstract.webdriver.core.components import (
 )
 
 
+__all__ = ["CoreComponentsMixin"]
+
+
 class CoreComponentsMixin(UnifiedCoreComponentsMixin, AbstractCoreComponentsMixin):
 	"""
 	Mixin providing access to specialized browser components for Core WebDrivers.

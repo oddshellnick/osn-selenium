@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractBrowserCDPExecutor"]
+
+
 class AbstractBrowserCDPExecutor(ABC):
 	@abstractmethod
 	def add_privacy_sandbox_coordinator_key_config(

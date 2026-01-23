@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -8,6 +8,9 @@ from typing import (
 )
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+
+
+__all__ = ["AbstractCoreLifecycleMixin"]
 
 
 class AbstractCoreLifecycleMixin(ABC):

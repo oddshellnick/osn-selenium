@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.inspector import (
 )
 
 
+__all__ = ["InspectorCDPExecutor"]
+
+
 class InspectorCDPExecutor(UnifiedInspectorCDPExecutor, AbstractInspectorCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedInspectorCDPExecutor.__init__(self, execute_function=execute_function)

@@ -4,8 +4,11 @@ from typing import (
 	List,
 	Optional
 )
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+
+
+__all__ = ["UnifiedCoreStorageMixin"]
 
 
 class UnifiedCoreStorageMixin(UnifiedCoreBaseMixin):

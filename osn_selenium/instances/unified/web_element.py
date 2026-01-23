@@ -7,15 +7,18 @@ from typing import (
 	List,
 	Optional
 )
-from selenium.webdriver.remote.webelement import (
-	WebElement as legacyWebElement
-)
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
+)
+from selenium.webdriver.remote.webelement import (
+	WebElement as legacyWebElement
 )
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
 )
+
+
+__all__ = ["UnifiedWebElement"]
 
 
 class UnifiedWebElement:

@@ -66,7 +66,7 @@ Here are some examples of how to use `osn-selenium`:
 
 ```python
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 # Initialize driver with specific window size
 driver = ChromeWebDriver(
 		webdriver_path="webdriver.exe",

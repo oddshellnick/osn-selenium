@@ -8,6 +8,9 @@ from typing import (
 from osn_selenium.abstract.instances.storage import AbstractStorage
 
 
+__all__ = ["AbstractCoreStorageMixin"]
+
+
 class AbstractCoreStorageMixin(ABC):
 	"""Mixin responsible for cookies and storage."""
 	

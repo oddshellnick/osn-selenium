@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.fetch import (
 )
 
 
+__all__ = ["FetchCDPExecutor"]
+
+
 class FetchCDPExecutor(UnifiedFetchCDPExecutor, AbstractFetchCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedFetchCDPExecutor.__init__(self, execute_function=execute_function)

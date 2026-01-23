@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractNetworkCDPExecutor"]
+
+
 class AbstractNetworkCDPExecutor(ABC):
 	@abstractmethod
 	def can_clear_browser_cache(self) -> bool:

@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.audits import (
 )
 
 
+__all__ = ["AuditsCDPExecutor"]
+
+
 class AuditsCDPExecutor(UnifiedAuditsCDPExecutor, TrioThreadMixin, AbstractAuditsCDPExecutor):
 	def __init__(
 			self,

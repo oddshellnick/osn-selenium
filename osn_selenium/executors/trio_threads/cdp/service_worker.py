@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.service_worker import (
 )
 
 
+__all__ = ["ServiceWorkerCDPExecutor"]
+
+
 class ServiceWorkerCDPExecutor(
 		UnifiedServiceWorkerCDPExecutor,
 		TrioThreadMixin,

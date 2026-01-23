@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractDeviceAccessCDPExecutor"]
+
+
 class AbstractDeviceAccessCDPExecutor(ABC):
 	@abstractmethod
 	def cancel_prompt(self, id_: str) -> None:

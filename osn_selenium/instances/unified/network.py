@@ -3,16 +3,19 @@ from typing import (
 	List,
 	Optional
 )
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
 )
 
 
+__all__ = ["UnifiedNetwork"]
+
+
 class UnifiedNetwork:
 	def __init__(self, selenium_network: legacyNetwork):
 		if not isinstance(selenium_network, legacyNetwork):
-			raise ExpectedTypeError(expected_class=legacyNetwork, received_instance=selenium_network)
+			raise NotExpectedTypeError(expected_type=legacyNetwork, received_instance=selenium_network)
 		
 		self._selenium_network = selenium_network
 	

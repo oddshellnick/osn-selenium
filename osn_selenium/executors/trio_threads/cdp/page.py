@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.page import (
 )
 
 
+__all__ = ["PageCDPExecutor"]
+
+
 class PageCDPExecutor(UnifiedPageCDPExecutor, TrioThreadMixin, AbstractPageCDPExecutor):
 	def __init__(
 			self,

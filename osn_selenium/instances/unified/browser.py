@@ -1,15 +1,18 @@
 from typing import List
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo
 )
 
 
+__all__ = ["UnifiedBrowser"]
+
+
 class UnifiedBrowser:
 	def __init__(self, selenium_browser: legacyBrowser):
 		if not isinstance(selenium_browser, legacyBrowser):
-			raise ExpectedTypeError(expected_class=legacyBrowser, received_instance=selenium_browser)
+			raise NotExpectedTypeError(expected_type=legacyBrowser, received_instance=selenium_browser)
 		
 		self._selenium_browser = selenium_browser
 	

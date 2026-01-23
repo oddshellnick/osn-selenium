@@ -6,9 +6,11 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.types import (
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+from osn_selenium.instances._typehints import (
 	WEB_EXTENSION_TYPEHINT
 )
 from osn_selenium.instances.unified.web_extension import UnifiedWebExtension
@@ -16,6 +18,9 @@ from osn_selenium.abstract.instances.web_extension import AbstractWebExtension
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
+
+
+__all__ = ["WebExtension"]
 
 
 class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
@@ -70,7 +75,7 @@ class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
 		legacy_web_extension_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_web_extension_obj, legacyWebExtension):
-			raise TypesConvertError(from_=legacyWebExtension, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyWebExtension, to_=legacy_object)
 		
 		return cls(
 				selenium_web_extension=legacy_web_extension_obj,

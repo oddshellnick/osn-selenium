@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.cache_storage import (
 )
 
 
+__all__ = ["CacheStorageCDPExecutor"]
+
+
 class CacheStorageCDPExecutor(UnifiedCacheStorageCDPExecutor, AbstractCacheStorageCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedCacheStorageCDPExecutor.__init__(self, execute_function=execute_function)

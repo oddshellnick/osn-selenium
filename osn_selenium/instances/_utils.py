@@ -1,4 +1,14 @@
-from osn_selenium.types import Point
+from osn_selenium.models import Point
+
+
+__all__ = [
+	"MoveOffset",
+	"MovePart",
+	"MoveStep",
+	"ScrollDelta",
+	"ScrollPart",
+	"TextInputPart"
+]
 
 
 class TextInputPart:

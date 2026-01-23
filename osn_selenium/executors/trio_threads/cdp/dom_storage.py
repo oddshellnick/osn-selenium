@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.dom_storage import (
 )
 
 
+__all__ = ["DomStorageCDPExecutor"]
+
+
 class DomStorageCDPExecutor(
 		UnifiedDomStorageCDPExecutor,
 		TrioThreadMixin,

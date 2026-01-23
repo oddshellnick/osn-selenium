@@ -1,7 +1,7 @@
 from pathlib import Path
 from pydantic import Field
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.utils import TargetFilter
+from osn_selenium.models import DictModel
+from osn_selenium.dev_tools.filters import TargetFilter
 from osn_selenium.dev_tools.domains import DomainsSettings
 from typing import (
 	Literal,
@@ -10,11 +10,19 @@ from typing import (
 	Union
 )
 from osn_selenium.javascript.fingerprint import FingerprintSettings
-from osn_selenium.dev_tools._types import (
-	CDPLogLevelsType,
-	FingerprintLogLevelsType,
-	devtools_background_func_type
+from osn_selenium.dev_tools._typehints import (
+	CDP_LOG_LEVELS_TYPEHINT,
+	DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT,
+	FINGERPRINT_LOG_LEVELS_TYPEHINT
 )
+
+
+__all__ = [
+	"CDPLoggerSettings",
+	"DevToolsSettings",
+	"FingerprintLoggerSettings",
+	"LoggerSettings"
+]
 
 
 class FingerprintLoggerSettings(DictModel):
@@ -35,7 +43,12 @@ class FingerprintLoggerSettings(DictModel):
 	
 	buffer_size: int = 100
 	log_level_filter_mode: Literal["exclude", "include"] = "exclude"
-	log_level_filter: Optional[Union[FingerprintLogLevelsType, Sequence[FingerprintLogLevelsType]]] = None
+	log_level_filter: Optional[
+		Union[
+			FINGERPRINT_LOG_LEVELS_TYPEHINT,
+			Sequence[FINGERPRINT_LOG_LEVELS_TYPEHINT]
+		]
+	] = None
 	category_filter_mode: Literal["exclude", "include"] = "exclude"
 	category_filter: Optional[Union[str, Sequence[str]]] = None
 
@@ -64,7 +77,7 @@ class CDPLoggerSettings(DictModel):
 	
 	buffer_size: int = 100
 	log_level_filter_mode: Literal["exclude", "include"] = "exclude"
-	log_level_filter: Optional[Union[CDPLogLevelsType, Sequence[CDPLogLevelsType]]] = None
+	log_level_filter: Optional[Union[CDP_LOG_LEVELS_TYPEHINT, Sequence[CDP_LOG_LEVELS_TYPEHINT]]] = None
 	target_type_filter_mode: Literal["exclude", "include"] = "exclude"
 	target_type_filter: Optional[Union[str, Sequence[str]]] = None
 
@@ -112,7 +125,7 @@ class DevToolsSettings(DictModel):
 	
 	new_targets_filter: Optional[Sequence[TargetFilter]] = None
 	new_targets_buffer_size: int = 100
-	target_background_task: Optional[devtools_background_func_type] = None
+	target_background_task: Optional[DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT] = None
 	logger_settings: Optional[LoggerSettings] = Field(default_factory=LoggerSettings)
 	fingerprint_settings: Optional[FingerprintSettings] = None
 	domains_settings: Optional[DomainsSettings] = None

@@ -2,6 +2,9 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractBlinkFeaturesMixin"]
+
+
 class AbstractBlinkFeaturesMixin(ABC):
 	"""
 	Abstract mixin defining the interface for specific Blink browser features.

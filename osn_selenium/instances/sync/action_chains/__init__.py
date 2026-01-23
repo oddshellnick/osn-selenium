@@ -7,6 +7,9 @@ from osn_selenium.instances.sync.action_chains.hm_keyboard import HMKeyboardMixi
 from osn_selenium.instances.sync.action_chains.drag_and_drop import DragAndDropMixin
 
 
+__all__ = ["ActionChains"]
+
+
 class ActionChains(
 		ClickMixin,
 		DragAndDropMixin,

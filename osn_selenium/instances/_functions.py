@@ -2,7 +2,7 @@ import math
 from typing import List
 from copy import deepcopy
 from random import randint
-from osn_selenium.types import Point
+from osn_selenium.models import Point
 from osn_selenium.instances._utils import (
 	MoveOffset,
 	MovePart,
@@ -11,6 +11,9 @@ from osn_selenium.instances._utils import (
 	ScrollPart,
 	TextInputPart
 )
+
+
+__all__ = ["move_to_parts", "scroll_to_parts", "text_input_to_parts"]
 
 
 def text_input_to_parts(text: str) -> List[TextInputPart]:

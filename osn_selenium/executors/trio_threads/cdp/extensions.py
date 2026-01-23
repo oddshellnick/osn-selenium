@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.extensions import (
 )
 
 
+__all__ = ["ExtensionsCDPExecutor"]
+
+
 class ExtensionsCDPExecutor(
 		UnifiedExtensionsCDPExecutor,
 		TrioThreadMixin,

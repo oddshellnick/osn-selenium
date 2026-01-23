@@ -1,5 +1,5 @@
 from pydantic import Field
-from osn_selenium.types import (
+from osn_selenium.models import (
 	DictModel,
 	ExtraDictModel
 )
@@ -10,9 +10,21 @@ from typing import (
 	Literal,
 	Optional
 )
-from osn_selenium.flags._types import (
-	any_webdriver_option_type
+from osn_selenium.flags._typehints import (
+	ANY_WEBDRIVER_OPTION_TYPEHINT
 )
+
+
+__all__ = [
+	"BrowserArguments",
+	"BrowserAttributes",
+	"BrowserExperimentalOptions",
+	"BrowserFlags",
+	"FlagDefinition",
+	"FlagNotDefined",
+	"FlagType",
+	"FlagTypeNotDefined"
+]
 
 
 class FlagTypeNotDefined:
@@ -61,7 +73,7 @@ class FlagType(DictModel):
 	set_flags_function: Callable[[ExtraDictModel], None]
 	update_flags_function: Callable[[ExtraDictModel], None]
 	clear_flags_function: Callable[..., None]
-	build_options_function: Callable[[any_webdriver_option_type], any_webdriver_option_type]
+	build_options_function: Callable[[ANY_WEBDRIVER_OPTION_TYPEHINT], ANY_WEBDRIVER_OPTION_TYPEHINT]
 	build_start_args_function: Callable[..., List[str]]
 
 

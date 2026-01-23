@@ -4,6 +4,9 @@ from selenium.webdriver.common.by import By
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 
 
+__all__ = ["AbstractCoreElementMixin"]
+
+
 class AbstractCoreElementMixin(ABC):
 	"""Mixin responsible for finding and creating web elements."""
 	

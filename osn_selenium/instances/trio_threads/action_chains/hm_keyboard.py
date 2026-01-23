@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.trio_threads.action_chains.base import BaseMixin
 from osn_selenium.instances.unified.action_chains.hm_keyboard import (
 	UnifiedHMKeyboardMixin
@@ -8,6 +8,8 @@ from osn_selenium.abstract.instances.action_chains.hm_keyboard import (
 	AbstractHMKeyboardMixin
 )
 
+
+__all__ = ["HMKeyboardMixin"]
 
 if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.action_chains import ActionChains

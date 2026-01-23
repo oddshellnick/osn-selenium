@@ -1,7 +1,10 @@
 from typing import Optional
 from selenium.webdriver.common.timeouts import Timeouts
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+
+
+__all__ = ["UnifiedCoreTimeoutsMixin"]
 
 
 class UnifiedCoreTimeoutsMixin(UnifiedCoreBaseMixin):

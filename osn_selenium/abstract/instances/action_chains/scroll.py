@@ -1,8 +1,10 @@
 from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 
+
+__all__ = ["AbstractScrollMixin"]
 
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.action_chains import AbstractActionChains

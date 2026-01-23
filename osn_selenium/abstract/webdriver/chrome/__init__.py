@@ -4,6 +4,9 @@ from osn_selenium.abstract.webdriver.blink import (
 )
 
 
+__all__ = ["AbstractChromeWebDriver"]
+
+
 class AbstractChromeWebDriver(AbstractBlinkWebDriver, ABC):
 	"""
 	Abstract composite class representing a full Chrome WebDriver.

@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractIndexedDbCDPExecutor"]
+
+
 class AbstractIndexedDbCDPExecutor(ABC):
 	@abstractmethod
 	def clear_object_store(

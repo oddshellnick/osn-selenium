@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.features import (
 )
 
 
+__all__ = ["BlinkFeaturesMixin"]
+
+
 class BlinkFeaturesMixin(UnifiedBlinkFeaturesMixin, TrioThreadMixin, AbstractBlinkFeaturesMixin):
 	"""
 	Mixin for managing browser features and capabilities for Blink WebDrivers.

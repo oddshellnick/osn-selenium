@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.autofill import (
 )
 
 
+__all__ = ["AutofillCDPExecutor"]
+
+
 class AutofillCDPExecutor(
 		UnifiedAutofillCDPExecutor,
 		TrioThreadMixin,

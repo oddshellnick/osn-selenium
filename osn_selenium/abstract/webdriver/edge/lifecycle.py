@@ -1,11 +1,14 @@
-import pathlib
+from typing import Optional
 from abc import abstractmethod
-from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.abstract.webdriver.blink.lifecycle import (
 	AbstractBlinkLifecycleMixin
 )
+
+
+__all__ = ["AbstractEdgeLifecycleMixin"]
 
 
 class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
@@ -20,7 +23,7 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	def restart_webdriver(
 			self,
 			flags: Optional[EdgeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -37,7 +40,7 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 		Args:
 			flags (Optional[EdgeFlags]): Override flags for the new session.
 				If provided, these flags will be applied. If `None`, current settings are used.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Override browser executable for the new session.
+			browser_exe (Optional[PATH_TYPEHINT]): Override browser executable for the new session.
 				If provided, this path will be used. If `None`, current settings are used.
 			browser_name_in_system (Optional[str]): Override browser name for auto-detection for the new session.
 				Only takes effect if `use_browser_exe` is also provided. If `None`, current settings are used.
@@ -56,7 +59,7 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	def start_webdriver(
 			self,
 			flags: Optional[EdgeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -73,7 +76,7 @@ class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 		Args:
 			flags (Optional[EdgeFlags]): Override flags for this start.
 				If provided, these flags will be applied. If `None`, current settings are used.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Override browser executable path for this start.
+			browser_exe (Optional[PATH_TYPEHINT]): Override browser executable path for this start.
 				If provided, this path will be used. If `None`, current settings are used.
 			browser_name_in_system (Optional[str]): Override browser name for auto-detection for this start.
 				Only takes effect if `use_browser_exe` is also provided. If `None`, current settings are used.

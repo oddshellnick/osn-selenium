@@ -1,7 +1,7 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from typing import (
 	Any,
 	Dict,
@@ -11,6 +11,9 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
@@ -21,6 +24,9 @@ from osn_selenium.instances.convert import (
 	get_legacy_instance,
 	get_trio_thread_instance_wrapper
 )
+
+
+__all__ = ["WebElement"]
 
 
 class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
@@ -117,7 +123,7 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	@classmethod
 	def from_legacy(
 			cls,
-			legacy_object: Any,
+			legacy_object: WEB_ELEMENT_TYPEHINT,
 			lock: trio.Lock,
 			limiter: trio.CapacityLimiter
 	) -> Self:
@@ -139,7 +145,7 @@ class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 		legacy_element_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypesConvertError(from_=legacyWebElement, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyWebElement, to_=legacy_object)
 		
 		return cls(selenium_web_element=legacy_element_obj, lock=lock, limiter=limiter)
 	

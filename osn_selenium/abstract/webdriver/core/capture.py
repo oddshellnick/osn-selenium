@@ -2,6 +2,9 @@ from typing import Any, Optional
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractCoreCaptureMixin"]
+
+
 class AbstractCoreCaptureMixin(ABC):
 	"""Mixin responsible for screenshots, page source, and printing."""
 	

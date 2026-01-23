@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.web_audio import (
 )
 
 
+__all__ = ["WebAudioCDPExecutor"]
+
+
 class WebAudioCDPExecutor(UnifiedWebAudioCDPExecutor, AbstractWebAudioCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedWebAudioCDPExecutor.__init__(self, execute_function=execute_function)

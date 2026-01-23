@@ -1,14 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
-from osn_selenium.javascript.types import JS_Scripts
+from osn_selenium.javascript.models import JS_Scripts
 from selenium.webdriver.remote.webelement import WebElement
 from osn_selenium.javascript.fingerprint import FingerprintSettings
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Point,
 	Position,
 	Rectangle,
 	Size
 )
+
+
+__all__ = ["AbstractJSExecutor"]
 
 
 class AbstractJSExecutor(ABC):

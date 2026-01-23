@@ -1,14 +1,8 @@
 import trio
+from osn_selenium.dev_tools.models import TargetData
 from selenium.webdriver.common.bidi.cdp import CdpSession
+from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.logger.target import TargetLogger
-from osn_selenium.dev_tools.utils import (
-	DevToolsPackage,
-	TargetData
-)
-from osn_selenium.dev_tools._functions import (
-	validate_target_event_filter,
-	validate_type_filter
-)
 from typing import (
 	Any,
 	Callable,
@@ -19,7 +13,11 @@ from typing import (
 	TYPE_CHECKING,
 	Tuple
 )
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools._validators import (
+	validate_target_event_filter,
+	validate_type_filter
+)
+from osn_selenium.dev_tools.logger.models import (
 	CDPLoggerChannelStats,
 	CDPTargetLogEntry,
 	FingerprintLoggerChannelStats,
@@ -27,11 +25,13 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["BaseMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings
 	from osn_selenium.dev_tools.settings import LoggerSettings
-	from osn_selenium.dev_tools._types import devtools_background_func_type
+	from osn_selenium.dev_tools._typehints import DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT
 
 
 class BaseMixin:
@@ -88,7 +88,7 @@ class BaseMixin:
 			nursery: trio.Nursery,
 			exit_event: trio.Event,
 			fingerprint_injection_script: Optional[str],
-			target_background_task: Optional["devtools_background_func_type"],
+			target_background_task: Optional["DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT"],
 			add_target_func: Callable[[Any], Coroutine[Any, Any, bool]],
 			remove_target_func: Callable[["DevToolsTarget"], Coroutine[Any, Any, Optional[bool]]],
 			add_cdp_log_func: Callable[[CDPTargetLogEntry], Coroutine[Any, Any, None]],

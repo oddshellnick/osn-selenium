@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Optional
 
 
+__all__ = ["AbstractExtensionsCDPExecutor"]
+
+
 class AbstractExtensionsCDPExecutor(ABC):
 	@abstractmethod
 	def clear_storage_items(self, id_: str, storage_area: str) -> None:

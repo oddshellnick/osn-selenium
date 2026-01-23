@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractDomCDPExecutor"]
+
+
 class AbstractDomCDPExecutor(ABC):
 	@abstractmethod
 	def collect_class_names_from_subtree(self, node_id: int) -> List[str]:

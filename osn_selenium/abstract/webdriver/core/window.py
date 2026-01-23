@@ -5,12 +5,15 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Position,
 	Rectangle,
 	Size
 )
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
+
+
+__all__ = ["AbstractCoreWindowMixin"]
 
 
 class AbstractCoreWindowMixin(ABC):

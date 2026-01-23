@@ -1,12 +1,8 @@
-import pathlib
-from osn_selenium.types import WindowRect
-from typing import (
-	Optional,
-	Type,
-	Union
-)
-from osn_selenium.flags.yandex import YandexFlagsManager
+from typing import Optional, Type
+from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.yandex import YandexFlags
+from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.webdrivers.sync.chrome import ChromeWebDriver
 from osn_selenium.webdrivers.sync.yandex.base import YandexBaseMixin
 from osn_selenium.webdrivers.sync.yandex.settings import YandexSettingsMixin
@@ -14,6 +10,9 @@ from osn_selenium.webdrivers.sync.yandex.lifecycle import YandexLifecycleMixin
 from osn_selenium.abstract.webdriver.yandex import (
 	AbstractYandexWebDriver
 )
+
+
+__all__ = ["YandexWebDriver"]
 
 
 class YandexWebDriver(
@@ -29,7 +28,7 @@ class YandexWebDriver(
 			flags_manager_type: Type[YandexFlagsManager] = YandexFlagsManager,
 			use_browser_exe: bool = True,
 			browser_name_in_system: str = "Yandex",
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			flags: Optional[YandexFlags] = None,
 			start_page_url: str = "about:blank",
 			implicitly_wait: int = 5,

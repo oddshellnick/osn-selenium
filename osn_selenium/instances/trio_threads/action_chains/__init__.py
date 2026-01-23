@@ -7,6 +7,9 @@ from osn_selenium.instances.trio_threads.action_chains.hm_keyboard import HMKeyb
 from osn_selenium.instances.trio_threads.action_chains.drag_and_drop import DragAndDropMixin
 
 
+__all__ = ["ActionChains"]
+
+
 class ActionChains(
 		ClickMixin,
 		DragAndDropMixin,

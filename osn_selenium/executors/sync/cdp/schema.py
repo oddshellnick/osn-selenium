@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.schema import (
 )
 
 
+__all__ = ["SchemaCDPExecutor"]
+
+
 class SchemaCDPExecutor(UnifiedSchemaCDPExecutor, AbstractSchemaCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedSchemaCDPExecutor.__init__(self, execute_function=execute_function)

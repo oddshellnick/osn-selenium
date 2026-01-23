@@ -5,11 +5,14 @@ from typing import (
 	Dict,
 	Tuple
 )
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers._functions import build_cdp_kwargs
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
+
+
+__all__ = ["UnifiedCoreDevToolsMixin"]
 
 
 class UnifiedCoreDevToolsMixin(UnifiedCoreBaseMixin):

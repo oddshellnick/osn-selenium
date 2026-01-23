@@ -4,23 +4,25 @@ from typing import (
 	Literal,
 	Optional
 )
-from osn_selenium.javascript.functions import convert_to_js_value
-from osn_selenium.javascript.fingerprint.functions import add_code_level
-from osn_selenium.javascript.fingerprint.spoof.types import RANDOM_VALUE
+from osn_selenium.javascript._functions import convert_to_js_value
+from osn_selenium.javascript.fingerprint._functions import add_code_level
 from osn_selenium.javascript.fingerprint.spoof.noise import (
 	RandomNoise,
 	StaticNoise
+)
+from osn_selenium.javascript.fingerprint.spoof._typehints import (
+	RANDOM_VALUE_TYPEHINT
 )
 from osn_selenium.javascript.fingerprint.spoof.core_rules import (
 	ArrayRule,
 	BaseRule,
 	RandomRule
 )
-from osn_selenium.javascript.fingerprint.spoof.functions import (
+from osn_selenium.javascript.fingerprint.spoof._functions import (
 	get_noise_js,
 	get_random_expression_js
 )
-from osn_selenium.javascript.fingerprint.spoof.templates import (
+from osn_selenium.javascript.fingerprint.spoof._templates import (
 	CUSTOM_RULE,
 	PERSISTED_RANDOM_ITEM_NOISE,
 	PERSISTED_RANDOM_ITEM_SET,
@@ -33,6 +35,19 @@ from osn_selenium.javascript.fingerprint.spoof.templates import (
 	STATIC_ITEM_NOISE,
 	STATIC_ITEM_SET
 )
+
+
+__all__ = [
+	"CustomRule",
+	"RandomArrayNoiseRule",
+	"RandomArraySetRule",
+	"RandomItemNoiseRule",
+	"RandomItemSetRule",
+	"StaticArrayNoiseRule",
+	"StaticArraySetRule",
+	"StaticItemNoiseRule",
+	"StaticItemSetRule"
+]
 
 
 class StaticItemSetRule(BaseRule):
@@ -222,8 +237,8 @@ class RandomArraySetRule(ArrayRule):
 	"""
 	
 	mode: Literal["random_array_set"] = "random_array_set"
-	value: Optional[RANDOM_VALUE]
-	value_by_channel: Dict[int, RANDOM_VALUE] = Field(default_factory=dict)
+	value: Optional[RANDOM_VALUE_TYPEHINT]
+	value_by_channel: Dict[int, RANDOM_VALUE_TYPEHINT] = Field(default_factory=dict)
 	
 	def generate_js(self, path: str) -> str:
 		"""

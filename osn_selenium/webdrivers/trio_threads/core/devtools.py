@@ -20,6 +20,9 @@ from osn_selenium.abstract.webdriver.core.devtools import (
 )
 
 
+__all__ = ["CoreDevToolsMixin"]
+
+
 class CoreDevToolsMixin(UnifiedCoreDevToolsMixin, TrioThreadMixin, AbstractCoreDevToolsMixin):
 	"""
 	Mixin for Chrome DevTools Protocol (CDP) and BiDi interactions in Core WebDrivers.

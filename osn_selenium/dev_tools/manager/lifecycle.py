@@ -1,16 +1,19 @@
 import trio
 from types import TracebackType
 from typing import Optional, Type
-from osn_selenium.dev_tools.utils import DevToolsPackage
-from osn_selenium.dev_tools.decorators import log_on_error
+from osn_selenium.dev_tools._decorators import log_on_error
+from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.manager.targets import TargetsMixin
 from osn_selenium.dev_tools.logger.main import build_main_logger
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.errors import (
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.exceptions.devtools import (
 	BidiConnectionNotEstablishedError,
-	CantEnterDevToolsContextError,
-	cdp_end_exceptions
+	CDPEndExceptions,
+	CantEnterDevToolsContextError
 )
+
+
+__all__ = ["LifecycleMixin"]
 
 
 class LifecycleMixin(TargetsMixin):
@@ -29,7 +32,7 @@ class LifecycleMixin(TargetsMixin):
 			None: The WebSocket URL for DevTools, or None if it cannot be retrieved.
 
 		Raises:
-			cdp_end_exceptions: If a CDP-related connection error occurs.
+			CDPEndExceptions: If a CDP-related connection error occurs.
 			BaseException: If another unexpected error occurs during URL retrieval.
 		"""
 		
@@ -43,7 +46,7 @@ class LifecycleMixin(TargetsMixin):
 				self._websocket_url = driver.caps.get("se:cdp")
 		
 			self._websocket_url = driver._get_cdp_details()[1]
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			log_exception(error)
@@ -65,7 +68,7 @@ class LifecycleMixin(TargetsMixin):
 				self._devtools_package = DevToolsPackage(package=self._bidi_connection_object.devtools)
 			else:
 				raise BidiConnectionNotEstablishedError()
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			log_exception(error)
@@ -84,7 +87,7 @@ class LifecycleMixin(TargetsMixin):
 		"""
 		
 		if self._webdriver.driver is None:
-			raise CantEnterDevToolsContextError("Driver is not initialized")
+			raise CantEnterDevToolsContextError(reason="Driver is not initialized")
 		
 		self._bidi_connection = self._webdriver.bidi_connection()
 		self._bidi_connection_object = await self._bidi_connection.__aenter__()
@@ -201,7 +204,8 @@ class LifecycleMixin(TargetsMixin):
 			self.exit_event = None
 			self._devtools_package = None
 			self._websocket_url = None
-			self._num_logs = 0
+			self._num_cdp_logs = 0
+			self._num_fingerprint_logs = 0
 			self._cdp_targets_types_stats = {}
 			self._cdp_log_level_stats = {}
 			self._fingerprint_categories_stats = {}

@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.performance import (
 )
 
 
+__all__ = ["PerformanceCDPExecutor"]
+
+
 class PerformanceCDPExecutor(UnifiedPerformanceCDPExecutor, AbstractPerformanceCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedPerformanceCDPExecutor.__init__(self, execute_function=execute_function)

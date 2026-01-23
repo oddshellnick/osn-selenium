@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.indexed_db import (
 )
 
 
+__all__ = ["IndexedDbCDPExecutor"]
+
+
 class IndexedDbCDPExecutor(
 		UnifiedIndexedDbCDPExecutor,
 		TrioThreadMixin,

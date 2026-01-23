@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractInputCDPExecutor"]
+
+
 class AbstractInputCDPExecutor(ABC):
 	@abstractmethod
 	def cancel_dragging(self) -> None:

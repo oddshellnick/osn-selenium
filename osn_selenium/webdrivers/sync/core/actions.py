@@ -1,9 +1,9 @@
-from osn_selenium.types import DEVICES_TYPEHINT
 from typing import (
 	Iterable,
 	List,
 	Optional
 )
+from osn_selenium._typehints import DEVICES_TYPEHINT
 from osn_selenium.instances.sync.action_chains import ActionChains
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
@@ -19,6 +19,9 @@ from osn_selenium.webdrivers.unified.core.actions import (
 from osn_selenium.abstract.webdriver.core.actions import (
 	AbstractCoreActionsMixin
 )
+
+
+__all__ = ["CoreActionsMixin"]
 
 
 class CoreActionsMixin(UnifiedCoreActionsMixin, CoreScriptMixin, AbstractCoreActionsMixin):

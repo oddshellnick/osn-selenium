@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 from selenium.webdriver.common.timeouts import Timeouts
 
 
+__all__ = ["AbstractCoreTimeoutsMixin"]
+
+
 class AbstractCoreTimeoutsMixin(ABC):
 	"""Mixin responsible for timeouts and waits."""
 	

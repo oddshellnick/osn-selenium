@@ -1,4 +1,3 @@
-from osn_selenium.webdrivers.decorators import requires_driver
 from typing import (
 	Any,
 	List,
@@ -6,10 +5,19 @@ from typing import (
 	Optional,
 	Union
 )
+from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.common.exceptions import (
 	InvalidSessionIdException
 )
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+from osn_selenium.exceptions.window import (
+	InvalidWindowHandleError,
+	InvalidWindowIndexError,
+	NoWindowHandlesFoundError
+)
+
+
+__all__ = ["UnifiedCoreWindowMixin"]
 
 
 class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
@@ -30,17 +38,21 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 		return self._driver_impl.current_window_handle
 	
 	def _get_window_handle_impl(self, window: Optional[Union[str, int]] = None) -> str:
+		handles = self._window_handles_impl()
+		
+		if not handles:
+			raise NoWindowHandlesFoundError()
+		
 		if isinstance(window, str):
+			if window not in handles:
+				raise InvalidWindowHandleError(handle=window)
+		
 			return window
 		
 		if isinstance(window, int):
-			handles = self._window_handles_impl()
-			if not handles:
-				raise RuntimeError("No window handles available")
-			
 			idx = window if window >= 0 else len(handles) + window
 			if idx < 0 or idx >= len(handles):
-				raise IndexError(f"Window index {window} out of range [0, {len(handles) - 1}]")
+				raise InvalidWindowIndexError(index=window, handles_length=len(handles))
 			
 			return handles[idx]
 		
@@ -53,15 +65,19 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 		
 		if target == current:
 			self._close_impl()
+		
 			try:
 				remaining = self._window_handles_impl()
+		
 				if remaining:
 					legacy_switch_to.window(remaining[-1])
 			except InvalidSessionIdException:
 				pass
 		else:
 			legacy_switch_to.window(target)
+		
 			self._close_impl()
+		
 			legacy_switch_to.window(current)
 	
 	def _close_all_windows_impl(self) -> None:

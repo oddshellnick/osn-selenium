@@ -4,13 +4,16 @@ from typing import (
 	TYPE_CHECKING,
 	Tuple
 )
-from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.exceptions.devtools import TrioEndExceptions
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.exceptions.configuration import ConfigurationError
+from osn_selenium.dev_tools.logger.models import (
 	CDPMainLogEntry,
 	FingerprintMainLogEntry
 )
 
+
+__all__ = ["MainLogger", "build_main_logger"]
 
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.settings import LoggerSettings
@@ -70,10 +73,10 @@ class MainLogger:
 		
 		if logger_settings.dir_path is None:
 			if logger_settings.cdp_settings:
-				raise ValueError("Can't log CDP without LoggerSettings.dir_path!")
+				raise ConfigurationError("Can't log CDP without LoggerSettings.dir_path!")
 			
 			if logger_settings.fingerprint_settings:
-				raise ValueError("Can't log Fingerprint without LoggerSettings.dir_path!")
+				raise ConfigurationError("Can't log Fingerprint without LoggerSettings.dir_path!")
 		else:
 			logdir_path = logger_settings.dir_path.joinpath("__MAIN__")
 			logdir_path.mkdir(exist_ok=True)
@@ -126,7 +129,7 @@ class MainLogger:
 					await file.write(log_entry.model_dump_json(indent=4))
 					await file.truncate()
 					await file.flush()
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:
 			log_exception(error)
@@ -150,7 +153,7 @@ class MainLogger:
 					await file.write(log_entry.model_dump_json(indent=4))
 					await file.truncate()
 					await file.flush()
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:
 			log_exception(error)
@@ -179,7 +182,7 @@ class MainLogger:
 					self._nursery_object.start_soon(self._write_fingerprint_file)
 		
 				self._is_active = True
-		except* trio_end_exceptions:
+		except* TrioEndExceptions:
 			await self.close()
 		except* BaseException as error:
 			log_exception(error)

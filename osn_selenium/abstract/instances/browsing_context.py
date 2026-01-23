@@ -12,6 +12,9 @@ from selenium.webdriver.common.bidi.browsing_context import (
 )
 
 
+__all__ = ["AbstractBrowsingContext"]
+
+
 class AbstractBrowsingContext(ABC):
 	"""
 	Abstract base class for managing browsing contexts.

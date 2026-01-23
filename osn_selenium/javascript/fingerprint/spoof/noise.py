@@ -1,7 +1,13 @@
 from pydantic import Field
 from typing import Any, Literal
-from osn_selenium.types import DictModel
-from osn_selenium.javascript.fingerprint.spoof.types import NOISE, RANDOM_NOISE
+from osn_selenium.models import DictModel
+from osn_selenium.javascript.fingerprint.spoof._typehints import (
+	NOISE_TYPEHINT,
+	RANDOM_NOISE_TYPEHINT
+)
+
+
+__all__ = ["BaseNoise", "RandomNoise", "StaticNoise"]
 
 
 class BaseNoise(DictModel):
@@ -31,7 +37,7 @@ class StaticNoise(BaseNoise):
 		value (NOISE): A single numeric value to use as noise.
 	"""
 	
-	value: NOISE
+	value: NOISE_TYPEHINT
 
 
 class RandomNoise(BaseNoise):
@@ -42,4 +48,4 @@ class RandomNoise(BaseNoise):
 		value (RANDOM_NOISE): A range (tuple) or list of values to pick from.
 	"""
 	
-	value: RANDOM_NOISE
+	value: RANDOM_NOISE_TYPEHINT

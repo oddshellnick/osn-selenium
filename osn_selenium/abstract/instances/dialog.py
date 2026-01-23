@@ -6,6 +6,9 @@ from selenium.webdriver.common.fedcm.dialog import (
 )
 
 
+__all__ = ["AbstractDialog"]
+
+
 class AbstractDialog(ABC):
 	"""
 	Abstract base class for a FedCM (Federated Credential Management) dialog.

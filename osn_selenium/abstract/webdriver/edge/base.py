@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.base import (
 )
 
 
+__all__ = ["AbstractEdgeBaseMixin"]
+
+
 class AbstractEdgeBaseMixin(AbstractBlinkBaseMixin):
 	"""
 	Abstract mixin defining the base interface for Edge WebDriver.

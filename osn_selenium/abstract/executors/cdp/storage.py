@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractStorageCDPExecutor"]
+
+
 class AbstractStorageCDPExecutor(ABC):
 	@abstractmethod
 	def clear_cookies(self, browser_context_id: Optional[str] = None) -> None:

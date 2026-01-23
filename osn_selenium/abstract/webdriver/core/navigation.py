@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractCoreNavigationMixin"]
+
+
 class AbstractCoreNavigationMixin(ABC):
 	"""Mixin responsible for page navigation."""
 	

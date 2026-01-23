@@ -2,12 +2,14 @@ from typing import (
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.trio_threads.action_chains.base import BaseMixin
 from osn_selenium.instances.unified.action_chains.click import UnifiedClickMixin
 from osn_selenium.abstract.instances.action_chains.click import AbstractClickMixin
 
+
+__all__ = ["ClickMixin"]
 
 if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.action_chains import ActionChains

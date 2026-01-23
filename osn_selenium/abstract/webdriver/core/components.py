@@ -9,6 +9,9 @@ from osn_selenium.abstract.instances.browsing_context import (
 )
 
 
+__all__ = ["AbstractCoreComponentsMixin"]
+
+
 class AbstractCoreComponentsMixin(ABC):
 	"""Mixin responsible for accessing various sub-components of the browser."""
 	

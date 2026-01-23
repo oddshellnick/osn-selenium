@@ -1,4 +1,4 @@
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -6,8 +6,11 @@ from typing import (
 	Union
 )
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.exceptions.logic import (
+	AbstractImplementationError
+)
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
@@ -17,6 +20,9 @@ from osn_selenium.webdrivers.unified.core.settings import (
 from osn_selenium.webdrivers.unified.core.timeouts import (
 	UnifiedCoreTimeoutsMixin
 )
+
+
+__all__ = ["UnifiedCoreLifecycleMixin"]
 
 
 class UnifiedCoreLifecycleMixin(UnifiedCoreSettingsMixin, UnifiedCoreTimeoutsMixin):
@@ -35,7 +41,7 @@ class UnifiedCoreLifecycleMixin(UnifiedCoreSettingsMixin, UnifiedCoreTimeoutsMix
 		self._is_active = True
 	
 	def _create_driver_impl(self) -> None:
-		raise NotImplementedError("This function must be implemented in child classes.")
+		raise AbstractImplementationError(method_name="_create_driver_impl", class_name=self.__class__.__name__)
 	
 	def _start_webdriver_impl(
 			self,

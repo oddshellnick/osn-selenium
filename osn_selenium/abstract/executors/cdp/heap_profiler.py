@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
 
+__all__ = ["AbstractHeapProfilerCDPExecutor"]
+
+
 class AbstractHeapProfilerCDPExecutor(ABC):
 	@abstractmethod
 	def add_inspected_heap_object(self, heap_object_id: str) -> None:

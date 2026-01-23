@@ -6,14 +6,16 @@ from typing import (
 )
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
-from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.unified.switch_to import UnifiedSwitchTo
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
 )
-from osn_selenium.instances.types import (
+from osn_selenium.instances._typehints import (
 	SWITCH_TO_TYPEHINT,
 	WEB_ELEMENT_TYPEHINT
 )
@@ -21,6 +23,9 @@ from osn_selenium.instances.convert import (
 	get_legacy_instance,
 	get_trio_thread_instance_wrapper
 )
+
+
+__all__ = ["SwitchTo"]
 
 
 class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
@@ -101,7 +106,7 @@ class SwitchTo(UnifiedSwitchTo, TrioThreadMixin, AbstractSwitchTo):
 		legacy_switch_to_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_switch_to_obj, legacySwitchTo):
-			raise TypesConvertError(from_=legacySwitchTo, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacySwitchTo, to_=legacy_object)
 		
 		return cls(selenium_switch_to=legacy_switch_to_obj, lock=lock, limiter=limiter)
 	

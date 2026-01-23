@@ -10,6 +10,9 @@ from selenium.webdriver.common.bidi.network import (
 )
 
 
+__all__ = ["AbstractNetwork"]
+
+
 class AbstractNetwork(ABC):
 	"""
 	Abstract base class for network interception.

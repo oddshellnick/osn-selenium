@@ -1,14 +1,17 @@
 from abc import ABC, abstractmethod
-from osn_selenium.types import DEVICES_TYPEHINT
 from typing import (
 	Iterable,
 	List,
 	Optional
 )
+from osn_selenium._typehints import DEVICES_TYPEHINT
 from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 from osn_selenium.abstract.instances.web_driver_wait import (
 	AbstractWebDriverWait
 )
+
+
+__all__ = ["AbstractCoreActionsMixin"]
 
 
 class AbstractCoreActionsMixin(ABC):

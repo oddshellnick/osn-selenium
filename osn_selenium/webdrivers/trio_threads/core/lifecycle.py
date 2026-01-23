@@ -1,4 +1,4 @@
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
@@ -14,6 +14,9 @@ from osn_selenium.webdrivers.unified.core.lifecycle import (
 from osn_selenium.abstract.webdriver.core.lifecycle import (
 	AbstractCoreLifecycleMixin
 )
+
+
+__all__ = ["CoreLifecycleMixin"]
 
 
 class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, TrioThreadMixin, AbstractCoreLifecycleMixin):

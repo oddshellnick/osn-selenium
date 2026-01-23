@@ -1,15 +1,20 @@
 import trio
 from typing import List, Self
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.types import BROWSER_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.browser import UnifiedBrowser
 from osn_selenium.abstract.instances.browser import AbstractBrowser
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo
 )
+
+
+__all__ = ["Browser"]
 
 
 class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
@@ -67,7 +72,7 @@ class Browser(UnifiedBrowser, TrioThreadMixin, AbstractBrowser):
 		legacy_browser_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_browser_obj, legacyBrowser):
-			raise TypesConvertError(from_=legacyBrowser, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyBrowser, to_=legacy_object)
 		
 		return cls(selenium_browser=legacy_browser_obj, limiter=limiter, lock=lock)
 	

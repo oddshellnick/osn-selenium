@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractPageCDPExecutor"]
+
+
 class AbstractPageCDPExecutor(ABC):
 	@abstractmethod
 	def add_compilation_cache(self, url: str, data: str) -> None:

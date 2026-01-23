@@ -1,6 +1,9 @@
 from typing import Any, List, Optional
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+
+
+__all__ = ["UnifiedCoreScriptMixin"]
 
 
 class UnifiedCoreScriptMixin(UnifiedCoreBaseMixin):

@@ -1,6 +1,8 @@
-from osn_selenium.instances.errors import TypesConvertError
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.types import (
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
+from osn_selenium.instances._typehints import (
 	BROWSING_CONTEXT_TYPEHINT
 )
 from typing import (
@@ -22,6 +24,9 @@ from selenium.webdriver.common.bidi.browsing_context import (
 	BrowsingContext as legacyBrowsingContext,
 	BrowsingContextInfo
 )
+
+
+__all__ = ["BrowsingContext"]
 
 
 class BrowsingContext(UnifiedBrowsingContext, AbstractBrowsingContext):
@@ -99,7 +104,7 @@ class BrowsingContext(UnifiedBrowsingContext, AbstractBrowsingContext):
 		
 		legacy_browsing_context_obj = get_legacy_instance(instance=legacy_object)
 		if not isinstance(legacy_browsing_context_obj, legacyBrowsingContext):
-			raise TypesConvertError(from_=legacyBrowsingContext, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyBrowsingContext, to_=legacy_object)
 		
 		return cls(selenium_browsing_context=legacy_browsing_context_obj)
 	

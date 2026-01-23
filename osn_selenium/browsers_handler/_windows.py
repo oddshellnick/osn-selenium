@@ -1,13 +1,10 @@
 import re
 import winreg
+import pathlib
 import subprocess
-from pathlib import Path
-from typing import (
-	List,
-	Optional,
-	Union
-)
-from osn_selenium.browsers_handler.types import Browser
+from typing import List, Optional
+from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium.browsers_handler.models import Browser
 from win32api import (
 	GetFileVersionInfo,
 	HIWORD,
@@ -15,12 +12,19 @@ from win32api import (
 )
 
 
-def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
+__all__ = [
+	"get_browser_version",
+	"get_installed_browsers",
+	"get_webdriver_version"
+]
+
+
+def get_webdriver_version(driver_path: PATH_TYPEHINT) -> Optional[str]:
 	"""
 	Retrieves the version of a given webdriver executable.
 
 	Args:
-		driver_path (Union[Path, str]): The path to the webdriver executable. It can be a string or a Path object.
+		driver_path (PATH_TYPEHINT): The path to the webdriver executable. It can be a string or a Path object.
 
 	Returns:
 		Optional[str]: The version of the webdriver as a string, or None if the version cannot be determined.
@@ -30,8 +34,7 @@ def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
 		Exception: If there is an error executing the webdriver or parsing the output.
 	"""
 	
-	if isinstance(driver_path, str):
-		driver_path = Path(driver_path)
+	driver_path = pathlib.Path(driver_path)
 	
 	if not driver_path.exists():
 		raise FileNotFoundError(f"{driver_path} not found.")
@@ -59,7 +62,7 @@ def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
 		raise e
 
 
-def get_browser_version(browser_path: Union[Path, str]) -> str:
+def get_browser_version(browser_path: PATH_TYPEHINT) -> str:
 	"""
 	Retrieves the version of a browser given its file path.
 
@@ -72,8 +75,7 @@ def get_browser_version(browser_path: Union[Path, str]) -> str:
 		str: The version of the browser as a string, or "unknown" if the file does not exist.
 	"""
 	
-	if isinstance(browser_path, str):
-		browser_path = Path(browser_path)
+	browser_path = pathlib.Path(browser_path)
 	
 	if not browser_path.exists():
 		return "unknown"
@@ -116,7 +118,7 @@ def get_installed_browsers() -> List[Browser]:
 						browser_name = subkey
 	
 					with winreg.OpenKey(key, rf"{subkey}\shell\open\command") as subkey:
-						browser_path = Path(winreg.QueryValue(subkey, None).strip('"'))
+						browser_path = pathlib.Path(winreg.QueryValue(subkey, None).strip('"'))
 	
 						if not browser_path.exists():
 							continue

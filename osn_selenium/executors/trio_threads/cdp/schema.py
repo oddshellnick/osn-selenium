@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.schema import (
 )
 
 
+__all__ = ["SchemaCDPExecutor"]
+
+
 class SchemaCDPExecutor(UnifiedSchemaCDPExecutor, TrioThreadMixin, AbstractSchemaCDPExecutor):
 	def __init__(
 			self,

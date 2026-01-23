@@ -1,4 +1,3 @@
-from osn_selenium.instances.errors import TypesConvertError
 from typing import (
 	Any,
 	Dict,
@@ -6,14 +5,20 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.instances.types import PERMISSIONS_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import PERMISSIONS_TYPEHINT
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances.unified.permissions import UnifiedPermissions
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
 )
+
+
+__all__ = ["Permissions"]
 
 
 class Permissions(UnifiedPermissions, AbstractPermissions):
@@ -52,7 +57,7 @@ class Permissions(UnifiedPermissions, AbstractPermissions):
 		legacy_permissions_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_permissions_obj, legacyPermissions):
-			raise TypesConvertError(from_=legacyPermissions, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyPermissions, to_=legacy_object)
 		
 		return cls(selenium_permissions=legacy_permissions_obj)
 	

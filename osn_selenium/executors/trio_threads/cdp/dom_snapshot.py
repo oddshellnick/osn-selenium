@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.dom_snapshot import (
 )
 
 
+__all__ = ["DomSnapshotCDPExecutor"]
+
+
 class DomSnapshotCDPExecutor(
 		UnifiedDomSnapshotCDPExecutor,
 		TrioThreadMixin,

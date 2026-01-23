@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.headless_experimental import (
 )
 
 
+__all__ = ["HeadlessExperimentalCDPExecutor"]
+
+
 class HeadlessExperimentalCDPExecutor(
 		UnifiedHeadlessExperimentalCDPExecutor,
 		TrioThreadMixin,

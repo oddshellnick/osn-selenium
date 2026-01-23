@@ -5,6 +5,9 @@ from selenium.webdriver.support.wait import (
 )
 
 
+__all__ = ["AbstractWebDriverWait"]
+
+
 class AbstractWebDriverWait(ABC):
 	"""
 	Abstract base class for WebDriver wait implementations.

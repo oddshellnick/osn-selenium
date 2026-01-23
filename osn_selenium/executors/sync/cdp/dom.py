@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.dom import (
 )
 
 
+__all__ = ["DomCDPExecutor"]
+
+
 class DomCDPExecutor(UnifiedDomCDPExecutor, AbstractDomCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedDomCDPExecutor.__init__(self, execute_function=execute_function)

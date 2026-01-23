@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.console import (
 )
 
 
+__all__ = ["ConsoleCDPExecutor"]
+
+
 class ConsoleCDPExecutor(UnifiedConsoleCDPExecutor, TrioThreadMixin, AbstractConsoleCDPExecutor):
 	def __init__(
 			self,

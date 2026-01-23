@@ -13,6 +13,8 @@ from typing import (
 )
 
 
+__all__ = ["TrioThreadMixin"]
+
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
 _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
 

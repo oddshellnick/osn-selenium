@@ -1,8 +1,11 @@
 from typing import Any
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.blink.base import (
 	UnifiedBlinkBaseMixin
 )
+
+
+__all__ = ["UnifiedBlinkLoggingMixin"]
 
 
 class UnifiedBlinkLoggingMixin(UnifiedBlinkBaseMixin):

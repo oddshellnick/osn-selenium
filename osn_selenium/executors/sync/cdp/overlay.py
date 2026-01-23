@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.overlay import (
 )
 
 
+__all__ = ["OverlayCDPExecutor"]
+
+
 class OverlayCDPExecutor(UnifiedOverlayCDPExecutor, AbstractOverlayCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedOverlayCDPExecutor.__init__(self, execute_function=execute_function)

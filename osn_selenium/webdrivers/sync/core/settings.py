@@ -1,5 +1,5 @@
 from typing import Optional
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers.unified.core.settings import (
 	UnifiedCoreSettingsMixin
@@ -7,6 +7,9 @@ from osn_selenium.webdrivers.unified.core.settings import (
 from osn_selenium.abstract.webdriver.core.settings import (
 	AbstractCoreSettingsMixin
 )
+
+
+__all__ = ["CoreSettingsMixin"]
 
 
 class CoreSettingsMixin(UnifiedCoreSettingsMixin, AbstractCoreSettingsMixin):

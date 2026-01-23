@@ -1,3 +1,4 @@
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -7,24 +8,29 @@ from typing import (
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
-from osn_selenium.webdrivers.decorators import requires_driver
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT
 )
+from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.exceptions.webdriver import (
+	WebDriverNotStartedError
+)
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
+
+
+__all__ = ["UnifiedCoreBaseMixin"]
 
 
 class UnifiedCoreBaseMixin:
 	def __init__(
 			self,
 			webdriver_path: str,
-			architecture: ARCHITECTURE_TYPEHINT,
+			architecture: ARCHITECTURES_TYPEHINT,
 			flags_manager_type: Type[BrowserFlagsManager] = BrowserFlagsManager,
 			flags: Optional[BrowserFlags] = None,
 			implicitly_wait: int = 5,
@@ -46,7 +52,7 @@ class UnifiedCoreBaseMixin:
 			self._webdriver_flags_manager.update_flags(flags)
 	
 	@property
-	def _architecture_impl(self) -> ARCHITECTURE_TYPEHINT:
+	def _architecture_impl(self) -> ARCHITECTURES_TYPEHINT:
 		return self._architecture
 	
 	@requires_driver
@@ -75,7 +81,7 @@ class UnifiedCoreBaseMixin:
 	
 	def _ensure_driver(self) -> None:
 		if self._driver is None:
-			raise RuntimeError("WebDriver is not started. Call start_webdriver() first.")
+			raise WebDriverNotStartedError()
 	
 	@requires_driver
 	def _error_handler_get_impl(self) -> ErrorHandler:

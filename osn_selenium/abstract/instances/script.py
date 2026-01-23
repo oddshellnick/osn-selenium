@@ -9,6 +9,9 @@ from selenium.webdriver.common.bidi.script import (
 )
 
 
+__all__ = ["AbstractScript"]
+
+
 class AbstractScript(ABC):
 	"""
 	Abstract base class for script execution and management.

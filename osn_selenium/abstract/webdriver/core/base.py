@@ -6,18 +6,21 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT
-)
 from selenium.webdriver.common.bidi.session import Session
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT
+)
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
-from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.remote.locator_converter import LocatorConverter
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
+
+
+__all__ = ["AbstractCoreBaseMixin"]
 
 
 class AbstractCoreBaseMixin(ABC):
@@ -39,20 +42,9 @@ class AbstractCoreBaseMixin(ABC):
 		
 		...
 	
-	@abstractmethod
-	def _session(self) -> Session:
-		"""
-		Internal method to access the current BiDi session object.
-
-		Returns:
-			Session: The session object.
-		"""
-		
-		...
-	
 	@property
 	@abstractmethod
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		"""
 		Returns the architecture of the driver.
 
@@ -266,6 +258,17 @@ class AbstractCoreBaseMixin(ABC):
 
 		Args:
 			value (Dict[str, Any]): Dictionary of scripts to pin.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def session(self) -> Session:
+		"""
+		Internal method to access the current BiDi session object.
+
+		Returns:
+			Session: The session object.
 		"""
 		
 		...

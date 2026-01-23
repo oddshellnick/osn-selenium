@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.accessibility import (
 )
 
 
+__all__ = ["AccessibilityCDPExecutor"]
+
+
 class AccessibilityCDPExecutor(
 		UnifiedAccessibilityCDPExecutor,
 		TrioThreadMixin,

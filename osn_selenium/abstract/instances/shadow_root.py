@@ -10,6 +10,8 @@ from selenium.webdriver.remote.shadowroot import (
 )
 
 
+__all__ = ["AbstractShadowRoot"]
+
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.web_element import AbstractWebElement
 

@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractEmulationCDPExecutor"]
+
+
 class AbstractEmulationCDPExecutor(ABC):
 	@abstractmethod
 	def add_screen(

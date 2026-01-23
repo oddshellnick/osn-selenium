@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.core.file import (
 )
 
 
+__all__ = ["CoreFileMixin"]
+
+
 class CoreFileMixin(UnifiedCoreFileMixin, TrioThreadMixin, AbstractCoreFileMixin):
 	"""
 	Mixin for file system interactions within Core WebDrivers.

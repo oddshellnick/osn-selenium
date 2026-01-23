@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractDomDebuggerCDPExecutor"]
+
+
 class AbstractDomDebuggerCDPExecutor(ABC):
 	@abstractmethod
 	def get_event_listeners(

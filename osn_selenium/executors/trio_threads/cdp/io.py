@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.io import (
 )
 
 
+__all__ = ["IoCDPExecutor"]
+
+
 class IoCDPExecutor(UnifiedIoCDPExecutor, TrioThreadMixin, AbstractIoCDPExecutor):
 	def __init__(
 			self,

@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.bluetooth_emulation import (
 )
 
 
+__all__ = ["BluetoothEmulationCDPExecutor"]
+
+
 class BluetoothEmulationCDPExecutor(
 		UnifiedBluetoothEmulationCDPExecutor,
 		TrioThreadMixin,

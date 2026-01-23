@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.emulation import (
 )
 
 
+__all__ = ["EmulationCDPExecutor"]
+
+
 class EmulationCDPExecutor(
 		UnifiedEmulationCDPExecutor,
 		TrioThreadMixin,

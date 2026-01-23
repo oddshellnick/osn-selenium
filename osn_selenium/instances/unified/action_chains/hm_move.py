@@ -1,14 +1,20 @@
 from typing import Tuple
-from osn_selenium.types import Point
+from osn_selenium.models import Point
 from osn_selenium.instances._functions import move_to_parts
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
+from osn_selenium.exceptions.instance import (
+	ElementNotVisibleError
+)
 from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.instances.unified.action_chains.move import UnifiedMoveMixin
 from osn_selenium.instances.unified.action_chains.utils import UnifiedUtilsMixin
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
 )
+
+
+__all__ = ["UnifiedHMMoveMixin"]
 
 
 class UnifiedHMMoveMixin(UnifiedUtilsMixin, UnifiedMoveMixin):
@@ -52,6 +58,9 @@ class UnifiedHMMoveMixin(UnifiedUtilsMixin, UnifiedMoveMixin):
 		return self._hm_move_impl(start_position=start_position, end_position=end_position), end_position
 	
 	def _hm_move_to_element_with_random_offset_impl(self, start_position: Point, element: WEB_ELEMENT_TYPEHINT) -> Tuple[legacyActionChains, Point]:
-		end_position = self._js_executor.get_random_element_point(element=get_legacy_instance(instance=element))
+		end_position = self._js_executor._get_random_element_point_impl(element=get_legacy_instance(instance=element))
+		
+		if end_position is None:
+			raise ElementNotVisibleError(element_id=get_legacy_instance(instance=element).id)
 		
 		return self._hm_move_impl(start_position=start_position, end_position=end_position), end_position

@@ -6,6 +6,9 @@ from selenium.webdriver.common.bidi.permissions import (
 )
 
 
+__all__ = ["AbstractPermissions"]
+
+
 class AbstractPermissions(ABC):
 	"""
 	Abstract base class for managing browser permissions.

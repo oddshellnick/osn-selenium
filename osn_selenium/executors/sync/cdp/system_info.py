@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.system_info import (
 )
 
 
+__all__ = ["SystemInfoCDPExecutor"]
+
+
 class SystemInfoCDPExecutor(UnifiedSystemInfoCDPExecutor, AbstractSystemInfoCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedSystemInfoCDPExecutor.__init__(self, execute_function=execute_function)

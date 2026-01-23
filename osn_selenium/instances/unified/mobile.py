@@ -1,23 +1,26 @@
 from typing import List, Union
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.remote.mobile import (
 	Mobile as legacyMobile,
 	_ConnectionType
 )
 
 
+__all__ = ["UnifiedMobile"]
+
+
 class UnifiedMobile:
 	def __init__(self, selenium_mobile: legacyMobile):
 		if not isinstance(selenium_mobile, legacyMobile):
-			raise ExpectedTypeError(expected_class=legacyMobile, received_instance=selenium_mobile)
+			raise NotExpectedTypeError(expected_type=legacyMobile, received_instance=selenium_mobile)
 		
 		self._selenium_mobile = selenium_mobile
 	
-	def _context_impl(self) -> str:
-		return self._legacy_impl.context
-	
 	def _contexts_impl(self) -> List[str]:
 		return self._legacy_impl.contexts
+	
+	def _get_context_impl(self) -> str:
+		return self._legacy_impl.context
 	
 	@property
 	def _legacy_impl(self) -> legacyMobile:

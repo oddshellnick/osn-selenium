@@ -3,17 +3,20 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
 
 
+__all__ = ["UnifiedWebExtension"]
+
+
 class UnifiedWebExtension:
 	def __init__(self, selenium_web_extension: legacyWebExtension):
 		if not isinstance(selenium_web_extension, legacyWebExtension):
-			raise ExpectedTypeError(
-					expected_class=legacyWebExtension,
+			raise NotExpectedTypeError(
+					expected_type=legacyWebExtension,
 					received_instance=selenium_web_extension
 			)
 		

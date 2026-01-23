@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["UnifiedFetchCDPExecutor"]
+
+
 class UnifiedFetchCDPExecutor:
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		self._execute_function = execute_function

@@ -5,11 +5,13 @@ from typing import (
 	Union
 )
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.types import STORAGE_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances._typehints import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.storage import UnifiedStorage
 from osn_selenium.abstract.instances.storage import AbstractStorage
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -20,6 +22,9 @@ from selenium.webdriver.common.bidi.storage import (
 	Storage as legacyStorage,
 	StorageKeyPartitionDescriptor
 )
+
+
+__all__ = ["Storage"]
 
 
 class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
@@ -81,7 +86,7 @@ class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 		legacy_storage_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_storage_obj, legacyStorage):
-			raise TypesConvertError(from_=legacyStorage, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyStorage, to_=legacy_object)
 		
 		return cls(selenium_storage=legacy_storage_obj, lock=lock, limiter=limiter)
 	

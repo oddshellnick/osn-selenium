@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractAutofillCDPExecutor"]
+
+
 class AbstractAutofillCDPExecutor(ABC):
 	@abstractmethod
 	def disable(self) -> None:

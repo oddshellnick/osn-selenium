@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.accessibility import (
 )
 
 
+__all__ = ["AccessibilityCDPExecutor"]
+
+
 class AccessibilityCDPExecutor(UnifiedAccessibilityCDPExecutor, AbstractAccessibilityCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedAccessibilityCDPExecutor.__init__(self, execute_function=execute_function)

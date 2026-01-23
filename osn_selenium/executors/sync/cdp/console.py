@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.console import (
 )
 
 
+__all__ = ["ConsoleCDPExecutor"]
+
+
 class ConsoleCDPExecutor(UnifiedConsoleCDPExecutor, AbstractConsoleCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedConsoleCDPExecutor.__init__(self, execute_function=execute_function)
