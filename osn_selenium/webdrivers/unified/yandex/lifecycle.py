@@ -2,28 +2,23 @@ import pathlib
 from typing import Optional, Union
 from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
-from osn_selenium.webdrivers.trio_threads.chrome import ChromeLifecycleMixin
-from osn_selenium.webdrivers.unified.yandex.lifecycle import (
-	UnifiedYandexLifecycleMixin
+from osn_selenium.webdrivers.unified.core.window import (
+	UnifiedCoreWindowMixin
 )
-from osn_selenium.abstract.webdriver.yandex.lifecycle import (
-	AbstractYandexLifecycleMixin
+from osn_selenium.webdrivers.unified.core.timeouts import (
+	UnifiedCoreTimeoutsMixin
+)
+from osn_selenium.webdrivers.unified.chrome.lifecycle import (
+	UnifiedChromeLifecycleMixin
 )
 
 
-class YandexLifecycleMixin(
-		UnifiedYandexLifecycleMixin,
-		ChromeLifecycleMixin,
-		AbstractYandexLifecycleMixin
+class UnifiedYandexLifecycleMixin(
+		UnifiedChromeLifecycleMixin,
+		UnifiedCoreTimeoutsMixin,
+		UnifiedCoreWindowMixin
 ):
-	"""
-	Mixin for managing the lifecycle of the Yandex WebDriver.
-
-	Handles the creation, startup, shutdown, and restarting processes of the
-	underlying browser instance, ensuring clean session management.
-	"""
-	
-	async def restart_webdriver(
+	def _restart_webdriver_impl(
 			self,
 			flags: Optional[YandexFlags] = None,
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
@@ -32,7 +27,7 @@ class YandexLifecycleMixin(
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await self.sync_to_trio(sync_function=self._restart_webdriver_impl)(
+		super()._restart_webdriver_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
@@ -41,7 +36,7 @@ class YandexLifecycleMixin(
 				window_rect=window_rect,
 		)
 	
-	async def start_webdriver(
+	def _start_webdriver_impl(
 			self,
 			flags: Optional[YandexFlags] = None,
 			browser_exe: Optional[Union[str, pathlib.Path]] = None,
@@ -50,7 +45,7 @@ class YandexLifecycleMixin(
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		await self.sync_to_trio(sync_function=self._start_webdriver_impl)(
+		super()._start_webdriver_impl(
 				flags=flags,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
