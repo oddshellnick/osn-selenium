@@ -176,7 +176,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 	def pinned_scripts(self, value: Dict[str, Any]) -> None:
 		self._pinned_scripts_set_impl(value=value)
 	
-	async def _session(self) -> Session:
+	async def session(self) -> Session:
 		return await self.sync_to_trio(sync_function=self._session_impl)()
 	
 	@property

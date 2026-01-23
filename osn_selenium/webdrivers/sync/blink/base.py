@@ -108,12 +108,6 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 				window_rect=window_rect,
 		)
 	
-	def _find_debugging_port(self, debugging_port: Optional[int]) -> int:
-		return self._find_debugging_port_impl(debugging_port=debugging_port)
-	
-	def _set_debugging_port(self, debugging_port: Optional[int], debugging_address: Optional[str]) -> None:
-		self._set_debugging_port_impl(debugging_port=debugging_port, debugging_address=debugging_address)
-	
 	@property
 	def browser_exe(self) -> Optional[Union[str, pathlib.Path]]:
 		return self._browser_exe_impl

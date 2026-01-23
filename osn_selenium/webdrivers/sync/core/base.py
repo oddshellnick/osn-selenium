@@ -152,7 +152,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 	def pinned_scripts(self, value: Dict[str, Any]) -> None:
 		self._pinned_scripts_set_impl(value)
 	
-	def _session(self) -> Session:
+	def session(self) -> Session:
 		return self._session_impl()
 	
 	@property

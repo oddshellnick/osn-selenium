@@ -23,9 +23,6 @@ class BlinkLifecycleMixin(
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	def _create_driver(self) -> None:
-		self._create_driver_impl()
-	
 	def close_webdriver(self) -> None:
 		self._close_webdriver_impl()
 	

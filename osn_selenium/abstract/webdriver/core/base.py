@@ -40,7 +40,7 @@ class AbstractCoreBaseMixin(ABC):
 		...
 	
 	@abstractmethod
-	def _session(self) -> Session:
+	def session(self) -> Session:
 		"""
 		Internal method to access the current BiDi session object.
 
