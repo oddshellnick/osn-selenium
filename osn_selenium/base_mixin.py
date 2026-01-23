@@ -40,7 +40,39 @@ class TrioThreadMixin:
 		self._lock = lock
 		self._capacity_limiter = limiter
 	
+	@property
+	def capacity_limiter(self) -> trio.CapacityLimiter:
+		"""
+		The Trio CapacityLimiter used for concurrency control.
+
+		Returns:
+			trio.CapacityLimiter: The limiter instance.
+		"""
+		
+		return self._capacity_limiter
+	
+	@property
+	def lock(self) -> trio.Lock:
+		"""
+		The Trio Lock used for synchronization.
+
+		Returns:
+			trio.Lock: The lock instance.
+		"""
+		
+		return self._lock
+	
 	def sync_to_trio(self, sync_function: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, Coroutine[Any, Any, _METHOD_OUTPUT]]:
+		"""
+		Wraps a synchronous function to run within a Trio thread pool using a lock and limiter.
+
+		Args:
+			sync_function (Callable[_METHOD_INPUT, _METHOD_OUTPUT]): The synchronous function to wrap.
+
+		Returns:
+			Callable[_METHOD_INPUT, Coroutine[Any, Any, _METHOD_OUTPUT]]: An async wrapper for the sync function.
+		"""
+		
 		async def wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> _METHOD_OUTPUT:
 			def function_with_kwargs(*args_) -> _METHOD_OUTPUT:
 				return sync_function(*args_, **kwargs)
@@ -52,7 +84,20 @@ class TrioThreadMixin:
 		
 		return wrapper
 	
-	def sync_to_trio_context(self, context_manager_factory: Callable[_METHOD_INPUT, ContextManager[_METHOD_OUTPUT]]) -> Callable[_METHOD_INPUT, AsyncContextManager[_METHOD_OUTPUT]]:
+	def sync_to_trio_context(
+			self,
+			context_manager_factory: Callable[_METHOD_INPUT, ContextManager[_METHOD_OUTPUT]]
+	) -> Callable[_METHOD_INPUT, AsyncContextManager[_METHOD_OUTPUT]]:
+		"""
+		Converts a synchronous context manager factory to an asynchronous Trio-compatible context manager.
+
+		Args:
+			context_manager_factory (Callable[_METHOD_INPUT, ContextManager[_METHOD_OUTPUT]]): A factory function returning a context manager.
+
+		Returns:
+			Callable[_METHOD_INPUT, AsyncContextManager[_METHOD_OUTPUT]]: An async function returning an async context manager.
+		"""
+		
 		@asynccontextmanager
 		async def wrapper(*args: _METHOD_INPUT.args, **kwargs: _METHOD_INPUT.kwargs) -> AsyncIterator[_METHOD_OUTPUT]:
 			sync_context_manager = await self.sync_to_trio(sync_function=context_manager_factory)(*args, **kwargs)

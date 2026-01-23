@@ -1,4 +1,4 @@
-from osn_selenium.types import WindowRect
+from osn_selenium.types import ARCHITECTURE_TYPEHINT, WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -59,6 +59,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 		UnifiedCoreBaseMixin.__init__(
 				self,
 				webdriver_path=webdriver_path,
+				architecture="sync",
 				flags_manager_type=flags_manager_type,
 				flags=flags,
 				implicitly_wait=implicitly_wait,
@@ -66,6 +67,10 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 		)
+
+	@property
+	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+		return self._architecture_impl
 	
 	@property
 	def capabilities(self) -> Dict[str, Any]:

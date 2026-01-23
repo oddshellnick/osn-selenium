@@ -23,8 +23,8 @@ from osn_selenium.abstract.webdriver.core import (
 from osn_selenium.webdrivers.sync.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.sync.core.navigation import CoreNavigationMixin
 from osn_selenium.webdrivers._functions import (
-	execute_cmd_bridge,
-	execute_js_bridge
+	get_cdp_executor_bridge,
+	get_js_executor_bridge
 )
 
 
@@ -93,13 +93,11 @@ class CoreWebDriver(
 		)
 		
 		self._cdp_executor = CDPExecutor(
-				execute_function=lambda cmd,
-				cmd_args: execute_cmd_bridge(self, cmd, cmd_args)
+				execute_function=get_cdp_executor_bridge(self)
 		)
 		
 		self._js_executor = JSExecutor(
-				execute_function=lambda script,
-				*args: execute_js_bridge(self, script, *args)
+				execute_function=get_js_executor_bridge(self)
 		)
 	
 	@property

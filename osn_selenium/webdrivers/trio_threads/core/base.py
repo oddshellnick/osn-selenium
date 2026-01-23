@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.types import WindowRect
+from osn_selenium.types import ARCHITECTURE_TYPEHINT, WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
@@ -67,6 +67,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 		UnifiedCoreBaseMixin.__init__(
 				self,
 				webdriver_path=webdriver_path,
+				architecture="trio_threads",
 				flags_manager_type=flags_manager_type,
 				flags=flags,
 				implicitly_wait=implicitly_wait,
@@ -82,6 +83,10 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 				if capacity_limiter is not None
 				else trio.CapacityLimiter(100),
 		)
+
+	@property
+	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+		return self._architecture_impl
 	
 	@property
 	def capabilities(self) -> Dict[str, Any]:

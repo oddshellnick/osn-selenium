@@ -5,7 +5,7 @@ from typing import (
 	Optional
 )
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.webdrivers._functions import execute_js_bridge
+from osn_selenium.webdrivers._functions import get_js_executor_bridge
 from osn_selenium.instances.trio_threads.action_chains import ActionChains
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
@@ -42,8 +42,7 @@ class CoreActionsMixin(
 		
 		return ActionChains(
 				selenium_action_chains=legacy,
-				execute_js_script_function=lambda script,
-				*args: execute_js_bridge(self, script, *args),
+				execute_js_script_function=get_js_executor_bridge(self),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

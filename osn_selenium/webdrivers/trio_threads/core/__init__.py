@@ -26,8 +26,8 @@ from osn_selenium.webdrivers.trio_threads.core.lifecycle import CoreLifecycleMix
 from osn_selenium.webdrivers.trio_threads.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationMixin
 from osn_selenium.webdrivers._functions import (
-	execute_cmd_bridge,
-	execute_js_bridge
+	get_cdp_executor_bridge,
+	get_js_executor_bridge
 )
 
 
@@ -107,15 +107,13 @@ class CoreWebDriver(
 		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
 		
 		self._cdp_executor = CDPExecutor(
-				execute_function=lambda cmd,
-				cmd_args: execute_cmd_bridge(self, cmd, cmd_args),
+				execute_function=get_cdp_executor_bridge(self),
 				lock=self._lock,
 				limiter=self._capacity_limiter
 		)
 		
 		self._js_executor = JSExecutor(
-				execute_function=lambda script,
-				*args: execute_js_bridge(self, script, *args),
+				execute_function=get_js_executor_bridge(self),
 				lock=self._lock,
 				limiter=self._capacity_limiter,
 		)

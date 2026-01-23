@@ -1,0 +1,61 @@
+from typing import (
+    Protocol,
+    Optional,
+    runtime_checkable
+)
+
+import trio
+from selenium.webdriver.remote.webdriver import WebDriver as legacyWebDriver
+
+
+@runtime_checkable
+class TrioThreadWebDriver(Protocol):
+    """
+    Protocol for a WebDriver that operates within a Trio thread pool.
+    """
+
+    @property
+    def architecture(self) -> str:
+        ...
+
+    @property
+    def driver(self) -> Optional[legacyWebDriver]:
+        ...
+
+    @property
+    def lock(self) -> trio.Lock:
+        ...
+
+    @property
+    def capacity_limiter(self) -> trio.CapacityLimiter:
+        ...
+
+
+@runtime_checkable
+class SyncWebDriver(Protocol):
+    """
+    Protocol for a synchronous WebDriver.
+    """
+
+    @property
+    def architecture(self) -> str:
+        ...
+
+    @property
+    def driver(self) -> Optional[legacyWebDriver]:
+        ...
+
+
+@runtime_checkable
+class AnyWebDriver(Protocol):
+    """
+    Abstract protocol encompassing different types of WebDriver implementations.
+    """
+
+    @property
+    def _architecture_impl(self) -> str:
+        ...
+
+    @property
+    def _driver_impl(self) -> Optional[legacyWebDriver]:
+        ...

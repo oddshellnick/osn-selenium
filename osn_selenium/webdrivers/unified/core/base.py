@@ -1,4 +1,4 @@
-from osn_selenium.types import WindowRect
+from osn_selenium.types import ARCHITECTURE_TYPEHINT, WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -21,6 +21,7 @@ class UnifiedCoreBaseMixin:
 	def __init__(
 			self,
 			webdriver_path: str,
+			architecture: ARCHITECTURE_TYPEHINT,
 			flags_manager_type: Type[BrowserFlagsManager] = BrowserFlagsManager,
 			flags: Optional[BrowserFlags] = None,
 			implicitly_wait: int = 5,
@@ -32,6 +33,7 @@ class UnifiedCoreBaseMixin:
 		self._webdriver_path = webdriver_path
 		self._webdriver_flags_manager = flags_manager_type()
 		self._driver: Optional[legacyWebDriver] = None
+		self._architecture = architecture
 		self._base_implicitly_wait = float(implicitly_wait)
 		self._base_page_load_timeout = float(page_load_timeout)
 		self._base_script_timeout = float(script_timeout)
@@ -39,6 +41,10 @@ class UnifiedCoreBaseMixin:
 		
 		if flags is not None:
 			self._webdriver_flags_manager.update_flags(flags)
+
+	@property
+	def _architecture_impl(self) -> ARCHITECTURE_TYPEHINT:
+		return self._architecture
 	
 	@requires_driver
 	def _capabilities_impl(self) -> Dict[str, Any]:
