@@ -9,6 +9,8 @@ from typing import (
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
+from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
+from osn_selenium.webdrivers.trio_threads.blink.base import BlinkBaseMixin
 from osn_selenium.abstract.webdriver.blink import (
 	AbstractBlinkWebDriver
 )
@@ -16,16 +18,20 @@ from osn_selenium.webdrivers.trio_threads.blink.casting import BlinkCastingMixin
 from osn_selenium.webdrivers.trio_threads.blink.logging import BlinkLoggingMixin
 from osn_selenium.webdrivers.trio_threads.blink.network import BlinkNetworkMixin
 from osn_selenium.webdrivers.trio_threads.blink.features import BlinkFeaturesMixin
+from osn_selenium.webdrivers.trio_threads.blink.settings import BlinkSettingsMixin
 from osn_selenium.webdrivers.trio_threads.blink.lifecycle import BlinkLifecycleMixin
 
 
 class BlinkWebDriver(
+		BlinkBaseMixin,
 		BlinkCastingMixin,
 		BlinkFeaturesMixin,
 		BlinkLifecycleMixin,
 		BlinkLoggingMixin,
 		BlinkNetworkMixin,
-		AbstractBlinkWebDriver
+		BlinkSettingsMixin,
+		CoreWebDriver,
+		AbstractBlinkWebDriver,
 ):
 	"""
 	Concrete Blink WebDriver implementation combining all functional mixins.
@@ -88,11 +94,26 @@ class BlinkWebDriver(
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreWebDriver.__init__(
+				self,
+				webdriver_path=webdriver_path,
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+				devtools_settings=devtools_settings,
+				capacity_limiter=capacity_limiter,
+		)
+		
+		BlinkBaseMixin.__init__(
+				self,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
 				use_browser_exe=use_browser_exe,
 				webdriver_path=webdriver_path,
+				architecture="trio_threads",
 				flags_manager_type=flags_manager_type,
 				flags=flags,
 				start_page_url=start_page_url,
@@ -100,6 +121,5 @@ class BlinkWebDriver(
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
-				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
 		)

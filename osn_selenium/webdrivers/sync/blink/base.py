@@ -1,33 +1,28 @@
 import pathlib
-from selenium import webdriver
-from osn_selenium.types import WindowRect
 from typing import (
 	Optional,
 	Type,
 	Union
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
-from osn_selenium.flags.models.values import ArgumentValue
-from osn_selenium.webdrivers.sync.core import CoreWebDriver
-from osn_selenium.browsers_handler import get_path_to_browser
-from osn_selenium.webdrivers._functions import (
-	find_browser_previous_session
+from osn_selenium.flags.models.blink import BlinkFlags
+from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium.types import (
+	ARCHITECTURE_TYPEHINT,
+	WindowRect
+)
+from osn_selenium.webdrivers.unified.blink.base import (
+	UnifiedBlinkBaseMixin
 )
 from osn_selenium.abstract.webdriver.blink.base import (
 	AbstractBlinkBaseMixin
 )
-from osn_selenium.flags.models.blink import (
-	BlinkArguments,
-	BlinkExperimentalOptions,
-	BlinkFlags
-)
-from osn_system_utils.api.network import (
-	get_localhost_free_port_of,
-	get_random_localhost_free_port
+from selenium.webdriver.chromium.webdriver import (
+	ChromiumDriver as legacyWebDriver
 )
 
 
-class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
+class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixin):
 	"""
 	Base mixin for Blink WebDrivers handling core initialization and state management.
 
@@ -41,6 +36,7 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 			browser_exe: Optional[Union[str, pathlib.Path]],
 			browser_name_in_system: str,
 			webdriver_path: str,
+			architecture: ARCHITECTURE_TYPEHINT,
 			use_browser_exe: bool = True,
 			flags_manager_type: Type[BlinkFlagsManager] = BlinkFlagsManager,
 			flags: Optional[BlinkFlags] = None,
@@ -85,7 +81,8 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 				the browser's default window size will be used. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreBaseMixin.__init__(
+				self,
 				webdriver_path=webdriver_path,
 				flags_manager_type=flags_manager_type,
 				flags=flags,
@@ -95,78 +92,43 @@ class BlinkBaseMixin(CoreWebDriver, AbstractBlinkBaseMixin):
 				window_rect=window_rect,
 		)
 		
-		if browser_exe is not None:
-			self._webdriver_flags_manager.browser_exe = browser_exe
-		
-		if start_page_url is not None:
-			self._webdriver_flags_manager.start_page_url = start_page_url
-		
-		if window_rect is not None:
-			self._window_rect = window_rect
-		
-		if use_browser_exe is not None and browser_name_in_system is not None:
-			self._detect_browser_exe(
-					browser_name_in_system=browser_name_in_system,
-					use_browser_exe=use_browser_exe
-			)
+		UnifiedBlinkBaseMixin.__init__(
+				self,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				webdriver_path=webdriver_path,
+				architecture=architecture,
+				use_browser_exe=use_browser_exe,
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				start_page_url=start_page_url,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+		)
 	
-	def _detect_browser_exe(self, browser_name_in_system: str, use_browser_exe: bool):
-		if self.browser_exe is None and use_browser_exe:
-			self._webdriver_flags_manager.browser_exe = get_path_to_browser(browser_name_in_system)
-		elif self.browser_exe is not None and not use_browser_exe:
-			self._webdriver_flags_manager.browser_exe = None
+	def _find_debugging_port(self, debugging_port: Optional[int]) -> int:
+		return self._find_debugging_port_impl(debugging_port=debugging_port)
 	
-	@property
-	def debugging_port(self) -> Optional[int]:
-		return self._webdriver_flags_manager.arguments.get("remote_debugging_port", ArgumentValue(command_line="", value=None)).value
+	def _set_debugging_port(self, debugging_port: Optional[int], debugging_address: Optional[str]) -> None:
+		self._set_debugging_port_impl(debugging_port=debugging_port, debugging_address=debugging_address)
 	
 	@property
 	def browser_exe(self) -> Optional[Union[str, pathlib.Path]]:
-		return self._webdriver_flags_manager.browser_exe
-	
-	def _find_debugging_port(self, debugging_port: Optional[int]) -> int:
-		if self.browser_exe is not None:
-			user_data_dir_command = self._webdriver_flags_manager.flags_definitions.get("user_data_dir", None)
-			user_data_dir_value = self._webdriver_flags_manager.arguments.get("user_data_dir", None)
-		
-			user_data_dir = None if user_data_dir_command is None else user_data_dir_value.value if user_data_dir_value is not None else None
-		
-			if user_data_dir_command is not None:
-				previous_session = find_browser_previous_session(self.browser_exe, user_data_dir_command.command, user_data_dir)
-		
-				if previous_session is not None:
-					return previous_session
-		
-		if debugging_port is not None:
-			return get_localhost_free_port_of(ports_to_check=debugging_port, on_candidates="min")
-		
-		if self.debugging_port is None or self.debugging_port == 0:
-			return get_random_localhost_free_port()
-		
-		return self.debugging_port
-	
-	def _set_debugging_port(self, debugging_port: Optional[int], debugging_address: Optional[str]):
-		if self.browser_exe is not None:
-			_debugging_address = "127.0.0.1" if debugging_address is None else debugging_address
-			_debugging_port = 0 if debugging_port is None else debugging_port
-		
-			self._webdriver_flags_manager.update_flags(
-					BlinkFlags(
-							argument=BlinkArguments(
-									remote_debugging_port=debugging_port,
-									remote_debugging_address=debugging_address
-							),
-							experimental_option=BlinkExperimentalOptions(debugger_address=f"{_debugging_address}:{_debugging_port}"),
-					)
-			)
+		return self._browser_exe_impl
 	
 	@property
 	def debugging_ip(self) -> Optional[str]:
-		return self._webdriver_flags_manager.arguments.get("remote_debugging_address", ArgumentValue(command_line="", value=None)).value
+		return self._debugging_ip_impl
 	
 	@property
-	def driver(self) -> Optional[Union[webdriver.Chrome, webdriver.Edge]]:
-		return super().driver
+	def debugging_port(self) -> Optional[int]:
+		return self._debugging_port_impl
 	
-	def set_start_page_url(self, start_page_url: str):
+	@property
+	def driver(self) -> Optional[legacyWebDriver]:
+		return self._driver_impl
+	
+	def set_start_page_url(self, start_page_url: str) -> None:
 		self._webdriver_flags_manager.start_page_url = start_page_url

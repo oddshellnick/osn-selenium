@@ -7,11 +7,13 @@ from typing import (
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_selenium.executors.sync.cdp import CDPExecutor
+from osn_selenium.webdrivers.sync.core import CoreWebDriver
+from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
 from osn_selenium.webdrivers.sync.blink.casting import BlinkCastingMixin
 from osn_selenium.webdrivers.sync.blink.logging import BlinkLoggingMixin
 from osn_selenium.webdrivers.sync.blink.network import BlinkNetworkMixin
 from osn_selenium.webdrivers.sync.blink.features import BlinkFeaturesMixin
+from osn_selenium.webdrivers.sync.blink.settings import BlinkSettingsMixin
 from osn_selenium.webdrivers.sync.blink.lifecycle import BlinkLifecycleMixin
 from osn_selenium.abstract.webdriver.blink import (
 	AbstractBlinkWebDriver
@@ -19,11 +21,14 @@ from osn_selenium.abstract.webdriver.blink import (
 
 
 class BlinkWebDriver(
+		BlinkBaseMixin,
 		BlinkCastingMixin,
 		BlinkFeaturesMixin,
 		BlinkLifecycleMixin,
 		BlinkLoggingMixin,
 		BlinkNetworkMixin,
+		BlinkSettingsMixin,
+		CoreWebDriver,
 		AbstractBlinkWebDriver
 ):
 	"""
@@ -82,11 +87,24 @@ class BlinkWebDriver(
 				the browser's default window size will be used. Defaults to None.
 		"""
 		
-		super().__init__(
+		CoreWebDriver.__init__(
+				self,
+				webdriver_path=webdriver_path,
+				flags_manager_type=flags_manager_type,
+				flags=flags,
+				implicitly_wait=implicitly_wait,
+				page_load_timeout=page_load_timeout,
+				script_timeout=script_timeout,
+				window_rect=window_rect,
+		)
+		
+		BlinkBaseMixin.__init__(
+				self,
 				browser_exe=browser_exe,
 				browser_name_in_system=browser_name_in_system,
 				use_browser_exe=use_browser_exe,
 				webdriver_path=webdriver_path,
+				architecture="sync",
 				flags_manager_type=flags_manager_type,
 				flags=flags,
 				start_page_url=start_page_url,

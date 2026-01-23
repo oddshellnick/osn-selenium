@@ -177,34 +177,6 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 		Callable[[str, Any], Any]: A wrapper for execute_script.
 	"""
 	
-	def unwrap_args(args: Any) -> Any:
-		"""
-	Recursively unwraps objects by extracting the legacy Selenium object from wrappers.
-
-	Args:
-		args (Any): Data structure containing potential instance wrappers.
-
-	Returns:
-		Any: Data structure with raw Selenium objects.
-	"""
-		
-		if isinstance(args, list):
-			return [unwrap_args(arg) for arg in args]
-		
-		if isinstance(args, set):
-			return {unwrap_args(arg) for arg in args}
-		
-		if isinstance(args, tuple):
-			return (unwrap_args(arg) for arg in args)
-		
-		if isinstance(args, dict):
-			return {unwrap_args(key): unwrap_args(value) for key, value in args.items()}
-		
-		if isinstance(args, AnyInstanceWrapper):
-			return args.legacy
-		
-		return args
-	
 	def wrapper(script: str, *args: Any) -> Any:
 		args = unwrap_args(args)
 		
@@ -213,9 +185,7 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 		return wrapper_function(result)
 	
 	wrapper_function = get_wrap_args_function(driver=driver)
-	
-	
-	
+
 	return wrapper
 
 
@@ -230,44 +200,14 @@ def get_cdp_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Dict[str, An
 		Callable[[str, Dict[str, Any]], Any]: A wrapper for execute_cdp_cmd.
 	"""
 	
-	def unwrap_args(args: Any) -> Any:
-		"""
-	Recursively unwraps objects by extracting the legacy Selenium object from wrappers.
-
-	Args:
-		args (Any): Data structure containing potential instance wrappers.
-
-	Returns:
-		Any: Data structure with raw Selenium objects.
-	"""
-		
-		if isinstance(args, list):
-			return [unwrap_args(arg) for arg in args]
-		
-		if isinstance(args, set):
-			return {unwrap_args(arg) for arg in args}
-		
-		if isinstance(args, tuple):
-			return (unwrap_args(arg) for arg in args)
-		
-		if isinstance(args, dict):
-			return {unwrap_args(key): unwrap_args(value) for key, value in args.items()}
-		
-		if isinstance(args, AnyInstanceWrapper):
-			return args.legacy
-		
-		return args
-	
 	def wrapper(cmd: str, cmd_args: Dict[str, Any]) -> Any:
 		cmd_args = unwrap_args(cmd_args)
 		
 		result = driver._driver_impl.execute_cdp_cmd(cmd, cmd_args)
 		
 		return wrapper_function(result)
-	
+
 	wrapper_function = get_wrap_args_function(driver=driver)
-	
-	
 	
 	return wrapper
 

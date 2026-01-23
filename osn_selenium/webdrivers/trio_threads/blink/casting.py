@@ -1,12 +1,14 @@
 from typing import Any, Dict, List
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.trio_threads.blink.base import BlinkBaseMixin
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.webdrivers.unified.blink.casting import (
+	UnifiedBlinkCastingMixin
+)
 from osn_selenium.abstract.webdriver.blink.casting import (
 	AbstractBlinkCastingMixin
 )
 
 
-class BlinkCastingMixin(BlinkBaseMixin, AbstractBlinkCastingMixin):
+class BlinkCastingMixin(UnifiedBlinkCastingMixin, TrioThreadMixin, AbstractBlinkCastingMixin):
 	"""
 	Mixin handling object type casting and wrapping for Blink WebDrivers.
 
@@ -14,22 +16,17 @@ class BlinkCastingMixin(BlinkBaseMixin, AbstractBlinkCastingMixin):
 	internal wrapper representations and vice versa during method calls.
 	"""
 	
-	@requires_driver
 	async def get_sinks(self) -> List[Dict[str, Any]]:
-		return await self.sync_to_trio(sync_function=self.driver.get_sinks)()
+		return await self.sync_to_trio(sync_function=self._get_sinks_impl)()
 	
-	@requires_driver
 	async def set_sink_to_use(self, sink_name: str) -> Dict[str, Any]:
-		return await self.sync_to_trio(sync_function=self.driver.set_sink_to_use)(sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._set_sink_to_use_impl)(sink_name=sink_name)
 	
-	@requires_driver
 	async def start_desktop_mirroring(self, sink_name: str) -> Dict[str, Any]:
-		return await self.sync_to_trio(sync_function=self.driver.start_desktop_mirroring)(sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._start_desktop_mirroring_impl)(sink_name=sink_name)
 	
-	@requires_driver
 	async def start_tab_mirroring(self, sink_name: str) -> Dict[str, Any]:
-		return await self.sync_to_trio(sync_function=self.driver.start_tab_mirroring)(sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._start_tab_mirroring_impl)(sink_name=sink_name)
 	
-	@requires_driver
 	async def stop_casting(self, sink_name: str) -> Dict[str, Any]:
-		return await self.sync_to_trio(sync_function=self.driver.stop_casting)(sink_name=sink_name)
+		return await self.sync_to_trio(sync_function=self._stop_casting_impl)(sink_name=sink_name)

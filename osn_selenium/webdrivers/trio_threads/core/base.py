@@ -96,7 +96,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 		self._cdp_executor = CDPExecutor(
 				execute_function=get_cdp_executor_bridge(self),
 				lock=self._lock,
-				limiter=self._capacity_limiter
+				limiter=self._capacity_limiter,
 		)
 		
 		self._js_executor = JSExecutor(

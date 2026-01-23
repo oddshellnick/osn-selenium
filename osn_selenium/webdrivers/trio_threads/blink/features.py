@@ -1,12 +1,14 @@
 from typing import Any, Dict
-from osn_selenium.webdrivers.decorators import requires_driver
-from osn_selenium.webdrivers.trio_threads.blink.base import BlinkBaseMixin
+from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.webdrivers.unified.blink.features import (
+	UnifiedBlinkFeaturesMixin
+)
 from osn_selenium.abstract.webdriver.blink.features import (
 	AbstractBlinkFeaturesMixin
 )
 
 
-class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
+class BlinkFeaturesMixin(UnifiedBlinkFeaturesMixin, TrioThreadMixin, AbstractBlinkFeaturesMixin):
 	"""
 	Mixin for managing browser features and capabilities for Blink WebDrivers.
 
@@ -14,14 +16,11 @@ class BlinkFeaturesMixin(BlinkBaseMixin, AbstractBlinkFeaturesMixin):
 	and inspect the supported capabilities of the current session.
 	"""
 	
-	@requires_driver
-	async def get_issue_message(self) -> str:
-		return await self.sync_to_trio(sync_function=self.driver.get_issue_message)()
+	async def get_issue_message(self) -> Any:
+		return await self.sync_to_trio(sync_function=self._get_issue_message_impl)()
 	
-	@requires_driver
 	async def launch_app(self, id: str) -> Dict[str, Any]:
-		return await self.sync_to_trio(sync_function=self.driver.launch_app)(id=id)
+		return await self.sync_to_trio(sync_function=self._launch_app_impl)(id=id)
 	
-	@requires_driver
 	async def set_permissions(self, name: str, value: str) -> None:
-		return await self.sync_to_trio(sync_function=self.driver.set_permissions)(name=name, value=value)
+		await self.sync_to_trio(sync_function=self._set_permissions_impl)(name=name, value=value)

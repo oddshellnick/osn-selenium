@@ -24,9 +24,6 @@ class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, TrioThreadMixin, AbstractCor
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	async def _create_driver(self) -> None:
-		await self.sync_to_trio(sync_function=self._create_driver_impl)()
-	
 	async def close_webdriver(self) -> None:
 		await self.sync_to_trio(sync_function=self._close_webdriver_impl)()
 	
