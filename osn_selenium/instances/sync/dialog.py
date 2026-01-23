@@ -10,6 +10,9 @@ from selenium.webdriver.common.fedcm.dialog import (
 )
 
 
+__all__ = ["Dialog"]
+
+
 class Dialog(UnifiedDialog, AbstractDialog):
 	"""
 	Wrapper for the legacy Selenium FedCM Dialog instance (Synchronous).

@@ -6,6 +6,9 @@ from osn_selenium.abstract.webdriver.core.navigation import (
 )
 
 
+__all__ = ["CoreNavigationMixin"]
+
+
 class CoreNavigationMixin(UnifiedCoreNavigationMixin, AbstractCoreNavigationMixin):
 	"""
 	Mixin controlling browser navigation for Core WebDrivers.

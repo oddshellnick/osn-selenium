@@ -1,6 +1,6 @@
 from osn_selenium.javascript.functions import convert_to_js_value
 from osn_selenium.javascript.fingerprint.spoof.types import NUMBER
-from osn_selenium.javascript.fingerprint.decorators import indent_code
+from osn_selenium.javascript.fingerprint._decorators import indent_code
 from typing import (
 	Any,
 	List,
@@ -9,12 +9,12 @@ from typing import (
 	Tuple,
 	Union
 )
-from osn_selenium.javascript.fingerprint.functions import reduce_code_level
+from osn_selenium.javascript.fingerprint._functions import reduce_code_level
 from osn_selenium.javascript.fingerprint.spoof.noise import (
 	RandomNoise,
 	StaticNoise
 )
-from osn_selenium.javascript.fingerprint.spoof.templates import (
+from osn_selenium.javascript.fingerprint.spoof._templates import (
 	ABSOLUTE_FREQUENCY,
 	ARRAY_GLOBAL_BLOCK,
 	INDEX_CALCULATION_PERIODIC,
@@ -23,6 +23,15 @@ from osn_selenium.javascript.fingerprint.spoof.templates import (
 	INDEX_INCLUSION_SINGLE_CHECK,
 	VARIABLE_FREQUENCY
 )
+
+
+__all__ = [
+	"get_array_global_block_js",
+	"get_frequency_js",
+	"get_index_calculation_js",
+	"get_noise_js",
+	"get_random_expression_js"
+]
 
 
 def get_random_expression_js(value: Union[List[Any], Tuple[NUMBER, NUMBER]]) -> str:

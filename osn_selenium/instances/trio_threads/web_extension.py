@@ -18,6 +18,9 @@ from selenium.webdriver.common.bidi.webextension import (
 )
 
 
+__all__ = ["WebExtension"]
+
+
 class WebExtension(UnifiedWebExtension, TrioThreadMixin, AbstractWebExtension):
 	"""
 	Wrapper for the legacy Selenium WebExtension instance.

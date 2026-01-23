@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.browser import (
 )
 
 
+__all__ = ["BrowserCDPExecutor"]
+
+
 class BrowserCDPExecutor(UnifiedBrowserCDPExecutor, AbstractBrowserCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedBrowserCDPExecutor.__init__(self, execute_function=execute_function)

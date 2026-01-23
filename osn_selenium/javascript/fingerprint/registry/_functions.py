@@ -1,16 +1,37 @@
 from typing import Dict
 from osn_selenium.javascript.fingerprint.registry.types import RegistryItem
-from osn_selenium.javascript.fingerprint.registry.utils import (
+from osn_selenium.javascript.fingerprint.registry._utils import (
 	MATCH_MEDIA_SETTINGS,
 	WRAP_ARG_0
 )
-from osn_selenium.javascript.fingerprint.registry.core_functions import (
+from osn_selenium.javascript.fingerprint.registry._core_functions import (
 	register_key_methods,
 	register_keys_methods,
 	register_target_methods,
 	register_targets,
 	register_targets_methods
 )
+
+
+__all__ = [
+	"create_registry",
+	"register_advanced_web_apis",
+	"register_audio",
+	"register_browser_environment",
+	"register_dom_layout",
+	"register_fonts",
+	"register_graphics_rendering",
+	"register_hardware_sensors",
+	"register_intl",
+	"register_media_devices",
+	"register_media_elements",
+	"register_navigator_identity",
+	"register_network",
+	"register_screen_properties",
+	"register_storage",
+	"register_system_utils",
+	"register_touch_events"
+]
 
 
 def register_browser_environment(registry: Dict[str, RegistryItem]) -> Dict[str, RegistryItem]:

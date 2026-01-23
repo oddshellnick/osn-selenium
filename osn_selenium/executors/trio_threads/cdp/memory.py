@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.memory import (
 )
 
 
+__all__ = ["MemoryCDPExecutor"]
+
+
 class MemoryCDPExecutor(UnifiedMemoryCDPExecutor, TrioThreadMixin, AbstractMemoryCDPExecutor):
 	def __init__(
 			self,

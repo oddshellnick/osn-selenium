@@ -18,6 +18,9 @@ from osn_selenium.webdrivers.trio_threads.chrome.settings import ChromeSettingsM
 from osn_selenium.webdrivers.trio_threads.chrome.lifecycle import ChromeLifecycleMixin
 
 
+__all__ = ["ChromeWebDriver"]
+
+
 class ChromeWebDriver(
 		ChromeBaseMixin,
 		ChromeLifecycleMixin,

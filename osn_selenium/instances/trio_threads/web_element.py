@@ -23,6 +23,9 @@ from osn_selenium.instances.convert import (
 )
 
 
+__all__ = ["WebElement"]
+
+
 class WebElement(UnifiedWebElement, TrioThreadMixin, AbstractWebElement):
 	"""
 	Represents an HTML element in the DOM, offering methods for interaction (click, type),

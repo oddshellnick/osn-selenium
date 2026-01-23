@@ -8,6 +8,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreStorageMixin"]
+
+
 class UnifiedCoreStorageMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _add_cookie_impl(self, cookie_dict: Dict[str, Any]) -> None:

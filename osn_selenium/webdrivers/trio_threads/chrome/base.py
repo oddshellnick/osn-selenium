@@ -23,6 +23,9 @@ from osn_selenium.abstract.webdriver.chrome.base import (
 )
 
 
+__all__ = ["ChromeBaseMixin"]
+
+
 class ChromeBaseMixin(UnifiedChromeBaseMixin, BlinkBaseMixin, AbstractChromeBaseMixin):
 	"""
 	Base mixin for Chrome WebDrivers handling core initialization and state management.

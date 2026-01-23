@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Tuple
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 
 
+__all__ = ["AbstractHMMoveMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 

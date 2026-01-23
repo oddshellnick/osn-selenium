@@ -22,6 +22,9 @@ from osn_selenium.webdrivers.trio_threads.blink.settings import BlinkSettingsMix
 from osn_selenium.webdrivers.trio_threads.blink.lifecycle import BlinkLifecycleMixin
 
 
+__all__ = ["BlinkWebDriver"]
+
+
 class BlinkWebDriver(
 		BlinkBaseMixin,
 		BlinkCastingMixin,

@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.pwa import (
 )
 
 
+__all__ = ["PwaCDPExecutor"]
+
+
 class PwaCDPExecutor(UnifiedPwaCDPExecutor, AbstractPwaCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedPwaCDPExecutor.__init__(self, execute_function=execute_function)

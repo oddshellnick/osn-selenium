@@ -34,6 +34,20 @@ from osn_selenium.instances.convert import (
 )
 
 
+__all__ = [
+	"build_cdp_kwargs",
+	"find_browser_previous_session",
+	"get_active_executables_table",
+	"get_cdp_executor_bridge",
+	"get_found_profile_dir",
+	"get_js_executor_bridge",
+	"get_wrap_args_function",
+	"unwrap_args",
+	"wrap_sync_args",
+	"wrap_trio_thread_args"
+]
+
+
 def unwrap_args(args: Any) -> Any:
 	"""
 	Recursively unwraps objects by extracting the legacy Selenium object from wrappers.

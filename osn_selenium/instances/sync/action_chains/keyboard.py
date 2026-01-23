@@ -11,6 +11,8 @@ from osn_selenium.abstract.instances.action_chains.keyboard import (
 )
 
 
+__all__ = ["KeyboardMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.sync.action_chains import ActionChains
 

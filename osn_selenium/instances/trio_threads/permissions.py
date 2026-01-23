@@ -18,6 +18,9 @@ from selenium.webdriver.common.bidi.permissions import (
 )
 
 
+__all__ = ["Permissions"]
+
+
 class Permissions(UnifiedPermissions, TrioThreadMixin, AbstractPermissions):
 	"""
 	Wrapper for the legacy Selenium Permissions instance.

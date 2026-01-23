@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.system_info import (
 )
 
 
+__all__ = ["SystemInfoCDPExecutor"]
+
+
 class SystemInfoCDPExecutor(
 		UnifiedSystemInfoCDPExecutor,
 		TrioThreadMixin,

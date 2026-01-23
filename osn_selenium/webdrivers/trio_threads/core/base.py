@@ -31,6 +31,9 @@ from osn_selenium.webdrivers._functions import (
 )
 
 
+__all__ = ["CoreBaseMixin"]
+
+
 class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin):
 	"""
 	This class serves as the foundation for browser-specific implementations, managing

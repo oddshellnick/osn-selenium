@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.blink.lifecycle import (
 )
 
 
+__all__ = ["BlinkLifecycleMixin"]
+
+
 class BlinkLifecycleMixin(
 		UnifiedBlinkLifecycleMixin,
 		CoreLifecycleMixin,

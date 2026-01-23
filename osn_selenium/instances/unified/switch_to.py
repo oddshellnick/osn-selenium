@@ -13,6 +13,9 @@ from selenium.webdriver.remote.webelement import (
 )
 
 
+__all__ = ["UnifiedSwitchTo"]
+
+
 class UnifiedSwitchTo:
 	def __init__(self, selenium_switch_to: legacySwitchTo):
 		if not isinstance(selenium_switch_to, legacySwitchTo):

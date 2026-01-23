@@ -4,6 +4,8 @@ from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
+__all__ = ["EventHandlersMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.domains.abstract import (AbstractDomainSettings, AbstractEventSettings)
 

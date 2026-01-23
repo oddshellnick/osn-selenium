@@ -10,6 +10,9 @@ from selenium.webdriver.remote.webelement import (
 )
 
 
+__all__ = ["UnifiedShadowRoot"]
+
+
 class UnifiedShadowRoot:
 	def __init__(self, selenium_shadow_root: legacyShadowRoot):
 		if not isinstance(selenium_shadow_root, legacyShadowRoot):

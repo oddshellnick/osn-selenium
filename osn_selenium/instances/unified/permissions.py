@@ -11,6 +11,9 @@ from selenium.webdriver.common.bidi.permissions import (
 )
 
 
+__all__ = ["UnifiedPermissions"]
+
+
 class UnifiedPermissions:
 	def __init__(self, selenium_permissions: legacyPermissions):
 		if not isinstance(selenium_permissions, legacyPermissions):

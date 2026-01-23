@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.core.settings import (
 )
 
 
+__all__ = ["AbstractBlinkSettingsMixin"]
+
+
 class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
 	"""
 	Abstract mixin defining the interface for managing browser settings and configuration.

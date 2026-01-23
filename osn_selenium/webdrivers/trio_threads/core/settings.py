@@ -10,6 +10,9 @@ from osn_selenium.abstract.webdriver.core.settings import (
 )
 
 
+__all__ = ["CoreSettingsMixin"]
+
+
 class CoreSettingsMixin(UnifiedCoreSettingsMixin, TrioThreadMixin, AbstractCoreSettingsMixin):
 	"""
 	Mixin for configuring and updating settings of the Core WebDriver.

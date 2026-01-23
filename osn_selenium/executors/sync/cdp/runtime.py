@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.runtime import (
 )
 
 
+__all__ = ["RuntimeCDPExecutor"]
+
+
 class RuntimeCDPExecutor(UnifiedRuntimeCDPExecutor, AbstractRuntimeCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedRuntimeCDPExecutor.__init__(self, execute_function=execute_function)

@@ -3,6 +3,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreScriptMixin"]
+
+
 class UnifiedCoreScriptMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _execute_async_script_impl(self, script: str, *args: Any) -> Any:

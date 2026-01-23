@@ -19,6 +19,9 @@ from selenium.webdriver.common.virtual_authenticator import (
 )
 
 
+__all__ = ["CoreAuthMixin"]
+
+
 class CoreAuthMixin(UnifiedCoreAuthMixin, AbstractCoreAuthMixin):
 	"""
 	Mixin handling authentication and credential management for Core WebDrivers.

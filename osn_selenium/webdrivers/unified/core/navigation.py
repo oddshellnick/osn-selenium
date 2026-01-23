@@ -2,6 +2,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreNavigationMixin"]
+
+
 class UnifiedCoreNavigationMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _back_impl(self) -> None:

@@ -20,6 +20,8 @@ from osn_selenium.instances.convert import (
 )
 
 
+__all__ = ["ShadowRoot"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.web_element import WebElement
 

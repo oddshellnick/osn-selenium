@@ -9,6 +9,9 @@ from osn_selenium.instances.unified.action_chains.drag_and_drop import (
 )
 
 
+__all__ = ["UnifiedActionChains"]
+
+
 class UnifiedActionChains(
 		UnifiedClickMixin,
 		UnifiedDragAndDropMixin,

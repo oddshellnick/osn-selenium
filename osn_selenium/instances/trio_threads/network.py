@@ -16,6 +16,9 @@ from selenium.webdriver.common.bidi.network import (
 )
 
 
+__all__ = ["Network"]
+
+
 class Network(UnifiedNetwork, TrioThreadMixin, AbstractNetwork):
 	"""
 	Wrapper for the legacy Selenium BiDi Network instance.

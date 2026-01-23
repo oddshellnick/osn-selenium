@@ -25,6 +25,8 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["BaseMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
 

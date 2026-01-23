@@ -1,6 +1,9 @@
 from osn_selenium.dev_tools.target.lifecycle import LifecycleMixin
 
 
+__all__ = ["DevToolsTarget"]
+
+
 class DevToolsTarget(LifecycleMixin):
 	"""
 	Manages the DevTools Protocol session and event handling for a specific browser target.

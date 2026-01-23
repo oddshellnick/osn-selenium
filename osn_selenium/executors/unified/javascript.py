@@ -15,6 +15,9 @@ from osn_selenium.types import (
 )
 
 
+__all__ = ["UnifiedJSExecutor"]
+
+
 class UnifiedJSExecutor:
 	"""
 	A unified executor for JavaScript scripts within the Selenium environment.

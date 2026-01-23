@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.input import (
 )
 
 
+__all__ = ["InputCDPExecutor"]
+
+
 class InputCDPExecutor(UnifiedInputCDPExecutor, AbstractInputCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedInputCDPExecutor.__init__(self, execute_function=execute_function)

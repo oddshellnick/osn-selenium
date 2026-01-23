@@ -3,6 +3,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreCaptureMixin"]
+
+
 class UnifiedCoreCaptureMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _get_screenshot_as_base64_impl(self) -> str:

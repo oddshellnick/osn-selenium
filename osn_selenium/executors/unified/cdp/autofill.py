@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["UnifiedAutofillCDPExecutor"]
+
+
 class UnifiedAutofillCDPExecutor:
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		self._execute_function = execute_function

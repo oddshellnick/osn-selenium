@@ -19,6 +19,9 @@ from osn_selenium.flags.models.edge import (
 )
 
 
+__all__ = ["EdgeFlagsManager"]
+
+
 class EdgeFlagsManager(BlinkFlagsManager):
 	"""
 	Manages Edge Browser-specific options for Selenium WebDriver.
@@ -60,6 +63,58 @@ class EdgeFlagsManager(BlinkFlagsManager):
 				flags_definitions=yandex_flags_definitions,
 		)
 	
+	def _build_options_arguments(self, options: Options) -> Options:
+		"""
+		Adds configured command-line arguments to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_arguments(options)
+	
+	def _build_options_attributes(self, options: Options) -> Options:
+		"""
+		Applies configured attributes to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_attributes(options)
+	
+	def _build_options_blink_features(self, options: Options) -> Options:
+		"""
+		Adds configured Edge features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object to modify.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_blink_features(options)
+	
+	def _build_options_experimental_options(self, options: Options) -> Options:
+		"""
+		Adds experimental options to the WebDriver options.
+
+		Args:
+			options (Options): The WebDriver options object.
+
+		Returns:
+			Options: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_experimental_options(options)
+	
 	def _renew_webdriver_options(self) -> Options:
 		"""
 		Creates and returns a new Options object.
@@ -72,58 +127,6 @@ class EdgeFlagsManager(BlinkFlagsManager):
 		"""
 		
 		return Options()
-	
-	def build_options_arguments(self, options: Options) -> Options:
-		"""
-		Adds configured command-line arguments to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_arguments(options)
-	
-	def build_options_attributes(self, options: Options) -> Options:
-		"""
-		Applies configured attributes to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_attributes(options)
-	
-	def build_options_blink_features(self, options: Options) -> Options:
-		"""
-		Adds configured Edge features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object to modify.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_blink_features(options)
-	
-	def build_options_experimental_options(self, options: Options) -> Options:
-		"""
-		Adds experimental options to the WebDriver options.
-
-		Args:
-			options (Options): The WebDriver options object.
-
-		Returns:
-			Options: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_experimental_options(options)
 	
 	def set_arguments(self, arguments: EdgeArguments):
 		"""

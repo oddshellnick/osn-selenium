@@ -5,6 +5,9 @@ from selenium.webdriver.common.bidi.script import (
 )
 
 
+__all__ = ["UnifiedScript"]
+
+
 class UnifiedScript:
 	def __init__(self, selenium_script: legacyScript):
 		if not isinstance(selenium_script, legacyScript):

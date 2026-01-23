@@ -5,6 +5,9 @@ from osn_selenium.webdrivers.unified.blink.base import (
 )
 
 
+__all__ = ["UnifiedBlinkCastingMixin"]
+
+
 class UnifiedBlinkCastingMixin(UnifiedBlinkBaseMixin):
 	@requires_driver
 	def _get_sinks_impl(self) -> List[Dict[str, Any]]:

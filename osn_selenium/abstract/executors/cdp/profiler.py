@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractProfilerCDPExecutor"]
+
+
 class AbstractProfilerCDPExecutor(ABC):
 	@abstractmethod
 	def disable(self) -> None:

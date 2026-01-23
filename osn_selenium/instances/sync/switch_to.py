@@ -21,6 +21,9 @@ from osn_selenium.instances.convert import (
 )
 
 
+__all__ = ["SwitchTo"]
+
+
 class SwitchTo(UnifiedSwitchTo, AbstractSwitchTo):
 	"""
 	Wrapper for the legacy Selenium SwitchTo instance.

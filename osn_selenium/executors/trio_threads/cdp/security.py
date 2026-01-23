@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.security import (
 )
 
 
+__all__ = ["SecurityCDPExecutor"]
+
+
 class SecurityCDPExecutor(
 		UnifiedSecurityCDPExecutor,
 		TrioThreadMixin,

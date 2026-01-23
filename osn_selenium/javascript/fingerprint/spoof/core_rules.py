@@ -11,16 +11,19 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.javascript.fingerprint.functions import add_code_level
-from osn_selenium.javascript.fingerprint.spoof.templates import (
+from osn_selenium.javascript.fingerprint._functions import add_code_level
+from osn_selenium.javascript.fingerprint.spoof._templates import (
 	ARRAY_CHANNEL_BLOCK,
 	ARRAY_LOOP_WRAPPER
 )
-from osn_selenium.javascript.fingerprint.spoof.functions import (
+from osn_selenium.javascript.fingerprint.spoof._functions import (
 	get_array_global_block_js,
 	get_frequency_js,
 	get_index_calculation_js
 )
+
+
+__all__ = ["ArrayRule", "BaseRule", "RandomRule"]
 
 
 class BaseRule(DictModel):
@@ -81,6 +84,21 @@ class ArrayRule(BaseRule):
 	index_list: Optional[List[int]] = None
 	value_by_channel: Dict[int, Any] = Field(default_factory=dict)
 	
+	@model_validator(mode="after")
+	def _cleanup_channels(self) -> Self:
+		"""
+		Validates and cleans up the index list to avoid conflicts with explicit channels.
+
+		Returns:
+			Self: The validated model.
+		"""
+		
+		if self.index_list is not None and self.value_by_channel:
+			exclusive_channels = set(self.value_by_channel.keys())
+			self.index_list = [c for c in self.index_list if c not in exclusive_channels]
+		
+		return self
+	
 	def _generate_array_js(self, get_expression_fn: Callable[[Any], str]) -> str:
 		"""
 		Helper to generate the array looping and modification logic.
@@ -118,18 +136,3 @@ class ArrayRule(BaseRule):
 				index_calculation=get_index_calculation_js(cycle_length=self.cycle_length),
 				loop_body_logic=add_code_level(code="\n".join(body_parts), num=1)
 		)
-	
-	@model_validator(mode="after")
-	def cleanup_channels(self) -> Self:
-		"""
-		Validates and cleans up the index list to avoid conflicts with explicit channels.
-
-		Returns:
-			Self: The validated model.
-		"""
-		
-		if self.index_list is not None and self.value_by_channel:
-			exclusive_channels = set(self.value_by_channel.keys())
-			self.index_list = [c for c in self.index_list if c not in exclusive_channels]
-		
-		return self

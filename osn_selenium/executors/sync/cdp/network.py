@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.network import (
 )
 
 
+__all__ = ["NetworkCDPExecutor"]
+
+
 class NetworkCDPExecutor(UnifiedNetworkCDPExecutor, AbstractNetworkCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedNetworkCDPExecutor.__init__(self, execute_function=execute_function)

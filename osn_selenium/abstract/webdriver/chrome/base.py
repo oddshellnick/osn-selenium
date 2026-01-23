@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.base import (
 )
 
 
+__all__ = ["AbstractChromeBaseMixin"]
+
+
 class AbstractChromeBaseMixin(AbstractBlinkBaseMixin):
 	"""
 	Abstract mixin defining the base interface for Chrome-based WebDrivers.

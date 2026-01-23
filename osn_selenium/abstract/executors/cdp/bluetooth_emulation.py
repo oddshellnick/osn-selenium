@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractBluetoothEmulationCDPExecutor"]
+
+
 class AbstractBluetoothEmulationCDPExecutor(ABC):
 	@abstractmethod
 	def add_characteristic(

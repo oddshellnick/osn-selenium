@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.chrome.settings import (
 )
 
 
+__all__ = ["ChromeSettingsMixin"]
+
+
 class ChromeSettingsMixin(
 		UnifiedChromeSettingsMixin,
 		BlinkSettingsMixin,

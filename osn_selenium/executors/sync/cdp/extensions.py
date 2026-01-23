@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.extensions import (
 )
 
 
+__all__ = ["ExtensionsCDPExecutor"]
+
+
 class ExtensionsCDPExecutor(UnifiedExtensionsCDPExecutor, AbstractExtensionsCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedExtensionsCDPExecutor.__init__(self, execute_function=execute_function)

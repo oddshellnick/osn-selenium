@@ -5,6 +5,14 @@ from selenium.webdriver.common.bidi.cdp import (
 )
 
 
+__all__ = [
+	"BidiConnectionNotEstablishedError",
+	"CantEnterDevToolsContextError",
+	"cdp_end_exceptions",
+	"trio_end_exceptions"
+]
+
+
 class CantEnterDevToolsContextError(Exception):
 	"""
 	Custom exception raised when unable to enter the DevTools context.

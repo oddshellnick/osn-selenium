@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractTargetCDPExecutor"]
+
+
 class AbstractTargetCDPExecutor(ABC):
 	@abstractmethod
 	def activate_target(self, target_id: str) -> None:

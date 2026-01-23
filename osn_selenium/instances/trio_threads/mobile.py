@@ -12,6 +12,9 @@ from selenium.webdriver.remote.mobile import (
 )
 
 
+__all__ = ["Mobile"]
+
+
 class Mobile(UnifiedMobile, TrioThreadMixin, AbstractMobile):
 	"""
 	Wrapper for the legacy Selenium Mobile instance.

@@ -6,6 +6,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedDragAndDropMixin"]
+
+
 class UnifiedDragAndDropMixin(UnifiedBaseMixin):
 	def _drag_and_drop_by_offset_impl(self, source: WEB_ELEMENT_TYPEHINT, xoffset: int, yoffset: int) -> legacyActionChains:
 		return self._legacy_impl.drag_and_drop_by_offset(

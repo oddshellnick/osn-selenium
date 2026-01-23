@@ -13,6 +13,9 @@ from osn_selenium.instances._utils import (
 )
 
 
+__all__ = ["move_to_parts", "scroll_to_parts", "text_input_to_parts"]
+
+
 def text_input_to_parts(text: str) -> List[TextInputPart]:
 	"""
 	Breaks down a text string into smaller parts for simulating human-like typing.

@@ -20,6 +20,9 @@ from selenium.webdriver.remote.webdriver import (
 )
 
 
+__all__ = ["AbstractCoreBaseMixin"]
+
+
 class AbstractCoreBaseMixin(ABC):
 	"""
 	Abstract base mixin providing core WebDriver functionality and session management.
@@ -35,17 +38,6 @@ class AbstractCoreBaseMixin(ABC):
 
 		Raises:
 			RuntimeError: If the driver is not started.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def session(self) -> Session:
-		"""
-		Internal method to access the current BiDi session object.
-
-		Returns:
-			Session: The session object.
 		"""
 		
 		...
@@ -266,6 +258,17 @@ class AbstractCoreBaseMixin(ABC):
 
 		Args:
 			value (Dict[str, Any]): Dictionary of scripts to pin.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def session(self) -> Session:
+		"""
+		Internal method to access the current BiDi session object.
+
+		Returns:
+			Session: The session object.
 		"""
 		
 		...

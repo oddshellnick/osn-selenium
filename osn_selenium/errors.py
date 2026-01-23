@@ -1,3 +1,6 @@
+__all__ = ["PlatformNotSupportedError"]
+
+
 class PlatformNotSupportedError(Exception):
 	"""
 	Custom exception raised when the current platform is not supported.

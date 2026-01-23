@@ -12,6 +12,8 @@ from osn_selenium.javascript.fingerprint.spoof.rules import (
 )
 
 
+__all__ = ["SPOOF_RULE_TYPEHINT"]
+
 SPOOF_RULE_TYPEHINT = Union[
 	StaticItemSetRule,
 	RandomItemSetRule,

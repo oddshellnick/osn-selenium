@@ -16,6 +16,9 @@ from osn_selenium.abstract.webdriver.core.components import (
 )
 
 
+__all__ = ["CoreComponentsMixin"]
+
+
 class CoreComponentsMixin(
 		UnifiedCoreComponentsMixin,
 		TrioThreadMixin,

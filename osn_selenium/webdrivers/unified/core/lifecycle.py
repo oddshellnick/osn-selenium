@@ -19,6 +19,9 @@ from osn_selenium.webdrivers.unified.core.timeouts import (
 )
 
 
+__all__ = ["UnifiedCoreLifecycleMixin"]
+
+
 class UnifiedCoreLifecycleMixin(UnifiedCoreSettingsMixin, UnifiedCoreTimeoutsMixin):
 	def _remote_connect_driver_impl(self, command_executor: Union[str, RemoteConnection]) -> None:
 		self._driver = legacyWebDriver(

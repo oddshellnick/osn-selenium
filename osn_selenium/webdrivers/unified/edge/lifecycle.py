@@ -15,6 +15,9 @@ from osn_selenium.webdrivers.unified.blink.lifecycle import (
 )
 
 
+__all__ = ["UnifiedEdgeLifecycleMixin"]
+
+
 class UnifiedEdgeLifecycleMixin(
 		UnifiedBlinkLifecycleMixin,
 		UnifiedCoreTimeoutsMixin,

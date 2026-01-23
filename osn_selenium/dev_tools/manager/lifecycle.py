@@ -13,6 +13,9 @@ from osn_selenium.dev_tools.errors import (
 )
 
 
+__all__ = ["LifecycleMixin"]
+
+
 class LifecycleMixin(TargetsMixin):
 	"""
 	Mixin managing the lifecycle of the DevTools context, including connection setup and teardown.
@@ -201,7 +204,8 @@ class LifecycleMixin(TargetsMixin):
 			self.exit_event = None
 			self._devtools_package = None
 			self._websocket_url = None
-			self._num_logs = 0
+			self._num_cdp_logs = 0
+			self._num_fingerprint_logs = 0
 			self._cdp_targets_types_stats = {}
 			self._cdp_log_level_stats = {}
 			self._fingerprint_categories_stats = {}

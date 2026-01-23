@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.autofill import (
 )
 
 
+__all__ = ["AutofillCDPExecutor"]
+
+
 class AutofillCDPExecutor(UnifiedAutofillCDPExecutor, AbstractAutofillCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedAutofillCDPExecutor.__init__(self, execute_function=execute_function)

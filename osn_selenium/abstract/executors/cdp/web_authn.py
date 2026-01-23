@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractWebAuthnCDPExecutor"]
+
+
 class AbstractWebAuthnCDPExecutor(ABC):
 	@abstractmethod
 	def add_credential(self, authenticator_id: str, credential: Dict[str, Any]) -> None:

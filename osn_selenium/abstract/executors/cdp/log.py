@@ -2,6 +2,9 @@ from typing import Any, Dict, List
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractLogCDPExecutor"]
+
+
 class AbstractLogCDPExecutor(ABC):
 	@abstractmethod
 	def clear(self) -> None:

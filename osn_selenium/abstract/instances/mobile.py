@@ -5,6 +5,9 @@ from selenium.webdriver.remote.mobile import (
 )
 
 
+__all__ = ["AbstractMobile"]
+
+
 class AbstractMobile(ABC):
 	"""
 	Abstract base class for mobile-specific interactions.

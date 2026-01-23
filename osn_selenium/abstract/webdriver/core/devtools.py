@@ -11,6 +11,9 @@ from selenium.webdriver.remote.bidi_connection import BidiConnection
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 
 
+__all__ = ["AbstractCoreDevToolsMixin"]
+
+
 class AbstractCoreDevToolsMixin(ABC):
 	"""
 	Mixin responsible for CDP (Chrome DevTools Protocol), BiDi, and Network interactions.

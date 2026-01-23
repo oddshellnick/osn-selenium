@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.log import (
 )
 
 
+__all__ = ["LogCDPExecutor"]
+
+
 class LogCDPExecutor(UnifiedLogCDPExecutor, TrioThreadMixin, AbstractLogCDPExecutor):
 	def __init__(
 			self,

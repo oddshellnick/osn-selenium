@@ -20,6 +20,9 @@ from osn_selenium.abstract.webdriver.yandex.base import (
 )
 
 
+__all__ = ["YandexBaseMixin"]
+
+
 class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBaseMixin):
 	"""
 	Base mixin for Yandex WebDrivers handling core initialization and state management.

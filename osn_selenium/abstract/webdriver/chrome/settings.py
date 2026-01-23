@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.settings import (
 )
 
 
+__all__ = ["AbstractChromeSettingsMixin"]
+
+
 class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
 	"""
 	Abstract mixin for managing Chrome browser settings.

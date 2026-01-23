@@ -25,6 +25,9 @@ from osn_selenium.webdrivers.trio_threads.core.comonents import CoreComponentsMi
 from osn_selenium.webdrivers.trio_threads.core.navigation import CoreNavigationMixin
 
 
+__all__ = ["CoreWebDriver"]
+
+
 class CoreWebDriver(
 		CoreActionsMixin,
 		CoreAuthMixin,

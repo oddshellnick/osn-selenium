@@ -161,6 +161,9 @@ from osn_selenium.abstract.executors.cdp.headless_experimental import (
 )
 
 
+__all__ = ["AbstractCDPExecutor"]
+
+
 class AbstractCDPExecutor(ABC):
 	@property
 	@abstractmethod

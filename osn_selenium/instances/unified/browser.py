@@ -6,6 +6,9 @@ from selenium.webdriver.common.bidi.browser import (
 )
 
 
+__all__ = ["UnifiedBrowser"]
+
+
 class UnifiedBrowser:
 	def __init__(self, selenium_browser: legacyBrowser):
 		if not isinstance(selenium_browser, legacyBrowser):

@@ -12,6 +12,8 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["MainLogger", "build_main_logger"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.settings import LoggerSettings
 

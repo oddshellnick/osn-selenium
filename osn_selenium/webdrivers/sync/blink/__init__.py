@@ -20,6 +20,9 @@ from osn_selenium.abstract.webdriver.blink import (
 )
 
 
+__all__ = ["BlinkWebDriver"]
+
+
 class BlinkWebDriver(
 		BlinkBaseMixin,
 		BlinkCastingMixin,

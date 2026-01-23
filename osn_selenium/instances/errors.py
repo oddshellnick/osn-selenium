@@ -2,6 +2,9 @@ from typing import Any
 from osn_selenium._functions import flatten_types
 
 
+__all__ = ["ExpectedTypeError", "TypeIsNotWrapper", "TypesConvertError"]
+
+
 class TypesConvertError(Exception):
 	"""
 	Error raised when conversion between two types is not possible.

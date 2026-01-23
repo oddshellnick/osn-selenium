@@ -11,6 +11,9 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["TargetLogger", "build_target_logger"]
+
+
 class TargetLogger:
 	"""
 	Manages logging for a specific browser target (e.g., a tab or iframe).

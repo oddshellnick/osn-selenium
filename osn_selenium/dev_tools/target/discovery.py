@@ -8,6 +8,9 @@ from osn_selenium.dev_tools._functions import (
 )
 
 
+__all__ = ["DiscoveryMixin"]
+
+
 class DiscoveryMixin(LoggingMixin):
 	"""
 	Mixin for discovering and attaching to new DevTools targets.

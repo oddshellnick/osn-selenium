@@ -11,6 +11,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedHMScrollMixin"]
+
+
 class UnifiedHMScrollMixin(UnifiedUtilsMixin, UnifiedScrollMixin):
 	def _hm_scroll_from_origin_impl(self, delta_x: int, delta_y: int, origin: Optional[ScrollOrigin] = None) -> legacyActionChains:
 		if origin is None:

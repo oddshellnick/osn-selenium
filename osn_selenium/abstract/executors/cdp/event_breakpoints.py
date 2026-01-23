@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractEventBreakpointsCDPExecutor"]
+
+
 class AbstractEventBreakpointsCDPExecutor(ABC):
 	@abstractmethod
 	def disable(self) -> None:

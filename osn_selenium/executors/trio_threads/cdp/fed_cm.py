@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.fed_cm import (
 )
 
 
+__all__ = ["FedCmCDPExecutor"]
+
+
 class FedCmCDPExecutor(UnifiedFedCmCDPExecutor, TrioThreadMixin, AbstractFedCmCDPExecutor):
 	def __init__(
 			self,

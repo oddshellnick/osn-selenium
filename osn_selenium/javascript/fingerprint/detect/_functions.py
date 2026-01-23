@@ -1,8 +1,8 @@
 from typing import Optional
 from osn_selenium.javascript.fingerprint import RegistryItem
-from osn_selenium.javascript.fingerprint.decorators import indent_code
-from osn_selenium.javascript.fingerprint.functions import add_code_level
-from osn_selenium.javascript.fingerprint.detect.templates import (
+from osn_selenium.javascript.fingerprint._decorators import indent_code
+from osn_selenium.javascript.fingerprint._functions import add_code_level
+from osn_selenium.javascript.fingerprint.detect._templates import (
 	ARG_WRAPPER_LOGIC,
 	CALL_ORIGINAL_METHOD,
 	CALL_ORIGINAL_PROP,
@@ -22,7 +22,17 @@ from osn_selenium.javascript.fingerprint.detect.templates import (
 )
 
 
-def _build_function_body(
+__all__ = [
+	"build_function_body",
+	"get_arg_wrapper_js",
+	"get_constructor_hook_body",
+	"get_hook_js",
+	"get_method_hook_body",
+	"get_prop_hook_body"
+]
+
+
+def build_function_body(
 		report_js: str,
 		arg_wrapper_js: Optional[str],
 		call_original: Optional[str],
@@ -81,7 +91,7 @@ def get_constructor_hook_body(target: str, report_js: str, arg_wrapper_js: str) 
 	
 	resolution = f"const originalClass = window['{target}'];\nif (!originalClass) return;"
 	
-	wrapper_body = _build_function_body(
+	wrapper_body = build_function_body(
 			report_js=report_js,
 			arg_wrapper_js=arg_wrapper_js,
 			call_original=None,
@@ -113,7 +123,7 @@ def get_prop_hook_body(target: str, name: str, report_js: str, spoof_path: Optio
 	lookup = DESCRIPTOR_LOOKUP_PROP.format(prop_name=name)
 	resolution = TARGET_RESOLUTION.format(target_object=target, descriptor_lookup=lookup)
 	
-	wrapper_body = _build_function_body(
+	wrapper_body = build_function_body(
 			report_js=report_js,
 			arg_wrapper_js=None,
 			call_original=CALL_ORIGINAL_PROP,
@@ -152,7 +162,7 @@ def get_method_hook_body(
 	lookup = DESCRIPTOR_LOOKUP_METHOD.format(method_name=name)
 	resolution = TARGET_RESOLUTION.format(target_object=target, descriptor_lookup=lookup)
 	
-	wrapper_body = _build_function_body(
+	wrapper_body = build_function_body(
 			report_js=report_js,
 			arg_wrapper_js=arg_wrapper_js,
 			call_original=CALL_ORIGINAL_METHOD,

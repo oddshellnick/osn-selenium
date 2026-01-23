@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.edge.settings import (
 )
 
 
+__all__ = ["EdgeSettingsMixin"]
+
+
 class EdgeSettingsMixin(
 		UnifiedEdgeSettingsMixin,
 		BlinkSettingsMixin,

@@ -18,6 +18,9 @@ from osn_selenium.webdrivers.trio_threads.yandex.settings import YandexSettingsM
 from osn_selenium.webdrivers.trio_threads.yandex.lifecycle import YandexLifecycleMixin
 
 
+__all__ = ["YandexWebDriver"]
+
+
 class YandexWebDriver(
 		YandexBaseMixin,
 		YandexLifecycleMixin,

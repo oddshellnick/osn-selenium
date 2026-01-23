@@ -13,6 +13,8 @@ from selenium.webdriver.support.wait import (
 )
 
 
+__all__ = ["OUTPUT", "UnifiedWebDriverWait"]
+
 OUTPUT = TypeVar("OUTPUT")
 
 

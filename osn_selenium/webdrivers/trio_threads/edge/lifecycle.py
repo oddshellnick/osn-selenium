@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.edge.lifecycle import (
 )
 
 
+__all__ = ["EdgeLifecycleMixin"]
+
+
 class EdgeLifecycleMixin(
 		UnifiedEdgeLifecycleMixin,
 		BlinkLifecycleMixin,

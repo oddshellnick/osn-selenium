@@ -12,6 +12,9 @@ from selenium.common.exceptions import (
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreWindowMixin"]
+
+
 class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _window_handles_impl(self) -> List[str]:

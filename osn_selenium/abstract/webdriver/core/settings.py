@@ -4,6 +4,9 @@ from osn_selenium.types import WindowRect
 from osn_selenium.flags.models.base import BrowserFlags
 
 
+__all__ = ["AbstractCoreSettingsMixin"]
+
+
 class AbstractCoreSettingsMixin(ABC):
 	"""Mixin responsible for browser flags and settings."""
 	

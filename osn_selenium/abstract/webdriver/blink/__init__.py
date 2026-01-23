@@ -4,6 +4,9 @@ from osn_selenium.abstract.webdriver.core import (
 )
 
 
+__all__ = ["AbstractBlinkWebDriver"]
+
+
 class AbstractBlinkWebDriver(AbstractBaseWebDriver, ABC):
 	"""
 	Abstract base class for Blink-based WebDrivers.

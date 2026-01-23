@@ -4,6 +4,9 @@ from osn_selenium.types import DictModel
 from osn_selenium.javascript.fingerprint.spoof.types import NOISE, RANDOM_NOISE
 
 
+__all__ = ["BaseNoise", "RandomNoise", "StaticNoise"]
+
+
 class BaseNoise(DictModel):
 	"""
 	Base configuration for noise generation.

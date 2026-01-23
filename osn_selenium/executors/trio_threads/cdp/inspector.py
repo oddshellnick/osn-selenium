@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.inspector import (
 )
 
 
+__all__ = ["InspectorCDPExecutor"]
+
+
 class InspectorCDPExecutor(
 		UnifiedInspectorCDPExecutor,
 		TrioThreadMixin,

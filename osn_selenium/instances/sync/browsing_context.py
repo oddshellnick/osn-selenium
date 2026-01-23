@@ -24,6 +24,9 @@ from selenium.webdriver.common.bidi.browsing_context import (
 )
 
 
+__all__ = ["BrowsingContext"]
+
+
 class BrowsingContext(UnifiedBrowsingContext, AbstractBrowsingContext):
 	"""
 	Wrapper for the legacy Selenium BiDi BrowsingContext instance.

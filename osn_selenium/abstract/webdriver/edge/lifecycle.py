@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.lifecycle import (
 )
 
 
+__all__ = ["AbstractEdgeLifecycleMixin"]
+
+
 class AbstractEdgeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	"""
 	Abstract mixin managing the lifecycle of a Edge WebDriver session.

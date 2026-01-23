@@ -22,6 +22,9 @@ from osn_selenium.webdrivers.sync.core.comonents import CoreComponentsMixin
 from osn_selenium.webdrivers.sync.core.navigation import CoreNavigationMixin
 
 
+__all__ = ["CoreWebDriver"]
+
+
 class CoreWebDriver(
 		CoreActionsMixin,
 		CoreAuthMixin,

@@ -5,6 +5,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedUtilsMixin"]
+
+
 class UnifiedUtilsMixin(UnifiedBaseMixin):
 	def _pause_impl(self, seconds: Union[float, int]) -> legacyActionChains:
 		return self._legacy_impl.pause(seconds=seconds)

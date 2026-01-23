@@ -6,6 +6,8 @@ from typing import (
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 
 
+__all__ = ["AbstractClickMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 

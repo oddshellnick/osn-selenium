@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.tethering import (
 )
 
 
+__all__ = ["TetheringCDPExecutor"]
+
+
 class TetheringCDPExecutor(
 		UnifiedTetheringCDPExecutor,
 		TrioThreadMixin,

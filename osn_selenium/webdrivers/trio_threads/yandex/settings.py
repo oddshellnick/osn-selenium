@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.yandex.settings import (
 )
 
 
+__all__ = ["YandexSettingsMixin"]
+
+
 class YandexSettingsMixin(
 		UnifiedYandexSettingsMixin,
 		ChromeSettingsMixin,

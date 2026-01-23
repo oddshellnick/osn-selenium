@@ -17,6 +17,9 @@ from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 
 
+__all__ = ["JSExecutor"]
+
+
 class JSExecutor(UnifiedJSExecutor, AbstractJSExecutor):
 	"""
 	A synchronous JavaScript executor that provides unified access to browser-side script execution.

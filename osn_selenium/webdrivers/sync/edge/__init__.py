@@ -16,6 +16,9 @@ from osn_selenium.abstract.webdriver.edge import (
 )
 
 
+__all__ = ["EdgeWebDriver"]
+
+
 class EdgeWebDriver(
 		EdgeBaseMixin,
 		EdgeLifecycleMixin,

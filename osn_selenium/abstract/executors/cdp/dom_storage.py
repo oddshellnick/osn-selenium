@@ -2,6 +2,9 @@ from typing import Any, Dict, List
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractDomStorageCDPExecutor"]
+
+
 class AbstractDomStorageCDPExecutor(ABC):
 	@abstractmethod
 	def clear(self, storage_id: Dict[str, Any]) -> None:

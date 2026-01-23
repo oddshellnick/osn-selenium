@@ -11,6 +11,9 @@ from osn_selenium.abstract.executors.cdp.io import (
 )
 
 
+__all__ = ["IoCDPExecutor"]
+
+
 class IoCDPExecutor(UnifiedIoCDPExecutor, AbstractIoCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedIoCDPExecutor.__init__(self, execute_function=execute_function)

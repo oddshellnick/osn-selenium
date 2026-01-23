@@ -10,6 +10,9 @@ from typing import (
 )
 
 
+__all__ = ["prepare_log_dir", "validate_log_filter"]
+
+
 def validate_log_filter(
 		filter_mode: Literal["include", "exclude"],
 		log_filter: Optional[Union[str, Iterable[str]]]

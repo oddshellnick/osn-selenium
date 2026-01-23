@@ -13,6 +13,9 @@ from osn_selenium.webdrivers.unified.chrome.lifecycle import (
 )
 
 
+__all__ = ["UnifiedYandexLifecycleMixin"]
+
+
 class UnifiedYandexLifecycleMixin(
 		UnifiedChromeLifecycleMixin,
 		UnifiedCoreTimeoutsMixin,

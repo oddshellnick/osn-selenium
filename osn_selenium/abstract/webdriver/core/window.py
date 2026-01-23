@@ -13,6 +13,9 @@ from osn_selenium.types import (
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 
 
+__all__ = ["AbstractCoreWindowMixin"]
+
+
 class AbstractCoreWindowMixin(ABC):
 	"""Mixin responsible for window management, switching, and geometry."""
 	

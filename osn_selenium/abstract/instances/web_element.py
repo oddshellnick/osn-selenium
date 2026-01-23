@@ -17,6 +17,9 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 )
 
 
+__all__ = ["AbstractWebElement"]
+
+
 class AbstractWebElement(ABC):
 	"""
 	Abstract base class for a web element.

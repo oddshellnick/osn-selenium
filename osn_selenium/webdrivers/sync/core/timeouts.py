@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.core.timeouts import (
 )
 
 
+__all__ = ["CoreTimeoutsMixin"]
+
+
 class CoreTimeoutsMixin(UnifiedCoreTimeoutsMixin, AbstractCoreTimeoutsMixin):
 	"""
 	Mixin for configuring execution timeouts in Core WebDrivers.

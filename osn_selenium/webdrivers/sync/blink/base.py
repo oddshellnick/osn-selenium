@@ -22,6 +22,9 @@ from selenium.webdriver.chromium.webdriver import (
 )
 
 
+__all__ = ["BlinkBaseMixin"]
+
+
 class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixin):
 	"""
 	Base mixin for Blink WebDrivers handling core initialization and state management.

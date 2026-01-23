@@ -19,6 +19,9 @@ from osn_selenium.dev_tools._functions import (
 )
 
 
+__all__ = ["LifecycleMixin"]
+
+
 class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, FingerprintMixin):
 	"""
 	Mixin managing the main lifecycle of the DevTools target (setup, run, close).

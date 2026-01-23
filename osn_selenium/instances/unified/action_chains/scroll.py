@@ -7,6 +7,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedScrollMixin"]
+
+
 class UnifiedScrollMixin(UnifiedBaseMixin):
 	def _scroll_by_amount_impl(self, delta_x: int, delta_y: int) -> legacyActionChains:
 		return self._legacy_impl.scroll_by_amount(delta_x=delta_x, delta_y=delta_y)

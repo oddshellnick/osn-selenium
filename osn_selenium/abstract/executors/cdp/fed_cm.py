@@ -2,6 +2,9 @@ from typing import Optional
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractFedCmCDPExecutor"]
+
+
 class AbstractFedCmCDPExecutor(ABC):
 	@abstractmethod
 	def click_dialog_button(self, dialog_id: str, dialog_button: str) -> None:

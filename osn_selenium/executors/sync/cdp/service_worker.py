@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.service_worker import (
 )
 
 
+__all__ = ["ServiceWorkerCDPExecutor"]
+
+
 class ServiceWorkerCDPExecutor(UnifiedServiceWorkerCDPExecutor, AbstractServiceWorkerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedServiceWorkerCDPExecutor.__init__(self, execute_function=execute_function)

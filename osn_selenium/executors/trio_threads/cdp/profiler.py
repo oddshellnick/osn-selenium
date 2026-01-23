@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.profiler import (
 )
 
 
+__all__ = ["ProfilerCDPExecutor"]
+
+
 class ProfilerCDPExecutor(
 		UnifiedProfilerCDPExecutor,
 		TrioThreadMixin,

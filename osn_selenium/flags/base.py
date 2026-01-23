@@ -31,6 +31,9 @@ from osn_selenium.flags.models.base import (
 )
 
 
+__all__ = ["BrowserFlagsManager"]
+
+
 class BrowserFlagsManager:
 	"""
 	Manages browser flags, including arguments, experimental options, and attributes for a generic WebDriver.
@@ -67,8 +70,8 @@ class BrowserFlagsManager:
 					set_flags_function=self.set_arguments,
 					update_flags_function=self.update_arguments,
 					clear_flags_function=self.clear_arguments,
-					build_options_function=self.build_options_arguments,
-					build_start_args_function=self.build_start_args_arguments
+					build_options_function=self._build_options_arguments,
+					build_start_args_function=self._build_start_args_arguments
 			),
 			"experimental_option": FlagType(
 					set_flag_function=self.set_experimental_option,
@@ -76,7 +79,7 @@ class BrowserFlagsManager:
 					set_flags_function=self.set_experimental_options,
 					update_flags_function=self.update_experimental_options,
 					clear_flags_function=self.clear_experimental_options,
-					build_options_function=self.build_options_experimental_options,
+					build_options_function=self._build_options_experimental_options,
 					build_start_args_function=lambda: [],
 			),
 			"attribute": FlagType(
@@ -85,7 +88,7 @@ class BrowserFlagsManager:
 					set_flags_function=self.set_attributes,
 					update_flags_function=self.update_attributes,
 					clear_flags_function=self.clear_attributes,
-					build_options_function=self.build_options_attributes,
+					build_options_function=self._build_options_attributes,
 					build_start_args_function=lambda: [],
 			),
 		}
@@ -127,7 +130,7 @@ class BrowserFlagsManager:
 		self._experimental_options: Dict[str, ExperimentalOptionValue] = {}
 		self._attributes: Dict[str, AttributeValue] = {}
 	
-	def build_options_attributes(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_attributes(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
 		"""
 		Applies configured attributes to the WebDriver options object.
 
@@ -215,7 +218,7 @@ class BrowserFlagsManager:
 		self.clear_attributes()
 		self.update_attributes(attributes)
 	
-	def build_options_experimental_options(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_experimental_options(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
 		"""
 		Adds configured experimental options to the WebDriver options object.
 
@@ -304,7 +307,7 @@ class BrowserFlagsManager:
 		self.clear_experimental_options()
 		self.update_experimental_options(experimental_options)
 	
-	def build_start_args_arguments(self) -> List[str]:
+	def _build_start_args_arguments(self) -> List[str]:
 		"""
 		Builds a List of command-line arguments intended for browser startup.
 
@@ -320,7 +323,7 @@ class BrowserFlagsManager:
 			if self._flags_definitions_by_types["argument"][name].mode in ["startup_argument", "both"]
 		]
 	
-	def build_options_arguments(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_arguments(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
 		"""
 		Adds configured command-line arguments to the WebDriver options object.
 

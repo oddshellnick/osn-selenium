@@ -13,6 +13,9 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["LoggingMixin"]
+
+
 class LoggingMixin(BaseMixin):
 	"""
 	Mixin for aggregating logs from all targets in the DevTools manager.

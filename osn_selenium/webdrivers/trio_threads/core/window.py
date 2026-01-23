@@ -22,6 +22,9 @@ from osn_selenium.abstract.webdriver.core.window import (
 )
 
 
+__all__ = ["CoreWindowMixin"]
+
+
 class CoreWindowMixin(UnifiedCoreWindowMixin, TrioThreadMixin, AbstractCoreWindowMixin):
 	"""
 	Mixin for window and tab management in Core WebDrivers.

@@ -20,6 +20,8 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["LoggingMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools._types import CDPLogLevelsType, FingerprintLogLevelsType
 

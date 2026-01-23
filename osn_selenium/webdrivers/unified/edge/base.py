@@ -16,6 +16,9 @@ from osn_selenium.webdrivers.unified.blink.base import (
 )
 
 
+__all__ = ["UnifiedEdgeBaseMixin"]
+
+
 class UnifiedEdgeBaseMixin(UnifiedBlinkBaseMixin):
 	def __init__(
 			self,

@@ -4,6 +4,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["AbstractBaseMixin"]
+
+
 class AbstractBaseMixin(ABC):
 	"""
 	Base mixin class providing access to the legacy Selenium ActionChains.

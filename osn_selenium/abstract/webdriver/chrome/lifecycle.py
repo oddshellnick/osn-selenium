@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.lifecycle import (
 )
 
 
+__all__ = ["AbstractChromeLifecycleMixin"]
+
+
 class AbstractChromeLifecycleMixin(AbstractBlinkLifecycleMixin):
 	"""
 	Abstract mixin managing the lifecycle of a Chrome WebDriver session.

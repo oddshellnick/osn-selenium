@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.preload import (
 )
 
 
+__all__ = ["PreloadCDPExecutor"]
+
+
 class PreloadCDPExecutor(UnifiedPreloadCDPExecutor, TrioThreadMixin, AbstractPreloadCDPExecutor):
 	def __init__(
 			self,

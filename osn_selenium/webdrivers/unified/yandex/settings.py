@@ -7,6 +7,9 @@ from osn_selenium.webdrivers.unified.chrome.settings import (
 )
 
 
+__all__ = ["UnifiedYandexSettingsMixin"]
+
+
 class UnifiedYandexSettingsMixin(UnifiedChromeSettingsMixin):
 	def _reset_settings_impl(
 			self,

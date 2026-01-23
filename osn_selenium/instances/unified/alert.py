@@ -2,6 +2,9 @@ from osn_selenium.instances.errors import ExpectedTypeError
 from selenium.webdriver.common.alert import Alert as legacyAlert
 
 
+__all__ = ["UnifiedAlert"]
+
+
 class UnifiedAlert:
 	def __init__(self, selenium_alert: legacyAlert):
 		if not isinstance(selenium_alert, legacyAlert):

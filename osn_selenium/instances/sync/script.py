@@ -9,6 +9,9 @@ from selenium.webdriver.common.bidi.script import (
 )
 
 
+__all__ = ["Script"]
+
+
 class Script(UnifiedScript, AbstractScript):
 	"""
 	Wrapper for the legacy Selenium BiDi Script instance.

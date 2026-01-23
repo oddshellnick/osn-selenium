@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.chrome.settings import (
 )
 
 
+__all__ = ["AbstractYandexSettingsMixin"]
+
+
 class AbstractYandexSettingsMixin(AbstractChromeSettingsMixin):
 	"""
 	Abstract mixin for managing Yandex browser settings.

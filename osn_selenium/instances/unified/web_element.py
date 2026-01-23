@@ -18,6 +18,9 @@ from selenium.webdriver.support.wait import (
 )
 
 
+__all__ = ["UnifiedWebElement"]
+
+
 class UnifiedWebElement:
 	def __init__(self, selenium_web_element: legacyWebElement):
 		if not isinstance(selenium_web_element, legacyWebElement):

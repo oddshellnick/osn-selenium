@@ -7,6 +7,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedKeyboardMixin"]
+
+
 class UnifiedKeyboardMixin(UnifiedBaseMixin):
 	def _key_down_impl(self, value: str, element: Optional[WEB_ELEMENT_TYPEHINT]) -> legacyActionChains:
 		return self._legacy_impl.key_down(value=value, element=get_legacy_instance(instance=element))

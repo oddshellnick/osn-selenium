@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractServiceWorkerCDPExecutor"]
+
+
 class AbstractServiceWorkerCDPExecutor(ABC):
 	@abstractmethod
 	def deliver_push_message(self, origin: str, registration_id: str, data: str) -> None:

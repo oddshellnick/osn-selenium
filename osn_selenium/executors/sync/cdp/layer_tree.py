@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.layer_tree import (
 )
 
 
+__all__ = ["LayerTreeCDPExecutor"]
+
+
 class LayerTreeCDPExecutor(UnifiedLayerTreeCDPExecutor, AbstractLayerTreeCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedLayerTreeCDPExecutor.__init__(self, execute_function=execute_function)

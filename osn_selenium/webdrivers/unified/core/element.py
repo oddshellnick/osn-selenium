@@ -7,6 +7,9 @@ from selenium.webdriver.remote.webelement import (
 )
 
 
+__all__ = ["UnifiedCoreElementMixin"]
+
+
 class UnifiedCoreElementMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _create_web_element_impl(self, element_id: str) -> legacyWebElement:

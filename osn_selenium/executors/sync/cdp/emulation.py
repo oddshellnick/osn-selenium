@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.emulation import (
 )
 
 
+__all__ = ["EmulationCDPExecutor"]
+
+
 class EmulationCDPExecutor(UnifiedEmulationCDPExecutor, AbstractEmulationCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedEmulationCDPExecutor.__init__(self, execute_function=execute_function)

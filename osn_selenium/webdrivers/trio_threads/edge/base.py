@@ -19,6 +19,9 @@ from osn_selenium.abstract.webdriver.edge.base import (
 )
 
 
+__all__ = ["EdgeBaseMixin"]
+
+
 class EdgeBaseMixin(UnifiedEdgeBaseMixin, BlinkBaseMixin, AbstractEdgeBaseMixin):
 	"""
 	Base mixin for Edge WebDrivers handling core initialization and state management.

@@ -8,6 +8,9 @@ from osn_selenium.dev_tools.domains import (
 )
 
 
+__all__ = ["SettingsMixin"]
+
+
 class SettingsMixin(BaseMixin):
 	"""
 	Mixin for managing DevTools domain settings (handlers and configurations).

@@ -3,6 +3,9 @@ from osn_selenium.instances.errors import ExpectedTypeError
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
 
 
+__all__ = ["UnifiedFedCM"]
+
+
 class UnifiedFedCM:
 	def __init__(self, selenium_fedcm: legacyFedCM):
 		if not isinstance(selenium_fedcm, legacyFedCM):

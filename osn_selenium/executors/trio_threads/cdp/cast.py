@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.cast import (
 )
 
 
+__all__ = ["CastCDPExecutor"]
+
+
 class CastCDPExecutor(UnifiedCastCDPExecutor, TrioThreadMixin, AbstractCastCDPExecutor):
 	def __init__(
 			self,

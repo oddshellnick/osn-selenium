@@ -7,6 +7,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedClickMixin"]
+
+
 class UnifiedClickMixin(UnifiedBaseMixin):
 	def _click_and_hold_impl(self, on_element: Optional[WEB_ELEMENT_TYPEHINT]) -> legacyActionChains:
 		return self._legacy_impl.click_and_hold(on_element=get_legacy_instance(instance=on_element))

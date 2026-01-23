@@ -93,12 +93,15 @@ from osn_selenium.executors.trio_threads.cdp.headless_experimental import (
 )
 
 
+__all__ = ["CDPExecutor"]
+
+
 class CDPExecutor(TrioThreadMixin, AbstractCDPExecutor):
 	def __init__(
 			self,
 			execute_function: Callable[[str, Dict[str, Any]], Any],
 			lock: trio.Lock,
-			limiter: trio.CapacityLimiter
+			limiter: trio.CapacityLimiter,
 	):
 		super().__init__(lock=lock, limiter=limiter)
 		
@@ -320,12 +323,6 @@ class CDPExecutor(TrioThreadMixin, AbstractCDPExecutor):
 				limiter=self._capacity_limiter
 		)
 		
-		self._pwa = PwaCDPExecutor(
-				execute_function=execute_function,
-				lock=self._lock,
-				limiter=self._capacity_limiter
-		)
-		
 		self._page = PageCDPExecutor(
 				execute_function=execute_function,
 				lock=self._lock,
@@ -351,6 +348,12 @@ class CDPExecutor(TrioThreadMixin, AbstractCDPExecutor):
 		)
 		
 		self._profiler = ProfilerCDPExecutor(
+				execute_function=execute_function,
+				lock=self._lock,
+				limiter=self._capacity_limiter
+		)
+		
+		self._pwa = PwaCDPExecutor(
 				execute_function=execute_function,
 				lock=self._lock,
 				limiter=self._capacity_limiter

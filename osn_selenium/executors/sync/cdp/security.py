@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.security import (
 )
 
 
+__all__ = ["SecurityCDPExecutor"]
+
+
 class SecurityCDPExecutor(UnifiedSecurityCDPExecutor, AbstractSecurityCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedSecurityCDPExecutor.__init__(self, execute_function=execute_function)

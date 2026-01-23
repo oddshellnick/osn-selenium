@@ -27,6 +27,8 @@ from osn_selenium.dev_tools.logger.types import (
 )
 
 
+__all__ = ["BaseMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings

@@ -12,6 +12,9 @@ from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection
 
 
+__all__ = ["UnifiedCoreDevToolsMixin"]
+
+
 class UnifiedCoreDevToolsMixin(UnifiedCoreBaseMixin):
 	@asynccontextmanager
 	@requires_driver

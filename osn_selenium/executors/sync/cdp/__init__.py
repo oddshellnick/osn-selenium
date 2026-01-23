@@ -91,6 +91,9 @@ from osn_selenium.executors.sync.cdp.headless_experimental import (
 )
 
 
+__all__ = ["CDPExecutor"]
+
+
 class CDPExecutor(AbstractCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		self._execute_function = execute_function

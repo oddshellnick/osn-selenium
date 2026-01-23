@@ -7,6 +7,9 @@ from typing import (
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
 
 
+__all__ = ["AbstractFedCM"]
+
+
 class AbstractFedCM(ABC):
 	"""
 	Abstract base class for Federated Credential Management (FedCM) API.

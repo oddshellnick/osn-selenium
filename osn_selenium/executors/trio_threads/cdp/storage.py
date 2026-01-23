@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.storage import (
 )
 
 
+__all__ = ["StorageCDPExecutor"]
+
+
 class StorageCDPExecutor(UnifiedStorageCDPExecutor, TrioThreadMixin, AbstractStorageCDPExecutor):
 	def __init__(
 			self,

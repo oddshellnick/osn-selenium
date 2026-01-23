@@ -11,6 +11,9 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 )
 
 
+__all__ = ["AbstractCoreActionsMixin"]
+
+
 class AbstractCoreActionsMixin(ABC):
 	"""Mixin responsible for user actions chains."""
 	

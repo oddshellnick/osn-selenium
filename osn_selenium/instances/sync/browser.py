@@ -10,6 +10,9 @@ from selenium.webdriver.common.bidi.browser import (
 )
 
 
+__all__ = ["Browser"]
+
+
 class Browser(UnifiedBrowser, AbstractBrowser):
 	"""
 	Wrapper for the legacy Selenium BiDi Browser instance.

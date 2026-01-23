@@ -15,6 +15,9 @@ from osn_selenium.abstract.executors.cdp.performance import (
 )
 
 
+__all__ = ["PerformanceCDPExecutor"]
+
+
 class PerformanceCDPExecutor(
 		UnifiedPerformanceCDPExecutor,
 		TrioThreadMixin,

@@ -14,6 +14,13 @@ from typing import (
 )
 
 
+__all__ = [
+	"get_browser_version",
+	"get_installed_browsers",
+	"get_webdriver_version"
+]
+
+
 def _get_process_version(executable_path: Union[Path, str]) -> Optional[str]:
 	if isinstance(executable_path, str):
 		executable_path = Path(executable_path)

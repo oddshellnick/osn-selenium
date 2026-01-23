@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.preload import (
 )
 
 
+__all__ = ["PreloadCDPExecutor"]
+
+
 class PreloadCDPExecutor(UnifiedPreloadCDPExecutor, AbstractPreloadCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedPreloadCDPExecutor.__init__(self, execute_function=execute_function)

@@ -8,6 +8,8 @@ from typing import (
 )
 
 
+__all__ = ["convert_to_js_value", "inject_data_in_js_script", "read_js_scripts"]
+
 _CACHED_JS_SCRIPTS: Optional[JS_Scripts] = None
 
 

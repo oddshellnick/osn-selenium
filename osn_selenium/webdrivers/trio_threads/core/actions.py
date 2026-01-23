@@ -22,6 +22,9 @@ from osn_selenium.abstract.webdriver.core.actions import (
 )
 
 
+__all__ = ["CoreActionsMixin"]
+
+
 class CoreActionsMixin(
 		UnifiedCoreActionsMixin,
 		CoreScriptMixin,

@@ -6,6 +6,9 @@ from selenium.webdriver.common.fedcm.dialog import (
 )
 
 
+__all__ = ["UnifiedDialog"]
+
+
 class UnifiedDialog:
 	def __init__(self, selenium_dialog: legacyDialog):
 		if not isinstance(selenium_dialog, legacyDialog):

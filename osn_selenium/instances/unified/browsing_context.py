@@ -13,6 +13,9 @@ from selenium.webdriver.common.bidi.browsing_context import (
 )
 
 
+__all__ = ["UnifiedBrowsingContext"]
+
+
 class UnifiedBrowsingContext:
 	def __init__(self, selenium_browsing_context: legacyBrowsingContext):
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):

@@ -4,6 +4,9 @@ from osn_selenium.abstract.webdriver.blink import (
 )
 
 
+__all__ = ["AbstractEdgeWebDriver"]
+
+
 class AbstractEdgeWebDriver(AbstractBlinkWebDriver, ABC):
 	"""
 	Abstract composite class representing a full Edge WebDriver.

@@ -16,6 +16,9 @@ from osn_selenium.abstract.webdriver.yandex import (
 )
 
 
+__all__ = ["YandexWebDriver"]
+
+
 class YandexWebDriver(
 		YandexBaseMixin,
 		YandexLifecycleMixin,

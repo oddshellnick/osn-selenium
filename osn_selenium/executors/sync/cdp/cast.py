@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.cast import (
 )
 
 
+__all__ = ["CastCDPExecutor"]
+
+
 class CastCDPExecutor(UnifiedCastCDPExecutor, AbstractCastCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedCastCDPExecutor.__init__(self, execute_function=execute_function)

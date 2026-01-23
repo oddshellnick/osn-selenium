@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.file_system import (
 )
 
 
+__all__ = ["FileSystemCDPExecutor"]
+
+
 class FileSystemCDPExecutor(UnifiedFileSystemCDPExecutor, AbstractFileSystemCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedFileSystemCDPExecutor.__init__(self, execute_function=execute_function)

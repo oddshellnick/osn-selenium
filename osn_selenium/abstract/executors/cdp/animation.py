@@ -2,6 +2,9 @@ from typing import Any, Dict, List
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractAnimationCDPExecutor"]
+
+
 class AbstractAnimationCDPExecutor(ABC):
 	@abstractmethod
 	def disable(self) -> None:

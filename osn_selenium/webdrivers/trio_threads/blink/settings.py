@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.blink.settings import (
 )
 
 
+__all__ = ["BlinkSettingsMixin"]
+
+
 class BlinkSettingsMixin(
 		UnifiedBlinkSettingsMixin,
 		CoreSettingsMixin,

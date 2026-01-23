@@ -16,6 +16,9 @@ from selenium.webdriver.support.wait import (
 )
 
 
+__all__ = ["UnifiedCoreActionsMixin"]
+
+
 class UnifiedCoreActionsMixin(UnifiedCoreScriptMixin):
 	@requires_driver
 	def _action_chains_impl(

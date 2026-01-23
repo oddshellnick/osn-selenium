@@ -10,6 +10,14 @@ from osn_selenium.flags.models.blink import (
 )
 
 
+__all__ = [
+	"EdgeArguments",
+	"EdgeAttributes",
+	"EdgeExperimentalOptions",
+	"EdgeFlags"
+]
+
+
 class EdgeAttributes(BlinkAttributes):
 	"""
 	Typed dictionary for WebDriver attributes specific to Edge browsers.

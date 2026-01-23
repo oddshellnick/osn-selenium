@@ -11,6 +11,9 @@ from osn_selenium.types import (
 )
 
 
+__all__ = ["AbstractJSExecutor"]
+
+
 class AbstractJSExecutor(ABC):
 	"""
 	Abstract base class for executing JavaScript commands in a browser context.

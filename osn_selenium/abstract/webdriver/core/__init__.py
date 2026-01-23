@@ -1,6 +1,9 @@
 from abc import ABC
 
 
+__all__ = ["AbstractCoreWebDriver"]
+
+
 class AbstractCoreWebDriver(ABC):
 	"""
 	Abstract base class for a WebDriver.

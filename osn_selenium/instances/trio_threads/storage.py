@@ -22,6 +22,9 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
+__all__ = ["Storage"]
+
+
 class Storage(UnifiedStorage, TrioThreadMixin, AbstractStorage):
 	"""
 	Wrapper for the legacy Selenium BiDi Storage instance.

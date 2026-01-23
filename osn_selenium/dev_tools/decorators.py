@@ -15,6 +15,8 @@ from osn_selenium.dev_tools.exception_utils import (
 )
 
 
+__all__ = ["background_task_decorator", "log_on_error", "warn_if_active"]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.manager import DevTools
 	from osn_selenium.dev_tools.target.base import BaseMixin

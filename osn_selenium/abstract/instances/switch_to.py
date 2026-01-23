@@ -7,6 +7,9 @@ from selenium.webdriver.remote.switch_to import (
 )
 
 
+__all__ = ["AbstractSwitchTo"]
+
+
 class AbstractSwitchTo(ABC):
 	"""
 	Abstract base class for context switching.

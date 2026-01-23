@@ -12,6 +12,9 @@ from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
 
 
+__all__ = ["FedCM"]
+
+
 class FedCM(UnifiedFedCM, AbstractFedCM):
 	"""
 	Wrapper for the legacy Selenium FedCM instance.

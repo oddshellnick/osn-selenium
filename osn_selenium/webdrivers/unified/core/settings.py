@@ -5,6 +5,9 @@ from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreSettingsMixin"]
+
+
 class UnifiedCoreSettingsMixin(UnifiedCoreBaseMixin):
 	def _reset_settings_impl(
 			self,

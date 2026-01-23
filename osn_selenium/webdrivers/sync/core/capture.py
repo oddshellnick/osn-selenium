@@ -7,6 +7,9 @@ from osn_selenium.abstract.webdriver.core.capture import (
 )
 
 
+__all__ = ["CoreCaptureMixin"]
+
+
 class CoreCaptureMixin(UnifiedCoreCaptureMixin, AbstractCoreCaptureMixin):
 	"""
 	Mixin enabling screen capture and page source retrieval for Core WebDrivers.

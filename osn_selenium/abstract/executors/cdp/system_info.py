@@ -7,6 +7,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractSystemInfoCDPExecutor"]
+
+
 class AbstractSystemInfoCDPExecutor(ABC):
 	@abstractmethod
 	def get_feature_state(self, feature_state: str) -> bool:

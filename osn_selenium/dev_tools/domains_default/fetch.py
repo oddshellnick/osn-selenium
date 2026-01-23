@@ -12,6 +12,14 @@ from typing import (
 )
 
 
+__all__ = [
+	"HeaderInstance",
+	"auth_required_choose_func",
+	"headers_handler",
+	"on_error_func",
+	"request_paused_choose_func"
+]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains.fetch import request_paused_actions_literal, auth_required_actions_literal

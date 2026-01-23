@@ -2,6 +2,9 @@ from typing import Any, List
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractCoreFileMixin"]
+
+
 class AbstractCoreFileMixin(ABC):
 	"""
 	Mixin responsible for browser-level file handling and detection.

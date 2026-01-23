@@ -6,6 +6,9 @@ from selenium.webdriver.remote.mobile import (
 )
 
 
+__all__ = ["UnifiedMobile"]
+
+
 class UnifiedMobile:
 	def __init__(self, selenium_mobile: legacyMobile):
 		if not isinstance(selenium_mobile, legacyMobile):

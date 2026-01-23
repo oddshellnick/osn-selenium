@@ -3,6 +3,9 @@ from typing import Any, List, Optional
 from osn_selenium.abstract.instances.script import AbstractScript
 
 
+__all__ = ["AbstractCoreScriptMixin"]
+
+
 class AbstractCoreScriptMixin(ABC):
 	"""Mixin responsible for Javascript execution and script management."""
 	

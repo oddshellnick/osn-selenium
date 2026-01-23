@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.heap_profiler import (
 )
 
 
+__all__ = ["HeapProfilerCDPExecutor"]
+
+
 class HeapProfilerCDPExecutor(
 		UnifiedHeapProfilerCDPExecutor,
 		TrioThreadMixin,

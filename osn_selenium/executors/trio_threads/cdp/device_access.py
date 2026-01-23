@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.device_access import (
 )
 
 
+__all__ = ["DeviceAccessCDPExecutor"]
+
+
 class DeviceAccessCDPExecutor(
 		UnifiedDeviceAccessCDPExecutor,
 		TrioThreadMixin,

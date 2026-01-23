@@ -36,6 +36,34 @@ from osn_selenium.dev_tools.domains.abstract import (
 )
 
 
+__all__ = [
+	"AuthRequiredActionsHandlerSettings",
+	"AuthRequiredActionsSettings",
+	"AuthRequiredSettings",
+	"ContinueRequestHandlersSettings",
+	"ContinueRequestSettings",
+	"ContinueResponseHandlersSettings",
+	"ContinueResponseSettings",
+	"ContinueWithAuthParameterHandlersSettings",
+	"ContinueWithAuthSettings",
+	"FailRequestHandlersSettings",
+	"FailRequestSettings",
+	"FetchEnableKwargsSettings",
+	"FetchHandlersSettings",
+	"FetchSettings",
+	"FulfillRequestHandlersSettings",
+	"FulfillRequestSettings",
+	"RequestPausedActionsHandlerSettings",
+	"RequestPausedActionsSettings",
+	"RequestPausedSettings",
+	"auth_required_actions_literal",
+	"auth_required_choose_action_func_type",
+	"handle_auth_required_func_type",
+	"handle_request_paused_func_type",
+	"request_paused_actions_literal",
+	"request_paused_choose_action_func_type"
+]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 else:

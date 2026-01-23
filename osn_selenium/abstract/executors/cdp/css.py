@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractCssCDPExecutor"]
+
+
 class AbstractCssCDPExecutor(ABC):
 	@abstractmethod
 	def add_rule(

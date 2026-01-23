@@ -81,6 +81,13 @@ from osn_selenium.instances.types import (
 )
 
 
+__all__ = [
+	"get_legacy_frame_reference",
+	"get_legacy_instance",
+	"get_sync_instance_wrapper",
+	"get_trio_thread_instance_wrapper"
+]
+
 _SYNC_WRAPPER_TYPE = TypeVar("_SYNC_WRAPPER_TYPE", bound=SyncInstanceWrapper)
 _TRIO_THREAD_WRAPPER_TYPE = TypeVar("_TRIO_THREAD_WRAPPER_TYPE", bound=TrioThreadInstanceWrapper)
 

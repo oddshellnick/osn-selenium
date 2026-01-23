@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.yandex.lifecycle import (
 )
 
 
+__all__ = ["YandexLifecycleMixin"]
+
+
 class YandexLifecycleMixin(
 		UnifiedYandexLifecycleMixin,
 		ChromeLifecycleMixin,

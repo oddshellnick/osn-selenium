@@ -5,8 +5,20 @@ from typing import (
 	Mapping,
 	Optional
 )
-from osn_selenium.javascript.fingerprint.registry.types import RegistryItem
-from osn_selenium.javascript.fingerprint.registry.typehints import ITEM_TYPE
+from osn_selenium.javascript.fingerprint.registry.types import (
+	ITEM_TYPE,
+	RegistryItem
+)
+
+
+__all__ = [
+	"register",
+	"register_key_methods",
+	"register_keys_methods",
+	"register_target_methods",
+	"register_targets",
+	"register_targets_methods"
+]
 
 
 def register(

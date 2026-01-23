@@ -8,6 +8,9 @@ from osn_selenium.webdrivers.unified.blink.base import (
 )
 
 
+__all__ = ["UnifiedBlinkSettingsMixin"]
+
+
 class UnifiedBlinkSettingsMixin(UnifiedBlinkBaseMixin):
 	def _reset_settings_impl(
 			self,

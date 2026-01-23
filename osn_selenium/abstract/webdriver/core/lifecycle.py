@@ -10,6 +10,9 @@ from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 
 
+__all__ = ["AbstractCoreLifecycleMixin"]
+
+
 class AbstractCoreLifecycleMixin(ABC):
 	"""Mixin responsible for driver lifecycle, creation, session, and connection management."""
 	

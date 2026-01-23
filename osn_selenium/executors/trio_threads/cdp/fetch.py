@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.fetch import (
 )
 
 
+__all__ = ["FetchCDPExecutor"]
+
+
 class FetchCDPExecutor(UnifiedFetchCDPExecutor, TrioThreadMixin, AbstractFetchCDPExecutor):
 	def __init__(
 			self,

@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.indexed_db import (
 )
 
 
+__all__ = ["IndexedDbCDPExecutor"]
+
+
 class IndexedDbCDPExecutor(UnifiedIndexedDbCDPExecutor, AbstractIndexedDbCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedIndexedDbCDPExecutor.__init__(self, execute_function=execute_function)

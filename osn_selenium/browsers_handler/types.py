@@ -2,6 +2,9 @@ import pathlib
 from osn_selenium.types import DictModel
 
 
+__all__ = ["Browser"]
+
+
 class Browser(DictModel):
 	"""
 	Represents a browser installed on the system.

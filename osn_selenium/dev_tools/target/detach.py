@@ -3,6 +3,9 @@ from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
+__all__ = ["DetachMixin"]
+
+
 class DetachMixin(LoggingMixin):
 	"""
 	Mixin for monitoring target detach, crash, or destruction events.

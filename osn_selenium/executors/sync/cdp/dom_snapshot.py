@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.dom_snapshot import (
 )
 
 
+__all__ = ["DomSnapshotCDPExecutor"]
+
+
 class DomSnapshotCDPExecutor(UnifiedDomSnapshotCDPExecutor, AbstractDomSnapshotCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedDomSnapshotCDPExecutor.__init__(self, execute_function=execute_function)

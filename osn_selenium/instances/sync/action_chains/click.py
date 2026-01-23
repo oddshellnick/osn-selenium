@@ -9,6 +9,8 @@ from osn_selenium.instances.unified.action_chains.click import UnifiedClickMixin
 from osn_selenium.abstract.instances.action_chains.click import AbstractClickMixin
 
 
+__all__ = ["ClickMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.sync.action_chains import ActionChains
 

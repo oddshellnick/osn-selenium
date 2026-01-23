@@ -12,6 +12,9 @@ from selenium.webdriver.common.virtual_authenticator import (
 )
 
 
+__all__ = ["UnifiedCoreAuthMixin"]
+
+
 class UnifiedCoreAuthMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _add_credential_impl(self, credential: Credential) -> None:

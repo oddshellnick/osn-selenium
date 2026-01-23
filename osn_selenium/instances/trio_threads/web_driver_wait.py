@@ -19,6 +19,8 @@ from osn_selenium.abstract.instances.web_driver_wait import (
 )
 
 
+__all__ = ["OUTPUT", "WebDriverWait"]
+
 OUTPUT = TypeVar("OUTPUT")
 
 

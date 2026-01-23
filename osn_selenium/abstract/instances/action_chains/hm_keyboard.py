@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 
 
+__all__ = ["AbstractHMKeyboardMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 

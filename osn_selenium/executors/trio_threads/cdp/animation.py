@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.animation import (
 )
 
 
+__all__ = ["AnimationCDPExecutor"]
+
+
 class AnimationCDPExecutor(
 		UnifiedAnimationCDPExecutor,
 		TrioThreadMixin,

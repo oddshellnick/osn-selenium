@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.tracing import (
 )
 
 
+__all__ = ["TracingCDPExecutor"]
+
+
 class TracingCDPExecutor(UnifiedTracingCDPExecutor, TrioThreadMixin, AbstractTracingCDPExecutor):
 	def __init__(
 			self,

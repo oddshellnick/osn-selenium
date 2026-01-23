@@ -17,6 +17,14 @@ from osn_selenium.dev_tools._types import (
 )
 
 
+__all__ = [
+	"CDPLoggerSettings",
+	"DevToolsSettings",
+	"FingerprintLoggerSettings",
+	"LoggerSettings"
+]
+
+
 class FingerprintLoggerSettings(DictModel):
 	"""
 	Configuration settings for fingerprint logging.

@@ -10,6 +10,9 @@ from osn_selenium.dev_tools.errors import (
 )
 
 
+__all__ = ["TargetsMixin"]
+
+
 class TargetsMixin(LoggingMixin):
 	"""
 	Mixin for adding, removing, and retrieving DevTools targets.

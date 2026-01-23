@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.background_service import (
 )
 
 
+__all__ = ["BackgroundServiceCDPExecutor"]
+
+
 class BackgroundServiceCDPExecutor(
 		UnifiedBackgroundServiceCDPExecutor,
 		TrioThreadMixin,

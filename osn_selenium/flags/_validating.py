@@ -2,6 +2,15 @@ from pathlib import Path
 from typing import Optional, Union
 
 
+__all__ = [
+	"bool_adding_validation_function",
+	"int_adding_validation_function",
+	"optional_bool_adding_validation_function",
+	"path_adding_validation_function",
+	"str_adding_validation_function"
+]
+
+
 def str_adding_validation_function(value: Optional[str]) -> bool:
 	"""
 	Validation function that checks if a value is a non-empty string.

@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 
+__all__ = ["AbstractBackgroundServiceCDPExecutor"]
+
+
 class AbstractBackgroundServiceCDPExecutor(ABC):
 	@abstractmethod
 	def clear_events(self, service: str) -> None:

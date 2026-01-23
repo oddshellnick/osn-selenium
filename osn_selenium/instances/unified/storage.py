@@ -12,6 +12,9 @@ from selenium.webdriver.common.bidi.storage import (
 )
 
 
+__all__ = ["UnifiedStorage"]
+
+
 class UnifiedStorage:
 	def __init__(self, selenium_storage: legacyStorage):
 		if not isinstance(selenium_storage, legacyStorage):

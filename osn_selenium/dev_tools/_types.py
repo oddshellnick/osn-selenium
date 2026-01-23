@@ -7,6 +7,12 @@ from typing import (
 )
 
 
+__all__ = [
+	"CDPLogLevelsType",
+	"FingerprintLogLevelsType",
+	"devtools_background_func_type"
+]
+
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.base import BaseMixin as BaseTargetMixin
 else:

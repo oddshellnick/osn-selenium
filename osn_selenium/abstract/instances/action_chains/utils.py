@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Union
 
 
+__all__ = ["AbstractUtilsMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 

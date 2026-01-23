@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractDebuggerCDPExecutor"]
+
+
 class AbstractDebuggerCDPExecutor(ABC):
 	@abstractmethod
 	def continue_to_location(self, location: Dict[str, Any], target_call_frames: Optional[str] = None) -> None:

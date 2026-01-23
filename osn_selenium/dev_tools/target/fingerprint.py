@@ -5,6 +5,9 @@ from osn_selenium.dev_tools.target.logging import LoggingMixin
 from osn_selenium.dev_tools._functions import execute_cdp_command
 
 
+__all__ = ["FingerprintMixin"]
+
+
 class FingerprintMixin(LoggingMixin):
 	"""
 	Mixin for detecting and logging fingerprinting attempts in the browser.

@@ -4,6 +4,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreFileMixin"]
+
+
 class UnifiedCoreFileMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _delete_downloadable_files_impl(self) -> None:

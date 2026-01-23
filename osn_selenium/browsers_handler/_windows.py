@@ -15,6 +15,13 @@ from win32api import (
 )
 
 
+__all__ = [
+	"get_browser_version",
+	"get_installed_browsers",
+	"get_webdriver_version"
+]
+
+
 def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
 	"""
 	Retrieves the version of a given webdriver executable.

@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractFetchCDPExecutor"]
+
+
 class AbstractFetchCDPExecutor(ABC):
 	@abstractmethod
 	def continue_request(

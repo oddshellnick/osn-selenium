@@ -1,6 +1,9 @@
 from osn_selenium.types import DictModel
 
 
+__all__ = ["JS_Scripts"]
+
+
 class JS_Scripts(DictModel):
 	"""
 	Represents a collection of JavaScript script snippets for use with WebDriver.

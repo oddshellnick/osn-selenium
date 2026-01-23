@@ -10,6 +10,9 @@ from selenium.webdriver.common.bidi.webextension import (
 )
 
 
+__all__ = ["AbstractWebExtension"]
+
+
 class AbstractWebExtension(ABC):
 	"""
 	Abstract base class for managing browser extensions.

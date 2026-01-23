@@ -7,6 +7,9 @@ from typing import (
 from osn_selenium.dev_tools.domains.fetch import FetchSettings
 
 
+__all__ = ["DomainsSettings", "domains_classes_type", "domains_type"]
+
+
 class DomainsSettings(DictModel):
 	"""
 	A dataclass container for configuration settings across different DevTools domains.

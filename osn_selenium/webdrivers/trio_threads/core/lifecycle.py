@@ -16,6 +16,9 @@ from osn_selenium.abstract.webdriver.core.lifecycle import (
 )
 
 
+__all__ = ["CoreLifecycleMixin"]
+
+
 class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, TrioThreadMixin, AbstractCoreLifecycleMixin):
 	"""
 	Mixin for managing the lifecycle of the Core WebDriver.

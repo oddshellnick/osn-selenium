@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractDomSnapshotCDPExecutor"]
+
+
 class AbstractDomSnapshotCDPExecutor(ABC):
 	@abstractmethod
 	def capture_snapshot(

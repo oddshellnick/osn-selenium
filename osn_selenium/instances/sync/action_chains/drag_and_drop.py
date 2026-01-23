@@ -10,6 +10,8 @@ from osn_selenium.abstract.instances.action_chains.drag_and_drop import (
 )
 
 
+__all__ = ["DragAndDropMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.sync.action_chains import ActionChains
 

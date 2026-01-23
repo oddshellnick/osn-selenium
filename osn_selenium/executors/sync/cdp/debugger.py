@@ -14,6 +14,9 @@ from osn_selenium.abstract.executors.cdp.debugger import (
 )
 
 
+__all__ = ["DebuggerCDPExecutor"]
+
+
 class DebuggerCDPExecutor(UnifiedDebuggerCDPExecutor, AbstractDebuggerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedDebuggerCDPExecutor.__init__(self, execute_function=execute_function)

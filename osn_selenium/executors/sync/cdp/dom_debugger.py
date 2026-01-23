@@ -13,6 +13,9 @@ from osn_selenium.abstract.executors.cdp.dom_debugger import (
 )
 
 
+__all__ = ["DomDebuggerCDPExecutor"]
+
+
 class DomDebuggerCDPExecutor(UnifiedDomDebuggerCDPExecutor, AbstractDomDebuggerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedDomDebuggerCDPExecutor.__init__(self, execute_function=execute_function)

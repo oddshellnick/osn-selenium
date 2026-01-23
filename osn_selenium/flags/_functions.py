@@ -3,6 +3,9 @@ from typing import Union
 from osn_selenium.flags.models.values import ArgumentValue
 
 
+__all__ = ["argument_to_flag", "build_first_start_argument"]
+
+
 def build_first_start_argument(browser_exe: Union[str, Path]) -> str:
 	"""
 	Builds the first command line argument to start a browser executable.

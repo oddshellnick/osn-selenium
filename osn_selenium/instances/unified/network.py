@@ -9,6 +9,9 @@ from selenium.webdriver.common.bidi.network import (
 )
 
 
+__all__ = ["UnifiedNetwork"]
+
+
 class UnifiedNetwork:
 	def __init__(self, selenium_network: legacyNetwork):
 		if not isinstance(selenium_network, legacyNetwork):

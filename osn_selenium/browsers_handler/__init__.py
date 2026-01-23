@@ -11,6 +11,13 @@ from osn_selenium.errors import (
 )
 
 
+__all__ = [
+	"get_installed_browsers",
+	"get_path_to_browser",
+	"get_version_of_browser",
+	"get_version_of_driver"
+]
+
 if sys.platform == "win32":
 	from osn_selenium.browsers_handler._windows import (
 			get_installed_browsers as _platform_get_installed_browsers,

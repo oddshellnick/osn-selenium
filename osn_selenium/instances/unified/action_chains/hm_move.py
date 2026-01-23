@@ -11,6 +11,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedHMMoveMixin"]
+
+
 class UnifiedHMMoveMixin(UnifiedUtilsMixin, UnifiedMoveMixin):
 	def _hm_move_impl(self, start_position: Point, end_position: Point) -> legacyActionChains:
 		parts = move_to_parts(start_position=start_position, end_position=end_position)

@@ -10,6 +10,9 @@ from osn_selenium.abstract.webdriver.yandex.settings import (
 )
 
 
+__all__ = ["YandexSettingsMixin"]
+
+
 class YandexSettingsMixin(UnifiedYandexSettingsMixin, AbstractYandexSettingsMixin):
 	"""
 	Mixin for configuring and updating settings of the Yandex WebDriver.

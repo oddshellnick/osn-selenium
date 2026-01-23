@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.blink.settings import (
 )
 
 
+__all__ = ["AbstractEdgeSettingsMixin"]
+
+
 class AbstractEdgeSettingsMixin(AbstractBlinkSettingsMixin):
 	"""
 	Abstract mixin for managing Edge browser settings.

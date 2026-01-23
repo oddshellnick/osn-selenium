@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.layer_tree import (
 )
 
 
+__all__ = ["LayerTreeCDPExecutor"]
+
+
 class LayerTreeCDPExecutor(
 		UnifiedLayerTreeCDPExecutor,
 		TrioThreadMixin,

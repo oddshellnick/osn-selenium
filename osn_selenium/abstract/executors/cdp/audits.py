@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractAuditsCDPExecutor"]
+
+
 class AbstractAuditsCDPExecutor(ABC):
 	@abstractmethod
 	def check_contrast(self, report_aaa: Optional[bool] = None) -> None:

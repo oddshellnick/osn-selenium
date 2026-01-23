@@ -7,6 +7,9 @@ from osn_selenium.abstract.webdriver.core.navigation import (
 )
 
 
+__all__ = ["CoreNavigationMixin"]
+
+
 class CoreNavigationMixin(
 		UnifiedCoreNavigationMixin,
 		TrioThreadMixin,

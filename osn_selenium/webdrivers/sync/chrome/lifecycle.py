@@ -11,6 +11,9 @@ from osn_selenium.abstract.webdriver.chrome.lifecycle import (
 )
 
 
+__all__ = ["ChromeLifecycleMixin"]
+
+
 class ChromeLifecycleMixin(
 		UnifiedChromeLifecycleMixin,
 		BlinkLifecycleMixin,

@@ -8,6 +8,8 @@ from typing import (
 )
 
 
+__all__ = ["requires_driver"]
+
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
 _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
 _METHOD = TypeVar("_METHOD", bound=Callable[..., Any])

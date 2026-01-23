@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractMemoryCDPExecutor"]
+
+
 class AbstractMemoryCDPExecutor(ABC):
 	@abstractmethod
 	def forcibly_purge_java_script_memory(self) -> None:

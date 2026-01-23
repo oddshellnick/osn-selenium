@@ -3,6 +3,9 @@ from osn_selenium.webdrivers.decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
+__all__ = ["UnifiedCoreComponentsMixin"]
+
+
 class UnifiedCoreComponentsMixin(UnifiedCoreBaseMixin):
 	@requires_driver
 	def _browser_impl(self) -> Any:

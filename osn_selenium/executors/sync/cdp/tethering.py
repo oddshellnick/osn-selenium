@@ -7,6 +7,9 @@ from osn_selenium.abstract.executors.cdp.tethering import (
 )
 
 
+__all__ = ["TetheringCDPExecutor"]
+
+
 class TetheringCDPExecutor(UnifiedTetheringCDPExecutor, AbstractTetheringCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedTetheringCDPExecutor.__init__(self, execute_function=execute_function)

@@ -1,6 +1,16 @@
 from osn_selenium.types import Point
 
 
+__all__ = [
+	"MoveOffset",
+	"MovePart",
+	"MoveStep",
+	"ScrollDelta",
+	"ScrollPart",
+	"TextInputPart"
+]
+
+
 class TextInputPart:
 	"""
 	Represents a segment of text input with an associated duration.

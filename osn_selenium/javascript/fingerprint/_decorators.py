@@ -1,11 +1,14 @@
 import functools
 from typing import (
-	Any, Callable,
+	Any,
+	Callable,
 	ParamSpec,
 	TypeVar
 )
-from osn_selenium.javascript.fingerprint.functions import add_code_level
+from osn_selenium.javascript.fingerprint._functions import add_code_level
 
+
+__all__ = ["indent_code"]
 
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
 _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")

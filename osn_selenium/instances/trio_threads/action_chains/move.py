@@ -6,6 +6,8 @@ from osn_selenium.instances.unified.action_chains.move import UnifiedMoveMixin
 from osn_selenium.abstract.instances.action_chains.move import AbstractMoveMixin
 
 
+__all__ = ["MoveMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.trio_threads.action_chains import ActionChains
 

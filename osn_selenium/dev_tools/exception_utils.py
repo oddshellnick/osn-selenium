@@ -9,6 +9,9 @@ from typing import (
 )
 
 
+__all__ = ["ExceptionThrown", "extract_exception_trace", "log_exception"]
+
+
 def extract_exception_trace(exception: BaseException) -> str:
 	"""
 	Extracts a comprehensive traceback string for an exception, including handling for `ExceptionGroup`s.

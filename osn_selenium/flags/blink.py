@@ -33,6 +33,9 @@ from osn_selenium.flags._validating import (
 )
 
 
+__all__ = ["BlinkFlagsManager"]
+
+
 class BlinkFlagsManager(BrowserFlagsManager):
 	"""
 	Manages browser flags specifically for Blink-based browsers (like Chrome, Edge), adding support for Blink Features.
@@ -72,8 +75,8 @@ class BlinkFlagsManager(BrowserFlagsManager):
 					set_flags_function=self.set_blink_features,
 					update_flags_function=self.update_blink_features,
 					clear_flags_function=self.clear_blink_features,
-					build_options_function=self.build_options_blink_features,
-					build_start_args_function=self.build_start_args_blink_features
+					build_options_function=self._build_options_blink_features,
+					build_start_args_function=self._build_start_args_blink_features
 			),
 		}
 		
@@ -705,7 +708,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		self._enable_blink_features: Dict[str, str] = {}
 		self._disable_blink_features: Dict[str, str] = {}
 	
-	def build_start_args_blink_features(self) -> List[str]:
+	def _build_start_args_blink_features(self) -> List[str]:
 		"""
 		Builds a List of Blink feature arguments for browser startup.
 
@@ -736,7 +739,7 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		
 		return start_args
 	
-	def build_options_blink_features(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
+	def _build_options_blink_features(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
 		"""
 		Adds configured Blink features (`--enable-blink-features` and `--disable-blink-features`) to the WebDriver options.
 
@@ -841,6 +844,55 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		self.clear_blink_features()
 		self.update_blink_features(blink_features)
 	
+	def _build_options_arguments(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
+		"""
+		Adds configured command-line arguments to the WebDriver options.
+
+		Args:
+			options (blink_webdriver_option_type): The WebDriver options object.
+
+		Returns:
+			blink_webdriver_option_type: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_arguments(options)
+	
+	def _build_options_attributes(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
+		"""
+		Applies configured attributes to the WebDriver options.
+
+		Args:
+			options (blink_webdriver_option_type): The WebDriver options object.
+
+		Returns:
+			blink_webdriver_option_type: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_attributes(options)
+	
+	def _build_options_experimental_options(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
+		"""
+		Adds experimental options to the WebDriver options.
+
+		Args:
+			options (blink_webdriver_option_type): The WebDriver options object.
+
+		Returns:
+			blink_webdriver_option_type: The modified WebDriver options object.
+		"""
+		
+		return super()._build_options_experimental_options(options)
+	
+	def _build_start_args_arguments(self) -> List[str]:
+		"""
+		Builds a List of command-line arguments for browser startup.
+
+		Returns:
+			List[str]: A List of startup arguments.
+		"""
+		
+		return super()._build_start_args_arguments()
+	
 	def _renew_webdriver_options(self) -> blink_webdriver_option_type:
 		"""
 		Abstract method to renew WebDriver options. Must be implemented in child classes.
@@ -880,55 +932,6 @@ class BlinkFlagsManager(BrowserFlagsManager):
 		"""
 		
 		self._browser_exe = value
-	
-	def build_options_arguments(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
-		"""
-		Adds configured command-line arguments to the WebDriver options.
-
-		Args:
-			options (blink_webdriver_option_type): The WebDriver options object.
-
-		Returns:
-			blink_webdriver_option_type: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_arguments(options)
-	
-	def build_options_attributes(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
-		"""
-		Applies configured attributes to the WebDriver options.
-
-		Args:
-			options (blink_webdriver_option_type): The WebDriver options object.
-
-		Returns:
-			blink_webdriver_option_type: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_attributes(options)
-	
-	def build_options_experimental_options(self, options: blink_webdriver_option_type) -> blink_webdriver_option_type:
-		"""
-		Adds experimental options to the WebDriver options.
-
-		Args:
-			options (blink_webdriver_option_type): The WebDriver options object.
-
-		Returns:
-			blink_webdriver_option_type: The modified WebDriver options object.
-		"""
-		
-		return super().build_options_experimental_options(options)
-	
-	def build_start_args_arguments(self) -> List[str]:
-		"""
-		Builds a List of command-line arguments for browser startup.
-
-		Returns:
-			List[str]: A List of startup arguments.
-		"""
-		
-		return super().build_start_args_arguments()
 	
 	def clear_flags(self):
 		"""Clears all configured flags and resets the start page URL."""

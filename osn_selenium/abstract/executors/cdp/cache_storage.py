@@ -8,6 +8,9 @@ from typing import (
 )
 
 
+__all__ = ["AbstractCacheStorageCDPExecutor"]
+
+
 class AbstractCacheStorageCDPExecutor(ABC):
 	@abstractmethod
 	def delete_cache(self, cache_id: str) -> None:

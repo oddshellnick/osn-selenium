@@ -19,6 +19,9 @@ from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 
 
+__all__ = ["JSExecutor"]
+
+
 class JSExecutor(UnifiedJSExecutor, TrioThreadMixin, AbstractJSExecutor):
 	"""
 	An asynchronous JavaScript executor that integrates Trio's threading mixin for thread-safe operations.

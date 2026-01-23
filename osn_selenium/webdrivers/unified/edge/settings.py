@@ -7,6 +7,9 @@ from osn_selenium.webdrivers.unified.blink.settings import (
 )
 
 
+__all__ = ["UnifiedEdgeSettingsMixin"]
+
+
 class UnifiedEdgeSettingsMixin(UnifiedBlinkSettingsMixin):
 	def _reset_settings_impl(
 			self,

@@ -2,6 +2,9 @@ from osn_selenium.dev_tools.manager.settings import SettingsMixin
 from osn_selenium.dev_tools.manager.lifecycle import LifecycleMixin
 
 
+__all__ = ["DevTools"]
+
+
 class DevTools(LifecycleMixin, SettingsMixin):
 	"""
 	Main entry point for managing Chrome DevTools Protocol (CDP) interactions.

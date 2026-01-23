@@ -5,6 +5,9 @@ from osn_selenium.webdrivers.unified.blink.base import (
 )
 
 
+__all__ = ["UnifiedBlinkFeaturesMixin"]
+
+
 class UnifiedBlinkFeaturesMixin(UnifiedBlinkBaseMixin):
 	@requires_driver
 	def _get_issue_message_impl(self) -> Any:

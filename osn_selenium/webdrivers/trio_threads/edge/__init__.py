@@ -18,6 +18,9 @@ from osn_selenium.webdrivers.trio_threads.edge.settings import EdgeSettingsMixin
 from osn_selenium.webdrivers.trio_threads.edge.lifecycle import EdgeLifecycleMixin
 
 
+__all__ = ["EdgeWebDriver"]
+
+
 class EdgeWebDriver(
 		EdgeBaseMixin,
 		EdgeLifecycleMixin,

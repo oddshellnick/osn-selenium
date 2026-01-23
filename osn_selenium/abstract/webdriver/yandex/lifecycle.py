@@ -8,6 +8,9 @@ from osn_selenium.abstract.webdriver.chrome.lifecycle import (
 )
 
 
+__all__ = ["AbstractYandexLifecycleMixin"]
+
+
 class AbstractYandexLifecycleMixin(AbstractChromeLifecycleMixin):
 	"""
 	Abstract mixin managing the lifecycle of a Yandex WebDriver session.

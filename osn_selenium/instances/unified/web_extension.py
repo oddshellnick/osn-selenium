@@ -9,6 +9,9 @@ from selenium.webdriver.common.bidi.webextension import (
 )
 
 
+__all__ = ["UnifiedWebExtension"]
+
+
 class UnifiedWebExtension:
 	def __init__(self, selenium_web_extension: legacyWebExtension):
 		if not isinstance(selenium_web_extension, legacyWebExtension):

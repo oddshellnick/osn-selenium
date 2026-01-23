@@ -1,16 +1,19 @@
 from pydantic import Field
 from typing import Dict, List, Literal
 from osn_selenium.types import DictModel
-from osn_selenium.javascript.fingerprint.functions import add_code_level
+from osn_selenium.javascript.fingerprint._functions import add_code_level
 from osn_selenium.javascript.fingerprint.types import SPOOF_RULE_TYPEHINT
 from osn_selenium.javascript.fingerprint.registry.types import RegistryItem
-from osn_selenium.javascript.fingerprint.detect.functions import get_hook_js
+from osn_selenium.javascript.fingerprint.detect._functions import get_hook_js
 from osn_selenium.javascript.fingerprint.registry import FINGERPRINT_REGISTRY
 from osn_selenium.javascript.functions import (
 	convert_to_js_value,
 	inject_data_in_js_script,
 	read_js_scripts
 )
+
+
+__all__ = ["FingerprintSettings"]
 
 
 class FingerprintSettings(DictModel):

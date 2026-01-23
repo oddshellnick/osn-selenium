@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.heap_profiler import (
 )
 
 
+__all__ = ["HeapProfilerCDPExecutor"]
+
+
 class HeapProfilerCDPExecutor(UnifiedHeapProfilerCDPExecutor, AbstractHeapProfilerCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedHeapProfilerCDPExecutor.__init__(self, execute_function=execute_function)

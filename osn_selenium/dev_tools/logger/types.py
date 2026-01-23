@@ -14,6 +14,20 @@ from osn_selenium.dev_tools._types import (
 )
 
 
+__all__ = [
+	"CDPLogLevelStats",
+	"CDPLoggerChannelStats",
+	"CDPMainLogEntry",
+	"CDPTargetLogEntry",
+	"CDPTargetTypeStats",
+	"FingerprintAPIStats",
+	"FingerprintLogLevelStats",
+	"FingerprintLoggerChannelStats",
+	"FingerprintMainLogEntry",
+	"FingerprintTargetLogEntry"
+]
+
+
 class FingerprintLogLevelStats(DictModel):
 	"""
 	Statistics for a specific fingerprint log level.

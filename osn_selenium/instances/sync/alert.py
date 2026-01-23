@@ -7,6 +7,9 @@ from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
 
 
+__all__ = ["Alert"]
+
+
 class Alert(UnifiedAlert, AbstractAlert):
 	"""
 	Wrapper for the legacy Selenium Alert instance.

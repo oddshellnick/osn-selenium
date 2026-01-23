@@ -9,6 +9,9 @@ from osn_selenium.abstract.executors.cdp.event_breakpoints import (
 )
 
 
+__all__ = ["EventBreakpointsCDPExecutor"]
+
+
 class EventBreakpointsCDPExecutor(
 		UnifiedEventBreakpointsCDPExecutor,
 		TrioThreadMixin,

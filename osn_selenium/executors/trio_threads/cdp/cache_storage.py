@@ -16,6 +16,9 @@ from osn_selenium.abstract.executors.cdp.cache_storage import (
 )
 
 
+__all__ = ["CacheStorageCDPExecutor"]
+
+
 class CacheStorageCDPExecutor(
 		UnifiedCacheStorageCDPExecutor,
 		TrioThreadMixin,

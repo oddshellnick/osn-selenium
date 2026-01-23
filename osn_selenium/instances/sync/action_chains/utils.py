@@ -4,6 +4,8 @@ from osn_selenium.instances.unified.action_chains.utils import UnifiedUtilsMixin
 from osn_selenium.abstract.instances.action_chains.utils import AbstractUtilsMixin
 
 
+__all__ = ["UtilsMixin"]
+
 if TYPE_CHECKING:
 	from osn_selenium.instances.sync.action_chains import ActionChains
 

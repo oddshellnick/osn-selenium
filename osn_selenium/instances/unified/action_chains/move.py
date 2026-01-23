@@ -6,6 +6,9 @@ from selenium.webdriver.common.action_chains import (
 )
 
 
+__all__ = ["UnifiedMoveMixin"]
+
+
 class UnifiedMoveMixin(UnifiedBaseMixin):
 	def _move_by_offset_impl(self, xoffset: int, yoffset: int) -> legacyActionChains:
 		return self._legacy_impl.move_by_offset(xoffset=xoffset, yoffset=yoffset)

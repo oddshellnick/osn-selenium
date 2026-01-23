@@ -18,6 +18,9 @@ from osn_selenium.webdrivers.unified.chrome.base import (
 )
 
 
+__all__ = ["UnifiedYandexBaseMixin"]
+
+
 class UnifiedYandexBaseMixin(UnifiedChromeBaseMixin):
 	def __init__(
 			self,

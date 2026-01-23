@@ -16,6 +16,9 @@ from osn_selenium.abstract.webdriver.chrome import (
 )
 
 
+__all__ = ["ChromeWebDriver"]
+
+
 class ChromeWebDriver(
 		ChromeBaseMixin,
 		ChromeLifecycleMixin,

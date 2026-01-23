@@ -12,6 +12,9 @@ from osn_selenium.abstract.executors.cdp.fed_cm import (
 )
 
 
+__all__ = ["FedCmCDPExecutor"]
+
+
 class FedCmCDPExecutor(UnifiedFedCmCDPExecutor, AbstractFedCmCDPExecutor):
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		UnifiedFedCmCDPExecutor.__init__(self, execute_function=execute_function)

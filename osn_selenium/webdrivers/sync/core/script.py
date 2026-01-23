@@ -15,6 +15,9 @@ from osn_selenium.abstract.webdriver.core.script import (
 )
 
 
+__all__ = ["CoreScriptMixin"]
+
+
 class CoreScriptMixin(UnifiedCoreScriptMixin, AbstractCoreScriptMixin):
 	"""
 	Mixin for JavaScript execution and management in Core WebDrivers.

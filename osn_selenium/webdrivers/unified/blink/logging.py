@@ -5,6 +5,9 @@ from osn_selenium.webdrivers.unified.blink.base import (
 )
 
 
+__all__ = ["UnifiedBlinkLoggingMixin"]
+
+
 class UnifiedBlinkLoggingMixin(UnifiedBlinkBaseMixin):
 	@requires_driver
 	def _get_log_impl(self, log_type: str) -> Any:
