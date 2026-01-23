@@ -162,5 +162,5 @@ _STANDARD_BROWSERS_BINARIES = {
 		"microsoft-edge-dev",
 		"microsoft-edge-canary"
 	],
-	"Yandex Browser": ["yandex-browser", "yandex-browser-beta", "yandex_browser"]
+	"Yandex": ["yandex-browser", "yandex-browser-beta", "yandex_browser"]
 }

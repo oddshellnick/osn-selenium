@@ -25,11 +25,11 @@ class ChromeWebDriver(
 ):
 	def __init__(
 			self,
-			browser_exe: Optional[Union[str, pathlib.Path]],
-			browser_name_in_system: str,
 			webdriver_path: str,
-			use_browser_exe: bool = True,
 			flags_manager_type: Type[ChromeFlagsManager] = ChromeFlagsManager,
+			use_browser_exe: bool = True,
+			browser_name_in_system: str = "Google Chrome",
+			browser_exe: Optional[Union[str, pathlib.Path]] = None,
 			flags: Optional[ChromeFlags] = None,
 			start_page_url: str = "",
 			implicitly_wait: int = 5,
