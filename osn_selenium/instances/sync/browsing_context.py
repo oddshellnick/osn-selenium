@@ -1,5 +1,7 @@
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances._typehints import (
 	BROWSING_CONTEXT_TYPEHINT
 )

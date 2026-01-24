@@ -1,16 +1,16 @@
 import re
 import time
-import pathlib
+from typing import Optional
 from subprocess import Popen
-from typing import Optional, Union
 from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_system_utils.api.process import kill_process_by_pid
-from osn_selenium.webdrivers.unified.core.lifecycle import (
-	UnifiedCoreLifecycleMixin
-)
 from osn_selenium.webdrivers.unified.blink.settings import (
 	UnifiedBlinkSettingsMixin
+)
+from osn_selenium.webdrivers.unified.core.lifecycle import (
+	UnifiedCoreLifecycleMixin
 )
 from osn_system_utils.api.network import (
 	get_localhost_pids_with_addresses,
@@ -43,7 +43,7 @@ class UnifiedBlinkLifecycleMixin(UnifiedBlinkSettingsMixin, UnifiedCoreLifecycle
 	def _start_webdriver_impl(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -97,7 +97,7 @@ class UnifiedBlinkLifecycleMixin(UnifiedBlinkSettingsMixin, UnifiedCoreLifecycle
 	def _restart_webdriver_impl(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,

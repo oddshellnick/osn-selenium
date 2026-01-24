@@ -1,12 +1,9 @@
 import sys
 import pathlib
-from typing import (
-	List,
-	Optional,
-	Union
-)
+from typing import List, Optional
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.browsers_handler.models import Browser
-from osn_selenium.errors import (
+from osn_selenium.exceptions.platform import (
 	PlatformNotSupportedError
 )
 
@@ -29,15 +26,15 @@ elif sys.platform == "linux":
 			get_webdriver_version as _platform_get_webdriver_version
 	)
 else:
-	raise PlatformNotSupportedError(sys.platform)
+	raise PlatformNotSupportedError(platform=sys.platform)
 
 
-def get_version_of_driver(driver_path: Union[pathlib.Path, str]) -> Optional[str]:
+def get_version_of_driver(driver_path: PATH_TYPEHINT) -> Optional[str]:
 	"""
 	Retrieves the version of a given webdriver executable based on the current platform.
 
 	Args:
-		driver_path (Union[pathlib.Path, str]): The path to the webdriver executable.
+		driver_path (PATH_TYPEHINT): The path to the webdriver executable.
 
 	Returns:
 		Optional[str]: The version of the webdriver as a string, or None if not determined.

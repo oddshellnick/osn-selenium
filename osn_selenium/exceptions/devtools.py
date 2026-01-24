@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.exceptions.base import OSNSeleniumError
 from osn_selenium.dev_tools._exception_helpers import (
 	extract_exception_trace
 )
@@ -10,10 +11,12 @@ from selenium.webdriver.common.bidi.cdp import (
 
 __all__ = [
 	"BidiConnectionNotEstablishedError",
+	"CDPCommandNotFoundError",
+	"CDPEndExceptions",
 	"CantEnterDevToolsContextError",
+	"DevToolsError",
 	"ExceptionThrown",
-	"cdp_end_exceptions",
-	"trio_end_exceptions"
+	"TrioEndExceptions"
 ]
 
 
@@ -29,7 +32,7 @@ class ExceptionThrown:
 		traceback (str): The formatted traceback string of the exception.
 	"""
 	
-	def __init__(self, exception: BaseException):
+	def __init__(self, exception: BaseException) -> None:
 		"""
 		Initializes the ExceptionThrown wrapper.
 
@@ -41,7 +44,15 @@ class ExceptionThrown:
 		self.traceback = extract_exception_trace(exception)
 
 
-class CantEnterDevToolsContextError(Exception):
+class DevToolsError(OSNSeleniumError):
+	"""
+	Base exception for all DevTools-related operations.
+	"""
+	
+	pass
+
+
+class CantEnterDevToolsContextError(DevToolsError):
 	"""
 	Custom exception raised when unable to enter the DevTools context.
 
@@ -49,7 +60,7 @@ class CantEnterDevToolsContextError(Exception):
 	the DevTools frame fails, preventing further DevTools interactions.
 	"""
 	
-	def __init__(self, reason: str):
+	def __init__(self, reason: str) -> None:
 		"""
 		Initializes CantEnterDevToolsContextError with the reason of failure.
 
@@ -60,7 +71,24 @@ class CantEnterDevToolsContextError(Exception):
 		super().__init__(f"Can't enter devtools context! Reason: {reason}.")
 
 
-class BidiConnectionNotEstablishedError(Exception):
+class CDPCommandNotFoundError(DevToolsError):
+	"""
+	Error raised when a requested CDP command attribute is not found in the specified module.
+	"""
+	
+	def __init__(self, object_: str, module_: str):
+		"""
+		Initializes CDPCommandNotFoundError.
+
+		Args:
+			object_ (str): The name of the missing attribute.
+			module_ (str): The name of the module where the attribute was expected.
+		"""
+		
+		super().__init__(f"Attribute '{object_}' not found in '{module_}'")
+
+
+class BidiConnectionNotEstablishedError(DevToolsError):
 	"""
 	Custom exception raised when a BiDi connection is required but not established.
 
@@ -68,7 +96,7 @@ class BidiConnectionNotEstablishedError(Exception):
 	context manager was entered, which establishes the necessary BiDi connection.
 	"""
 	
-	def __init__(self):
+	def __init__(self) -> None:
 		"""
 		Initializes BidiConnectionNotEstablishedError.
 		"""
@@ -76,8 +104,8 @@ class BidiConnectionNotEstablishedError(Exception):
 		super().__init__("Bidi connection not established. Enter the DevTools context first!")
 
 
-trio_end_exceptions = (trio.Cancelled, trio.EndOfChannel, trio.ClosedResourceError)
-cdp_end_exceptions = (
+TrioEndExceptions = (trio.Cancelled, trio.EndOfChannel, trio.ClosedResourceError)
+CDPEndExceptions = (
 		trio.Cancelled,
 		trio.EndOfChannel,
 		trio.ClosedResourceError,

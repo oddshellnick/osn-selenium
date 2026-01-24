@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
-from osn_selenium.instances.errors import NotExpectedTypeError
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 
 
 __all__ = ["UnifiedFedCM"]
@@ -9,7 +9,7 @@ __all__ = ["UnifiedFedCM"]
 class UnifiedFedCM:
 	def __init__(self, selenium_fedcm: legacyFedCM):
 		if not isinstance(selenium_fedcm, legacyFedCM):
-			raise NotExpectedTypeError(expected_class=legacyFedCM, received_instance=selenium_fedcm)
+			raise NotExpectedTypeError(expected_type=legacyFedCM, received_instance=selenium_fedcm)
 		
 		self._selenium_fedcm = selenium_fedcm
 	

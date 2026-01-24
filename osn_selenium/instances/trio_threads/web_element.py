@@ -1,7 +1,6 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from typing import (
 	Any,
@@ -12,6 +11,9 @@ from typing import (
 	Self
 )
 from osn_selenium.instances.trio_threads.shadow_root import ShadowRoot
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait

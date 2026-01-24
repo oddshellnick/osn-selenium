@@ -7,15 +7,22 @@ from typing import (
 	Optional
 )
 from osn_selenium.flags._functions import argument_to_flag
+from osn_selenium.exceptions.logic import (
+	AbstractImplementationError
+)
 from osn_selenium.flags._typehints import (
-	any_webdriver_option_type
+	ANY_WEBDRIVER_OPTION_TYPEHINT
+)
+from osn_selenium.exceptions.flags import (
+	FlagNotDefinedError,
+	FlagTypeNotDefinedError
 )
 from osn_selenium.flags.models.values import (
 	ArgumentValue,
 	AttributeValue,
 	ExperimentalOptionValue
 )
-from osn_selenium.flags._validating import (
+from osn_selenium.flags._validators import (
 	bool_adding_validation_function,
 	optional_bool_adding_validation_function
 )
@@ -130,7 +137,7 @@ class BrowserFlagsManager:
 		self._experimental_options: Dict[str, ExperimentalOptionValue] = {}
 		self._attributes: Dict[str, AttributeValue] = {}
 	
-	def _build_options_attributes(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_attributes(self, options: ANY_WEBDRIVER_OPTION_TYPEHINT) -> ANY_WEBDRIVER_OPTION_TYPEHINT:
 		"""
 		Applies configured attributes to the WebDriver options object.
 
@@ -193,14 +200,14 @@ class BrowserFlagsManager:
 			attributes (BrowserAttributes): A dictionary of attributes to set or update.
 
 		Raises:
-			ValueError: If an unknown attribute key is provided.
+			FlagNotDefinedError: If an unknown attribute key is provided.
 		"""
 		
 		for key, value in attributes.model_dump(exclude_none=True).items():
 			flag_definition = self._flags_definitions_by_types["attribute"].get(key, FlagNotDefined())
 		
 			if isinstance(flag_definition, FlagNotDefined):
-				raise ValueError(f"Unknown attribute: {key}.")
+				raise FlagNotDefinedError(flag_name=key, flag_type="attributes")
 		
 			self.set_attribute(flag_definition, getattr(attributes, key))
 	
@@ -210,15 +217,12 @@ class BrowserFlagsManager:
 
 		Args:
 			attributes (BrowserAttributes): A dictionary of attributes to set.
-
-		Raises:
-			ValueError: If an unknown attribute key is provided.
 		"""
 		
 		self.clear_attributes()
 		self.update_attributes(attributes)
 	
-	def _build_options_experimental_options(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_experimental_options(self, options: ANY_WEBDRIVER_OPTION_TYPEHINT) -> ANY_WEBDRIVER_OPTION_TYPEHINT:
 		"""
 		Adds configured experimental options to the WebDriver options object.
 
@@ -282,14 +286,14 @@ class BrowserFlagsManager:
 			experimental_options (BrowserExperimentalOptions): A dictionary of experimental options to set or update.
 
 		Raises:
-			ValueError: If an unknown experimental option key is provided.
+			FlagNotDefinedError: If an unknown experimental option key is provided.
 		"""
 		
 		for key, value in experimental_options.model_dump(exclude_none=True).items():
 			flag_definition = self._flags_definitions_by_types["experimental_option"].get(key, FlagNotDefined())
 		
 			if isinstance(flag_definition, FlagNotDefined):
-				raise ValueError(f"Unknown experimental option: {key}.")
+				raise FlagNotDefinedError(flag_name=key, flag_type="experimental options")
 		
 			self.set_experimental_option(flag_definition, getattr(experimental_options, key))
 	
@@ -299,9 +303,6 @@ class BrowserFlagsManager:
 
 		Args:
 			experimental_options (BrowserExperimentalOptions): A dictionary of experimental options to set.
-
-		Raises:
-			ValueError: If an unknown experimental option key is provided.
 		"""
 		
 		self.clear_experimental_options()
@@ -323,7 +324,7 @@ class BrowserFlagsManager:
 			if self._flags_definitions_by_types["argument"][name].mode in ["startup_argument", "both"]
 		]
 	
-	def _build_options_arguments(self, options: any_webdriver_option_type) -> any_webdriver_option_type:
+	def _build_options_arguments(self, options: ANY_WEBDRIVER_OPTION_TYPEHINT) -> ANY_WEBDRIVER_OPTION_TYPEHINT:
 		"""
 		Adds configured command-line arguments to the WebDriver options object.
 
@@ -386,14 +387,14 @@ class BrowserFlagsManager:
 			arguments (BrowserArguments): A dictionary of arguments to set or update.
 
 		Raises:
-			ValueError: If an unknown argument key is provided.
+			FlagNotDefinedError: If an unknown argument key is provided.
 		"""
 		
 		for key, value in arguments.model_dump(exclude_none=True).items():
 			flag_definition = self._flags_definitions_by_types["argument"].get(key, FlagNotDefined())
 		
 			if isinstance(flag_definition, FlagNotDefined):
-				raise ValueError(f"Unknown argument: {key}.")
+				raise FlagNotDefinedError(flag_name=key, flag_type="arguments")
 		
 			self.set_argument(flag_definition, getattr(arguments, key))
 	
@@ -403,9 +404,6 @@ class BrowserFlagsManager:
 
 		Args:
 			arguments (BrowserArguments): A dictionary of arguments to set.
-
-		Raises:
-			ValueError: If an unknown argument key is provided.
 		"""
 		
 		self.clear_arguments()
@@ -441,7 +439,7 @@ class BrowserFlagsManager:
 	def flags_types(self) -> Dict[str, FlagType]:
 		return deepcopy(self._flags_types)
 	
-	def _renew_webdriver_options(self) -> any_webdriver_option_type:
+	def _renew_webdriver_options(self) -> ANY_WEBDRIVER_OPTION_TYPEHINT:
 		"""
 		Abstract method to renew WebDriver options. Must be implemented in child classes.
 
@@ -452,13 +450,16 @@ class BrowserFlagsManager:
 			any_webdriver_option_type: A new instance of WebDriver options (e.g., ChromeOptions, FirefoxOptions).
 
 		Raises:
-			NotImplementedError: If the method is not implemented in a subclass.
+			AbstractImplementationError: If the method is not implemented in a subclass.
 		"""
 		
-		raise NotImplementedError("This function must be implemented in child classes.")
+		raise AbstractImplementationError(
+				method_name="_renew_webdriver_options",
+				class_name=self.__class__.__name__
+		)
 	
 	@property
-	def options(self) -> any_webdriver_option_type:
+	def options(self) -> ANY_WEBDRIVER_OPTION_TYPEHINT:
 		"""
 		Builds and returns a WebDriver options object with all configured flags applied.
 
@@ -485,14 +486,14 @@ class BrowserFlagsManager:
 			option (WebdriverOption): The configuration object defining the option to be removed.
 
 		Raises:
-			ValueError: If the option type is not recognized.
+			FlagTypeNotDefinedError: If the option type is not recognized.
 		"""
 		
 		for type_name, type_functions in self._flags_types.items():
 			if option.type == type_name:
 				type_functions.remove_flag_function(option.name)
 		
-		raise ValueError(f"Unknown option type ({option}).")
+		raise FlagTypeNotDefinedError(flag_type=option.type)
 	
 	def set_flags(self, flags: BrowserFlags):
 		"""
@@ -507,14 +508,14 @@ class BrowserFlagsManager:
 				and values are dictionaries of flags to set for that type.
 
 		Raises:
-			ValueError: If an unknown flag type is provided in the `flags` dictionary.
+			FlagTypeNotDefinedError: If an unknown flag type is provided in the `flags` dictionary.
 		"""
 		
 		for type_name, type_flags in flags.model_dump(exclude_none=True).items():
 			flags_type_definition = self._flags_types.get(type_name, FlagTypeNotDefined())
 		
 			if isinstance(flags_type_definition, FlagTypeNotDefined):
-				raise ValueError(f"Unknown flag type: {type_name}.")
+				raise FlagTypeNotDefinedError(flag_type=type_name)
 		
 			flags_type_definition.set_flags_function(getattr(flags, type_name))
 	
@@ -531,16 +532,14 @@ class BrowserFlagsManager:
 			value (Any): The value to be set for the option. The type and acceptable values depend on the specific browser option being configured.
 
 		Raises:
-			ValueError: If the option type is not recognized.
+			FlagTypeNotDefinedError: If the option type is not recognized.
 		"""
 		
 		for type_name, type_functions in self._flags_types.items():
 			if option.type == type_name:
 				type_functions.set_flag_function(option, value)
 		
-		raise ValueError(
-				f"Unknown option type ({option}). Acceptable types are: {', '.join(self._flags_types.keys())}."
-		)
+		raise FlagTypeNotDefinedError(flag_type=option.type)
 	
 	def update_flags(self, flags: BrowserFlags):
 		"""
@@ -555,13 +554,13 @@ class BrowserFlagsManager:
 				and values are dictionaries of flags to update for that type.
 
 		Raises:
-			ValueError: If an unknown flag type is provided in the `flags` dictionary.
+			FlagTypeNotDefinedError: If an unknown flag type is provided in the `flags` dictionary.
 		"""
 		
 		for type_name, type_flags in flags.model_dump(exclude_none=True).items():
 			flags_type_definition = self._flags_types.get(type_name, FlagTypeNotDefined())
 		
 			if isinstance(flags_type_definition, FlagTypeNotDefined):
-				raise ValueError(f"Unknown flag type: {type_name}.")
+				raise FlagTypeNotDefinedError(flag_type=type_name)
 		
 			flags_type_definition.update_flags_function(getattr(flags, type_name))

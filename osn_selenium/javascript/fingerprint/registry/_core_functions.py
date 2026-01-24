@@ -6,7 +6,7 @@ from typing import (
 	Optional
 )
 from osn_selenium.javascript.fingerprint.registry.models import RegistryItem
-from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE
+from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE_TYPEHINT
 
 
 __all__ = [
@@ -23,7 +23,7 @@ def register(
 		registry: Dict[str, RegistryItem],
 		target: str,
 		key: str,
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		method: Optional[str],
 		settings: Optional[Dict[str, Any]] = None
@@ -52,7 +52,7 @@ def register(
 def register_targets_methods(
 		registry: Dict[str, RegistryItem],
 		targets: Iterable[str],
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		methods: Iterable[str],
 		settings: Optional[Dict[str, Any]] = None
@@ -90,7 +90,7 @@ def register_targets_methods(
 def register_targets(
 		registry: Dict[str, RegistryItem],
 		targets: Iterable[str],
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		settings: Optional[Dict[str, Any]] = None
 ) -> Dict[str, RegistryItem]:
@@ -125,7 +125,7 @@ def register_targets(
 def register_target_methods(
 		registry: Dict[str, RegistryItem],
 		target: str,
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		methods: Iterable[str],
 		settings: Optional[Dict[str, Any]] = None
@@ -162,7 +162,7 @@ def register_target_methods(
 def register_keys_methods(
 		registry: Dict[str, RegistryItem],
 		keys: Mapping[str, str],
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		methods: Iterable[str],
 		settings: Optional[Dict[str, Any]] = None
@@ -201,7 +201,7 @@ def register_key_methods(
 		registry: Dict[str, RegistryItem],
 		key: str,
 		target: str,
-		type_: ITEM_TYPE,
+		type_: ITEM_TYPE_TYPEHINT,
 		api: str,
 		methods: Iterable[str],
 		settings: Optional[Dict[str, Any]] = None

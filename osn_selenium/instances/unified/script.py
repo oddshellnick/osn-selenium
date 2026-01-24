@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from osn_selenium.instances.errors import NotExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
 )
@@ -11,7 +11,7 @@ __all__ = ["UnifiedScript"]
 class UnifiedScript:
 	def __init__(self, selenium_script: legacyScript):
 		if not isinstance(selenium_script, legacyScript):
-			raise NotExpectedTypeError(expected_class=legacyScript, received_instance=selenium_script)
+			raise NotExpectedTypeError(expected_type=legacyScript, received_instance=selenium_script)
 		
 		self._selenium_script = selenium_script
 	

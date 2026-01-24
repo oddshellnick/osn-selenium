@@ -11,7 +11,7 @@ from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.executors.sync.javascript import JSExecutor
 from osn_selenium._typehints import (
-	ARCHITECTURE_TYPEHINT
+	ARCHITECTURES_TYPEHINT
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from selenium.webdriver.remote.locator_converter import LocatorConverter
@@ -85,7 +85,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, AbstractCoreBaseMixin):
 		self._js_executor = JSExecutor(execute_function=get_js_executor_bridge(self))
 	
 	@property
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		return self._architecture_impl
 	
 	@property

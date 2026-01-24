@@ -8,27 +8,27 @@ from typing import (
 
 
 __all__ = [
-	"AutoplayPolicyType",
-	"LogLevelType",
-	"UseGLType",
-	"ValidAutoplayPolicies",
-	"ValidLogLevels",
-	"ValidUseGLs",
-	"any_flags_mapping",
-	"any_webdriver_option_type",
-	"blink_webdriver_option_type"
+	"ANY_FLAGS_TYPEHINT",
+	"ANY_WEBDRIVER_OPTION_TYPEHINT",
+	"AUTOPLAY_POLICY_TYPEHINT",
+	"BLINK_WEBDRIVER_OPTION_TYPEHINT",
+	"LOG_LEVEL_TYPEHINT",
+	"USE_GL_TYPEHINT",
+	"VALID_AUTOPLAY_POLICIES",
+	"VALID_LOG_LEVELS",
+	"VALID_USE_GLS"
 ]
 
-AutoplayPolicyType = Literal["user-gesture-required", "no-user-gesture-required"]
-ValidAutoplayPolicies = ["user-gesture-required", "no-user-gesture-required"]
+AUTOPLAY_POLICY_TYPEHINT = Literal["user-gesture-required", "no-user-gesture-required"]
+VALID_AUTOPLAY_POLICIES = ["user-gesture-required", "no-user-gesture-required"]
 
-LogLevelType = Literal[0, 1, 2, 3]
-ValidLogLevels = [0, 1, 2, 3]
+LOG_LEVEL_TYPEHINT = Literal[0, 1, 2, 3]
+VALID_LOG_LEVELS = [0, 1, 2, 3]
 
-UseGLType = Literal["desktop", "egl", "swiftshader"]
-ValidUseGLs = ["desktop", "egl", "swiftshader"]
+USE_GL_TYPEHINT = Literal["desktop", "egl", "swiftshader"]
+VALID_USE_GLS = ["desktop", "egl", "swiftshader"]
 
-any_flags_mapping = Mapping[str, Any]
+ANY_FLAGS_TYPEHINT = Mapping[str, Any]
 
-any_webdriver_option_type = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]
-blink_webdriver_option_type = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]
+ANY_WEBDRIVER_OPTION_TYPEHINT = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]
+BLINK_WEBDRIVER_OPTION_TYPEHINT = Union[webdriver.ChromeOptions, webdriver.EdgeOptions]

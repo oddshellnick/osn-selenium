@@ -1,6 +1,7 @@
 from typing import Sequence, Union
 from osn_selenium.dev_tools.manager.base import BaseMixin
 from osn_selenium.dev_tools._decorators import warn_if_active
+from osn_selenium.exceptions.configuration import NotExpectedTypeError
 from osn_selenium.dev_tools.domains import (
 	DomainsSettings,
 	domains_classes_type,
@@ -46,14 +47,16 @@ class SettingsMixin(BaseMixin):
 			TypeError: If the `domains` argument is not a string or a sequence of strings.
 		"""
 		
-		if isinstance(domains, Sequence) and all(isinstance(domain, str) for domain in domains):
+		if isinstance(domains, str):
+			self._remove_handler_settings(domains)
+		elif isinstance(domains, Sequence) and all(isinstance(domain, str) for domain in domains):
 			for domain in domains:
 				self._remove_handler_settings(domain)
-		elif isinstance(domains, str):
-			self._remove_handler_settings(domains)
 		else:
-			raise TypeError(
-					f"domains must be a str or a sequence of str, got {type(domains).__name__}."
+			raise NotExpectedTypeError(
+					value_name="domains",
+					value=domains,
+					valid_types=("str", "Sequence[str]")
 			)
 	
 	@warn_if_active

@@ -6,11 +6,13 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.network import UnifiedNetwork
 from osn_selenium.abstract.instances.network import AbstractNetwork
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.bidi.network import (
 	Network as legacyNetwork
 )

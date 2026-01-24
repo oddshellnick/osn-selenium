@@ -1,12 +1,12 @@
-from pathlib import Path
-from typing import Union
+from osn_selenium._functions import validate_path
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.values import ArgumentValue
 
 
 __all__ = ["argument_to_flag", "build_first_start_argument"]
 
 
-def build_first_start_argument(browser_exe: Union[str, Path]) -> str:
+def build_first_start_argument(browser_exe: PATH_TYPEHINT) -> str:
 	"""
 	Builds the first command line argument to start a browser executable.
 
@@ -14,7 +14,7 @@ def build_first_start_argument(browser_exe: Union[str, Path]) -> str:
 	handling different operating systems and executable path formats.
 
 	Args:
-		browser_exe (Union[str, Path]): Path to the browser executable or just the executable name.
+		browser_exe (PATH_TYPEHINT): Path to the browser executable or just the executable name.
 
 	Returns:
 		str: The constructed command line argument string.
@@ -23,13 +23,9 @@ def build_first_start_argument(browser_exe: Union[str, Path]) -> str:
 		TypeError: If `browser_exe` is not of type str or Path.
 	"""
 	
-	if isinstance(browser_exe, str):
-		return browser_exe
+	path = validate_path(path=browser_exe).resolve()
 	
-	if isinstance(browser_exe, Path):
-		return f"\"{str(browser_exe.resolve())}\""
-	
-	raise TypeError(f"browser_exe must be str or Path, not {type(browser_exe).__name__}.")
+	return f"\"{str(path)}\""
 
 
 def argument_to_flag(argument: ArgumentValue) -> str:

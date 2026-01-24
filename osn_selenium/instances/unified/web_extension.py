@@ -3,7 +3,7 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.instances.errors import NotExpectedTypeError
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
@@ -16,7 +16,7 @@ class UnifiedWebExtension:
 	def __init__(self, selenium_web_extension: legacyWebExtension):
 		if not isinstance(selenium_web_extension, legacyWebExtension):
 			raise NotExpectedTypeError(
-					expected_class=legacyWebExtension,
+					expected_type=legacyWebExtension,
 					received_instance=selenium_web_extension
 			)
 		

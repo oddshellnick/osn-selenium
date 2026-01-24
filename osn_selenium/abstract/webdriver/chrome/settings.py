@@ -1,7 +1,7 @@
-import pathlib
+from typing import Optional
 from abc import abstractmethod
-from typing import Optional, Union
 from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.abstract.webdriver.blink.settings import (
 	AbstractBlinkSettingsMixin
@@ -23,7 +23,7 @@ class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
 	def reset_settings(
 			self,
 			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
@@ -42,7 +42,7 @@ class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
 			flags (Optional[ChromeFlags]): New browser flags to apply.
 				If provided, existing flags are cleared and replaced with these.
 				If `None`, all custom flags are cleared, and the browser will start with default flags.
-			browser_exe (Optional[Union[str, pathlib.Path]]): The explicit path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): The explicit path to the browser executable.
 				If provided, this path will be used. If `None`, the executable path managed by the
 				flags manager will be cleared, and then potentially re-detected based on
 				`use_browser_exe` and `browser_name_in_system`.
@@ -69,7 +69,7 @@ class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
 	def update_settings(
 			self,
 			flags: Optional[ChromeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -88,7 +88,7 @@ class AbstractChromeSettingsMixin(AbstractBlinkSettingsMixin):
 			flags (Optional[ChromeFlags]): New browser flags to update.
 				If provided, these flags will be merged with or overwrite existing flags
 				within the flags manager. If `None`, existing flags remain unchanged.
-			browser_exe (Optional[Union[str, pathlib.Path]]): The new path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): The new path to the browser executable.
 				If provided, this path will be set in the flags manager. If `None`, the
 				current browser executable path remains unchanged.
 			browser_name_in_system (Optional[str]): The common name of the browser (e.g., "Chrome").

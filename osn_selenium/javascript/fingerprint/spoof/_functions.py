@@ -1,5 +1,5 @@
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from osn_selenium.javascript._functions import convert_to_js_value
-from osn_selenium.javascript.fingerprint.spoof._typehints import NUMBER
 from osn_selenium.javascript.fingerprint._decorators import indent_code
 from typing import (
 	Any,
@@ -10,6 +10,7 @@ from typing import (
 	Union
 )
 from osn_selenium.javascript.fingerprint._functions import reduce_code_level
+from osn_selenium.javascript.fingerprint.spoof._typehints import NUMBER_TYPEHINT
 from osn_selenium.javascript.fingerprint.spoof.noise import (
 	RandomNoise,
 	StaticNoise
@@ -34,7 +35,7 @@ __all__ = [
 ]
 
 
-def get_random_expression_js(value: Union[List[Any], Tuple[NUMBER, NUMBER]]) -> str:
+def get_random_expression_js(value: Union[List[Any], Tuple[NUMBER_TYPEHINT, NUMBER_TYPEHINT]]) -> str:
 	"""
 	Generates JavaScript code to produce a random value based on the input configuration.
 
@@ -63,7 +64,7 @@ def get_random_expression_js(value: Union[List[Any], Tuple[NUMBER, NUMBER]]) -> 
 		json_items = convert_to_js_value(value)
 		return f"{json_items}[Math.floor(Math.random() * {len(value)})]"
 	
-	raise TypeError(f"Invalid value type: {type(value)}")
+	raise NotExpectedTypeError(expected_type=(list, tuple), received_instance=value)
 
 
 def get_noise_js(

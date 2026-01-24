@@ -4,9 +4,9 @@ from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.dev_tools.manager.logging import LoggingMixin
 from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.logger.models import CDPTargetTypeStats
-from osn_selenium.dev_tools.errors import (
+from osn_selenium.exceptions.devtools import (
 	BidiConnectionNotEstablishedError,
-	cdp_end_exceptions
+	CDPEndExceptions
 )
 
 
@@ -47,7 +47,7 @@ class TargetsMixin(LoggingMixin):
 					return True
 				else:
 					return False
-		except cdp_end_exceptions:
+		except CDPEndExceptions:
 			pass
 		except BaseException as error:
 			log_exception(error)
@@ -138,7 +138,7 @@ class TargetsMixin(LoggingMixin):
 					self._handling_targets[target_id].subtype = target_info.subtype
 		
 					return False
-		except* cdp_end_exceptions:
+		except* CDPEndExceptions:
 			pass
 		except* BaseException as error:
 			log_exception(error)
@@ -168,7 +168,7 @@ class TargetsMixin(LoggingMixin):
 				return await self._bidi_connection_object.session.execute(self._devtools_package.get("target.get_targets")(targets_filter))
 		
 			raise BidiConnectionNotEstablishedError()
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			log_exception(error)

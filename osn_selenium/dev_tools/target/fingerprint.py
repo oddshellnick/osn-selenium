@@ -1,6 +1,6 @@
 import trio
 from osn_selenium.dev_tools.models import FingerprintData
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 from osn_selenium.dev_tools._functions import execute_cdp_command
 
@@ -21,7 +21,7 @@ class FingerprintMixin(LoggingMixin):
 			ready_event (trio.Event): Event to signal when the listener is set up and ready.
 
 		Raises:
-			cdp_end_exceptions: If a CDP connection error occurs.
+			CDPEndExceptions: If a CDP connection error occurs.
 			BaseException: If any other error occurs.
 		"""
 		
@@ -33,7 +33,7 @@ class FingerprintMixin(LoggingMixin):
 			self._fingerprint_receive_channel = self.cdp_session.listen(BindingCalled, buffer_size=100)
 		
 			ready_event.set()
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			await self.log_cdp_error(error=error)
@@ -50,7 +50,7 @@ class FingerprintMixin(LoggingMixin):
 					fingerprint_data = FingerprintData.model_validate_json(event.payload)
 		
 					await self.log_fingerprint(level="Detect", data=fingerprint_data)
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				keep_alive = False
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
@@ -66,7 +66,7 @@ class FingerprintMixin(LoggingMixin):
 			ready_event (trio.Event): Event to signal when injection setup is complete.
 
 		Raises:
-			cdp_end_exceptions: If a CDP connection error occurs.
+			CDPEndExceptions: If a CDP connection error occurs.
 			BaseException: If any other error occurs.
 		"""
 		
@@ -119,7 +119,7 @@ class FingerprintMixin(LoggingMixin):
 				)
 		
 				self._nursery_object.start_soon(self._run_fingerprint_detect_listener, ready_event)
-			except* cdp_end_exceptions as error:
+			except* CDPEndExceptions as error:
 				raise error
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)

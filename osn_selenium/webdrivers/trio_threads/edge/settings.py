@@ -1,6 +1,6 @@
-import pathlib
-from typing import Optional, Union
+from typing import Optional
 from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.webdrivers.trio_threads.blink import BlinkSettingsMixin
 from osn_selenium.webdrivers.unified.edge.settings import (
@@ -29,7 +29,7 @@ class EdgeSettingsMixin(
 	async def reset_settings(
 			self,
 			flags: Optional[EdgeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
@@ -47,7 +47,7 @@ class EdgeSettingsMixin(
 	async def update_settings(
 			self,
 			flags: Optional[EdgeFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,

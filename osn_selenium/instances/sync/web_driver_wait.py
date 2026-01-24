@@ -3,8 +3,10 @@ from typing import (
 	Self,
 	TypeVar
 )
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances._typehints import (
 	WebDriverWaitInputType
 )
@@ -42,6 +44,19 @@ class WebDriverWait(UnifiedWebDriverWait, AbstractWebDriverWait):
 	
 	@classmethod
 	def from_legacy(cls, legacy_object: legacyWebDriverWait) -> Self:
+		"""
+		Creates a WebDriverWait wrapper instance from a legacy Selenium object.
+
+		Args:
+			legacy_object (legacyWebDriverWait): The legacy object to convert.
+
+		Returns:
+			Self: An instance of the WebDriverWait wrapper.
+
+		Raises:
+			CannotConvertTypeError: If the provided object cannot be converted to legacyWebDriverWait.
+		"""
+		
 		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):

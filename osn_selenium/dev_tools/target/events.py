@@ -1,6 +1,6 @@
 import trio
 from typing import List, TYPE_CHECKING
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
@@ -30,7 +30,7 @@ class EventHandlersMixin(LoggingMixin):
 			event_config (AbstractEventSettings): Configuration for the specific event.
 
 		Raises:
-			cdp_end_exceptions: If connection issues occur.
+			CDPEndExceptions: If connection issues occur.
 			BaseException: If initialization fails.
 		"""
 		
@@ -47,7 +47,7 @@ class EventHandlersMixin(LoggingMixin):
 		
 			domain_handler_ready_event.set()
 			handler = event_config.handle_function
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			await self.log_cdp_error(error=error)
@@ -60,7 +60,7 @@ class EventHandlersMixin(LoggingMixin):
 			try:
 				event = await receiver_channel.receive()
 				self._nursery_object.start_soon(handler, self, event_config, event)
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				keep_alive = False
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
@@ -83,7 +83,7 @@ class EventHandlersMixin(LoggingMixin):
 			domain_config (AbstractDomainSettings): Configuration for the domain events.
 
 		Raises:
-			cdp_end_exceptions: If connection issues occur.
+			CDPEndExceptions: If connection issues occur.
 			BaseException: If other errors occur during setup.
 		"""
 		
@@ -113,7 +113,7 @@ class EventHandlersMixin(LoggingMixin):
 			await self.log_cdp_step(
 					message=f"Domain '{domain_config.name}' events handlers setup complete."
 			)
-		except* cdp_end_exceptions as error:
+		except* CDPEndExceptions as error:
 			raise error
 		except* BaseException as error:
 			await self.log_cdp_error(error=error)

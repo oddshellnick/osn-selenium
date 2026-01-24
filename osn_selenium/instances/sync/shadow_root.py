@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from osn_selenium.instances.errors import CannotConvertTypeError
 from typing import (
 	List,
 	Optional,
@@ -7,6 +6,9 @@ from typing import (
 	TYPE_CHECKING
 )
 from osn_selenium.instances._typehints import SHADOW_ROOT_TYPEHINT
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances.unified.shadow_root import UnifiedShadowRoot
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from selenium.webdriver.remote.shadowroot import (

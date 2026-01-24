@@ -1,11 +1,13 @@
 import trio
 from typing import List, Self
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import BROWSER_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.browser import UnifiedBrowser
 from osn_selenium.abstract.instances.browser import AbstractBrowser
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.bidi.browser import (
 	Browser as legacyBrowser,
 	ClientWindowInfo

@@ -9,8 +9,8 @@ from typing import (
 	Sequence
 )
 from osn_selenium.dev_tools._typehints import (
-	CDPLogLevelsType,
-	FingerprintLogLevelsType
+	CDP_LOG_LEVELS_TYPEHINT,
+	FINGERPRINT_LOG_LEVELS_TYPEHINT
 )
 
 
@@ -55,7 +55,7 @@ class FingerprintTargetLogEntry(DictModel):
 	"""
 	
 	target_data: TargetData
-	level: FingerprintLogLevelsType
+	level: FINGERPRINT_LOG_LEVELS_TYPEHINT
 	api: str
 	used_method: str
 	datetime: datetime
@@ -159,7 +159,7 @@ class CDPTargetLogEntry(DictModel):
 	
 	target_data: TargetData
 	message: str
-	level: CDPLogLevelsType
+	level: CDP_LOG_LEVELS_TYPEHINT
 	datetime: datetime
 	extra_data: Optional[Dict[str, Any]] = None
 

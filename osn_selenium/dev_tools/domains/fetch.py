@@ -2,9 +2,9 @@ import trio
 from pydantic import Field
 from osn_selenium.models import DictModel
 from osn_selenium.dev_tools._functions import execute_cdp_command
-from osn_selenium.dev_tools.errors import (
-	ExceptionThrown,
-	cdp_end_exceptions
+from osn_selenium.exceptions.devtools import (
+	CDPEndExceptions,
+	ExceptionThrown
 )
 from typing import (
 	Any,
@@ -147,7 +147,7 @@ async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictM
 			await kwargs_ready_event.wait()
 	
 		return kwargs
-	except* cdp_end_exceptions as error:
+	except* CDPEndExceptions as error:
 		raise error
 	except* BaseException as error:
 		await self.log_cdp_error(error=error)
@@ -244,14 +244,14 @@ async def _handle_auth_required(
 	
 				if response_handle_func is not None:
 					self._nursery_object.start_soon(response_handle_func, self, response)
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				pass
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
 	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
-	except* cdp_end_exceptions as error:
+	except* CDPEndExceptions as error:
 		raise error
 	except* BaseException as error:
 		await self.log_cdp_error(error=error)
@@ -506,14 +506,14 @@ async def _handle_request_paused(
 	
 				if response_handle_func is not None:
 					self._nursery_object.start_soon(response_handle_func, self, response)
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				pass
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
 	
 				if handler_settings.on_error_func is not None:
 					handler_settings.on_error_func(self, event, error)
-	except* cdp_end_exceptions as error:
+	except* CDPEndExceptions as error:
 		raise error
 	except* BaseException as error:
 		await self.log_cdp_error(error=error)

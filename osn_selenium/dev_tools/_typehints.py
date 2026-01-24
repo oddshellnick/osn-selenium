@@ -8,9 +8,9 @@ from typing import (
 
 
 __all__ = [
-	"CDPLogLevelsType",
-	"FingerprintLogLevelsType",
-	"devtools_background_func_type"
+	"CDP_LOG_LEVELS_TYPEHINT",
+	"DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT",
+	"FINGERPRINT_LOG_LEVELS_TYPEHINT"
 ]
 
 if TYPE_CHECKING:
@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 else:
 	BaseTargetMixin = Any
 
-devtools_background_func_type = Callable[[BaseTargetMixin], Coroutine[Any, Any, None]]
+DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT = Callable[[BaseTargetMixin], Coroutine[Any, Any, None]]
 
-CDPLogLevelsType = Literal[
+CDP_LOG_LEVELS_TYPEHINT = Literal[
 	"INFO",
 	"ERROR",
 	"DEBUG",
@@ -29,4 +29,4 @@ CDPLogLevelsType = Literal[
 	"AuthRequired",
 	"Building Kwargs"
 ]
-FingerprintLogLevelsType = Literal["Detect"]
+FINGERPRINT_LOG_LEVELS_TYPEHINT = Literal["Detect"]

@@ -1,11 +1,13 @@
 import trio
 from typing import Any, Callable, Self
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.script import UnifiedScript
 from osn_selenium.abstract.instances.script import AbstractScript
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
 )

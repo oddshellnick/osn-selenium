@@ -2,15 +2,18 @@ import os
 import re
 import glob
 import shutil
+import pathlib
 import subprocess
-from pathlib import Path
-from osn_selenium.browsers_handler.models import Browser
+from osn_selenium._typehints import PATH_TYPEHINT
 from typing import (
 	List,
 	Optional,
 	Set,
-	Tuple,
-	Union
+	Tuple
+)
+from osn_selenium.browsers_handler.models import Browser
+from osn_selenium.exceptions.path import (
+	BrowserExecutableNotFoundError
 )
 
 
@@ -21,9 +24,18 @@ __all__ = [
 ]
 
 
-def _get_process_version(executable_path: Union[Path, str]) -> Optional[str]:
-	if isinstance(executable_path, str):
-		executable_path = Path(executable_path)
+def _get_process_version(executable_path: PATH_TYPEHINT) -> Optional[str]:
+	"""
+	Executes a process with the --version flag and extracts the version string.
+
+	Args:
+		executable_path (PATH_TYPEHINT): The file system path to the executable.
+
+	Returns:
+		Optional[str]: The extracted version string if successful, otherwise None.
+	"""
+	
+	executable_path = pathlib.Path(executable_path)
 	
 	if not executable_path.exists():
 		return None
@@ -44,18 +56,30 @@ def _get_process_version(executable_path: Union[Path, str]) -> Optional[str]:
 			return match.group(1)
 	
 		return None
-	except (Exception):
+	except (Exception,):
 		return None
 
 
-def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
-	if isinstance(driver_path, str):
-		driver_path = Path(driver_path)
+def get_webdriver_version(driver_path: PATH_TYPEHINT) -> Optional[str]:
+	"""
+	Retrieves the version string of a WebDriver executable.
+
+	Args:
+		driver_path (PATH_TYPEHINT): The path to the WebDriver binary.
+
+	Returns:
+		Optional[str]: The version string if found, otherwise None.
+
+	Raises:
+		BrowserExecutableNotFoundError: If the provided driver path does not exist.
+	"""
+	
+	driver_path = pathlib.Path(driver_path)
 	
 	if not driver_path.exists():
-		raise FileNotFoundError(f"{driver_path} not found.")
+		raise BrowserExecutableNotFoundError(path=driver_path)
 	
-	version = _get_process_version(driver_path)
+	version = _get_process_version(executable_path=driver_path)
 	
 	if version:
 		return version
@@ -63,20 +87,42 @@ def get_webdriver_version(driver_path: Union[Path, str]) -> Optional[str]:
 	return None
 
 
-def get_browser_version(browser_path: Union[Path, str]) -> str:
-	return _get_process_version(browser_path) or "unknown"
+def get_browser_version(browser_path: PATH_TYPEHINT) -> str:
+	"""
+	Retrieves the version string of a browser executable.
+
+	Args:
+		browser_path (PATH_TYPEHINT): The path to the browser binary.
+
+	Returns:
+		str: The version string or 'unknown' if extraction fails.
+	"""
+	
+	return _get_process_version(executable_path=browser_path) or "unknown"
 
 
-def _get_browser_from_binary(browser_name: str, binary_name: str, processed_paths: Set[Path]) -> Optional[Tuple[Browser, Path]]:
+def _get_browser_from_binary(browser_name: str, binary_name: str, processed_paths: Set[pathlib.Path]) -> Optional[Tuple[Browser, pathlib.Path]]:
+	"""
+	Attempts to locate a browser binary and create a Browser model.
+
+	Args:
+		browser_name (str): The display name of the browser.
+		binary_name (str): The command or path used to execute the browser.
+		processed_paths (Set[pathlib.Path]): A set of already identified paths to avoid duplicates.
+
+	Returns:
+		Optional[Tuple[Browser, pathlib.Path]]: A tuple containing the Browser model and its resolved path.
+	"""
+	
 	full_path = shutil.which(binary_name)
 	
 	if full_path:
-		path_obj = Path(full_path)
+		path_obj = pathlib.Path(full_path)
 	
 		if path_obj in processed_paths:
 			return None
 	
-		version = get_browser_version(path_obj)
+		version = get_browser_version(browser_path=path_obj)
 	
 		browser = Browser(name=browser_name, path=path_obj, version=version)
 	
@@ -86,8 +132,15 @@ def _get_browser_from_binary(browser_name: str, binary_name: str, processed_path
 
 
 def get_installed_browsers() -> List[Browser]:
+	"""
+	Scans the Linux system for installed web browsers.
+
+	Returns:
+		List[Browser]: A list of detected Browser instances.
+	"""
+	
 	found_browsers: List[Browser] = []
-	processed_paths: Set[Path] = set()
+	processed_paths: Set[pathlib.Path] = set()
 	
 	search_paths = [
 		"/usr/share/applications",
@@ -135,7 +188,7 @@ def get_installed_browsers() -> List[Browser]:
 	
 					found_browsers.append(found_browser)
 					processed_paths.add(path_obj)
-			except (Exception):
+			except (Exception,):
 				continue
 				
 	for name, binaries in _STANDARD_BROWSERS_BINARIES.items():

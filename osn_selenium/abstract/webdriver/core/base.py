@@ -8,12 +8,12 @@ from typing import (
 )
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium._typehints import (
-	ARCHITECTURE_TYPEHINT
+	ARCHITECTURES_TYPEHINT
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
-from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.remote.locator_converter import LocatorConverter
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
@@ -44,7 +44,7 @@ class AbstractCoreBaseMixin(ABC):
 	
 	@property
 	@abstractmethod
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		"""
 		Returns the architecture of the driver.
 

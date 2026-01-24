@@ -7,9 +7,12 @@ from typing import (
 	TYPE_CHECKING,
 	Union
 )
-from osn_selenium.dev_tools.errors import (
-	ExceptionThrown,
-	cdp_end_exceptions
+from osn_selenium.exceptions.configuration import (
+	NotExpectedValueError
+)
+from osn_selenium.exceptions.devtools import (
+	CDPEndExceptions,
+	ExceptionThrown
 )
 
 
@@ -71,7 +74,7 @@ async def cdp_command_error(
 
 	Raises:
 		BaseException: The original error if error_mode is "raise".
-		ValueError: If an invalid error_mode is provided.
+		NotExpectedValueError: If an invalid error_mode is provided.
 	"""
 	
 	if error_mode == "raise":
@@ -93,7 +96,11 @@ async def cdp_command_error(
 	if error_mode == "pass":
 		return ExceptionThrown(exception=error)
 	
-	raise ValueError(f"Wrong error_mode: {error_mode}. Expected: 'raise', 'log', 'pass'.")
+	raise NotExpectedValueError(
+			value_name="error_mode",
+			value=error_mode,
+			valid_values=["raise", "log", "pass"]
+	)
 
 
 async def execute_cdp_command(
@@ -128,7 +135,7 @@ async def execute_cdp_command(
 			or an `ExceptionThrown` object if an error occurred and `error_mode` is "log" or "pass".
 
 	Raises:
-		cdp_end_exceptions: If a CDP-related connection error occurs, these are always re-raised.
+		CDPEndExceptions: If a CDP-related connection error occurs, these are always re-raised.
 		BaseException: If `error_mode` is "raise" and any other exception occurs.
 		ValueError: If an unknown `error_mode` is provided.
 	"""
@@ -147,7 +154,7 @@ async def execute_cdp_command(
 				await trio.sleep(random.uniform(0.5, 1.5))
 	
 		return await self.cdp_session.execute(function(*args, **kwargs))
-	except cdp_end_exceptions as error:
+	except CDPEndExceptions as error:
 		return await cdp_command_error(
 				self=self,
 				error=error,

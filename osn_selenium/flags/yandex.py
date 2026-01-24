@@ -1,9 +1,5 @@
-import pathlib
-from typing import (
-	Dict,
-	Optional,
-	Union
-)
+from typing import Dict, Optional
+from osn_selenium._typehints import PATH_TYPEHINT
 from selenium.webdriver.chrome.options import Options
 from osn_selenium.flags.chrome import ChromeFlagsManager
 from osn_selenium.flags.models.blink import BlinkFeatures
@@ -34,7 +30,7 @@ class YandexFlagsManager(ChromeFlagsManager):
 	
 	def __init__(
 			self,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			start_page_url: Optional[str] = None,
 			flags_types: Optional[Dict[str, FlagType]] = None,
 			flags_definitions: Optional[Dict[str, FlagDefinition]] = None

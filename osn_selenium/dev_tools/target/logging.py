@@ -23,7 +23,7 @@ from osn_selenium.dev_tools.logger.models import (
 __all__ = ["LoggingMixin"]
 
 if TYPE_CHECKING:
-	from osn_selenium.dev_tools._typehints import CDPLogLevelsType, FingerprintLogLevelsType
+	from osn_selenium.dev_tools._typehints import CDP_LOG_LEVELS_TYPEHINT, FINGERPRINT_LOG_LEVELS_TYPEHINT
 
 
 class LoggingMixin(BaseMixin):
@@ -33,7 +33,7 @@ class LoggingMixin(BaseMixin):
 	
 	async def log_cdp(
 			self,
-			level: "CDPLogLevelsType",
+			level: "CDP_LOG_LEVELS_TYPEHINT",
 			message: str,
 			extra_data: Optional[Dict[str, Any]] = None
 	):
@@ -119,7 +119,7 @@ class LoggingMixin(BaseMixin):
 		
 		await self.log_cdp(level="INFO", message=message, extra_data=extra_data_)
 	
-	async def log_fingerprint(self, level: "FingerprintLogLevelsType", data: FingerprintData):
+	async def log_fingerprint(self, level: "FINGERPRINT_LOG_LEVELS_TYPEHINT", data: FingerprintData):
 		"""
 		Records a fingerprint detection log entry.
 

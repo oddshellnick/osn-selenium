@@ -9,6 +9,11 @@ from typing import (
 	Sequence,
 	Union
 )
+from osn_selenium.exceptions.configuration import (
+	DuplicationError,
+	NotExpectedTypeError,
+	NotExpectedValueError
+)
 
 
 __all__ = [
@@ -47,7 +52,7 @@ def validate_log_filter(
 			and returns True if it passes the filter, False otherwise.
 
 	Raises:
-		ValueError: If `filter_mode` or 'log_filter' is invalid.
+		ConfigurationError: If `filter_mode` or 'log_filter' is invalid.
 
 	EXAMPLES
 	________
@@ -65,12 +70,25 @@ def validate_log_filter(
 	... print(all_logs_filter("ERROR"))	# True
 	"""
 	
+	filter_mode_error = NotExpectedValueError(
+			value_name="filter_mode",
+			value=filter_mode,
+			valid_values=["include", "exclude"]
+	)
+	log_filter_error = NotExpectedTypeError(
+			value_name="log_filter",
+			value=log_filter,
+			valid_types=("str", "Iterable[str]", "None")
+	)
+	
 	if log_filter is None:
 		if filter_mode == "include":
 			return lambda x: False
 	
 		if filter_mode == "exclude":
 			return lambda x: True
+	
+		raise filter_mode_error
 	
 	if isinstance(log_filter, str):
 		if filter_mode == "include":
@@ -79,6 +97,8 @@ def validate_log_filter(
 		if filter_mode == "exclude":
 			return lambda x: x != log_filter
 	
+		raise filter_mode_error
+	
 	if isinstance(log_filter, Iterable):
 		if filter_mode == "include":
 			return lambda x: x in log_filter
@@ -86,9 +106,9 @@ def validate_log_filter(
 		if filter_mode == "exclude":
 			return lambda x: x not in log_filter
 	
-	raise ValueError(
-			f"Invalid 'filter_mode' ({filter_mode}) or 'log_filter' type ({type(filter_mode).__name__})."
-	)
+		raise filter_mode_error
+	
+	raise log_filter_error
 
 
 def validate_type_filter(
@@ -144,8 +164,10 @@ def validate_target_event_filter(filter_: Optional[Sequence[Dict[str, Any]]]) ->
 	]
 	
 	if len(set(all_excluded_types) & set(all_included_types)) > 0:
-		raise ValueError(
-				f"Duplicate types in target filters! ({set(all_excluded_types) & set(all_included_types)})"
+		raise DuplicationError(
+				value_name="Excluded and included types",
+				duplicated_values=set(all_excluded_types) &
+				set(all_included_types)
 		)
 	
 	other_types = any(

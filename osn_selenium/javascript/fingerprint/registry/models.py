@@ -1,8 +1,8 @@
 from pydantic import Field
 from typing import Any, Dict, Optional
 from osn_selenium.models import DictModel
-from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE
 from osn_selenium.javascript.fingerprint._typehints import SPOOF_RULE_TYPEHINT
+from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE_TYPEHINT
 
 
 __all__ = ["RegistryItem"]
@@ -24,7 +24,7 @@ class RegistryItem(DictModel):
 	
 	target: str
 	name: Optional[str] = None
-	type_: ITEM_TYPE = Field(alias="type")
+	type_: ITEM_TYPE_TYPEHINT = Field(alias="type")
 	api: str
 	settings: Optional[Dict[str, Any]] = None
 	spoofing_rule: Optional[SPOOF_RULE_TYPEHINT] = None

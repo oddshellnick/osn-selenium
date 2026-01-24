@@ -39,11 +39,11 @@ from selenium.webdriver.common.bidi.storage import (
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
-from selenium.webdriver.remote.webelement import (
-	WebElement as legacyWebElement
-)
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
+)
+from selenium.webdriver.remote.webelement import (
+	WebElement as legacyWebElement
 )
 from selenium.webdriver.support.wait import (
 	WebDriverWait as legacyWebDriverWait
@@ -71,8 +71,8 @@ from selenium.webdriver.common.bidi.browsing_context import (
 __all__ = [
 	"ACTION_CHAINS_TYPEHINT",
 	"ALERT_TYPEHINT",
-	"ANY_ABSTRACT_TYPE",
-	"ANY_LEGACY_TYPE",
+	"ANY_ABSTRACT_INSTANCE_TYPEHINT",
+	"ANY_LEGACY_INSTANCE_TYPEHINT",
 	"BROWSER_TYPEHINT",
 	"BROWSING_CONTEXT_TYPEHINT",
 	"DIALOG_TYPEHINT",
@@ -107,7 +107,7 @@ WEB_DRIVER_WAIT_TYPEHINT = Union[AbstractWebDriverWait, legacyWebDriverWait]
 WEB_ELEMENT_TYPEHINT = Union[AbstractWebElement, legacyWebElement]
 WEB_EXTENSION_TYPEHINT = Union[AbstractWebExtension, legacyWebExtension]
 
-ANY_ABSTRACT_TYPE = Union[
+ANY_ABSTRACT_INSTANCE_TYPEHINT = Union[
 	AbstractAlert,
 	AbstractFedCM,
 	AbstractWebElement,
@@ -126,7 +126,7 @@ ANY_ABSTRACT_TYPE = Union[
 	AbstractWebDriverWait,
 ]
 
-ANY_LEGACY_TYPE = Union[
+ANY_LEGACY_INSTANCE_TYPEHINT = Union[
 	legacyAlert,
 	legacyFedCM,
 	legacyWebElement,

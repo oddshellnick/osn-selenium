@@ -1,8 +1,10 @@
-import warnings
 from typing import Optional
 from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+from osn_selenium.exceptions.webdriver import (
+	WebDriverAlreadyRunningError
+)
 
 
 __all__ = ["UnifiedCoreSettingsMixin"]
@@ -25,7 +27,7 @@ class UnifiedCoreSettingsMixin(UnifiedCoreBaseMixin):
 		
 			self._window_rect = window_rect
 		else:
-			warnings.warn("Browser is already running.")
+			raise WebDriverAlreadyRunningError()
 	
 	def _update_settings_impl(
 			self,
@@ -39,4 +41,4 @@ class UnifiedCoreSettingsMixin(UnifiedCoreBaseMixin):
 			if window_rect is not None:
 				self._window_rect = window_rect
 		else:
-			warnings.warn("Browser is already running.")
+			raise WebDriverAlreadyRunningError()

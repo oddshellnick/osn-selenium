@@ -1,7 +1,7 @@
-import pathlib
+from typing import Optional
 from abc import abstractmethod
-from typing import Optional, Union
 from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.abstract.webdriver.core.settings import (
 	AbstractCoreSettingsMixin
@@ -23,7 +23,7 @@ class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
 	def reset_settings(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: str = "",
@@ -34,7 +34,7 @@ class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
 
 		Args:
 			flags (Optional[BlinkFlags]): Flags to set (overwriting previous configuration).
-			browser_exe (Optional[Union[str, pathlib.Path]]): Path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): Path to the browser executable.
 			browser_name_in_system (Optional[str]): System name for the browser.
 			use_browser_exe (Optional[bool]): Flag to enable/disable executable management.
 			start_page_url (str): The start page URL (defaults to empty string).
@@ -47,7 +47,7 @@ class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
 	def update_settings(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -58,7 +58,7 @@ class AbstractBlinkSettingsMixin(AbstractCoreSettingsMixin):
 
 		Args:
 			flags (Optional[BlinkFlags]): New flags to merge or apply.
-			browser_exe (Optional[Union[str, pathlib.Path]]): New path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): New path to the browser executable.
 			browser_name_in_system (Optional[str]): New system name for the browser.
 			use_browser_exe (Optional[bool]): Flag to enable/disable executable management.
 			start_page_url (Optional[str]): New start page URL.

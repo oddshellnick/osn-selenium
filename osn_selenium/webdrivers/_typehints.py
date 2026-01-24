@@ -5,7 +5,6 @@ from osn_selenium.webdrivers.protocols import (
 )
 
 
-__all__ = ["ANY_WEBDRIVER_PROTOCOL"]
+__all__ = ["ANY_WEBDRIVER_PROTOCOL_TYPEHINT"]
 
-
-ANY_WEBDRIVER_PROTOCOL = Union[SyncWebDriver, TrioThreadWebDriver]
+ANY_WEBDRIVER_PROTOCOL_TYPEHINT = Union[SyncWebDriver, TrioThreadWebDriver]

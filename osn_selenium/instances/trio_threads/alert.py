@@ -1,12 +1,14 @@
 import trio
 from typing import Optional, Self
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import ALERT_TYPEHINT
 from osn_selenium.instances.unified.alert import UnifiedAlert
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.alert import AbstractAlert
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 
 
 __all__ = ["Alert"]

@@ -11,10 +11,10 @@ from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium._typehints import (
-	ARCHITECTURE_TYPEHINT
+	ARCHITECTURES_TYPEHINT
 )
-from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from selenium.webdriver.remote.errorhandler import ErrorHandler
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
@@ -109,7 +109,7 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 		)
 	
 	@property
-	def architecture(self) -> ARCHITECTURE_TYPEHINT:
+	def architecture(self) -> ARCHITECTURES_TYPEHINT:
 		return self._architecture_impl
 	
 	@property

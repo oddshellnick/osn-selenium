@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 
 
@@ -44,7 +44,7 @@ class DetachMixin(LoggingMixin):
 				if isinstance(event, (TargetCrashed, TargetDestroyed, DetachedFromTarget,)):
 					if event.target_id == self.target_id:
 						should_stop = True
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				break_ = True
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)

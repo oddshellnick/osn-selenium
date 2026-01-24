@@ -1,6 +1,5 @@
-import pathlib
 from pydantic import Field
-from typing import Optional, Union
+from typing import Optional
 from osn_selenium.flags.models.blink import (
 	BlinkArguments,
 	BlinkAttributes,
@@ -107,7 +106,7 @@ class ChromeArguments(BlinkArguments):
 		proxy_server (Optional[str]): Specifies a proxy server to use.
 		remote_debugging_port (Optional[int]): Specifies the remote debugging port.
 		remote_debugging_address (Optional[str]): Specifies the remote debugging address.
-		use_file_for_fake_video_capture (Optional[Union[str, pathlib.Path]]): Uses a file for fake video capture.
+		use_file_for_fake_video_capture (Optional[PATH_TYPEHINT]): Uses a file for fake video capture.
 		autoplay_policy (Optional[AutoplayPolicyType]): Sets the autoplay policy.
 		log_level (Optional[LogLevelType]): Sets the browser's log level.
 		use_gl (Optional[UseGLType]): Specifies the GL backend to use.

@@ -6,10 +6,12 @@ from typing import (
 )
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.unified.switch_to import UnifiedSwitchTo
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo
 from osn_selenium.instances.trio_threads.web_element import WebElement
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.remote.switch_to import (
 	SwitchTo as legacySwitchTo
 )

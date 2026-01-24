@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.sync.shadow_root import ShadowRoot
 from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
@@ -10,6 +9,9 @@ from typing import (
 	List,
 	Optional,
 	Self
+)
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
 )
 from osn_selenium.instances.unified.web_element import UnifiedWebElement
 from osn_selenium.abstract.instances.web_element import AbstractWebElement

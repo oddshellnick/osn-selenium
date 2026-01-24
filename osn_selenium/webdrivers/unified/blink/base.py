@@ -1,17 +1,14 @@
 import pathlib
+from typing import Optional, Type
 from osn_selenium.models import WindowRect
-from typing import (
-	Optional,
-	Type,
-	Union
-)
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
 from osn_selenium.browsers_handler import get_path_to_browser
-from osn_selenium._typehints import (
-	ARCHITECTURE_TYPEHINT
-)
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT,
+	PATH_TYPEHINT
+)
 from osn_selenium.webdrivers._functions import (
 	find_browser_previous_session
 )
@@ -35,10 +32,10 @@ __all__ = ["UnifiedBlinkBaseMixin"]
 class UnifiedBlinkBaseMixin(UnifiedCoreBaseMixin):
 	def __init__(
 			self,
-			browser_exe: Optional[Union[str, pathlib.Path]],
+			browser_exe: Optional[PATH_TYPEHINT],
 			browser_name_in_system: str,
 			webdriver_path: str,
-			architecture: ARCHITECTURE_TYPEHINT,
+			architecture: ARCHITECTURES_TYPEHINT,
 			use_browser_exe: bool = True,
 			flags_manager_type: Type[BlinkFlagsManager] = BlinkFlagsManager,
 			flags: Optional[BlinkFlags] = None,
@@ -94,7 +91,7 @@ class UnifiedBlinkBaseMixin(UnifiedCoreBaseMixin):
 		return self._webdriver_flags_manager.arguments.get("remote_debugging_port", ArgumentValue(command_line="", value=None)).value
 	
 	@property
-	def _browser_exe_impl(self) -> Optional[Union[str, pathlib.Path]]:
+	def _browser_exe_impl(self) -> Optional[pathlib.Path]:
 		return self._webdriver_flags_manager.browser_exe
 	
 	def _find_debugging_port_impl(self, debugging_port: Optional[int]) -> int:

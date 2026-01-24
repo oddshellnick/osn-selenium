@@ -6,10 +6,12 @@ from typing import (
 )
 from osn_selenium.javascript._functions import convert_to_js_value
 from osn_selenium.javascript.fingerprint._functions import add_code_level
-from osn_selenium.javascript.fingerprint.spoof._typehints import RANDOM_VALUE
 from osn_selenium.javascript.fingerprint.spoof.noise import (
 	RandomNoise,
 	StaticNoise
+)
+from osn_selenium.javascript.fingerprint.spoof._typehints import (
+	RANDOM_VALUE_TYPEHINT
 )
 from osn_selenium.javascript.fingerprint.spoof.core_rules import (
 	ArrayRule,
@@ -235,8 +237,8 @@ class RandomArraySetRule(ArrayRule):
 	"""
 	
 	mode: Literal["random_array_set"] = "random_array_set"
-	value: Optional[RANDOM_VALUE]
-	value_by_channel: Dict[int, RANDOM_VALUE] = Field(default_factory=dict)
+	value: Optional[RANDOM_VALUE_TYPEHINT]
+	value_by_channel: Dict[int, RANDOM_VALUE_TYPEHINT] = Field(default_factory=dict)
 	
 	def generate_js(self, path: str) -> str:
 		"""

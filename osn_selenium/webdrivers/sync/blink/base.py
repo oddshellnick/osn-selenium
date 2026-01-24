@@ -1,19 +1,13 @@
 import pathlib
-import pathlib
-import pathlib
-import pathlib
+from typing import Optional, Type
 from osn_selenium.models import WindowRect
-from typing import (
-	Optional,
-	Type,
-	Union
-)
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_selenium._typehints import (
-	ARCHITECTURE_TYPEHINT
-)
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT,
+	PATH_TYPEHINT
+)
 from osn_selenium.webdrivers.unified.blink.base import (
 	UnifiedBlinkBaseMixin
 )
@@ -39,10 +33,10 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 	
 	def __init__(
 			self,
-			browser_exe: Optional[Union[str, pathlib.Path]],
+			browser_exe: Optional[PATH_TYPEHINT],
 			browser_name_in_system: str,
 			webdriver_path: str,
-			architecture: ARCHITECTURE_TYPEHINT,
+			architecture: ARCHITECTURES_TYPEHINT,
 			use_browser_exe: bool = True,
 			flags_manager_type: Type[BlinkFlagsManager] = BlinkFlagsManager,
 			flags: Optional[BlinkFlags] = None,
@@ -61,7 +55,7 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 		for managing browser processes.
 
 		Args:
-			browser_exe (Optional[Union[str, pathlib.Path]]): The path to the browser executable
+			browser_exe (Optional[PATH_TYPEHINT]): The path to the browser executable
 				(e.g., `chrome.exe` or `msedge.exe`). If None, the browser executable will not be
 				managed directly by this class (e.g., for remote WebDriver connections where the
 				browser is already running).
@@ -115,7 +109,7 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 		)
 	
 	@property
-	def browser_exe(self) -> Optional[Union[str, pathlib.Path]]:
+	def browser_exe(self) -> Optional[pathlib.Path]:
 		return self._browser_exe_impl
 	
 	@property

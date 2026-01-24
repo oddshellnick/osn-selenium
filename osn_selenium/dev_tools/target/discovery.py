@@ -1,6 +1,6 @@
 import trio
 from typing import Tuple
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
 from osn_selenium.dev_tools._functions import execute_cdp_command
 from osn_selenium.dev_tools._validators import (
@@ -26,7 +26,7 @@ class DiscoveryMixin(LoggingMixin):
 			new_targets_listener_ready_event (trio.Event): Event to signal that the listener is successfully started.
 
 		Raises:
-			cdp_end_exceptions: If connection issues occur during initialization.
+			CDPEndExceptions: If connection issues occur during initialization.
 			BaseException: If other errors occur during initialization.
 		"""
 		
@@ -43,7 +43,7 @@ class DiscoveryMixin(LoggingMixin):
 					trio.Event()
 			)
 			new_targets_listener_ready_event.set()
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			await self.log_cdp_error(error=error)
@@ -66,7 +66,7 @@ class DiscoveryMixin(LoggingMixin):
 					)
 		
 					self._nursery_object.start_soon(self._add_target_func, event)
-			except* cdp_end_exceptions:
+			except* CDPEndExceptions:
 				keep_alive = False
 			except* BaseException as error:
 				await self.log_cdp_error(error=error)
@@ -82,7 +82,7 @@ class DiscoveryMixin(LoggingMixin):
 		based on the configured filters.
 
 		Raises:
-			cdp_end_exceptions: If the connection closes during setup.
+			CDPEndExceptions: If the connection closes during setup.
 			BaseException: If other errors occur.
 		"""
 		
@@ -105,7 +105,7 @@ class DiscoveryMixin(LoggingMixin):
 					flatten=True,
 					filter_=target_filter,
 			)
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			await self.log_cdp_error(error=error)

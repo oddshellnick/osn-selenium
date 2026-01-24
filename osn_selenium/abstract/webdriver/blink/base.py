@@ -1,7 +1,7 @@
-import pathlib
 from abc import abstractmethod
 from selenium import webdriver
 from typing import Optional, Union
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.abstract.webdriver.core.base import (
 	AbstractCoreBaseMixin
 )
@@ -20,12 +20,12 @@ class AbstractBlinkBaseMixin(AbstractCoreBaseMixin):
 	
 	@property
 	@abstractmethod
-	def browser_exe(self) -> Optional[Union[str, pathlib.Path]]:
+	def browser_exe(self) -> Optional[PATH_TYPEHINT]:
 		"""
 		Returns the file path to the browser executable.
 
 		Returns:
-			Optional[Union[str, pathlib.Path]]: The path to the executable,
+			Optional[PATH_TYPEHINT]: The path to the executable,
 			or None if not managed by this instance.
 		"""
 		

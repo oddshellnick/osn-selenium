@@ -1,6 +1,10 @@
 import pathlib
 from typing import Optional
+from pydantic import ValidationError
 from osn_selenium.javascript.models import JS_Scripts
+from osn_selenium.exceptions.javascript import (
+	JavaScriptResourceError
+)
 
 
 __all__ = ["get_js_scripts"]
@@ -30,6 +34,11 @@ def get_js_scripts() -> JS_Scripts:
 		for script_file in path_to_js_scripts.iterdir():
 			scripts[script_file.stem] = script_file.read_text(encoding="utf-8")
 	
-		_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
+		try:
+			_CACHED_JS_SCRIPTS = JS_Scripts.model_validate(scripts)
+		except ValidationError as exception:
+			missing_fields = [error["loc"][0] for error in exception.errors()]
+	
+			raise JavaScriptResourceError(missing_script=missing_fields)
 	
 	return _CACHED_JS_SCRIPTS

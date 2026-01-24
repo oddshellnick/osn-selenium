@@ -4,12 +4,14 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import FEDCM_TYPEHINT
 from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.abstract.instances.fedcm import AbstractFedCM
 from selenium.webdriver.remote.fedcm import FedCM as legacyFedCM
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 
 
 __all__ = ["FedCM"]

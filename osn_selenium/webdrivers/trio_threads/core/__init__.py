@@ -6,13 +6,13 @@ from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
-from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
 from osn_selenium.abstract.webdriver.core import (
 	AbstractCoreWebDriver
 )
-from osn_selenium.webdrivers.trio_threads.core.window import CoreWindowMixin
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
+from osn_selenium.webdrivers.trio_threads.core.window import CoreWindowMixin
 from osn_selenium.webdrivers.trio_threads.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.trio_threads.core.capture import CoreCaptureMixin
 from osn_selenium.webdrivers.trio_threads.core.element import CoreElementMixin

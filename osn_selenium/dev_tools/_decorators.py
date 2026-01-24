@@ -2,7 +2,8 @@ import trio
 import inspect
 import warnings
 import functools
-from osn_selenium.dev_tools.errors import ExceptionThrown
+from osn_selenium.exceptions.devtools import ExceptionThrown
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from osn_selenium.dev_tools._exception_helpers import log_exception
 from typing import (
 	Any,
@@ -18,7 +19,7 @@ __all__ = ["background_task_decorator", "log_on_error", "warn_if_active"]
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.manager import DevTools
 	from osn_selenium.dev_tools.target.base import BaseMixin
-	from osn_selenium.dev_tools._typehints import devtools_background_func_type
+	from osn_selenium.dev_tools._typehints import DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT
 
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
 _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
@@ -70,9 +71,7 @@ def warn_if_active(func: _METHOD) -> _METHOD:
 	if inspect.isfunction(func):
 		return sync_wrapper
 	
-	raise TypeError(
-			f"Expected a coroutine function or function, got {type(func).__name__}"
-	)
+	raise NotExpectedTypeError(expected_type=["coroutine function", "function"], received_instance=func)
 
 
 def log_on_error(func: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, _METHOD_OUTPUT]:
@@ -111,12 +110,10 @@ def log_on_error(func: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_MET
 	if inspect.isfunction(func):
 		return sync_wrapper
 	
-	raise TypeError(
-			f"Expected a coroutine function or function, got {type(func).__name__}"
-	)
+	raise NotExpectedTypeError(expected_type=["coroutine function", "function"], received_instance=func)
 
 
-def background_task_decorator(func: "devtools_background_func_type") -> "devtools_background_func_type":
+def background_task_decorator(func: "DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT") -> "DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT":
 	"""
 	Decorator for BaseTargetMixin background tasks to manage their lifecycle.
 

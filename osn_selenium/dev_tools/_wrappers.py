@@ -6,6 +6,10 @@ from typing import (
 	Iterable,
 	Union
 )
+from osn_selenium.exceptions.configuration import NotExpectedTypeError
+from osn_selenium.exceptions.devtools import (
+	CDPCommandNotFoundError
+)
 
 
 __all__ = ["DevToolsPackage"]
@@ -22,7 +26,7 @@ def _yield_package_item_way(name: Union[str, Iterable[str]]) -> Generator[str, A
 		Generator[str, Any, None]: A generator yielding each part of the path.
 
 	Raises:
-		TypeError: If `name` is not a string or an iterable of strings.
+		NotExpectedTypeError: If `name` is not a string or an iterable of strings.
 	"""
 	
 	if (
@@ -30,11 +34,9 @@ def _yield_package_item_way(name: Union[str, Iterable[str]]) -> Generator[str, A
 					not isinstance(name, Iterable) or not all(isinstance(item, str) for item in name)
 			)
 	):
-		raise TypeError(
-				f"Wrong name type ({type(name).__name__})! Must be str or Iterable[str]!"
-		)
+		raise NotExpectedTypeError(value_name="name", value=name, valid_types=["str", "Iterable[str]"])
 	
-	way = name if isinstance(name, Iterable) and not isinstance(name, str) else [name]
+	way = [name] if isinstance(name, str) else name
 	
 	for item in way:
 		for part in item.split("."):
@@ -57,11 +59,11 @@ class DevToolsPackage:
 			package (ModuleType): The root module to wrap.
 
 		Raises:
-			TypeError: If the provided package is not a module.
+			NotExpectedTypeError: If the provided package is not a module.
 		"""
 		
 		if not inspect.ismodule(package):
-			raise TypeError(f"Expected a module, got {type(package).__name__}.")
+			raise NotExpectedTypeError(value_name="package", value=package, valid_types="ModuleType")
 		
 		self._package = package
 	
@@ -85,8 +87,7 @@ class DevToolsPackage:
 		
 		for part in _yield_package_item_way(name=name):
 			if not hasattr(object_, part):
-				package_str = ".".join(used_parts)
-				raise AttributeError(f"Attribute '{part}' not found in '{package_str}'")
+				raise CDPCommandNotFoundError(object_=part, module_=".".join(used_parts))
 		
 			object_ = getattr(object_, part)
 			used_parts.append(part)

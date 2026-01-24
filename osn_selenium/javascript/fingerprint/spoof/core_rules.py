@@ -12,6 +12,9 @@ from typing import (
 	Self
 )
 from osn_selenium.javascript.fingerprint._functions import add_code_level
+from osn_selenium.exceptions.logic import (
+	AbstractImplementationError
+)
 from osn_selenium.javascript.fingerprint.spoof._templates import (
 	ARRAY_CHANNEL_BLOCK,
 	ARRAY_LOOP_WRAPPER
@@ -52,7 +55,7 @@ class BaseRule(DictModel):
 			NotImplementedError: Must be implemented by subclasses.
 		"""
 		
-		raise NotImplementedError("This method should be implemented by subclasses.")
+		raise AbstractImplementationError(method_name="generate_js", class_name=self.__class__.__name__)
 
 
 class RandomRule(BaseRule):

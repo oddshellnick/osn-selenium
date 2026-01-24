@@ -1,5 +1,7 @@
-from pathlib import Path
-from typing import Optional, Union
+import os
+import pathlib
+from typing import Optional
+from osn_selenium._typehints import PATH_TYPEHINT
 
 
 __all__ = [
@@ -28,18 +30,18 @@ def str_adding_validation_function(value: Optional[str]) -> bool:
 	return bool(value)
 
 
-def path_adding_validation_function(value: Optional[Union[str, Path]]) -> bool:
+def path_adding_validation_function(value: Optional[PATH_TYPEHINT]) -> bool:
 	"""
 	Validation function that checks if a value is a non-empty string or a Path object.
 
 	Args:
-		value (Optional[Union[str, Path]]): The value to validate.
+		value (Optional[PATH_TYPEHINT]): The value to validate.
 
 	Returns:
 		bool: `True` if the value is a valid path-like object, `False` otherwise.
 	"""
 	
-	if value is not None and not isinstance(value, (str, Path)):
+	if value is not None and not isinstance(value, (str, bytes, pathlib.Path, os.PathLike)):
 		return False
 	
 	return bool(value)

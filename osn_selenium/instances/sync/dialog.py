@@ -1,10 +1,12 @@
 from typing import List, Optional, Self
 from selenium.webdriver.common.fedcm.account import Account
-from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances._typehints import DIALOG_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.dialog import UnifiedDialog
 from osn_selenium.abstract.instances.dialog import AbstractDialog
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from selenium.webdriver.common.fedcm.dialog import (
 	Dialog as legacyDialog
 )

@@ -6,6 +6,7 @@ from typing import (
 	ParamSpec,
 	TypeVar
 )
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 
 
 __all__ = ["requires_driver"]
@@ -15,7 +16,7 @@ _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")
 _METHOD = TypeVar("_METHOD", bound=Callable[..., Any])
 
 
-def requires_driver(fn: _METHOD) -> _METHOD:
+def requires_driver(func: _METHOD) -> _METHOD:
 	"""
 	A decorator that ensures a '_ensure_driver' method is called before
 	executing the decorated method.
@@ -25,13 +26,13 @@ def requires_driver(fn: _METHOD) -> _METHOD:
 	to the original method.
 
 	Args:
-		fn (_METHOD): The method to decorate.
+		func (_METHOD): The method to decorate.
 
 	Returns:
 		_METHOD: The wrapped synchronous or asynchronous method.
 	"""
 	
-	@functools.wraps(fn)
+	@functools.wraps(func)
 	def sync_wrapper(
 			self: object,
 			*args: _METHOD_INPUT.args,
@@ -50,9 +51,9 @@ def requires_driver(fn: _METHOD) -> _METHOD:
 		"""
 		
 		getattr(self, "_ensure_driver")()
-		return fn(self, *args, **kwargs)
+		return func(self, *args, **kwargs)
 	
-	@functools.wraps(fn)
+	@functools.wraps(func)
 	async def async_wrapper(
 			self: object,
 			*args: _METHOD_INPUT.args,
@@ -71,12 +72,12 @@ def requires_driver(fn: _METHOD) -> _METHOD:
 		"""
 		
 		getattr(self, "_ensure_driver")()
-		return await fn(self, *args, **kwargs)
+		return await func(self, *args, **kwargs)
 	
-	if inspect.iscoroutinefunction(fn):
+	if inspect.iscoroutinefunction(func):
 		return async_wrapper
 	
-	if inspect.isfunction(fn):
+	if inspect.isfunction(func):
 		return sync_wrapper
 	
-	raise TypeError(f"Expected a coroutine function or function, got {type(fn).__name__}")
+	raise NotExpectedTypeError(expected_type=["coroutine function", "function"], received_instance=func)

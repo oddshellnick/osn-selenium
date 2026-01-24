@@ -1,7 +1,7 @@
-import pathlib
+from typing import Optional
 from abc import abstractmethod
-from typing import Optional, Union
 from osn_selenium.models import WindowRect
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.abstract.webdriver.core.lifecycle import (
 	AbstractCoreLifecycleMixin
@@ -31,7 +31,7 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 	async def restart_webdriver(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -42,7 +42,7 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 
 		Args:
 			flags (Optional[BlinkFlags]): Configuration flags for the new session.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): Path to the browser executable.
 			browser_name_in_system (Optional[str]): Name of the browser in the system.
 			use_browser_exe (Optional[bool]): Whether to manage the browser executable process.
 			start_page_url (Optional[str]): URL to open after restart.
@@ -55,7 +55,7 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 	async def start_webdriver(
 			self,
 			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[Union[str, pathlib.Path]] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
 			browser_name_in_system: Optional[str] = None,
 			use_browser_exe: Optional[bool] = None,
 			start_page_url: Optional[str] = None,
@@ -66,7 +66,7 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 
 		Args:
 			flags (Optional[BlinkFlags]): Configuration flags for the browser.
-			browser_exe (Optional[Union[str, pathlib.Path]]): Path to the browser executable.
+			browser_exe (Optional[PATH_TYPEHINT]): Path to the browser executable.
 			browser_name_in_system (Optional[str]): Name of the browser in the OS registry/system.
 			use_browser_exe (Optional[bool]): Whether to manage the browser executable process.
 			start_page_url (Optional[str]): URL to open immediately upon start.

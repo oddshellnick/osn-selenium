@@ -11,7 +11,7 @@ from typing import (
 	Optional
 )
 from osn_selenium.flags._typehints import (
-	any_webdriver_option_type
+	ANY_WEBDRIVER_OPTION_TYPEHINT
 )
 
 
@@ -73,7 +73,7 @@ class FlagType(DictModel):
 	set_flags_function: Callable[[ExtraDictModel], None]
 	update_flags_function: Callable[[ExtraDictModel], None]
 	clear_flags_function: Callable[..., None]
-	build_options_function: Callable[[any_webdriver_option_type], any_webdriver_option_type]
+	build_options_function: Callable[[ANY_WEBDRIVER_OPTION_TYPEHINT], ANY_WEBDRIVER_OPTION_TYPEHINT]
 	build_start_args_function: Callable[..., List[str]]
 
 

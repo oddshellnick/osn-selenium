@@ -1,6 +1,5 @@
 import trio
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import CannotConvertTypeError
 from typing import (
 	Any,
 	Dict,
@@ -10,6 +9,9 @@ from typing import (
 )
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances._typehints import PERMISSIONS_TYPEHINT
+from osn_selenium.exceptions.instance import (
+	CannotConvertTypeError
+)
 from osn_selenium.instances.unified.permissions import UnifiedPermissions
 from osn_selenium.abstract.instances.permissions import AbstractPermissions
 from selenium.webdriver.common.bidi.permissions import (

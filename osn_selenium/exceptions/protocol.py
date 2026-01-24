@@ -1,17 +1,44 @@
+from osn_selenium.exceptions.base import OSNSeleniumError
 from typing import (
 	Any,
 	Iterable,
+	Protocol,
 	Type,
 	Union,
 	get_origin
 )
 
 
-__all__ = ["PlatformNotSupportedError", "ProtocolComplianceError"]
+__all__ = ["ProtocolComplianceError", "ProtocolError"]
 
 
-class ProtocolComplianceError(Exception):
-	def __init__(self, instance: Any, expected_protocols: Union[Type, Iterable[Type]]):
+class ProtocolError(OSNSeleniumError):
+	"""
+	Base class for errors related to Protocol contract violations.
+	"""
+	
+	pass
+
+
+class ProtocolComplianceError(ProtocolError):
+	"""
+	Error raised when an object fails to implement the required protocol members.
+
+	Attributes:
+		instance (Any): The object instance that failed the check.
+		instance_name (str): The name of the instance class.
+		expected_list (list): A list of protocols the instance was checked against.
+	"""
+	
+	def __init__(self, instance: Any, expected_protocols: Union[Type, Iterable[Type]]) -> None:
+		"""
+		Initializes ProtocolComplianceError.
+
+		Args:
+			instance (Any): The object instance that failed the check.
+			expected_protocols (Union[Type, Iterable[Type]]): The protocol or protocols expected.
+		"""
+		
 		self.instance = instance
 		
 		self.instance_name = type(instance).__name__
@@ -24,6 +51,13 @@ class ProtocolComplianceError(Exception):
 		super().__init__(self._generate_report())
 	
 	def _generate_report(self) -> str:
+		"""
+		Generates a detailed report of missing members for the protocols.
+
+		Returns:
+			str: A formatted string containing missing members and compliance status.
+		"""
+		
 		report = [f"Object '{self.instance_name}' failed protocol compliance check."]
 		
 		for proto in self.expected_list:
@@ -50,23 +84,3 @@ class ProtocolComplianceError(Exception):
 		)
 		
 		return "\n".join(report)
-
-
-class PlatformNotSupportedError(Exception):
-	"""
-	Custom exception raised when the current platform is not supported.
-
-	This exception is intended to be raised when the script or application is run on a platform that is not explicitly supported by the program logic.
-	"""
-	
-	def __init__(self, platform: str):
-		"""
-		Initializes a new instance of `PlatformNotSupportedError`.
-
-		Args:
-		   platform (str): The name of the unsupported operating system.
-		"""
-		
-		super().__init__(
-				f"Platform not supported: {platform}. Currently supported: Windows, Linux."
-		)

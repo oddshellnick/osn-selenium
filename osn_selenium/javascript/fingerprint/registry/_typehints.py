@@ -1,6 +1,6 @@
 from typing import Literal
 
 
-__all__ = ["ITEM_TYPE"]
+__all__ = ["ITEM_TYPE_TYPEHINT"]
 
-ITEM_TYPE = Literal["method", "prop", "constructor"]
+ITEM_TYPE_TYPEHINT = Literal["method", "prop", "constructor"]

@@ -1,7 +1,7 @@
 import trio
 from typing import List
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools.target.detach import DetachMixin
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.discovery import DiscoveryMixin
 from osn_selenium.dev_tools.target.events import EventHandlersMixin
 from osn_selenium.dev_tools.logger.target import build_target_logger
@@ -71,7 +71,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		and initializes target discovery and detach monitoring.
 
 		Raises:
-			cdp_end_exceptions: If connection issues occur.
+			CDPEndExceptions: If connection issues occur.
 			BaseException: If setup fails.
 		"""
 		
@@ -128,7 +128,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 			)
 		
 			await self.log_cdp_step(message="Target setup complete.")
-		except* cdp_end_exceptions as error:
+		except* CDPEndExceptions as error:
 			raise error
 		except* BaseException as error:
 			await self.log_cdp_error(error=error)
@@ -167,7 +167,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 					await wait_one(self.exit_event, self.about_to_stop_event)
 		except* (BrowserError, RuntimeError):
 			self.about_to_stop_event.set()
-		except* cdp_end_exceptions:
+		except* CDPEndExceptions:
 			self.about_to_stop_event.set()
 		except* BaseException as error:
 			self.about_to_stop_event.set()

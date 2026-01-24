@@ -1,6 +1,6 @@
 import trio
 from osn_selenium.dev_tools.manager.base import BaseMixin
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.logger.models import (
 	CDPLogLevelStats,
@@ -30,7 +30,7 @@ class LoggingMixin(BaseMixin):
 		the log is dropped silently.
 
 		Raises:
-			cdp_end_exceptions: If a CDP connection error occurs.
+			CDPEndExceptions: If a CDP connection error occurs.
 			BaseException: If any other error occurs during logging.
 		"""
 		
@@ -51,7 +51,7 @@ class LoggingMixin(BaseMixin):
 				self._main_logger_cdp_send_channel.send_nowait(log_entry)
 		except (trio.WouldBlock, trio.BrokenResourceError):
 			pass
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			log_exception(error)
@@ -81,7 +81,7 @@ class LoggingMixin(BaseMixin):
 				self._cdp_log_level_stats[log_entry.level].last_log_time = log_entry.datetime
 		
 			await self._add_main_cdp_log()
-		except cdp_end_exceptions:
+		except CDPEndExceptions:
 			pass
 		except BaseException as error:
 			log_exception(error)
@@ -92,7 +92,7 @@ class LoggingMixin(BaseMixin):
 		Sends updated overall fingerprint logging statistics to the main logger.
 
 		Raises:
-			cdp_end_exceptions: If a CDP connection error occurs.
+			CDPEndExceptions: If a CDP connection error occurs.
 			BaseException: If any other error occurs during logging.
 		"""
 		
@@ -113,7 +113,7 @@ class LoggingMixin(BaseMixin):
 				self._main_logger_fingerprint_send_channel.send_nowait(log_entry)
 		except (trio.WouldBlock, trio.BrokenResourceError):
 			pass
-		except cdp_end_exceptions as error:
+		except CDPEndExceptions as error:
 			raise error
 		except BaseException as error:
 			log_exception(error)
@@ -146,7 +146,7 @@ class LoggingMixin(BaseMixin):
 				self._fingerprint_categories_stats[log_entry.api].methods_stats[log_entry.used_method] = self._fingerprint_categories_stats[log_entry.api].methods_stats.get(log_entry.used_method, 0) + 1
 		
 			await self._add_main_fingerprint_log()
-		except cdp_end_exceptions:
+		except CDPEndExceptions:
 			pass
 		except BaseException as error:
 			log_exception(error)

@@ -3,10 +3,10 @@ from osn_selenium.models import WindowRect
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers.sync.core.auth import CoreAuthMixin
-from osn_selenium.webdrivers.sync.core.file import CoreFileMixin
 from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin
-from osn_selenium.webdrivers.sync.core.window import CoreWindowMixin
+from osn_selenium.webdrivers.sync.core.file import CoreFileMixin
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
+from osn_selenium.webdrivers.sync.core.window import CoreWindowMixin
 from osn_selenium.webdrivers.sync.core.actions import CoreActionsMixin
 from osn_selenium.webdrivers.sync.core.capture import CoreCaptureMixin
 from osn_selenium.webdrivers.sync.core.element import CoreElementMixin
