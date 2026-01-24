@@ -6,11 +6,11 @@ from typing import (
 	Union
 )
 from osn_selenium.flags.base import BrowserFlagsManager
-from osn_selenium.flags._types import (
-	blink_webdriver_option_type
-)
 from osn_selenium.flags._functions import (
 	build_first_start_argument
+)
+from osn_selenium.flags._typehints import (
+	blink_webdriver_option_type
 )
 from osn_selenium.flags.models.base import (
 	FlagDefinition,

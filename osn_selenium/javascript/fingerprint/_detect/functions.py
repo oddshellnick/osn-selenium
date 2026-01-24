@@ -1,8 +1,8 @@
 from typing import Optional
-from osn_selenium.javascript.fingerprint import RegistryItem
 from osn_selenium.javascript.fingerprint._decorators import indent_code
 from osn_selenium.javascript.fingerprint._functions import add_code_level
-from osn_selenium.javascript.fingerprint.detect._templates import (
+from osn_selenium.javascript.fingerprint.registry.models import RegistryItem
+from osn_selenium.javascript.fingerprint._detect.templates import (
 	ARG_WRAPPER_LOGIC,
 	CALL_ORIGINAL_METHOD,
 	CALL_ORIGINAL_PROP,

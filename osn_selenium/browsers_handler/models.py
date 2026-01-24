@@ -1,5 +1,5 @@
 import pathlib
-from osn_selenium.types import DictModel
+from osn_selenium.models import DictModel
 
 
 __all__ = ["Browser"]

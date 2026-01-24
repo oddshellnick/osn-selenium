@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from osn_selenium.types import Point
+from osn_selenium.models import Point
 from typing import TYPE_CHECKING, Tuple
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 
 
 __all__ = ["AbstractHMMoveMixin"]

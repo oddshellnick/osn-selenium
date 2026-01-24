@@ -1,16 +1,11 @@
-from typing import Literal, Self, Union
+from typing import Self
 from pydantic import (
 	BaseModel,
 	ConfigDict
 )
-from selenium.webdriver.common.actions.key_input import KeyInput
-from selenium.webdriver.common.actions.wheel_input import WheelInput
-from selenium.webdriver.common.actions.pointer_input import PointerInput
 
 
 __all__ = [
-	"ARCHITECTURE_TYPEHINT",
-	"DEVICES_TYPEHINT",
 	"DictModel",
 	"ExtraDictModel",
 	"Point",
@@ -142,7 +137,3 @@ class ExtraDictModel(BaseModel):
 			str_strip_whitespace=True,
 			validate_assignment=True,
 	)
-
-
-DEVICES_TYPEHINT = Union[PointerInput, KeyInput, WheelInput]
-ARCHITECTURE_TYPEHINT = Literal["sync", "trio_threads"]

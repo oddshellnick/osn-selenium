@@ -1,3 +1,4 @@
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -9,11 +10,10 @@ from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium.executors.sync.javascript import JSExecutor
-from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
+from selenium.webdriver.remote.errorhandler import ErrorHandler
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin

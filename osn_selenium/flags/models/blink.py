@@ -1,8 +1,8 @@
 import pathlib
 from pydantic import Field
 from typing import Optional, Union
-from osn_selenium.types import ExtraDictModel
-from osn_selenium.flags._types import (
+from osn_selenium.models import ExtraDictModel
+from osn_selenium.flags._typehints import (
 	AutoplayPolicyType,
 	LogLevelType,
 	UseGLType

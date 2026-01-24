@@ -1,11 +1,11 @@
 import trio
 from typing import Optional, Tuple
-from osn_selenium.dev_tools.utils import TargetData
+from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.settings import LoggerSettings
 from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.logger.functions import validate_log_filter
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools._validators import validate_log_filter
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.dev_tools.logger.models import (
 	CDPTargetLogEntry,
 	FingerprintTargetLogEntry
 )

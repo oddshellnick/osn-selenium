@@ -2,16 +2,14 @@ import trio
 import inspect
 import warnings
 import functools
+from osn_selenium.dev_tools.errors import ExceptionThrown
+from osn_selenium.dev_tools._exception_helpers import log_exception
 from typing import (
 	Any,
 	Callable,
 	ParamSpec,
 	TYPE_CHECKING,
 	TypeVar
-)
-from osn_selenium.dev_tools.exception_utils import (
-	ExceptionThrown,
-	log_exception
 )
 
 
@@ -20,7 +18,7 @@ __all__ = ["background_task_decorator", "log_on_error", "warn_if_active"]
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.manager import DevTools
 	from osn_selenium.dev_tools.target.base import BaseMixin
-	from osn_selenium.dev_tools._types import devtools_background_func_type
+	from osn_selenium.dev_tools._typehints import devtools_background_func_type
 
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
 _METHOD_OUTPUT = TypeVar("_METHOD_OUTPUT")

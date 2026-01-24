@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.blink.base import (
 	UnifiedBlinkBaseMixin
 )

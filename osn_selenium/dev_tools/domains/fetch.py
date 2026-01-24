@@ -1,9 +1,11 @@
 import trio
 from pydantic import Field
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
+from osn_selenium.models import DictModel
 from osn_selenium.dev_tools._functions import execute_cdp_command
-from osn_selenium.dev_tools.exception_utils import ExceptionThrown
+from osn_selenium.dev_tools.errors import (
+	ExceptionThrown,
+	cdp_end_exceptions
+)
 from typing import (
 	Any,
 	Callable,

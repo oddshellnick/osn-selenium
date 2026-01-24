@@ -2,8 +2,8 @@ import trio
 from typing import Tuple
 from osn_selenium.dev_tools.errors import cdp_end_exceptions
 from osn_selenium.dev_tools.target.logging import LoggingMixin
-from osn_selenium.dev_tools._functions import (
-	execute_cdp_command,
+from osn_selenium.dev_tools._functions import execute_cdp_command
+from osn_selenium.dev_tools._validators import (
 	validate_target_event
 )
 

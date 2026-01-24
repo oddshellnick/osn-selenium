@@ -1,4 +1,5 @@
 import pathlib
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -7,11 +8,10 @@ from typing import (
 from selenium.webdriver import Edge as legacyEdge
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.flags.edge import EdgeFlagsManager
-from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
+from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
 from osn_selenium.webdrivers.unified.edge.base import UnifiedEdgeBaseMixin
 from osn_selenium.abstract.webdriver.edge.base import (
 	AbstractEdgeBaseMixin

@@ -1,10 +1,10 @@
-from osn_selenium.types import DEVICES_TYPEHINT
 from typing import (
 	Iterable,
 	List,
 	Optional
 )
 from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium._typehints import DEVICES_TYPEHINT
 from osn_selenium.webdrivers._functions import (
 	get_js_executor_bridge
 )

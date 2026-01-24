@@ -1,11 +1,9 @@
 import trio
+from osn_selenium.dev_tools.models import TargetData
 from selenium.webdriver.common.bidi.cdp import CdpSession
+from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.logger.target import TargetLogger
-from osn_selenium.dev_tools.utils import (
-	DevToolsPackage,
-	TargetData
-)
-from osn_selenium.dev_tools._functions import (
+from osn_selenium.dev_tools._validators import (
 	validate_target_event_filter,
 	validate_type_filter
 )
@@ -19,7 +17,7 @@ from typing import (
 	TYPE_CHECKING,
 	Tuple
 )
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools.logger.models import (
 	CDPLoggerChannelStats,
 	CDPTargetLogEntry,
 	FingerprintLoggerChannelStats,
@@ -33,7 +31,7 @@ if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains import DomainsSettings
 	from osn_selenium.dev_tools.settings import LoggerSettings
-	from osn_selenium.dev_tools._types import devtools_background_func_type
+	from osn_selenium.dev_tools._typehints import devtools_background_func_type
 
 
 class BaseMixin:

@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.instances.errors import NotExpectedTypeError
 from selenium.webdriver.common.bidi.storage import (
 	BrowsingContextPartitionDescriptor,
 	CookieFilter,
@@ -18,7 +18,7 @@ __all__ = ["UnifiedStorage"]
 class UnifiedStorage:
 	def __init__(self, selenium_storage: legacyStorage):
 		if not isinstance(selenium_storage, legacyStorage):
-			raise ExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
+			raise NotExpectedTypeError(expected_class=legacyStorage, received_instance=selenium_storage)
 		
 		self._selenium_storage = selenium_storage
 	

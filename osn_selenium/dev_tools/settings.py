@@ -1,7 +1,7 @@
 from pathlib import Path
 from pydantic import Field
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.utils import TargetFilter
+from osn_selenium.models import DictModel
+from osn_selenium.dev_tools.filters import TargetFilter
 from osn_selenium.dev_tools.domains import DomainsSettings
 from typing import (
 	Literal,
@@ -10,7 +10,7 @@ from typing import (
 	Union
 )
 from osn_selenium.javascript.fingerprint import FingerprintSettings
-from osn_selenium.dev_tools._types import (
+from osn_selenium.dev_tools._typehints import (
 	CDPLogLevelsType,
 	FingerprintLogLevelsType,
 	devtools_background_func_type

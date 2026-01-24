@@ -1,11 +1,11 @@
 import trio
 from types import TracebackType
 from typing import Optional, Type
-from osn_selenium.dev_tools.utils import DevToolsPackage
-from osn_selenium.dev_tools.decorators import log_on_error
+from osn_selenium.dev_tools._decorators import log_on_error
+from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.manager.targets import TargetsMixin
 from osn_selenium.dev_tools.logger.main import build_main_logger
-from osn_selenium.dev_tools.exception_utils import log_exception
+from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.errors import (
 	BidiConnectionNotEstablishedError,
 	CantEnterDevToolsContextError,

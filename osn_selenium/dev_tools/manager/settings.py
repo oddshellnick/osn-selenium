@@ -1,6 +1,6 @@
 from typing import Sequence, Union
 from osn_selenium.dev_tools.manager.base import BaseMixin
-from osn_selenium.dev_tools.decorators import warn_if_active
+from osn_selenium.dev_tools._decorators import warn_if_active
 from osn_selenium.dev_tools.domains import (
 	DomainsSettings,
 	domains_classes_type,

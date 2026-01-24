@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.instances.errors import NotExpectedTypeError
 from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
 from selenium.webdriver.common.action_chains import (
 	ActionChains as legacyActionChains
@@ -16,7 +16,7 @@ class UnifiedBaseMixin:
 			execute_js_script_function: Callable[[str, Any], Any]
 	):
 		if not isinstance(selenium_action_chains, legacyActionChains):
-			raise ExpectedTypeError(
+			raise NotExpectedTypeError(
 					expected_class=legacyActionChains,
 					received_instance=selenium_action_chains
 			)

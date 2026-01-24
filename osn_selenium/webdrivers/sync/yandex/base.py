@@ -1,4 +1,5 @@
 import pathlib
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -6,11 +7,10 @@ from typing import (
 )
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
-from osn_selenium.webdrivers.sync.chrome.base import ChromeBaseMixin
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
+from osn_selenium.webdrivers.sync.chrome.base import ChromeBaseMixin
 from osn_selenium.webdrivers.unified.yandex.base import (
 	UnifiedYandexBaseMixin
 )

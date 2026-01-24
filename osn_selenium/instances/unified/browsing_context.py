@@ -1,4 +1,4 @@
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.instances.errors import NotExpectedTypeError
 from typing import (
 	Any,
 	Callable,
@@ -19,7 +19,7 @@ __all__ = ["UnifiedBrowsingContext"]
 class UnifiedBrowsingContext:
 	def __init__(self, selenium_browsing_context: legacyBrowsingContext):
 		if not isinstance(selenium_browsing_context, legacyBrowsingContext):
-			raise ExpectedTypeError(
+			raise NotExpectedTypeError(
 					expected_class=legacyBrowsingContext,
 					received_instance=selenium_browsing_context
 			)

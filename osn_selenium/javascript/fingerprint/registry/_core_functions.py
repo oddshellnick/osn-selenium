@@ -5,10 +5,8 @@ from typing import (
 	Mapping,
 	Optional
 )
-from osn_selenium.javascript.fingerprint.registry.types import (
-	ITEM_TYPE,
-	RegistryItem
-)
+from osn_selenium.javascript.fingerprint.registry.models import RegistryItem
+from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE
 
 
 __all__ = [

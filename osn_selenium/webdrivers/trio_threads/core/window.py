@@ -5,7 +5,7 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Position,
 	Rectangle,
 	Size

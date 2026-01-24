@@ -31,8 +31,8 @@ from selenium.webdriver.common.bidi.storage import (
 	Storage as legacyStorage
 )
 from osn_selenium.instances.errors import (
-	ExpectedTypeError,
-	TypeIsNotWrapper
+	NotExpectedTypeError,
+	TypeIsNotWrapperError
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as legacyWebElement
@@ -59,7 +59,7 @@ from osn_selenium.instances.protocols import (
 from selenium.webdriver.common.bidi.browsing_context import (
 	BrowsingContext as legacyBrowsingContext
 )
-from osn_selenium.instances.types import (
+from osn_selenium.instances._typehints import (
 	ACTION_CHAINS_TYPEHINT,
 	ALERT_TYPEHINT,
 	ANY_ABSTRACT_TYPE,
@@ -207,7 +207,7 @@ def get_legacy_instance(instance: Optional[Union[ANY_ABSTRACT_TYPE, ANY_LEGACY_T
 	if isinstance(instance, ANY_LEGACY_TYPE):
 		return instance
 	
-	raise ExpectedTypeError(
+	raise NotExpectedTypeError(
 			expected_class=(ANY_ABSTRACT_TYPE, ANY_LEGACY_TYPE, None),
 			received_instance=instance
 	)
@@ -236,7 +236,7 @@ def get_trio_thread_instance_wrapper(
 	"""
 	
 	if not isinstance(wrapper_class, TrioThreadInstanceWrapper):
-		raise TypeIsNotWrapper(class_var=wrapper_class, wrapper_protocol=TrioThreadInstanceWrapper)
+		raise TypeIsNotWrapperError(class_var=wrapper_class, wrapper_protocol=TrioThreadInstanceWrapper)
 	
 	return wrapper_class.from_legacy(legacy_object=legacy_object, lock=lock, limiter=limiter)
 
@@ -257,7 +257,7 @@ def get_sync_instance_wrapper(wrapper_class: Type[_SYNC_WRAPPER_TYPE], legacy_ob
 	"""
 	
 	if not isinstance(wrapper_class, SyncInstanceWrapper):
-		raise TypeIsNotWrapper(class_var=wrapper_class, wrapper_protocol=SyncInstanceWrapper)
+		raise TypeIsNotWrapperError(class_var=wrapper_class, wrapper_protocol=SyncInstanceWrapper)
 	
 	return wrapper_class.from_legacy(legacy_object=legacy_object)
 

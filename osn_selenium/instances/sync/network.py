@@ -4,8 +4,8 @@ from typing import (
 	Optional,
 	Self
 )
-from osn_selenium.instances.types import NETWORK_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.errors import CannotConvertTypeError
+from osn_selenium.instances._typehints import NETWORK_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.network import UnifiedNetwork
 from osn_selenium.abstract.instances.network import AbstractNetwork
@@ -73,7 +73,7 @@ class Network(UnifiedNetwork, AbstractNetwork):
 		legacy_network_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_network_obj, legacyNetwork):
-			raise TypesConvertError(from_=legacyNetwork, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyNetwork, to_=legacy_object)
 		
 		return cls(selenium_network=legacy_network_obj)
 	

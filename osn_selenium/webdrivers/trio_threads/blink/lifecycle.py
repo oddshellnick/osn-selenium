@@ -1,6 +1,6 @@
 import pathlib
 from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.webdrivers.trio_threads.core.lifecycle import CoreLifecycleMixin
 from osn_selenium.webdrivers.unified.blink.lifecycle import (

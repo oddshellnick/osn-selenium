@@ -1,5 +1,6 @@
 import trio
 import pathlib
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -7,9 +8,8 @@ from typing import (
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.unified.blink.base import (

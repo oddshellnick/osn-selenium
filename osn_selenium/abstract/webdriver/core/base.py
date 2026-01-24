@@ -6,10 +6,10 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.types import (
+from selenium.webdriver.common.bidi.session import Session
+from osn_selenium._typehints import (
 	ARCHITECTURE_TYPEHINT
 )
-from selenium.webdriver.common.bidi.session import Session
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
 from selenium.webdriver.remote.remote_connection import RemoteConnection

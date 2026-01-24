@@ -1,6 +1,6 @@
-from osn_selenium.types import Point
+from osn_selenium.models import Point
 from typing import TYPE_CHECKING, Tuple
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.action_chains.base import BaseMixin
 from osn_selenium.instances.unified.action_chains.hm_move import UnifiedHMMoveMixin
 from osn_selenium.abstract.instances.action_chains.hm_move import AbstractHMMoveMixin

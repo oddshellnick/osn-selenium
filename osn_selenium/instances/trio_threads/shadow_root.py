@@ -1,14 +1,14 @@
 import trio
 from selenium.webdriver.common.by import By
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.errors import TypesConvertError
-from osn_selenium.instances.types import SHADOW_ROOT_TYPEHINT
+from osn_selenium.instances.errors import CannotConvertTypeError
 from typing import (
 	List,
 	Optional,
 	Self,
 	TYPE_CHECKING
 )
+from osn_selenium.instances._typehints import SHADOW_ROOT_TYPEHINT
 from osn_selenium.instances.unified.shadow_root import UnifiedShadowRoot
 from osn_selenium.abstract.instances.shadow_root import AbstractShadowRoot
 from selenium.webdriver.remote.shadowroot import (
@@ -105,7 +105,7 @@ class ShadowRoot(UnifiedShadowRoot, TrioThreadMixin, AbstractShadowRoot):
 		legacy_shadow_root_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_shadow_root_obj, legacyShadowRoot):
-			raise TypesConvertError(from_=legacyShadowRoot, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyShadowRoot, to_=legacy_object)
 		
 		return cls(
 				selenium_shadow_root=legacy_shadow_root_obj,

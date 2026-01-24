@@ -1,6 +1,6 @@
 import trio
 import pathlib
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,

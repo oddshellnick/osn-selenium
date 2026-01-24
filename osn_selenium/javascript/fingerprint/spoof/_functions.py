@@ -1,5 +1,5 @@
-from osn_selenium.javascript.functions import convert_to_js_value
-from osn_selenium.javascript.fingerprint.spoof.types import NUMBER
+from osn_selenium.javascript._functions import convert_to_js_value
+from osn_selenium.javascript.fingerprint.spoof._typehints import NUMBER
 from osn_selenium.javascript.fingerprint._decorators import indent_code
 from typing import (
 	Any,

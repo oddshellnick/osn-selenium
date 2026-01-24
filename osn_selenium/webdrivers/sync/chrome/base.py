@@ -1,4 +1,5 @@
 import pathlib
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -9,11 +10,10 @@ from osn_selenium.flags.chrome import ChromeFlagsManager
 from selenium.webdriver import (
 	Chrome as legacyChrome
 )
-from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
+from osn_selenium.webdrivers.sync.blink.base import BlinkBaseMixin
 from osn_selenium.webdrivers.unified.chrome.base import (
 	UnifiedChromeBaseMixin
 )

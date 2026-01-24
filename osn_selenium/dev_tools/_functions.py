@@ -1,65 +1,22 @@
 import trio
-from osn_selenium.dev_tools.errors import cdp_end_exceptions
-from osn_selenium.dev_tools.exception_utils import ExceptionThrown
+import random
 from typing import (
 	Any,
 	Callable,
-	Dict,
-	Generator,
-	Iterable,
-	List,
 	Literal,
-	Optional,
-	Sequence,
 	TYPE_CHECKING,
 	Union
 )
+from osn_selenium.dev_tools.errors import (
+	ExceptionThrown,
+	cdp_end_exceptions
+)
 
 
-__all__ = [
-	"cdp_command_error",
-	"execute_cdp_command",
-	"validate_target_event",
-	"validate_target_event_filter",
-	"validate_target_type",
-	"validate_type_filter",
-	"wait_one",
-	"yield_package_item_way"
-]
+__all__ = ["cdp_command_error", "execute_cdp_command", "wait_one"]
 
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.logging import LoggingMixin as LoggingTargetMixin
-	from osn_selenium.dev_tools.utils import TargetsFilters
-
-
-def yield_package_item_way(name: Union[str, Iterable[str]]) -> Generator[str, Any, None]:
-	"""
-	Yields parts of a package path from a string or iterable of strings.
-
-	Args:
-		name (Union[str, Iterable[str]]): The name or path components to yield.
-
-	Returns:
-		Generator[str, Any, None]: A generator yielding each part of the path.
-
-	Raises:
-		TypeError: If `name` is not a string or an iterable of strings.
-	"""
-	
-	if (
-			not isinstance(name, str) and (
-					not isinstance(name, (list, set, tuple)) or not all(isinstance(item, str) for item in name)
-			)
-	):
-		raise TypeError(
-				f"Wrong name type ({type(name).__name__})! Must be str or Iterable[str]!"
-		)
-	
-	way = name if isinstance(name, (list, set, tuple)) else [name]
-	
-	for item in way:
-		for part in item.split("."):
-			yield part
 
 
 async def wait_one(*events: trio.Event):
@@ -88,124 +45,6 @@ async def wait_one(*events: trio.Event):
 	
 		await receive_chan.receive()
 		nursery.cancel_scope.cancel()
-
-
-def validate_type_filter(
-		type_: str,
-		filter_mode: Literal["include", "exclude"],
-		filter_instances: Any
-):
-	"""
-	Validates a target type against a given filter mode and filter instances.
-
-	This is a wrapper around `_validate_log_filter` specifically for target types.
-
-	Args:
-		type_ (str): The target type string to check (e.g., "page", "iframe").
-		filter_mode (Literal["include", "exclude"]): The mode of the filter ("include" or "exclude").
-		filter_instances (Any): The filter value(s) (e.g., a string or a sequence of strings).
-
-	Returns:
-		bool: True if the `type_` passes the filter, False otherwise.
-	"""
-	
-	from osn_selenium.dev_tools.logger.functions import validate_log_filter
-	
-	return validate_log_filter(filter_mode, filter_instances)(type_)
-
-
-def validate_target_event_filter(filter_: Optional[Sequence[Dict[str, Any]]]) -> "TargetsFilters":
-	"""
-	Validates and processes a raw dictionary-based event filter into a `TargetsFilters` object.
-
-	Args:
-		filter_ (Optional[List[Dict[str, Any]]]): A list of dictionary filters defining inclusion/exclusion rules.
-
-	Returns:
-		"TargetsFilters": A processed object containing excluded and included types.
-
-	Raises:
-		ValueError: If duplicate types appear in both included and excluded lists.
-	"""
-	
-	if filter_ is None:
-		filter_ = []
-	
-	all_excluded_types = [
-		type_filter["type"]
-		for type_filter in filter_
-		if type_filter.get("exclude", True)
-		and type_filter.get("type", None) is not None
-	]
-	all_included_types = [
-		type_filter["type"]
-		for type_filter in filter_
-		if not type_filter.get("exclude", True)
-		and type_filter.get("type", None) is not None
-	]
-	
-	if len(set(all_excluded_types) & set(all_included_types)) > 0:
-		raise ValueError(
-				f"Duplicate types in target filters! ({set(all_excluded_types) & set(all_included_types)})"
-		)
-	
-	other_types = any(
-			type_filter.get("type", None) is None
-			and not type_filter.get("exclude", True)
-			for type_filter in filter_
-	)
-	
-	from osn_selenium.dev_tools.utils import TargetsFilters
-	
-	return TargetsFilters(
-			excluded=all_excluded_types,
-			included=all_included_types,
-			entire=other_types,
-	)
-
-
-def validate_target_type(type_: str, filter_: "TargetsFilters") -> bool:
-	"""
-	Checks if a target type is valid based on the provided filter configuration.
-
-	Args:
-		type_ (str): The target type to check.
-		filter_ ("TargetsFilters"): The filter configuration containing included and excluded types.
-
-	Returns:
-		bool: True if the target type is valid according to the filter, False otherwise.
-	"""
-	
-	if type_ in filter_.excluded:
-		return False
-	
-	if type_ in filter_.included:
-		return True
-	
-	return filter_.entire
-
-
-def validate_target_event(event: Any, filter_: "TargetsFilters") -> Optional[bool]:
-	"""
-	Validates a target event against the provided filter.
-
-	Args:
-		event (Any): The event object containing target information.
-		filter_ ("TargetsFilters"): The filter to apply.
-
-	Returns:
-		Optional[bool]: True if the event target is valid, False otherwise, or None if validation cannot be determined.
-	"""
-	
-	result = None
-	
-	if hasattr(event, "target_info") and hasattr(event.target_info, "type_"):
-		result = validate_target_type(type_=event.target_info.type_, filter_=filter_)
-	
-	if hasattr(event, "type_"):
-		result = validate_target_type(type_=event.type_, filter_=filter_)
-	
-	return result
 
 
 async def cdp_command_error(
@@ -304,8 +143,8 @@ async def execute_cdp_command(
 		for i in range(command_retries):
 			try:
 				return await self.cdp_session.execute(function(*args, **kwargs))
-			except* (BaseException):
-				await trio.sleep(1.0)
+			except* (BaseException,):
+				await trio.sleep(random.uniform(0.5, 1.5))
 	
 		return await self.cdp_session.execute(function(*args, **kwargs))
 	except cdp_end_exceptions as error:

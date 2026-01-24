@@ -1,7 +1,7 @@
 from typing import Optional, Union
-from osn_selenium.instances.errors import ExpectedTypeError
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances.errors import NotExpectedTypeError
 from selenium.webdriver.common.alert import Alert as legacyAlert
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import (
 	get_legacy_frame_reference
 )
@@ -19,7 +19,7 @@ __all__ = ["UnifiedSwitchTo"]
 class UnifiedSwitchTo:
 	def __init__(self, selenium_switch_to: legacySwitchTo):
 		if not isinstance(selenium_switch_to, legacySwitchTo):
-			raise ExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
+			raise NotExpectedTypeError(expected_class=legacySwitchTo, received_instance=selenium_switch_to)
 		
 		self._selenium_switch_to = selenium_switch_to
 	

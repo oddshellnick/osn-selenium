@@ -1,6 +1,6 @@
 from typing import Optional
 from abc import ABC, abstractmethod
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.base import BrowserFlags
 
 

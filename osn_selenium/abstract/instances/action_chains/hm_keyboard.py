@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 
 
 __all__ = ["AbstractHMKeyboardMixin"]

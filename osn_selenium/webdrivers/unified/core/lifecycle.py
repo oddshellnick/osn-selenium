@@ -1,4 +1,4 @@
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
@@ -6,7 +6,7 @@ from typing import (
 	Union
 )
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver

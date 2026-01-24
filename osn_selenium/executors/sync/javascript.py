@@ -1,4 +1,4 @@
-from osn_selenium.javascript.types import JS_Scripts
+from osn_selenium.javascript.models import JS_Scripts
 from typing import (
 	Any,
 	Callable,
@@ -7,13 +7,13 @@ from typing import (
 )
 from osn_selenium.instances.sync.web_element import WebElement
 from osn_selenium.javascript.fingerprint import FingerprintSettings
-from osn_selenium.types import (
+from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
+from osn_selenium.models import (
 	Point,
 	Position,
 	Rectangle,
 	Size
 )
-from osn_selenium.executors.unified.javascript import UnifiedJSExecutor
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
 
 

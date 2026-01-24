@@ -3,9 +3,9 @@ from typing import (
 	Self,
 	TypeVar
 )
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.convert import get_legacy_instance
-from osn_selenium.instances.types import (
+from osn_selenium.instances._typehints import (
 	WebDriverWaitInputType
 )
 from osn_selenium.instances.unified.web_driver_wait import UnifiedWebDriverWait
@@ -45,7 +45,7 @@ class WebDriverWait(UnifiedWebDriverWait, AbstractWebDriverWait):
 		legacy_wait_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_wait_obj, legacyWebDriverWait):
-			raise TypesConvertError(from_=legacyWebDriverWait, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyWebDriverWait, to_=legacy_object)
 		
 		return cls(selenium_webdriver_wait=legacy_wait_obj)
 	

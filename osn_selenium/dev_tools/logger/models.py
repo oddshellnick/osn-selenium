@@ -1,14 +1,14 @@
 from pydantic import Field
 from datetime import datetime
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.utils import TargetData
+from osn_selenium.models import DictModel
+from osn_selenium.dev_tools.models import TargetData
 from typing import (
 	Any,
 	Dict,
 	Optional,
 	Sequence
 )
-from osn_selenium.dev_tools._types import (
+from osn_selenium.dev_tools._typehints import (
 	CDPLogLevelsType,
 	FingerprintLogLevelsType
 )

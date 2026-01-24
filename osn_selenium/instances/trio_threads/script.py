@@ -1,8 +1,8 @@
 import trio
 from typing import Any, Callable, Self
 from osn_selenium.base_mixin import TrioThreadMixin
-from osn_selenium.instances.types import SCRIPT_TYPEHINT
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.errors import CannotConvertTypeError
+from osn_selenium.instances._typehints import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.script import UnifiedScript
 from osn_selenium.abstract.instances.script import AbstractScript
@@ -75,7 +75,7 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 		legacy_script_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_script_obj, legacyScript):
-			raise TypesConvertError(from_=legacyScript, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyScript, to_=legacy_object)
 		
 		return cls(selenium_script=legacy_script_obj, lock=lock, limiter=limiter)
 	

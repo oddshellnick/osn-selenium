@@ -4,9 +4,9 @@ from typing import (
 	Literal,
 	Optional
 )
-from osn_selenium.javascript.functions import convert_to_js_value
-from osn_selenium.javascript.fingerprint.spoof.types import RANDOM_VALUE
+from osn_selenium.javascript._functions import convert_to_js_value
 from osn_selenium.javascript.fingerprint._functions import add_code_level
+from osn_selenium.javascript.fingerprint.spoof._typehints import RANDOM_VALUE
 from osn_selenium.javascript.fingerprint.spoof.noise import (
 	RandomNoise,
 	StaticNoise

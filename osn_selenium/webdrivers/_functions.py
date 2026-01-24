@@ -4,7 +4,9 @@ import psutil
 import pathlib
 from pandas import DataFrame, Series
 from osn_system_utils.api._utils import LOCALHOST_IPS
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.errors import (
+	ProtocolComplianceError
+)
 from osn_selenium.instances.protocols import AnyInstanceWrapper
 from typing import (
 	Any,
@@ -14,19 +16,21 @@ from typing import (
 	Optional,
 	Union
 )
+from osn_selenium.webdrivers._typehints import (
+	ANY_WEBDRIVER_PROTOCOL
+)
 from osn_selenium.instances.sync.web_element import (
 	WebElement as SyncWebElement
 )
 from selenium.webdriver.remote.webelement import (
 	WebElement as SeleniumWebElement
 )
-from osn_selenium.instances.trio_threads.web_element import (
-	WebElement as TrioThreadWebElement
-)
 from osn_selenium.webdrivers.protocols import (
-	AnyWebDriver,
 	SyncWebDriver,
 	TrioThreadWebDriver
+)
+from osn_selenium.instances.trio_threads.web_element import (
+	WebElement as TrioThreadWebElement
 )
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper,
@@ -145,12 +149,12 @@ def wrap_sync_args(args: Any) -> Any:
 	return args
 
 
-def get_wrap_args_function(driver: AnyWebDriver) -> Callable[[Any], Any]:
+def get_wrap_args_function(driver: ANY_WEBDRIVER_PROTOCOL) -> Callable[[Any], Any]:
 	"""
 	Determines the appropriate argument wrapping function based on the driver's architecture.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[Any], Any]: A function to wrap elements.
@@ -171,21 +175,15 @@ def get_wrap_args_function(driver: AnyWebDriver) -> Callable[[Any], Any]:
 	
 		return wrapper
 	
-	from osn_selenium.webdrivers.sync.core.base import CoreBaseMixin as SyncCoreWebDriver
-	from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin as TrioThreadCoreWebDriver
-	
-	raise ExpectedTypeError(
-			expected_class=(SyncCoreWebDriver, TrioThreadCoreWebDriver),
-			received_instance=driver
-	)
+	raise ProtocolComplianceError(instance=driver, expected_protocols=(SyncWebDriver, TrioThreadWebDriver))
 
 
-def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
+def get_js_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL) -> Callable[[str, Any], Any]:
 	"""
 	Creates a bridge function for executing JavaScript in the browser.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[str, Any], Any]: A wrapper for execute_script.
@@ -203,12 +201,12 @@ def get_js_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Any], Any]:
 	return wrapper
 
 
-def get_cdp_executor_bridge(driver: AnyWebDriver) -> Callable[[str, Dict[str, Any]], Any]:
+def get_cdp_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL) -> Callable[[str, Dict[str, Any]], Any]:
 	"""
 	Creates a bridge function for executing CDP commands in the browser.
 
 	Args:
-		driver (AnyWebDriver): The driver instance.
+		driver (ANY_WEBDRIVER_PROTOCOL): The driver instance.
 
 	Returns:
 		Callable[[str, Dict[str, Any]], Any]: A wrapper for execute_cdp_cmd.

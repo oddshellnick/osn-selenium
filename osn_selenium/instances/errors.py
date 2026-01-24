@@ -2,27 +2,14 @@ from typing import Any
 from osn_selenium._functions import flatten_types
 
 
-__all__ = ["ExpectedTypeError", "TypeIsNotWrapper", "TypesConvertError"]
+__all__ = [
+	"CannotConvertTypeError",
+	"NotExpectedTypeError",
+	"TypeIsNotWrapperError"
+]
 
 
-class TypesConvertError(Exception):
-	"""
-	Error raised when conversion between two types is not possible.
-	"""
-	
-	def __init__(self, from_: Any, to_: Any):
-		"""
-		Initializes the error with the source and target objects.
-
-		Args:
-			from_ (Any): The object being converted from.
-			to_ (Any): The object being converted to.
-		"""
-		
-		super().__init__(f"Cannot convert {type(from_).__name__} to {type(to_).__name__}")
-
-
-class TypeIsNotWrapper(Exception):
+class TypeIsNotWrapperError(Exception):
 	"""
 	Error raised when a class does not implement the required wrapper protocol.
 	"""
@@ -41,7 +28,7 @@ class TypeIsNotWrapper(Exception):
 		)
 
 
-class ExpectedTypeError(Exception):
+class NotExpectedTypeError(Exception):
 	"""
 	Error raised when an object is not of the expected type.
 	"""
@@ -60,3 +47,20 @@ class ExpectedTypeError(Exception):
 		super().__init__(
 				f"Expected one of [{expected_str}], got {type(received_instance).__name__}"
 		)
+
+
+class CannotConvertTypeError(Exception):
+	"""
+	Error raised when conversion between two types is not possible.
+	"""
+	
+	def __init__(self, from_: Any, to_: Any):
+		"""
+		Initializes the error with the source and target objects.
+
+		Args:
+			from_ (Any): The object being converted from.
+			to_ (Any): The object being converted to.
+		"""
+		
+		super().__init__(f"Cannot convert {type(from_).__name__} to {type(to_).__name__}")

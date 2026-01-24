@@ -1,7 +1,7 @@
 import pathlib
 from selenium import webdriver
 from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from selenium.webdriver.edge.service import Service
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.webdrivers.unified.core.window import (

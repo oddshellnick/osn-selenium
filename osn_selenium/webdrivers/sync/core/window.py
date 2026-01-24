@@ -5,7 +5,7 @@ from typing import (
 	Union
 )
 from osn_selenium.instances.sync.switch_to import SwitchTo
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Position,
 	Rectangle,
 	Size

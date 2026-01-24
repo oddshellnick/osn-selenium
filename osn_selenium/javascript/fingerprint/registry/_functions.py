@@ -1,5 +1,5 @@
 from typing import Dict
-from osn_selenium.javascript.fingerprint.registry.types import RegistryItem
+from osn_selenium.javascript.fingerprint.registry.models import RegistryItem
 from osn_selenium.javascript.fingerprint.registry._utils import (
 	MATCH_MEDIA_SETTINGS,
 	WRAP_ARG_0

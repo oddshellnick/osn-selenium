@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
-from osn_selenium.instances.errors import TypesConvertError
+from osn_selenium.instances.errors import CannotConvertTypeError
 from osn_selenium.instances.sync.shadow_root import ShadowRoot
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
 from typing import (
 	Any,
@@ -97,7 +98,7 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 		return self._location_once_scrolled_into_view_impl()
 	
 	@classmethod
-	def from_legacy(cls, legacy_object: Any) -> Self:
+	def from_legacy(cls, legacy_object: WEB_ELEMENT_TYPEHINT) -> Self:
 		"""
 		Creates an instance from a legacy Selenium WebElement object.
 
@@ -114,7 +115,7 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 		legacy_element_obj = get_legacy_instance(instance=legacy_object)
 		
 		if not isinstance(legacy_element_obj, legacyWebElement):
-			raise TypesConvertError(from_=legacyWebElement, to_=legacy_object)
+			raise CannotConvertTypeError(from_=legacyWebElement, to_=legacy_object)
 		
 		return cls(selenium_web_element=legacy_element_obj)
 	

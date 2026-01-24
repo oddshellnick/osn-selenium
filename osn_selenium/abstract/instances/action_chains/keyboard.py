@@ -3,7 +3,7 @@ from typing import (
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 
 
 __all__ = ["AbstractKeyboardMixin"]

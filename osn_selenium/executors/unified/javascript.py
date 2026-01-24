@@ -1,13 +1,13 @@
-from osn_selenium.javascript.types import JS_Scripts
+from osn_selenium.javascript.models import JS_Scripts
 from typing import (
 	Any,
 	Callable,
 	Dict,
 	Optional
 )
-from osn_selenium.javascript.functions import read_js_scripts
+from osn_selenium.javascript.functions import get_js_scripts
 from osn_selenium.javascript.fingerprint import FingerprintSettings
-from osn_selenium.types import (
+from osn_selenium.models import (
 	Point,
 	Position,
 	Rectangle,
@@ -36,7 +36,7 @@ class UnifiedJSExecutor:
 		"""
 		
 		self._execute_function = execute_function
-		self._scripts = read_js_scripts()
+		self._scripts = get_js_scripts()
 	
 	def _execute_impl(self, script: str, *args: Any) -> Any:
 		return self._execute_function(script, *args)

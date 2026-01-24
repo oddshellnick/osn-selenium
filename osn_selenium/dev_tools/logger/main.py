@@ -5,8 +5,8 @@ from typing import (
 	Tuple
 )
 from osn_selenium.dev_tools.errors import trio_end_exceptions
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.dev_tools.logger.models import (
 	CDPMainLogEntry,
 	FingerprintMainLogEntry
 )

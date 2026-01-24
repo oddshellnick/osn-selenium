@@ -2,8 +2,8 @@ from typing import (
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.instances.types import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
+from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from osn_selenium.instances.sync.action_chains.base import BaseMixin
 from osn_selenium.instances.unified.action_chains.keyboard import UnifiedKeyboardMixin
 from osn_selenium.abstract.instances.action_chains.keyboard import (

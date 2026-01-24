@@ -1,4 +1,5 @@
 import trio
+from osn_selenium.models import WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
 from typing import (
 	Any,
@@ -9,13 +10,12 @@ from typing import (
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
+)
 from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
-)
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin

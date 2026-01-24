@@ -1,6 +1,6 @@
 import pathlib
 from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.chrome import ChromeFlags
 from osn_selenium.webdrivers.trio_threads.blink import BlinkSettingsMixin
 from osn_selenium.webdrivers.unified.chrome.settings import (

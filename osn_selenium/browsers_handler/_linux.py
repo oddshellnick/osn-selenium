@@ -4,7 +4,7 @@ import glob
 import shutil
 import subprocess
 from pathlib import Path
-from osn_selenium.browsers_handler.types import Browser
+from osn_selenium.browsers_handler.models import Browser
 from typing import (
 	List,
 	Optional,

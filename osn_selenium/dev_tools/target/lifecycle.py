@@ -10,7 +10,7 @@ from selenium.webdriver.common.bidi.cdp import (
 	BrowserError,
 	open_cdp
 )
-from osn_selenium.dev_tools.decorators import (
+from osn_selenium.dev_tools._decorators import (
 	background_task_decorator
 )
 from osn_selenium.dev_tools._functions import (

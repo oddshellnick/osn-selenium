@@ -3,7 +3,7 @@ import time
 import pathlib
 from subprocess import Popen
 from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_system_utils.api.process import kill_process_by_pid
 from osn_selenium.webdrivers.unified.core.lifecycle import (

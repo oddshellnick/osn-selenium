@@ -1,17 +1,11 @@
 from pydantic import Field
-from osn_selenium.types import DictModel
-from typing import (
-	Any,
-	Dict,
-	Literal,
-	Optional
-)
-from osn_selenium.javascript.fingerprint.types import SPOOF_RULE_TYPEHINT
+from typing import Any, Dict, Optional
+from osn_selenium.models import DictModel
+from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE
+from osn_selenium.javascript.fingerprint._typehints import SPOOF_RULE_TYPEHINT
 
 
-__all__ = ["ITEM_TYPE", "RegistryItem"]
-
-ITEM_TYPE = Literal["method", "prop", "constructor"]
+__all__ = ["RegistryItem"]
 
 
 class RegistryItem(DictModel):

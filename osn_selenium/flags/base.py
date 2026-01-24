@@ -1,5 +1,5 @@
 from copy import deepcopy
-from osn_selenium.types import DictModel
+from osn_selenium.models import DictModel
 from typing import (
 	Any,
 	Dict,
@@ -7,7 +7,7 @@ from typing import (
 	Optional
 )
 from osn_selenium.flags._functions import argument_to_flag
-from osn_selenium.flags._types import (
+from osn_selenium.flags._typehints import (
 	any_webdriver_option_type
 )
 from osn_selenium.flags.models.values import (

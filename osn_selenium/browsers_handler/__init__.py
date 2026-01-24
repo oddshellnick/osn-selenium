@@ -5,7 +5,7 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.browsers_handler.types import Browser
+from osn_selenium.browsers_handler.models import Browser
 from osn_selenium.errors import (
 	PlatformNotSupportedError
 )

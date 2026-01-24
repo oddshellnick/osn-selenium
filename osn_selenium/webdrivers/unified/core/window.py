@@ -1,4 +1,4 @@
-from osn_selenium.webdrivers.decorators import requires_driver
+from osn_selenium.webdrivers._decorators import requires_driver
 from typing import (
 	Any,
 	List,

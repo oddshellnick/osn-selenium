@@ -1,7 +1,7 @@
 import trio
 from datetime import datetime
-from osn_selenium.types import DictModel
-from osn_selenium.dev_tools.exception_utils import log_exception
+from osn_selenium.models import DictModel
+from osn_selenium.dev_tools._exception_helpers import log_exception
 from typing import (
 	Any,
 	Dict,

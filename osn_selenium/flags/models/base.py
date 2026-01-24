@@ -1,5 +1,5 @@
 from pydantic import Field
-from osn_selenium.types import (
+from osn_selenium.models import (
 	DictModel,
 	ExtraDictModel
 )
@@ -10,7 +10,7 @@ from typing import (
 	Literal,
 	Optional
 )
-from osn_selenium.flags._types import (
+from osn_selenium.flags._typehints import (
 	any_webdriver_option_type
 )
 

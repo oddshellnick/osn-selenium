@@ -1,7 +1,7 @@
 import pathlib
 from abc import abstractmethod
 from typing import Optional, Union
-from osn_selenium.types import WindowRect
+from osn_selenium.models import WindowRect
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.abstract.webdriver.chrome.lifecycle import (
 	AbstractChromeLifecycleMixin

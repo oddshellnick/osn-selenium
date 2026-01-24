@@ -4,7 +4,7 @@ from typing import (
 	Optional,
 	Union
 )
-from osn_selenium.instances.errors import ExpectedTypeError
+from osn_selenium.instances.errors import NotExpectedTypeError
 from selenium.webdriver.common.bidi.permissions import (
 	PermissionDescriptor,
 	Permissions as legacyPermissions
@@ -17,7 +17,7 @@ __all__ = ["UnifiedPermissions"]
 class UnifiedPermissions:
 	def __init__(self, selenium_permissions: legacyPermissions):
 		if not isinstance(selenium_permissions, legacyPermissions):
-			raise ExpectedTypeError(
+			raise NotExpectedTypeError(
 					expected_class=legacyPermissions,
 					received_instance=selenium_permissions
 			)

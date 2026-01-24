@@ -1,9 +1,9 @@
 from typing import Any, List, Optional
-from osn_selenium.dev_tools.utils import TargetData
+from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.dev_tools.manager.logging import LoggingMixin
-from osn_selenium.dev_tools.exception_utils import log_exception
-from osn_selenium.dev_tools.logger.types import CDPTargetTypeStats
+from osn_selenium.dev_tools._exception_helpers import log_exception
+from osn_selenium.dev_tools.logger.models import CDPTargetTypeStats
 from osn_selenium.dev_tools.errors import (
 	BidiConnectionNotEstablishedError,
 	cdp_end_exceptions

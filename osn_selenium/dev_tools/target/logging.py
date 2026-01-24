@@ -3,18 +3,18 @@ import inspect
 import warnings
 from datetime import datetime
 from osn_selenium.dev_tools.target.base import BaseMixin
-from osn_selenium.dev_tools.utils import FingerprintData
+from osn_selenium.dev_tools.models import FingerprintData
 from typing import (
 	Any,
 	Dict,
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.dev_tools.exception_utils import (
+from osn_selenium.dev_tools._exception_helpers import (
 	extract_exception_trace,
 	log_exception
 )
-from osn_selenium.dev_tools.logger.types import (
+from osn_selenium.dev_tools.logger.models import (
 	CDPTargetLogEntry,
 	FingerprintTargetLogEntry
 )
@@ -23,7 +23,7 @@ from osn_selenium.dev_tools.logger.types import (
 __all__ = ["LoggingMixin"]
 
 if TYPE_CHECKING:
-	from osn_selenium.dev_tools._types import CDPLogLevelsType, FingerprintLogLevelsType
+	from osn_selenium.dev_tools._typehints import CDPLogLevelsType, FingerprintLogLevelsType
 
 
 class LoggingMixin(BaseMixin):

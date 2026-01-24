@@ -1,4 +1,5 @@
 import pathlib
+from osn_selenium.models import WindowRect
 from typing import (
 	Optional,
 	Type,
@@ -7,9 +8,8 @@ from typing import (
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
 from osn_selenium.browsers_handler import get_path_to_browser
-from osn_selenium.types import (
-	ARCHITECTURE_TYPEHINT,
-	WindowRect
+from osn_selenium._typehints import (
+	ARCHITECTURE_TYPEHINT
 )
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from osn_selenium.webdrivers._functions import (
