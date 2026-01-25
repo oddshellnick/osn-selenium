@@ -7,11 +7,11 @@ from osn_selenium._typehints import DEVICES_TYPEHINT
 from osn_selenium.instances.sync.action_chains import ActionChains
 from osn_selenium.webdrivers.sync.core.script import CoreScriptMixin
 from osn_selenium.instances.sync.web_driver_wait import WebDriverWait
+from osn_selenium.webdrivers._bridges import (
+	get_js_executor_bridge
+)
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper
-)
-from osn_selenium.webdrivers._functions import (
-	get_js_executor_bridge
 )
 from osn_selenium.webdrivers.unified.core.actions import (
 	UnifiedCoreActionsMixin

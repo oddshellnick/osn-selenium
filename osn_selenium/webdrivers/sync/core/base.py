@@ -23,7 +23,7 @@ from osn_selenium.abstract.webdriver.core.base import (
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.webdrivers._bridges import (
 	get_cdp_executor_bridge,
 	get_js_executor_bridge
 )

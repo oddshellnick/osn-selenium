@@ -6,7 +6,7 @@ from typing import (
 	Tuple
 )
 from osn_selenium.webdrivers._decorators import requires_driver
-from osn_selenium.webdrivers._functions import build_cdp_kwargs
+from osn_selenium.webdrivers._args_helpers import build_cdp_kwargs
 from selenium.webdriver.remote.bidi_connection import BidiConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.remote.websocket_connection import WebSocketConnection

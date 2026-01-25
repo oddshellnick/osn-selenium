@@ -3,7 +3,7 @@ from osn_selenium.instances.sync.script import Script
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.webdrivers._args_helpers import (
 	unwrap_args,
 	wrap_sync_args
 )

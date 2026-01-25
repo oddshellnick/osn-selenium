@@ -5,10 +5,10 @@ from typing import (
 )
 from osn_selenium.base_mixin import TrioThreadMixin
 from osn_selenium._typehints import DEVICES_TYPEHINT
-from osn_selenium.instances.trio_threads.action_chains import ActionChains
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.webdrivers._bridges import (
 	get_js_executor_bridge
 )
+from osn_selenium.instances.trio_threads.action_chains import ActionChains
 from osn_selenium.webdrivers.trio_threads.core.script import CoreScriptMixin
 from osn_selenium.instances.trio_threads.web_driver_wait import WebDriverWait
 from osn_selenium.instances.convert import (
