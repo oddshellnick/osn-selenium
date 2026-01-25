@@ -4,5 +4,4 @@ setuptools~=80.9.0
 pydantic~=2.12.4
 trio-websocket~=0.12.2
 pywin32==311; sys_platform == 'win32'
-pandas~=2.3.3
-osn-system-utils~=0.0.1
+osn-system-utils~=0.0.3
