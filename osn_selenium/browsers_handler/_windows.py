@@ -2,8 +2,9 @@ import re
 import winreg
 import pathlib
 import subprocess
-from typing import Optional, Union
-from osn_selenium.browsers_handler.types import Browser
+from typing import List, Optional
+from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium.browsers_handler.models import Browser
 from win32api import (
 	GetFileVersionInfo,
 	HIWORD,
@@ -11,12 +12,19 @@ from win32api import (
 )
 
 
-def get_webdriver_version(driver_path: Union[pathlib.Path, str]) -> Optional[str]:
+__all__ = [
+	"get_browser_version",
+	"get_installed_browsers",
+	"get_webdriver_version"
+]
+
+
+def get_webdriver_version(driver_path: PATH_TYPEHINT) -> Optional[str]:
 	"""
 	Retrieves the version of a given webdriver executable.
 
 	Args:
-		driver_path (Union[pathlib.Path, str]): The path to the webdriver executable. It can be a string or a pathlib.Path object.
+		driver_path (PATH_TYPEHINT): The path to the webdriver executable. It can be a string or a Path object.
 
 	Returns:
 		Optional[str]: The version of the webdriver as a string, or None if the version cannot be determined.
@@ -26,8 +34,7 @@ def get_webdriver_version(driver_path: Union[pathlib.Path, str]) -> Optional[str
 		Exception: If there is an error executing the webdriver or parsing the output.
 	"""
 	
-	if isinstance(driver_path, str):
-		driver_path = pathlib.Path(driver_path)
+	driver_path = pathlib.Path(driver_path)
 	
 	if not driver_path.exists():
 		raise FileNotFoundError(f"{driver_path} not found.")
@@ -55,41 +62,41 @@ def get_webdriver_version(driver_path: Union[pathlib.Path, str]) -> Optional[str
 		raise e
 
 
-def get_browser_version(browser_path: Union[pathlib.Path, str]) -> str:
+def get_browser_version(browser_path: PATH_TYPEHINT) -> str:
 	"""
 	Retrieves the version of a browser given its file path.
 
 	This function uses the `GetFileVersionInfo` function from the `win32api` module to extract the browser's version information from the executable file.
 
 	Args:
-		browser_path (pathlib.Path): The file path to the browser executable.
+		browser_path (Path): The file path to the browser executable.
 
 	Returns:
 		str: The version of the browser as a string, or "unknown" if the file does not exist.
 	"""
 	
-	if isinstance(browser_path, str):
-		browser_path = pathlib.Path(browser_path)
+	browser_path = pathlib.Path(browser_path)
 	
 	if not browser_path.exists():
 		return "unknown"
 	
 	info = GetFileVersionInfo(str(browser_path.resolve()), "\\")
+	
 	ms = info["FileVersionMS"]
 	ls = info["FileVersionLS"]
 	
 	return ".".join(map(str, (HIWORD(ms), LOWORD(ms), HIWORD(ls), LOWORD(ls))))
 
 
-def get_installed_browsers_win32() -> list[Browser]:
+def get_installed_browsers() -> List[Browser]:
 	"""
-	Retrieves a list of installed browsers on a Windows system by querying the registry.
+	Retrieves a List of installed browsers on a Windows system by querying the registry.
 
 	This function iterates through different registry locations to identify installed browsers and their paths.
-	It constructs a list of unique `Browser` objects, each representing an installed browser.
+	It constructs a List of unique `Browser` objects, each representing an installed browser.
 
 	Returns:
-		list[Browser]: A list of unique installed browsers.
+		List[Browser]: A List of unique installed browsers.
 	"""
 	
 	installed_browsers = []

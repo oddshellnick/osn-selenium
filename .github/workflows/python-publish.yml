@@ -80,4 +80,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: ${{ steps.pypi_repo.outputs.repository-url }}
-          username: __token__
+          verbose: true

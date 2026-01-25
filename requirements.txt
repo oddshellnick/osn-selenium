@@ -1,7 +1,6 @@
-trio>=0.30.0
-setuptools>=78.1.1
-pywin32>=308
-selenium>=4.34.0
-pandas>=2.3.0
-osn-windows-cmd>=1.1.0
-osn-requests>=1.1.0
+trio>=0.32.0,<1.0.0
+selenium>=4.40.0,<5.0.0
+pydantic>=2.0.0,<3.0.0
+trio-websocket>=0.12.0,<1.0.0
+pywin32>=310; sys_platform == 'win32'
+osn-system-utils>=0.0.4,<0.1.0

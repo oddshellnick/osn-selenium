@@ -1,24 +1,31 @@
 import trio
-from osn_selenium.dev_tools.utils import (
-	TargetData,
-	log_exception
-)
+from datetime import datetime
+from osn_selenium.models import DictModel
+from osn_selenium.dev_tools._exception_helpers import log_exception
 from typing import (
 	Any,
+	Dict,
+	List,
 	Literal,
-	Sequence,
 	TYPE_CHECKING,
-	TypedDict,
 	Union
 )
 
 
+__all__ = [
+	"HeaderInstance",
+	"auth_required_choose_func",
+	"headers_handler",
+	"on_error_func",
+	"request_paused_choose_func"
+]
+
 if TYPE_CHECKING:
-	from osn_selenium.dev_tools.manager import DevToolsTarget
+	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools.domains.fetch import request_paused_actions_literal, auth_required_actions_literal
 
 
-def request_paused_choose_func(self: "DevToolsTarget", event: Any) -> Sequence["request_paused_actions_literal"]:
+def request_paused_choose_func(self: "DevToolsTarget", event: Any) -> List["request_paused_actions_literal"]:
 	"""
 	Default function to choose actions for a 'fetch.RequestPaused' event.
 
@@ -27,11 +34,11 @@ def request_paused_choose_func(self: "DevToolsTarget", event: Any) -> Sequence["
 	deciding which actions to take based on the event details.
 
 	Args:
-		self (DevToolsTarget): The DevToolsTarget instance.
+		self ("DevToolsTarget"): The DevToolsTarget instance.
 		event (Any): The 'RequestPaused' event object.
 
 	Returns:
-		Sequence[request_paused_actions_literal]: A sequence of action names to be executed.
+		List[request_paused_actions_literal]: A list of action names to be executed.
 	"""
 	
 	return ["continue_request"]
@@ -45,15 +52,22 @@ def on_error_func(self: "DevToolsTarget", event: Any, error: BaseException):
 	Users can provide their own function to implement custom error handling logic.
 
 	Args:
-		self (DevToolsTarget): The DevToolsTarget instance.
+		self ("DevToolsTarget"): The DevToolsTarget instance.
 		event (Any): The event object that was being processed when the error occurred.
 		error (BaseException): The exception that was raised.
 	"""
 	
-	log_exception(error)
+	log_exception(
+			exception=error,
+			extra_data={
+				"datetime": datetime.now(),
+				"target object data": self.target_data.model_dump(),
+				"event": event
+			}
+	)
 
 
-class HeaderInstance(TypedDict):
+class HeaderInstance(DictModel):
 	"""
 	Type definition for header modification instructions used by the `headers_handler`.
 
@@ -76,9 +90,9 @@ class HeaderInstance(TypedDict):
 async def headers_handler(
 		self: "DevToolsTarget",
 		ready_event: trio.Event,
-		headers_instances: dict[str, HeaderInstance],
+		headers_instances: Dict[str, HeaderInstance],
 		event: Any,
-		kwargs: dict[str, Any]
+		kwargs: Dict[str, Any]
 ):
 	"""
 	A parameter handler function to modify request headers.
@@ -89,24 +103,24 @@ async def headers_handler(
 	like `fetch.continueRequest`.
 
 	Args:
-		self (DevToolsTarget): The DevToolsTarget instance.
+		self ("DevToolsTarget"): The DevToolsTarget instance.
 		ready_event (trio.Event): A Trio event to signal when the handler has completed its work.
-		headers_instances (dict[str, HeaderInstance]): A dictionary where keys are header names
+		headers_instances (Dict[str, HeaderInstance]): A dictionary where keys are header names
 			and values are `HeaderInstance` objects defining the modification.
 		event (Any): The CDP event object (e.g., `RequestPaused`) containing the original request headers.
-		kwargs (dict[str, Any]): The dictionary of keyword arguments to which the modified headers will be added.
+		kwargs (Dict[str, Any]): The dictionary of keyword arguments to which the modified headers will be added.
 
 	Raises:
 		Exception: If an error occurs during header modification.
 	"""
 	
 	try:
-		header_entry_class = await self.get_devtools_object("fetch.HeaderEntry")
+		header_entry_class = self.devtools_package.get("fetch.HeaderEntry")
 		headers = {name: value for name, value in event.request.headers.items()}
 	
 		for name, instance in headers_instances.items():
-			value = instance["value"]
-			instruction = instance["instruction"]
+			value = instance.value
+			instruction = instance.instruction
 	
 			if instruction == "set":
 				headers[name] = value
@@ -119,8 +133,7 @@ async def headers_handler(
 				continue
 	
 			if instruction == "remove":
-				if name in headers:
-					headers.pop(name)
+				headers.pop(name, None)
 	
 				continue
 	
@@ -131,11 +144,11 @@ async def headers_handler(
 	
 		ready_event.set()
 	except BaseException as error:
-		await self.log_error(error=error)
+		await self.log_cdp_error(error=error)
 		raise error
 
 
-def auth_required_choose_func(self: "DevToolsTarget", target_data: TargetData, event: Any) -> Sequence["auth_required_actions_literal"]:
+def auth_required_choose_func(self: "DevToolsTarget", event: Any) -> List["auth_required_actions_literal"]:
 	"""
 	Default function to choose actions for a 'fetch.AuthRequired' event.
 
@@ -144,12 +157,11 @@ def auth_required_choose_func(self: "DevToolsTarget", target_data: TargetData, e
 	deciding which actions to take based on the event details.
 
 	Args:
-		self (DevToolsTarget): The DevToolsTarget instance.
-		target_data (TargetData): Data about the current browser target.
+		self ("DevToolsTarget"): The DevToolsTarget instance.
 		event (Any): The 'AuthRequired' event object.
 
 	Returns:
-		Sequence[auth_required_actions_literal]: A sequence of action names to be executed.
+		List[auth_required_actions_literal]: A list of action names to be executed.
 	"""
 	
 	return ["continue_with_auth"]
