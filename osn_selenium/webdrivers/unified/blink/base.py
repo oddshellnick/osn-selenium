@@ -9,11 +9,11 @@ from osn_selenium._typehints import (
 	ARCHITECTURES_TYPEHINT,
 	PATH_TYPEHINT
 )
-from osn_selenium.webdrivers._functions import (
-	find_browser_previous_session
-)
 from selenium.webdriver.chromium.webdriver import (
 	ChromiumDriver as legacyWebDriver
+)
+from osn_selenium.webdrivers._executable_tables.functions import (
+	find_browser_previous_session
 )
 from osn_selenium.flags.models.blink import (
 	BlinkArguments,

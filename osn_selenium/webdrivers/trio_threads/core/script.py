@@ -10,7 +10,7 @@ from osn_selenium.webdrivers.unified.core.script import (
 from osn_selenium.abstract.webdriver.core.script import (
 	AbstractCoreScriptMixin
 )
-from osn_selenium.webdrivers._functions import (
+from osn_selenium.webdrivers._args_helpers import (
 	unwrap_args,
 	wrap_trio_thread_args
 )
