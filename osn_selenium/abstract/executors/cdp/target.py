@@ -86,6 +86,10 @@ class AbstractTargetCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
+	def get_dev_tools_target(self, target_id: str) -> Optional[str]:
+		...
+	
+	@abstractmethod
 	def get_target_info(self, target_id: Optional[str] = None) -> Dict[str, Any]:
 		...
 	
@@ -94,7 +98,7 @@ class AbstractTargetCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def open_dev_tools(self, target_id: str) -> str:
+	def open_dev_tools(self, target_id: str, panel_id: Optional[str] = None) -> str:
 		...
 	
 	@abstractmethod

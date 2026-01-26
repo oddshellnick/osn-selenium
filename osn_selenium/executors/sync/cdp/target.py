@@ -109,14 +109,17 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, AbstractTargetCDPExecutor):
 	def get_browser_contexts(self) -> List[str]:
 		return self._get_browser_contexts_impl()
 	
+	def get_dev_tools_target(self, target_id: str) -> Optional[str]:
+		return self._get_dev_tools_target_impl(target_id=target_id)
+	
 	def get_target_info(self, target_id: Optional[str] = None) -> Dict[str, Any]:
 		return self._get_target_info_impl(target_id=target_id)
 	
 	def get_targets(self, filter_: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
 		return self._get_targets_impl(filter_=filter_)
 	
-	def open_dev_tools(self, target_id: str) -> str:
-		return self._open_dev_tools_impl(target_id=target_id)
+	def open_dev_tools(self, target_id: str, panel_id: Optional[str] = None) -> str:
+		return self._open_dev_tools_impl(target_id=target_id, panel_id=panel_id)
 	
 	def send_message_to_target(
 			self,

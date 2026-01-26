@@ -111,10 +111,6 @@ class AbstractNetworkCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
-	def get_ip_protection_proxy_status(self) -> str:
-		...
-	
-	@abstractmethod
 	def get_request_post_data(self, request_id: str) -> str:
 		...
 	
@@ -223,10 +219,6 @@ class AbstractNetworkCDPExecutor(ABC):
 	
 	@abstractmethod
 	def set_extra_http_headers(self, headers: Dict[Any, Any]) -> None:
-		...
-	
-	@abstractmethod
-	def set_ip_protection_proxy_bypass_enabled(self, enabled: bool) -> None:
 		...
 	
 	@abstractmethod

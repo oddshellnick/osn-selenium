@@ -116,6 +116,12 @@ class UnifiedPageCDPExecutor:
 	def _get_ad_script_ancestry_impl(self, frame_id: str) -> Optional[Dict[str, Any]]:
 		return self._execute_function("Page.getAdScriptAncestry", {"frame_id": frame_id})
 	
+	def _get_annotated_page_content_impl(self, include_actionable_information: Optional[bool] = None) -> str:
+		return self._execute_function(
+				"Page.getAnnotatedPageContent",
+				{"include_actionable_information": include_actionable_information}
+		)
+	
 	def _get_app_id_impl(self) -> Tuple[Optional[str], Optional[str]]:
 		return self._execute_function("Page.getAppId", {})
 	

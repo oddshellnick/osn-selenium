@@ -119,6 +119,9 @@ class PageCDPExecutor(UnifiedPageCDPExecutor, TrioThreadMixin, AbstractPageCDPEx
 	async def get_ad_script_ancestry(self, frame_id: str) -> Optional[Dict[str, Any]]:
 		return await self.sync_to_trio(sync_function=self._get_ad_script_ancestry_impl)(frame_id=frame_id)
 	
+	async def get_annotated_page_content(self, include_actionable_information: Optional[bool] = None) -> str:
+		return await self.sync_to_trio(sync_function=self._get_annotated_page_content_impl)(include_actionable_information=include_actionable_information)
+	
 	async def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
 		return await self.sync_to_trio(sync_function=self._get_app_id_impl)()
 	

@@ -93,7 +93,7 @@ class CssCDPExecutor(UnifiedCssCDPExecutor, AbstractCssCDPExecutor):
 		Optional[int],
 		Optional[List[Dict[str, Any]]],
 		Optional[List[Dict[str, Any]]],
-		Optional[Dict[str, Any]],
+		Optional[List[Dict[str, Any]]],
 		Optional[int],
 		Optional[List[Dict[str, Any]]]
 	]:

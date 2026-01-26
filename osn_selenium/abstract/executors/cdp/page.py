@@ -104,6 +104,10 @@ class AbstractPageCDPExecutor(ABC):
 		...
 	
 	@abstractmethod
+	def get_annotated_page_content(self, include_actionable_information: Optional[bool] = None) -> str:
+		...
+	
+	@abstractmethod
 	def get_app_id(self) -> Tuple[Optional[str], Optional[str]]:
 		...
 	

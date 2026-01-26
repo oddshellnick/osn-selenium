@@ -118,14 +118,17 @@ class TargetCDPExecutor(UnifiedTargetCDPExecutor, TrioThreadMixin, AbstractTarge
 	async def get_browser_contexts(self) -> List[str]:
 		return await self.sync_to_trio(sync_function=self._get_browser_contexts_impl)()
 	
+	async def get_dev_tools_target(self, target_id: str) -> Optional[str]:
+		return await self.sync_to_trio(sync_function=self._get_dev_tools_target_impl)(target_id=target_id)
+	
 	async def get_target_info(self, target_id: Optional[str] = None) -> Dict[str, Any]:
 		return await self.sync_to_trio(sync_function=self._get_target_info_impl)(target_id=target_id)
 	
 	async def get_targets(self, filter_: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
 		return await self.sync_to_trio(sync_function=self._get_targets_impl)(filter_=filter_)
 	
-	async def open_dev_tools(self, target_id: str) -> str:
-		return await self.sync_to_trio(sync_function=self._open_dev_tools_impl)(target_id=target_id)
+	async def open_dev_tools(self, target_id: str, panel_id: Optional[str] = None) -> str:
+		return await self.sync_to_trio(sync_function=self._open_dev_tools_impl)(target_id=target_id, panel_id=panel_id)
 	
 	async def send_message_to_target(
 			self,

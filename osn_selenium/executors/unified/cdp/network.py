@@ -145,9 +145,6 @@ class UnifiedNetworkCDPExecutor:
 	def _get_cookies_impl(self, urls: Optional[List[str]] = None) -> List[Dict[str, Any]]:
 		return self._execute_function("Network.getCookies", {"urls": urls})
 	
-	def _get_ip_protection_proxy_status_impl(self) -> str:
-		return self._execute_function("Network.getIPProtectionProxyStatus", {})
-	
 	def _get_request_post_data_impl(self, request_id: str) -> str:
 		return self._execute_function("Network.getRequestPostData", {"request_id": request_id})
 	
@@ -289,9 +286,6 @@ class UnifiedNetworkCDPExecutor:
 	
 	def _set_extra_http_headers_impl(self, headers: Dict[Any, Any]) -> None:
 		return self._execute_function("Network.setExtraHTTPHeaders", {"headers": headers})
-	
-	def _set_ip_protection_proxy_bypass_enabled_impl(self, enabled: bool) -> None:
-		return self._execute_function("Network.setIPProtectionProxyBypassEnabled", {"enabled": enabled})
 	
 	def _set_request_interception_impl(self, patterns: List[Dict[str, Any]]) -> None:
 		return self._execute_function("Network.setRequestInterception", {"patterns": patterns})
