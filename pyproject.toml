@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=80.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "osn-selenium"
+version = "1.0.1-beta.0"
+authors = [
+  { name="oddshellnick",email="oddshellnick.programming@gmail.com" },
+]
+dynamic = ["description", "dependencies"]
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.urls]
+Homepage = "https://github.com/oddshellnick/osn-selenium"
+Issues = "https://github.com/oddshellnick/osn-selenium/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["unit_tests*"]
+
+[tool.setuptools.package-data]
+osn_selenium = ["javascript/scripts/*.js"]
+
+[tool.setuptools.dynamic]
+description = {file = "description.txt"}
+dependencies = {file = ["requirements.txt"]}
