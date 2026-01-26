@@ -4,7 +4,7 @@ from typing import (
 	AsyncGenerator,
 	List
 )
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.webdrivers.unified.core.file import UnifiedCoreFileMixin
 from osn_selenium.abstract.webdriver.core.file import (
 	AbstractCoreFileMixin
@@ -38,7 +38,7 @@ class CoreFileMixin(UnifiedCoreFileMixin, TrioThreadMixin, AbstractCoreFileMixin
 	
 	@asynccontextmanager
 	async def file_detector_context(self, file_detector_class: Any, *args: Any, **kwargs: Any) -> AsyncGenerator[Any, Any]:
-		async with self.sync_to_trio_context(context_manager_factory=self.driver.file_detector_context)(file_detector_class, *args, **kwargs) as file_detector:
+		async with self.sync_to_trio_context(context_manager_factory=self._file_detector_context_impl)(file_detector_class, *args, **kwargs) as file_detector:
 			yield file_detector
 	
 	async def get_downloadable_files(self) -> List[str]:

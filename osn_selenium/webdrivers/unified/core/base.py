@@ -1,15 +1,16 @@
+from osn_selenium._cdp_import import install_cdp_hook
 from osn_selenium.models import WindowRect
 from typing import (
 	Any,
 	Dict,
-	Optional,
+	Mapping, Optional,
 	Type
 )
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
 from osn_selenium._typehints import (
-	ARCHITECTURES_TYPEHINT
+	ARCHITECTURES_TYPEHINT, PATH_TYPEHINT
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.webdrivers._decorators import requires_driver
@@ -37,6 +38,8 @@ class UnifiedCoreBaseMixin:
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	) -> None:
 		self._window_rect = window_rect
 		self._webdriver_path = webdriver_path
@@ -50,6 +53,10 @@ class UnifiedCoreBaseMixin:
 		
 		if flags is not None:
 			self._webdriver_flags_manager.update_flags(flags)
+
+		if not getattr(self, "cdp_hook_installed", False):
+			install_cdp_hook(cdp_paths=cdp_versioned_packages_paths, ignore_package_missing=ignore_cdp_version_package_missing)
+			setattr(self, "cdp_hook_installed", True)
 	
 	@property
 	def _architecture_impl(self) -> ARCHITECTURES_TYPEHINT:

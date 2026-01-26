@@ -1,5 +1,5 @@
 from typing import Optional
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 
 
 __all__ = ["FingerprintData", "TargetData"]

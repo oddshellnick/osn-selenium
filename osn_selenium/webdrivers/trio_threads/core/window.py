@@ -1,4 +1,4 @@
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	List,
 	Literal,
@@ -92,8 +92,8 @@ class CoreWindowMixin(UnifiedCoreWindowMixin, TrioThreadMixin, AbstractCoreWindo
 	async def set_window_size(self, width: int, height: int, windowHandle: str = "current") -> None:
 		await self.sync_to_trio(sync_function=self._set_window_size_impl)(width=width, height=height, windowHandle=windowHandle)
 	
-	async def switch_to(self) -> SwitchTo:
-		legacy = await self.sync_to_trio(sync_function=self._switch_to_impl)()
+	def switch_to(self) -> SwitchTo:
+		legacy = self._switch_to_impl()
 		return get_trio_thread_instance_wrapper(
 				wrapper_class=SwitchTo,
 				legacy_object=legacy,

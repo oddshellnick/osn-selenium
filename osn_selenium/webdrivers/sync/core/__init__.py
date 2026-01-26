@@ -1,5 +1,10 @@
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers.sync.core.auth import CoreAuthMixin
@@ -59,6 +64,8 @@ class CoreWebDriver(
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	) -> None:
 		"""
 		Initializes the synchronous WebDriver instance.
@@ -88,4 +95,6 @@ class CoreWebDriver(
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)

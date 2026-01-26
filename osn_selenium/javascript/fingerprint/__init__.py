@@ -1,6 +1,6 @@
 from pydantic import Field
 from typing import Dict, List, Literal
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.javascript.functions import get_js_scripts
 from osn_selenium.javascript.fingerprint._functions import add_code_level
 from osn_selenium.javascript.fingerprint.registry.models import RegistryItem

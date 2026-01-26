@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.webdrivers.unified.blink.casting import (
 	UnifiedBlinkCastingMixin
 )

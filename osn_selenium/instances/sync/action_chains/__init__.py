@@ -1,6 +1,9 @@
+from osn_selenium.instances.sync.action_chains.move import MoveMixin
 from osn_selenium.instances.sync.action_chains.click import ClickMixin
 from osn_selenium.instances.sync.action_chains.utils import UtilsMixin
+from osn_selenium.instances.sync.action_chains.scroll import ScrollMixin
 from osn_selenium.instances.sync.action_chains.hm_move import HMMoveMixin
+from osn_selenium.instances.sync.action_chains.keyboard import KeyboardMixin
 from osn_selenium.instances.sync.action_chains.hm_scroll import HMScrollMixin
 from osn_selenium.abstract.instances.action_chains import AbstractActionChains
 from osn_selenium.instances.sync.action_chains.hm_keyboard import HMKeyboardMixin
@@ -17,6 +20,9 @@ class ActionChains(
 		HMKeyboardMixin,
 		HMMoveMixin,
 		HMScrollMixin,
+		KeyboardMixin,
+		MoveMixin,
+		ScrollMixin,
 		AbstractActionChains,
 ):
 	"""

@@ -1,4 +1,4 @@
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.instances.trio_threads.mobile import Mobile
 from osn_selenium.instances.trio_threads.browser import Browser

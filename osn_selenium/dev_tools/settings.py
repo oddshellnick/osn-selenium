@@ -1,6 +1,6 @@
 from pathlib import Path
 from pydantic import Field
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.dev_tools.filters import TargetFilter
 from osn_selenium.dev_tools.domains import DomainsSettings
 from typing import (
@@ -39,6 +39,7 @@ class FingerprintLoggerSettings(DictModel):
 			Defaults to "exclude".
 		category_filter (Optional[Union[str, Sequence[str]]]): Specific categories to filter.
 			Defaults to None.
+		send_wait (bool): Whether to wait for the log to be sent. Defaults to False.
 	"""
 	
 	buffer_size: int = 100
@@ -51,6 +52,7 @@ class FingerprintLoggerSettings(DictModel):
 	] = None
 	category_filter_mode: Literal["exclude", "include"] = "exclude"
 	category_filter: Optional[Union[str, Sequence[str]]] = None
+	send_wait: bool = False
 
 
 class CDPLoggerSettings(DictModel):
@@ -73,6 +75,7 @@ class CDPLoggerSettings(DictModel):
 		target_type_filter (Optional[Union[str, Sequence[str]]]):
 			A single target type string or a sequence of target type strings to filter by.
 			Used in conjunction with `target_type_filter_mode`. Defaults to None.
+		send_wait (bool): Whether to wait for the log to be sent. Defaults to False.
 	"""
 	
 	buffer_size: int = 100
@@ -80,6 +83,7 @@ class CDPLoggerSettings(DictModel):
 	log_level_filter: Optional[Union[CDP_LOG_LEVELS_TYPEHINT, Sequence[CDP_LOG_LEVELS_TYPEHINT]]] = None
 	target_type_filter_mode: Literal["exclude", "include"] = "exclude"
 	target_type_filter: Optional[Union[str, Sequence[str]]] = None
+	send_wait: bool = False
 
 
 class LoggerSettings(DictModel):

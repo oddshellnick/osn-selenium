@@ -1,6 +1,6 @@
 from pydantic import Field
 from typing import Any, Dict, Optional
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.javascript.fingerprint._typehints import SPOOF_RULE_TYPEHINT
 from osn_selenium.javascript.fingerprint.registry._typehints import ITEM_TYPE_TYPEHINT
 

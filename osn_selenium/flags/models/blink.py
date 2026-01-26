@@ -1,7 +1,7 @@
 from pydantic import Field
 from typing import Optional
-from osn_selenium.models import ExtraDictModel
 from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium._base_models import ExtraDictModel
 from osn_selenium.flags._typehints import (
 	AUTOPLAY_POLICY_TYPEHINT,
 	LOG_LEVEL_TYPEHINT,

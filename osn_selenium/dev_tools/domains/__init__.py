@@ -1,4 +1,4 @@
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import ExtraDictModel
 from typing import (
 	Literal,
 	Optional,
@@ -10,7 +10,7 @@ from osn_selenium.dev_tools.domains.fetch import FetchSettings
 __all__ = ["DomainsSettings", "domains_classes_type", "domains_type"]
 
 
-class DomainsSettings(DictModel):
+class DomainsSettings(ExtraDictModel):
 	"""
 	A dataclass container for configuration settings across different DevTools domains.
 
