@@ -50,29 +50,6 @@ class BaseMixin:
 		about_to_stop_event (trio.Event): Event set when the target is about to stop.
 		stopped_event (trio.Event): Event set when the target handling has fully stopped.
 		background_task_ended (Optional[trio.Event]): Event set when the background task completes.
-		_is_main_target (bool): Whether this is the primary target.
-		_logger_settings ("LoggerSettings"): Configuration for logging.
-		_domains_settings (Optional["DomainsSettings"]): Configuration for enabled domains and handlers.
-		_new_targets_filter_list (Sequence[Mapping[str, Any]]): Filters for discovering new targets.
-		_new_targets_buffer_size (int): Buffer size for new target events.
-		_nursery_object (trio.Nursery): Trio nursery for background tasks.
-		_target_background_task (Optional[devtools_background_func_type]): Optional background task to run.
-		_add_target_func (Callable): Callback to add a new target.
-		_remove_target_func (Callable): Callback to remove this target.
-		_add_cdp_log_func (Callable): Callback to record a CDP log entry.
-		_add_fingerprint_log_func (Callable): Callback to record a fingerprint log entry.
-		_fingerprint_injection_script (Optional[str]): JS script to inject into the target.
-		_new_targets_events_filters (Any): Validated filters for target events.
-		_cdp_target_type_log_accepted (bool): Whether CDP logging is enabled for this target type.
-		_cdp_log_stats (CDPLoggerChannelStats): Statistics for CDP logs.
-		_fingerprint_log_stats (FingerprintLoggerChannelStats): Statistics for fingerprint logs.
-		_logger_cdp_send_channel (Optional[trio.MemorySendChannel]): Channel to send CDP logs to the logger.
-		_logger_fingerprint_send_channel (Optional[trio.MemorySendChannel]): Channel to send fingerprint logs.
-		_logger (Optional[TargetLogger]): The logger instance for this target.
-		_cdp_session (Optional[CdpSession]): The active CDP session.
-		_new_target_receive_channel (Optional[Tuple[trio.MemoryReceiveChannel, trio.Event]]): Channel for new target events.
-		_detached_receive_channel (Optional[trio.MemoryReceiveChannel]): Channel for detach events.
-		_events_receive_channels (Dict[str, Tuple[trio.MemoryReceiveChannel, trio.Event]]): Channels for domain events.
 	"""
 	
 	def __init__(

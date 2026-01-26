@@ -76,7 +76,7 @@ def warn_if_active(func: _METHOD) -> _METHOD:
 	raise NotExpectedTypeError(expected_type=["coroutine function", "function"], received_instance=func)
 
 
-def log_on_error(func: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_METHOD_INPUT, _METHOD_OUTPUT]:
+def log_on_error(func: _METHOD) -> _METHOD:
 	"""
 	Decorator that logs any `BaseException` raised by the decorated async function.
 

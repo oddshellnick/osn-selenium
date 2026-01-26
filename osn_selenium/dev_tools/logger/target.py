@@ -20,15 +20,6 @@ class TargetLogger:
 
 	Each `TargetLogger` instance is responsible for writing log entries
 	related to its associated `TargetData` to a dedicated file.
-
-	Attributes:
-		_target_data (TargetData): The data of the browser target this logger is associated with.
-		_nursery_object (trio.Nursery): The Trio nursery for managing concurrent tasks.
-		_cdp_log_level_filter (Optional[Callable[[Any], bool]]): Filter function for CDP log levels.
-		_cdp_target_type_filter (Optional[Callable[[Any], bool]]): Filter function for CDP target types.
-		_cdp_file_writing_stopped (Optional[trio.Event]): An event set when CDP file writing task stops.
-		_cdp_file_path (Optional[Path]): The path to the target-specific CDP log file.
-		_is_active (bool): Flag indicating if the target logger is active.
 	"""
 	
 	def __init__(
