@@ -65,7 +65,10 @@ class LoggingMixin(BaseMixin):
 		
 			try:
 				if self._logger.filter_cdp_log(log_entry=log_entry):
-					self._logger_cdp_send_channel.send_nowait(log_entry)
+					if self._logger_settings.cdp_settings.send_wait:
+						await self._logger_cdp_send_channel.send(log_entry)
+					else:
+						self._logger_cdp_send_channel.send_nowait(log_entry)
 			except trio.WouldBlock:
 				warnings.warn(
 						f"WARNING: Log channel for session {self.target_id} is full. Log dropped:\n{log_entry.model_dump_json(indent=4)}"
@@ -146,7 +149,10 @@ class LoggingMixin(BaseMixin):
 		
 			try:
 				if self._logger.filter_fingerprint_log(log_entry=log_entry):
-					self._logger_fingerprint_send_channel.send_nowait(log_entry)
+					if self._logger_settings.fingerprint_settings.send_wait:
+						await self._logger_fingerprint_send_channel.send(log_entry)
+					else:
+						self._logger_fingerprint_send_channel.send_nowait(log_entry)
 			except trio.WouldBlock:
 				warnings.warn(
 						f"WARNING: Log channel for session {self.target_id} is full. Log dropped:\n{log_entry.model_dump_json(indent=4)}"
