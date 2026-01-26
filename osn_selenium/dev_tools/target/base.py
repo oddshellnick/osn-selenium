@@ -164,6 +164,7 @@ class BaseMixin:
 		self._new_target_receive_channel: Optional[Tuple[trio.MemoryReceiveChannel, trio.Event]] = None
 		self._detached_receive_channel: Optional[trio.MemoryReceiveChannel] = None
 		self._events_receive_channels: Dict[str, Tuple[trio.MemoryReceiveChannel, trio.Event]] = {}
+		self._cancel_scopes: Dict[str, trio.CancelScope] = {}
 	
 	@property
 	def type_(self) -> Optional[str]:
@@ -257,6 +258,17 @@ class BaseMixin:
 		"""
 		
 		self.target_data.can_access_opener = value
+	
+	@property
+	def cancel_scopes(self) -> Dict[str, trio.CancelScope]:
+		"""
+		Provides access to the dictionary of cancellation scopes.
+
+		Returns:
+			Dict[str, trio.CancelScope]: The cancel scopes dictionary.
+		"""
+		
+		return self._cancel_scopes
 	
 	@property
 	def cdp_log_stats(self) -> CDPLoggerChannelStats:

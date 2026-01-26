@@ -53,11 +53,16 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 			await self._logger.close()
 			self._logger = None
 		
-		for channel in self._events_receive_channels.values():
+		for event_name, channel in self._events_receive_channels.items():
 			await channel[0].aclose()
 			await channel[1].wait()
 		
 		self._events_receive_channels = {}
+		
+		for scope_name, scope in self._cancel_scopes.items():
+			scope.cancel()
+		
+		self._cancel_scopes = {}
 		
 		if self.background_task_ended is not None:
 			await self.background_task_ended.wait()

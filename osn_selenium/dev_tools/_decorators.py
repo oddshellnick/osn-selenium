@@ -10,7 +10,8 @@ from typing import (
 	Callable,
 	ParamSpec,
 	TYPE_CHECKING,
-	TypeVar
+	TypeVar,
+	Union
 )
 
 
@@ -19,6 +20,7 @@ __all__ = ["background_task_decorator", "log_on_error", "warn_if_active"]
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.manager import DevTools
 	from osn_selenium.dev_tools.target.base import BaseMixin
+	from osn_selenium.dev_tools.target import DevToolsTarget
 	from osn_selenium.dev_tools._typehints import DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT
 
 _METHOD_INPUT = ParamSpec("_METHOD_INPUT")
@@ -115,26 +117,33 @@ def log_on_error(func: Callable[_METHOD_INPUT, _METHOD_OUTPUT]) -> Callable[_MET
 
 def background_task_decorator(func: "DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT") -> "DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT":
 	"""
-	Decorator for BaseTargetMixin background tasks to manage their lifecycle.
+	Decorator for target background tasks to manage their lifecycle.
 
 	This decorator wraps a target's background task function. It ensures that
 	`target.background_task_ended` event is set when the function completes,
 	allowing the `BaseTargetMixin` to track the task's termination.
 
 	Args:
-		func ("devtools_background_func_type"): The asynchronous background task function
-											  to be wrapped. It should accept a `BaseTargetMixin` instance.
+		func ("DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT"): The asynchronous background task function
+		to be wrapped. It should accept a target instance.
 
 	Returns:
-		"devtools_background_func_type": The wrapped function.
+		"DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT": The wrapped function.
 	"""
 	
 	@functools.wraps(func)
-	async def wrapper(target: "BaseMixin") -> Any:
-		target.background_task_ended = trio.Event()
+	async def wrapper(target: Union["BaseMixin", "DevToolsTarget"]) -> Any:
+		if not target.about_to_stop_event.is_set():
+			with trio.CancelScope() as cancel_scope:
+				target.cancel_scopes["background_task"] = cancel_scope
 		
-		await func(target)
+				try:
+					target.background_task_ended = trio.Event()
 		
-		target.background_task_ended.set()
+					await func(target)
+		
+					target.background_task_ended.set()
+				finally:
+					target.cancel_scopes.pop("background_task")
 	
 	return wrapper
