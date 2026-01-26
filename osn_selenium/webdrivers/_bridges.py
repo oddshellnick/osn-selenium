@@ -25,7 +25,7 @@ def get_js_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[
 	def wrapper(script: str, *args: Any) -> Any:
 		args = unwrap_args(args)
 		
-		result = driver._driver_impl.execute_script(script, *args)
+		result = driver.driver.execute_script(script, *args)
 		
 		return wrapper_function(result)
 	
@@ -48,7 +48,7 @@ def get_cdp_executor_bridge(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable
 	def wrapper(cmd: str, cmd_args: Dict[str, Any]) -> Any:
 		cmd_args = unwrap_args(cmd_args)
 		
-		result = driver._driver_impl.execute_cdp_cmd(cmd, cmd_args)
+		result = driver.driver.execute_cdp_cmd(cmd, cmd_args)
 		
 		return wrapper_function(result)
 	
