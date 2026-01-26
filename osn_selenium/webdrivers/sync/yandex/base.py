@@ -1,5 +1,9 @@
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.webdrivers.sync.chrome.base import ChromeBaseMixin
@@ -41,6 +45,8 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		"""
 		Initializes the synchronous Yandex WebDriver mixin with specified configuration.
@@ -64,6 +70,8 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 			script_timeout (int): Default script execution timeout in seconds. Defaults to 5.
 			window_rect (Optional[WindowRect]): Initial window dimensions and position.
 				If None, browser defaults are used.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
 		"""
 		
 		ChromeBaseMixin.__init__(
@@ -80,6 +88,8 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		UnifiedYandexBaseMixin.__init__(
@@ -96,4 +106,6 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)

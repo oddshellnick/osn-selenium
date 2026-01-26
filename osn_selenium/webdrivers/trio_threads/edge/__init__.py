@@ -1,6 +1,10 @@
 import trio
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.edge import EdgeFlagsManager
 from osn_selenium.flags.models.edge import EdgeFlags
@@ -46,7 +50,32 @@ class EdgeWebDriver(
 			window_rect: Optional[WindowRect] = None,
 			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
+		"""
+		Initializes the Trio-based Edge WebDriver with specified configuration.
+
+		Args:
+			webdriver_path (str): Path to the EdgeDriver executable.
+			flags_manager_type (Type[EdgeFlagsManager]): The class type used for managing Edge flags.
+				Defaults to EdgeFlagsManager.
+			use_browser_exe (bool): Whether to use a specific browser executable path or auto-detect.
+				Defaults to True.
+			browser_name_in_system (str): The name of the browser in the system registry or path.
+				Defaults to "Microsoft Edge".
+			browser_exe (Optional[PATH_TYPEHINT]): Explicit path to the Edge browser executable.
+			flags (Optional[EdgeFlags]): Initial set of flags.
+			start_page_url (str): The initial URL. Defaults to "about:blank".
+			implicitly_wait (int): Default implicit wait time.
+			page_load_timeout (int): Default page load timeout.
+			script_timeout (int): Default script timeout.
+			window_rect (Optional[WindowRect]): Initial window dimensions.
+			capacity_limiter (Optional[trio.CapacityLimiter]): Trio capacity limiter.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
+		"""
+		
 		BlinkWebDriver.__init__(
 				self,
 				browser_exe=browser_exe,
@@ -61,6 +90,8 @@ class EdgeWebDriver(
 				window_rect=window_rect,
 				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		EdgeBaseMixin.__init__(
@@ -78,4 +109,6 @@ class EdgeWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)

@@ -1,6 +1,11 @@
 import trio
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
+from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
@@ -64,12 +69,11 @@ class CoreWebDriver(
 			window_rect: Optional[WindowRect] = None,
 			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	) -> None:
 		"""
 		Initializes the main WebDriver instance with Trio thread support.
-
-		Combines multiple functional mixins and initializes the JavaScript executor
-		along with base configuration components.
 
 		Args:
 			webdriver_path (str): The file path to the WebDriver executable.
@@ -100,6 +104,8 @@ class CoreWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)

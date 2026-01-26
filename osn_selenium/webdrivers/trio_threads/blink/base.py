@@ -1,7 +1,11 @@
 import trio
 import pathlib
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
@@ -47,6 +51,8 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		"""
 		Initializes the BlinkWebDriver instance.
@@ -83,6 +89,8 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 				the browser's default window size will be used. Defaults to None.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
 		"""
 		
 		CoreBaseMixin.__init__(
@@ -95,6 +103,8 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		UnifiedBlinkBaseMixin.__init__(

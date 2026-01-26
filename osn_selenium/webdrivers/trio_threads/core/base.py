@@ -1,17 +1,15 @@
 import trio
 from osn_selenium.models import WindowRect
 from osn_selenium.base_mixin import TrioThreadMixin
-from typing import (
-	Any,
-	Dict,
-	Optional,
-	Type
-)
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
-from osn_selenium._typehints import (
-	ARCHITECTURES_TYPEHINT
+from typing import (
+	Any,
+	Dict,
+	Mapping,
+	Optional,
+	Type
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.executors.trio_threads.cdp import CDPExecutor
@@ -19,6 +17,10 @@ from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT,
+	PATH_TYPEHINT
+)
 from osn_selenium.abstract.webdriver.core.base import (
 	AbstractCoreBaseMixin
 )
@@ -51,6 +53,8 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	) -> None:
 		"""
 		Initializes the base mixin for Trio-based WebDrivers.
@@ -74,6 +78,8 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 				browser window. Defaults to None.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
 		"""
 		
 		UnifiedCoreBaseMixin.__init__(
@@ -86,6 +92,8 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		TrioThreadMixin.__init__(

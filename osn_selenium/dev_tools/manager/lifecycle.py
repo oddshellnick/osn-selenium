@@ -166,7 +166,7 @@ class LifecycleMixin(TargetsMixin):
 				try:
 					await target.stop()
 					await target.stopped_event.wait()
-				except (BaseException):
+				except (BaseException,):
 					pass
 			
 			self._handling_targets = {}
