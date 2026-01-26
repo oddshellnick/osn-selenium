@@ -25,18 +25,6 @@ class MainLogger:
 
 	This logger is responsible for writing aggregated statistics about all active
 	logging channels and target types to a designated file.
-
-	Attributes:
-		_nursery_object (trio.Nursery): The Trio nursery for managing concurrent tasks.
-		_cdp_receive_channel (Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]]):
-			The receive channel for CDP main log entries.
-		_fingerprint_receive_channel (Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]):
-			The receive channel for fingerprint main log entries.
-		_cdp_file_writing_stopped (Optional[trio.Event]): An event set when the CDP file writing task stops.
-		_fingerprint_file_writing_stopped (Optional[trio.Event]): An event set when the fingerprint file writing task stops.
-		_is_active (bool): Flag indicating if the main logger is active.
-		_cdp_file_path (Optional[Path]): The path to the CDP main log file.
-		_fingerprint_file_path (Optional[Path]): The path to the fingerprint main log file.
 	"""
 	
 	def __init__(

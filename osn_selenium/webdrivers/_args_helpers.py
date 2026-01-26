@@ -146,13 +146,13 @@ def get_wrap_args_function(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[
 		ExpectedTypeError: If the driver instance type is not supported.
 	"""
 	
-	if isinstance(driver, SyncWebDriver) and driver._architecture_impl == "sync":
+	if isinstance(driver, SyncWebDriver) and driver.architecture == "sync":
 		def wrapper(args: Any) -> Any:
 			return wrap_sync_args(args)
 	
 		return wrapper
 	
-	if isinstance(driver, TrioThreadWebDriver) and driver._architecture_impl == "trio_threads":
+	if isinstance(driver, TrioThreadWebDriver) and driver.architecture == "trio_threads":
 		def wrapper(args: Any) -> Any:
 			return wrap_trio_thread_args(args, lock=driver.lock, limiter=driver.capacity_limiter)
 	

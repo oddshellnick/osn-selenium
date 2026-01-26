@@ -1,5 +1,10 @@
 import trio
-from typing import Optional, Tuple
+import pathlib
+from typing import (
+	Callable,
+	Optional,
+	Tuple
+)
 from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.settings import LoggerSettings
 from osn_selenium.exceptions.devtools import TrioEndExceptions
@@ -20,15 +25,6 @@ class TargetLogger:
 
 	Each `TargetLogger` instance is responsible for writing log entries
 	related to its associated `TargetData` to a dedicated file.
-
-	Attributes:
-		_target_data (TargetData): The data of the browser target this logger is associated with.
-		_nursery_object (trio.Nursery): The Trio nursery for managing concurrent tasks.
-		_cdp_log_level_filter (Optional[Callable[[Any], bool]]): Filter function for CDP log levels.
-		_cdp_target_type_filter (Optional[Callable[[Any], bool]]): Filter function for CDP target types.
-		_cdp_file_writing_stopped (Optional[trio.Event]): An event set when CDP file writing task stops.
-		_cdp_file_path (Optional[Path]): The path to the target-specific CDP log file.
-		_is_active (bool): Flag indicating if the target logger is active.
 	"""
 	
 	def __init__(
@@ -59,12 +55,12 @@ class TargetLogger:
 		self._nursery_object = nursery_object
 		self._cdp_receive_channel = cdp_receive_channel
 		self._fingerprint_receive_channel = fingerprint_receive_channel
-		self._cdp_file_path = None
-		self._cdp_log_level_filter = None
-		self._cdp_target_type_filter = None
-		self._fingerprint_file_path = None
-		self._fingerprint_log_level_filter = None
-		self._fingerprint_target_type_filter = None
+		self._cdp_file_path: Optional[pathlib.Path] = None
+		self._cdp_log_level_filter: Optional[Callable[[str], bool]] = None
+		self._cdp_target_type_filter: Optional[Callable[[str], bool]] = None
+		self._fingerprint_file_path: Optional[pathlib.Path] = None
+		self._fingerprint_log_level_filter: Optional[Callable[[str], bool]] = None
+		self._fingerprint_target_type_filter: Optional[Callable[[str], bool]] = None
 		
 		if logger_settings.dir_path is None:
 			if logger_settings.cdp_settings:
@@ -105,6 +101,32 @@ class TargetLogger:
 		self._cdp_file_writing_stopped: Optional[trio.Event] = None
 		self._fingerprint_file_writing_stopped: Optional[trio.Event] = None
 		self._is_active = False
+	
+	def filter_cdp_log(self, log_entry: CDPTargetLogEntry) -> bool:
+		"""
+		Applies configured filters to a CDP log entry.
+
+		Args:
+			log_entry (CDPTargetLogEntry): The log entry to check.
+
+		Returns:
+			bool: True if the log entry passes filters, False otherwise.
+		"""
+		
+		return self._cdp_log_level_filter(log_entry.level) and self._cdp_target_type_filter(log_entry.target_data.type_)
+	
+	def filter_fingerprint_log(self, log_entry: FingerprintTargetLogEntry) -> bool:
+		"""
+		Applies configured filters to a fingerprint log entry.
+
+		Args:
+			log_entry (FingerprintTargetLogEntry): The log entry to check.
+
+		Returns:
+			bool: True if the log entry passes filters, False otherwise.
+		"""
+		
+		return self._fingerprint_log_level_filter(log_entry.level) and self._fingerprint_category_filter(log_entry.api)
 	
 	@property
 	def is_active(self) -> bool:
@@ -153,9 +175,8 @@ class TargetLogger:
 		
 			async with await trio.open_file(self._fingerprint_file_path, "a+", encoding="utf-8") as file:
 				async for log_entry in self._fingerprint_receive_channel:
-					if self._fingerprint_log_level_filter(log_entry.level) and self._fingerprint_category_filter(log_entry.api):
-						await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
-						await file.flush()
+					await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
+					await file.flush()
 		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:
@@ -179,9 +200,8 @@ class TargetLogger:
 		
 			async with await trio.open_file(self._cdp_file_path, "a+", encoding="utf-8") as file:
 				async for log_entry in self._cdp_receive_channel:
-					if self._cdp_log_level_filter(log_entry.level) and self._cdp_target_type_filter(log_entry.target_data.type_):
-						await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
-						await file.flush()
+					await file.write(log_entry.model_dump_json(indent=4) + end_of_entry)
+					await file.flush()
 		except* TrioEndExceptions:
 			pass
 		except* BaseException as error:

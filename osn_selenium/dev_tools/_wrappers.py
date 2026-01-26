@@ -46,9 +46,6 @@ def _yield_package_item_way(name: Union[str, Iterable[str]]) -> Generator[str, A
 class DevToolsPackage:
 	"""
 	Wrapper around the DevTools module to safely retrieve nested attributes/classes.
-
-	Attributes:
-		_package (ModuleType): The root DevTools module package.
 	"""
 	
 	def __init__(self, package: ModuleType):
