@@ -15,69 +15,63 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          pip install build
+
+      - name: Get version from pyproject.toml
+        id: project_version
+        run: |
+          # Используем встроенный в Python 3.11+ модуль tomllib
+          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          if [[ -z "$VERSION" ]]; then
+            echo "Version not found in pyproject.toml"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build package
         run: python -m build
 
-      - name: Get version from setup.py
-        id: setup_version
-        run: |
-          SETUP_PY_VERSION=$(grep "version=" setup.py | sed -E "s/.*version=['\"]([^'\"]+)['\"].*/\1/")
-          if [[ -z "$SETUP_PY_VERSION" ]]; then
-            echo "Version not found in setup.py"
-            exit 1
-          fi
-          echo "SETUP_PY_VERSION=$SETUP_PY_VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Print release tag name and setup.py version
-        run: |
-          echo "Release tag name: ${GITHUB_REF_NAME}"
-          echo "Version from setup.py: ${{ steps.setup_version.outputs.SETUP_PY_VERSION }}"
-
-      - name: Determine PyPI repository and validate tag and version
+      - name: Determine PyPI repository and validate tag
         id: pypi_repo
         run: |
           RELEASE_TAG_NAME="${GITHUB_REF_NAME}"
-          SETUP_PY_VERSION="${{ steps.setup_version.outputs.SETUP_PY_VERSION }}"
+          PROJECT_VERSION="${{ steps.project_version.outputs.VERSION }}"
 
           if [[ "$RELEASE_TAG_NAME" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            TAG_VERSION="${RELEASE_TAG_NAME:1}" # Remove 'v' prefix
+            TAG_VERSION="${RELEASE_TAG_NAME:1}"
             PYPI_REPO="PyPI"
-            REPO_URL="https://upload.pypi.org/legacy/"
-            PYPI_TOKEN="PYPI_TOKEN"
-            RELEASE_TYPE="stable"
           elif [[ "$RELEASE_TAG_NAME" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)-beta\.([0-9]+)$ ]]; then
-            TAG_VERSION="${RELEASE_TAG_NAME:1}" # Remove 'v' prefix
-            PYPI_REPO="Test PyPI"
-            REPO_URL="https://test.pypi.org/legacy/"
-            PYPI_TOKEN="TEST_PYPI_TOKEN"
-            RELEASE_TYPE="beta"
+            TAG_VERSION="${RELEASE_TAG_NAME:1}"
+            PYPI_REPO="TestPyPI"
           else
-            echo "::error::Invalid release tag format: $RELEASE_TAG_NAME. Tag must be in vx.y.z or vx.y.z-beta.n format."
-            exit 1 # Fail the workflow if tag format is invalid
+            echo "::error::Invalid release tag format: $RELEASE_TAG_NAME"
+            exit 1
           fi
 
-          if [[ "$TAG_VERSION" != "$SETUP_PY_VERSION" ]]; then
-            echo "::error::Version mismatch: Version in tag ($TAG_VERSION) does not match version in setup.py ($SETUP_PY_VERSION)."
-            exit 1 # Fail the workflow if versions do not match
+          if [[ "$TAG_VERSION" != "$PROJECT_VERSION" ]]; then
+            echo "::error::Version mismatch: Tag ($TAG_VERSION) != pyproject.toml ($PROJECT_VERSION)"
+            exit 1
           fi
 
-          echo "repository-url=$REPO_URL" >> "$GITHUB_OUTPUT"
-          echo "PYPI_TOKEN_SECRET=$PYPI_TOKEN" >> "$GITHUB_OUTPUT"
-          echo "PYPI_REPO_NAME=$PYPI_REPO" >> "$GITHUB_OUTPUT"
-          echo "Publishing to $PYPI_REPO for $RELEASE_TYPE release: $RELEASE_TAG_NAME"
-          echo "Release Tag Name: $RELEASE_TAG_NAME, Setup.py Version: $SETUP_PY_VERSION"
+          echo "is_test_pypi=$([[ "$PYPI_REPO" == "TestPyPI" ]] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+          echo "Publishing to $PYPI_REPO: $RELEASE_TAG_NAME"
 
-      - name: Publish package
+      - name: Publish to TestPyPI
+        if: steps.pypi_repo.outputs.is_test_pypi == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: ${{ steps.pypi_repo.outputs.repository-url }}
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+
+      - name: Publish to PyPI
+        if: steps.pypi_repo.outputs.is_test_pypi == 'false'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
           verbose: true

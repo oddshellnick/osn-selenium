@@ -47,9 +47,20 @@ osn-selenium is a robust wrapper around Selenium WebDriver designed for automati
         pip install osn-selenium
         ```
 
+        **With pip (beta versions):**
+        ```bash
+        pip install -i https://test.pypi.org/simple/ osn_system_utils
+        ```
+
     *   **With git:**
         ```bash
         pip install git+https://github.com/oddshellnick/osn-selenium.git
+        ```
+        *(Ensure you have git installed)*
+
+    *   **With git (beta versions):**
+        ```bash
+        pip install git+https://github.com/oddshellnick/osn-selenium.git@dev
         ```
         *(Ensure you have git installed)*
 

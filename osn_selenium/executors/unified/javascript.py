@@ -21,10 +21,6 @@ __all__ = ["UnifiedJSExecutor"]
 class UnifiedJSExecutor:
 	"""
 	A unified executor for JavaScript scripts within the Selenium environment.
-
-	Attributes:
-		_execute_function (Callable[[str, Any], Any]): The internal function used to execute JS code.
-		_scripts (JS_Scripts): A collection of pre-defined JavaScript scripts.
 	"""
 	
 	def __init__(self, execute_function: Callable[[str, Any], Any]):

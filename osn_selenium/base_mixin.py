@@ -23,11 +23,6 @@ class TrioThreadMixin:
 	"""
 	Provides utilities for running synchronous functions in a Trio event loop
 	with a controlled concurrency, ensuring thread safety and resource limits.
-
-	Attributes:
-		_lock (trio.Lock): A Trio Lock to ensure exclusive access for certain operations.
-		_capacity_limiter (trio.CapacityLimiter): A Trio CapacityLimiter to control the number
-			of concurrent synchronous operations.
 	"""
 	
 	def __init__(self, lock: trio.Lock, limiter: trio.CapacityLimiter) -> None:
