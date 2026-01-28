@@ -1,6 +1,6 @@
 import trio
 from osn_selenium.models import WindowRect
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session

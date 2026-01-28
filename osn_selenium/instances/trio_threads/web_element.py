@@ -1,6 +1,6 @@
 import trio
 from selenium.webdriver.common.by import By
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances._typehints import WEB_ELEMENT_TYPEHINT
 from typing import (
 	Any,

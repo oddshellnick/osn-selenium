@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	Callable,
 	List,
