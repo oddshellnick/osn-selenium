@@ -1,4 +1,6 @@
+import importlib
 from typing import TYPE_CHECKING, Any, Dict, Callable
+
 import trio
 
 from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
@@ -31,6 +33,31 @@ class CDPExecutor(AbstractCDPExecutor):
 		self._v143 = None
 		self._v144 = None
 
+	def get(self, version: int) -> Any:
+		"""
+		Dynamically loads and returns the CDP executor for a specific version.
+
+		Args:
+			version (int): The CDP version number.
+
+		Returns:
+			Any: The version-specific executor instance.
+
+		Raises:
+			CDPPackageError: If the version-specific package is not installed.
+		"""
+	
+		try:
+			if getattr(self, f"_v{version}", None) is None:
+				module = importlib.import_module(f"osn_selenium_cdp_v{version}.executors.trio_threads")
+				executor_type = getattr(module, f"CDP{version}Executor")
+
+				setattr(self, f"_v{version}", executor_type(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter))
+
+			return getattr(self, f"_v{version}", None)
+		except ImportError:
+			raise CDPPackageError(version=version)
+
 	@property
 	def v140(self) -> "CDP140Executor":
 		"""
@@ -38,14 +65,7 @@ class CDPExecutor(AbstractCDPExecutor):
 		Raises CDPPackageError if the version-specific package is not installed.
 		"""
 
-		try:
-			if self._v140 is None:
-				from osn_selenium_cdp_v140.executors.trio_threads import CDP140Executor
-				self._v140 = CDP140Executor(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter)
-
-			return self._v140
-		except ImportError:
-			raise CDPPackageError(version=140)
+		return self.get(version=140)
 
 	@property
 	def v141(self) -> "CDP141Executor":
@@ -54,14 +74,7 @@ class CDPExecutor(AbstractCDPExecutor):
 		Raises CDPPackageError if the version-specific package is not installed.
 		"""
 
-		try:
-			if self._v141 is None:
-				from osn_selenium_cdp_v141.executors.trio_threads import CDP141Executor
-				self._v141 = CDP141Executor(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter)
-
-			return self._v141
-		except ImportError:
-			raise CDPPackageError(version=141)
+		return self.get(version=141)
 
 	@property
 	def v142(self) -> "CDP142Executor":
@@ -70,14 +83,7 @@ class CDPExecutor(AbstractCDPExecutor):
 		Raises CDPPackageError if the version-specific package is not installed.
 		"""
 
-		try:
-			if self._v142 is None:
-				from osn_selenium_cdp_v142.executors.trio_threads import CDP142Executor
-				self._v142 = CDP142Executor(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter)
-
-			return self._v142
-		except ImportError:
-			raise CDPPackageError(version=142)
+		return self.get(version=142)
 
 	@property
 	def v143(self) -> "CDP143Executor":
@@ -86,14 +92,7 @@ class CDPExecutor(AbstractCDPExecutor):
 		Raises CDPPackageError if the version-specific package is not installed.
 		"""
 
-		try:
-			if self._v143 is None:
-				from osn_selenium_cdp_v143.executors.trio_threads import CDP143Executor
-				self._v143 = CDP143Executor(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter)
-
-			return self._v143
-		except ImportError:
-			raise CDPPackageError(version=143)
+		return self.get(version=143)
 
 	@property
 	def v144(self) -> "CDP144Executor":
@@ -102,11 +101,4 @@ class CDPExecutor(AbstractCDPExecutor):
 		Raises CDPPackageError if the version-specific package is not installed.
 		"""
 
-		try:
-			if self._v144 is None:
-				from osn_selenium_cdp_v144.executors.trio_threads import CDP144Executor
-				self._v144 = CDP144Executor(execute_function=self._execute_function, lock=self._lock, limiter=self._limiter)
-
-			return self._v144
-		except ImportError:
-			raise CDPPackageError(version=144)
+		return self.get(version=144)
