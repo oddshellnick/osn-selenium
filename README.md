@@ -215,6 +215,10 @@ Utilities for executing JS and managing browser fingerprints.
 
 ## Notes
 
+*   **CDP Versioning and External Packages:** 
+    This library supports a modular CDP (Chrome DevTools Protocol) architecture. Since standard Selenium distributions often deprecate or remove older protocol versions, we maintain a dedicated repository for all versions at [osn-selenium-cdp](https://github.com/oddshellnick/osn-selenium-cdp).
+    *   **Manual Installation:** You can install specific CDP support by targeting the corresponding branch (e.g., `pip install git+https://github.com/oddshellnick/osn-selenium-cdp.git@v131`).
+    *   **Structure Requirement:** If you choose to add or create CDP version packages manually, they **must strictly follow the directory structure** used in the `osn-selenium-cdp` repository. This ensures that the internal `MetaPathFinder` hook can correctly intercept and redirect imports from `selenium.webdriver.common.devtools`. Deviating from this structure will result in `CDPPackageError` or `ImportError`.
 *   **Concurrency Constraints in `trio_threads`:** 
     The `trio_threads` implementation is built using a unified `trio.Lock`. This means that every driver function and every associated instance (including `ActionChains`, `WebElement`, `Alert`, etc.) can execute only one operation at a time. Do not attempt to parallelize multiple operations (coroutines) within a single browser instance, as they will be queued sequentially. The primary purpose of this asynchronous implementation is to enable the simultaneous management of **multiple browser instances** within a single event loop, rather than concurrent interactions with one browser.
 *   **CDP Domains and Background Tasks:** 

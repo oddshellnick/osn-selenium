@@ -1,6 +1,10 @@
 import trio
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
@@ -54,6 +58,8 @@ class BlinkWebDriver(
 			window_rect: Optional[WindowRect] = None,
 			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		"""
 		Initializes the BlinkWebDriver instance.
@@ -104,6 +110,8 @@ class BlinkWebDriver(
 				window_rect=window_rect,
 				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		BlinkBaseMixin.__init__(
@@ -121,4 +129,6 @@ class BlinkWebDriver(
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)

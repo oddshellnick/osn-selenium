@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Mapping, Optional, Type
 from osn_selenium.models import WindowRect
 from osn_selenium.flags.chrome import ChromeFlagsManager
 from osn_selenium.flags.models.chrome import ChromeFlags
@@ -32,6 +32,8 @@ class UnifiedChromeBaseMixin(UnifiedBlinkBaseMixin):
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		UnifiedBlinkBaseMixin.__init__(
 				self,
@@ -47,6 +49,8 @@ class UnifiedChromeBaseMixin(UnifiedBlinkBaseMixin):
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 	
 	@property

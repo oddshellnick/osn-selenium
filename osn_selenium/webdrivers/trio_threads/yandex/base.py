@@ -1,6 +1,10 @@
 import trio
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium.flags.models.yandex import YandexFlags
 from osn_selenium.flags.yandex import YandexFlagsManager
 from osn_selenium.webdrivers.trio_threads.chrome.base import ChromeBaseMixin
@@ -43,9 +47,11 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		"""
-		Initializes the Trio-based Yandex WebDriver mixin.
+		Initializes the Trio-based Yandex WebDriver mixin with specified configuration.
 
 		Args:
 			webdriver_path (str): Path to the YandexDriver executable.
@@ -64,6 +70,8 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 			script_timeout (int): Default script timeout.
 			window_rect (Optional[WindowRect]): Initial window dimensions.
 			capacity_limiter (Optional[trio.CapacityLimiter]): Trio capacity limiter.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
 		"""
 		
 		ChromeBaseMixin.__init__(
@@ -81,6 +89,8 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 				capacity_limiter=capacity_limiter,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		UnifiedYandexBaseMixin.__init__(
@@ -97,4 +107,6 @@ class YandexBaseMixin(UnifiedYandexBaseMixin, ChromeBaseMixin, AbstractYandexBas
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)

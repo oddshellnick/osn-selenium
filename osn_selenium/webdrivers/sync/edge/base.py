@@ -1,5 +1,9 @@
-from typing import Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from selenium.webdriver import Edge as legacyEdge
 from osn_selenium.flags.edge import EdgeFlagsManager
 from osn_selenium.flags.models.edge import EdgeFlags
@@ -40,6 +44,8 @@ class EdgeBaseMixin(UnifiedEdgeBaseMixin, BlinkBaseMixin, AbstractEdgeBaseMixin)
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
+			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
+			ignore_cdp_version_package_missing: bool = True,
 	):
 		"""
 		Initializes the synchronous Edge WebDriver mixin with specified configuration.
@@ -63,6 +69,8 @@ class EdgeBaseMixin(UnifiedEdgeBaseMixin, BlinkBaseMixin, AbstractEdgeBaseMixin)
 			script_timeout (int): Default script execution timeout in seconds. Defaults to 5.
 			window_rect (Optional[WindowRect]): Initial window dimensions and position.
 				If None, browser defaults are used.
+			cdp_versioned_packages_paths (Optional[Mapping[int, PATH_TYPEHINT]]): Custom local paths for specific CDP versions packages.
+			ignore_cdp_version_package_missing (bool): Whether to ignore missing CDP package errors.
 		"""
 		
 		BlinkBaseMixin.__init__(
@@ -79,6 +87,8 @@ class EdgeBaseMixin(UnifiedEdgeBaseMixin, BlinkBaseMixin, AbstractEdgeBaseMixin)
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 		
 		UnifiedEdgeBaseMixin.__init__(
@@ -95,6 +105,8 @@ class EdgeBaseMixin(UnifiedEdgeBaseMixin, BlinkBaseMixin, AbstractEdgeBaseMixin)
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
+				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
+				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
 	
 	@property
