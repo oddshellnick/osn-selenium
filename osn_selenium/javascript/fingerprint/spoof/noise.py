@@ -1,6 +1,6 @@
 from pydantic import Field
 from typing import Any, Literal
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.javascript.fingerprint.spoof._typehints import (
 	NOISE_TYPEHINT,
 	RANDOM_NOISE_TYPEHINT

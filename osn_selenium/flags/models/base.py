@@ -1,14 +1,14 @@
 from pydantic import Field
-from osn_selenium.models import (
-	DictModel,
-	ExtraDictModel
-)
 from typing import (
 	Any,
 	Callable,
 	List,
 	Literal,
 	Optional
+)
+from osn_selenium._base_models import (
+	DictModel,
+	ExtraDictModel
 )
 from osn_selenium.flags._typehints import (
 	ANY_WEBDRIVER_OPTION_TYPEHINT

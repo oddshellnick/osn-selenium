@@ -1,6 +1,6 @@
 import trio
 from pydantic import Field
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.dev_tools._functions import execute_cdp_command
 from osn_selenium.exceptions.devtools import (
 	CDPEndExceptions,

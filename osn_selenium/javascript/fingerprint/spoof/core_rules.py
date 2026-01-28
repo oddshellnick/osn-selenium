@@ -1,4 +1,4 @@
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from pydantic import (
 	Field,
 	model_validator

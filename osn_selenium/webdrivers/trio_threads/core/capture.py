@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.webdrivers.unified.core.capture import (
 	UnifiedCoreCaptureMixin
 )

@@ -1,6 +1,6 @@
 from typing import List, Optional
 from selenium.webdriver.common.by import By
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.web_element import WebElement
 from osn_selenium.instances.convert import (
 	get_trio_thread_instance_wrapper
