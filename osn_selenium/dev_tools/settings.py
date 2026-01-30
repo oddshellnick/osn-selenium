@@ -1,6 +1,6 @@
 from pathlib import Path
 from pydantic import Field
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from osn_selenium.dev_tools.filters import TargetFilter
 from osn_selenium.dev_tools.domains import DomainsSettings
 from typing import (
