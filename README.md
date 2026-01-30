@@ -2,6 +2,8 @@
 
 osn-selenium is a robust wrapper around Selenium WebDriver designed for automation of Blink-based browsers (Chrome, Edge, Yandex). It extends standard Selenium capabilities by providing native asynchronous support via Trio, deep integration with the Chrome DevTools Protocol (CDP), sophisticated browser fingerprint spoofing, and human-like user interaction simulation.
 
+For more detailed information, please visit the [wiki page](https://github.com/oddshellnick/osn-selenium/wiki).
+
 ## Technologies
 
 | Name       | Badge                                                                                                                                               | Description                                                                                                                                            |
