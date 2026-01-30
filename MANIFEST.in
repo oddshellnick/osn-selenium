@@ -1,4 +1,0 @@
-include description.txt
-include README.md
-include requirements.txt
-include osn_selenium/javascript/scripts/*.js

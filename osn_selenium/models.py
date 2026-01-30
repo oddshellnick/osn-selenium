@@ -1,36 +1,8 @@
 from typing import Self
-from pydantic import (
-	BaseModel,
-	ConfigDict
-)
+from osn_selenium._base_models import DictModel
 
 
-__all__ = [
-	"DictModel",
-	"ExtraDictModel",
-	"Point",
-	"Position",
-	"Rectangle",
-	"Size",
-	"WindowRect"
-]
-
-
-class DictModel(BaseModel):
-	"""
-	Base class for Pydantic models with a predefined configuration.
-
-	This configuration enforces strict validation rules such as forbidding extra
-	fields and stripping whitespace from string inputs.
-	"""
-	
-	model_config = ConfigDict(
-			populate_by_name=True,
-			extra="forbid",
-			use_enum_values=True,
-			str_strip_whitespace=True,
-			validate_assignment=True,
-	)
+__all__ = ["Point", "Position", "Rectangle", "Size", "WindowRect"]
 
 
 class WindowRect(DictModel):
@@ -120,20 +92,3 @@ class Point:
 	
 	def __ne__(self, other: Self) -> bool:
 		return not self.__eq__(other)
-
-
-class ExtraDictModel(BaseModel):
-	"""
-	Base class for Pydantic models that allows extra fields.
-
-	This configuration allows the model to accept fields that are not
-	explicitly defined in the model's schema.
-	"""
-	
-	model_config = ConfigDict(
-			populate_by_name=True,
-			extra="allow",
-			use_enum_values=True,
-			str_strip_whitespace=True,
-			validate_assignment=True,
-	)

@@ -1,5 +1,5 @@
 from copy import deepcopy
-from osn_selenium.models import DictModel
+from osn_selenium._base_models import DictModel
 from typing import (
 	Any,
 	Dict,
@@ -47,14 +47,6 @@ class BrowserFlagsManager:
 
 	This class provides a structured way to define, set, and build browser options
 	for various Selenium WebDriver instances.
-
-	Attributes:
-		_flags_types (Dict[str, FlagType]): A dictionary mapping flag types to their handler functions.
-		_flags_definitions (Dict[str, FlagDefinition]): A dictionary of all available flag definitions.
-		_flags_definitions_by_types (Dict[str, Dict[str, FlagDefinition]]): Flags definitions grouped by type.
-		_arguments (Dict[str, ArgumentValue]): Stores the configured command-line arguments.
-		_experimental_options (Dict[str, ExperimentalOptionValue]): Stores the configured experimental options.
-		_attributes (Dict[str, AttributeValue]): Stores the configured WebDriver attributes.
 	"""
 	
 	def __init__(

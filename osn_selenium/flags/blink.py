@@ -44,12 +44,6 @@ class BlinkFlagsManager(BrowserFlagsManager):
 	This class extends `BrowserFlagsManager` to handle Blink-specific features,
 	such as `--enable-blink-features` and `--disable-blink-features`, and provides
 	a comprehensive set of predefined flags for these browsers.
-
-	Attributes:
-		_browser_exe (Optional[PATH_TYPEHINT]): Path to the browser executable.
-		_start_page_url (Optional[str]): The URL to open when the browser starts.
-		_enable_blink_features (Dict[str, str]): Stores enabled Blink feature commands.
-		_disable_blink_features (Dict[str, str]): Stores disabled Blink feature commands.
 	"""
 	
 	def __init__(

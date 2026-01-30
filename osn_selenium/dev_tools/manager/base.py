@@ -41,31 +41,8 @@ class BaseMixin:
 	by using an asynchronous context manager.
 
 	Attributes:
-		_webdriver (CoreWebDriver): The parent WebDriver instance associated with this DevTools instance.
-		_new_targets_filter (Optional[List[Dict[str, Any]]]): Processed filters for new targets.
-		_new_targets_buffer_size (int): Buffer size for new target events.
-		_target_background_task (Optional[devtools_background_func_type]): Optional background task for targets.
-		_logger_settings (LoggerSettings): Logging configuration for the entire DevTools manager.
-		_bidi_connection (Optional[AbstractAsyncContextManager[BidiConnection, Any]]): Asynchronous context manager for the BiDi connection.
-		_bidi_connection_object (Optional[BidiConnection]): The BiDi connection object when active.
-		_nursery (Optional[AbstractAsyncContextManager[trio.Nursery, object]]): Asynchronous context manager for the Trio nursery.
-		_nursery_object (Optional[trio.Nursery]): The Trio nursery object when active, managing concurrent tasks.
-		_domains_settings (DomainsSettings): Settings for configuring DevTools domain handlers.
-		_handling_targets (Dict[str, DevToolsTarget]): Dictionary of target IDs currently being handled by event listeners.
 		targets_lock (trio.Lock): A lock used for synchronizing access to shared resources, like the List of handled targets.
 		exit_event (Optional[trio.Event]): Trio Event to signal exiting of DevTools event handling.
-		_is_active (bool): Flag indicating if the DevTools event handler is currently active.
-		_is_closing (bool): Flag indicating if the DevTools manager is in the process of closing.
-		_num_cdp_logs (int): Total count of all CDP log entries across all targets.
-		_num_fingerprint_logs (int): Total count of all Fingerprint log entries across all targets.
-		_cdp_targets_types_stats (Dict[str, CDPTargetTypeStats]): Statistics for each target type.
-		_cdp_log_level_stats (Dict[str, CDPLogLevelStats]): Overall statistics for each log level.
-		_main_logger_cdp_send_channel (Optional[trio.MemorySendChannel[CDPMainLogEntry]]): Send channel for the main logger.
-		_fingerprint_categories_stats (Dict[str, FingerprintAPIStats]): Statistics for each API category.
-		_fingerprint_log_level_stats (Dict[str, FingerprintLogLevelStats]): Overall statistics for each log level.
-		_main_logger_fingerprint_send_channel (Optional[trio.MemorySendChannel[FingerprintMainLogEntry]]): Send channel for the main logger.
-		_main_logger (Optional[MainLogger]): The main logger instance.
-		_fingerprint_injection_script (Optional[str]): Injection script for fingerprinting.
 	"""
 	
 	def __init__(

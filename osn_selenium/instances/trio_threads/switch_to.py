@@ -4,7 +4,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.alert import Alert
 from osn_selenium.instances.unified.switch_to import UnifiedSwitchTo
 from osn_selenium.abstract.instances.switch_to import AbstractSwitchTo

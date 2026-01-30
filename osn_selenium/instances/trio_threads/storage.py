@@ -4,7 +4,7 @@ from typing import (
 	Self,
 	Union
 )
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances._typehints import STORAGE_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.storage import UnifiedStorage

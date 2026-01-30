@@ -1,6 +1,6 @@
 import trio
 from typing import List, Optional, Self
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from selenium.webdriver.common.fedcm.account import Account
 from osn_selenium.instances._typehints import DIALOG_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance

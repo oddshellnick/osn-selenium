@@ -3,7 +3,8 @@ from typing import (
 	Callable,
 	Coroutine,
 	Literal,
-	TYPE_CHECKING
+	TYPE_CHECKING,
+	Union
 )
 
 
@@ -15,10 +16,12 @@ __all__ = [
 
 if TYPE_CHECKING:
 	from osn_selenium.dev_tools.target.base import BaseMixin as BaseTargetMixin
+	from osn_selenium.dev_tools.target import DevToolsTarget
 else:
 	BaseTargetMixin = Any
+	DevToolsTarget = Any
 
-DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT = Callable[[BaseTargetMixin], Coroutine[Any, Any, None]]
+DEVTOOLS_BACKGROUND_FUNCTION_TYPEHINT = Callable[[Union[BaseTargetMixin, DevToolsTarget]], Coroutine[Any, Any, None]]
 
 CDP_LOG_LEVELS_TYPEHINT = Literal[
 	"INFO",

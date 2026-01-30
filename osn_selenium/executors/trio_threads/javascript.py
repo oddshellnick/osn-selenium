@@ -1,5 +1,5 @@
 import trio
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.javascript.models import JS_Scripts
 from typing import (
 	Any,

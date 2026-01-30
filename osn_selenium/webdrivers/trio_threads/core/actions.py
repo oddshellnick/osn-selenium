@@ -3,7 +3,7 @@ from typing import (
 	List,
 	Optional
 )
-from osn_selenium.base_mixin import TrioThreadMixin
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium._typehints import DEVICES_TYPEHINT
 from osn_selenium.webdrivers._bridges import (
 	get_js_executor_bridge
