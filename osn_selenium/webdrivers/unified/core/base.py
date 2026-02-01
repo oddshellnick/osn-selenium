@@ -1,16 +1,14 @@
-from osn_selenium._cdp_import import install_cdp_hook
 from osn_selenium.models import WindowRect
-from typing import (
-	Any,
-	Dict,
-	Mapping, Optional,
-	Type
-)
+from osn_selenium._cdp_import import install_cdp_hook
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
-from osn_selenium._typehints import (
-	ARCHITECTURES_TYPEHINT, PATH_TYPEHINT
+from typing import (
+	Any,
+	Dict,
+	Mapping,
+	Optional,
+	Type
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
 from osn_selenium.webdrivers._decorators import requires_driver
@@ -18,6 +16,10 @@ from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.exceptions.webdriver import (
 	WebDriverNotStartedError
+)
+from osn_selenium._typehints import (
+	ARCHITECTURES_TYPEHINT,
+	PATH_TYPEHINT
 )
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
@@ -53,9 +55,13 @@ class UnifiedCoreBaseMixin:
 		
 		if flags is not None:
 			self._webdriver_flags_manager.update_flags(flags)
-
+		
 		if not getattr(self, "cdp_hook_installed", False):
-			install_cdp_hook(cdp_paths=cdp_versioned_packages_paths, ignore_package_missing=ignore_cdp_version_package_missing)
+			install_cdp_hook(
+					cdp_paths=cdp_versioned_packages_paths,
+					ignore_package_missing=ignore_cdp_version_package_missing
+			)
+			
 			setattr(self, "cdp_hook_installed", True)
 	
 	@property

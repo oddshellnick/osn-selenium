@@ -151,7 +151,7 @@ class BrowserFlagsManager:
 	def clear_attributes(self):
 		"""Clears all configured browser attributes."""
 		
-		self._attributes = {}
+		self._attributes.clear()
 	
 	def remove_attribute(self, attribute_name: str):
 		"""
@@ -236,7 +236,7 @@ class BrowserFlagsManager:
 	def clear_experimental_options(self):
 		"""Clears all configured experimental options."""
 		
-		self._experimental_options = {}
+		self._experimental_options.clear()
 	
 	def remove_experimental_option(self, experimental_option_name: str):
 		"""
@@ -338,7 +338,7 @@ class BrowserFlagsManager:
 	def clear_arguments(self):
 		"""Clears all configured browser arguments."""
 		
-		self._arguments = {}
+		self._arguments.clear()
 	
 	def remove_argument(self, argument_name: str):
 		"""
@@ -463,7 +463,9 @@ class BrowserFlagsManager:
 		
 		for type_name, type_functions in self._flags_types.items():
 			options = type_functions.build_options_function(options)
-		
+
+		options.set_capability("webSocketUrl", True)
+
 		return options
 	
 	def remove_option(self, option: FlagDefinition):

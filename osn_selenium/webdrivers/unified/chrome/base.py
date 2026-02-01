@@ -1,5 +1,9 @@
-from typing import Mapping, Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium.flags.chrome import ChromeFlagsManager
 from osn_selenium.flags.models.chrome import ChromeFlags
 from selenium.webdriver import (

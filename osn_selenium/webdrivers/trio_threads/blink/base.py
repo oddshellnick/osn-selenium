@@ -8,7 +8,11 @@ from typing import (
 )
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
+from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
+from osn_selenium.webdrivers._bridges import (
+	get_cdp_executor_bridge
+)
 from osn_selenium._typehints import (
 	ARCHITECTURES_TYPEHINT,
 	PATH_TYPEHINT
@@ -122,10 +126,20 @@ class BlinkBaseMixin(UnifiedBlinkBaseMixin, CoreBaseMixin, AbstractBlinkBaseMixi
 				script_timeout=script_timeout,
 				window_rect=window_rect,
 		)
+		
+		self._cdp_executor = CDPExecutor(
+				execute_function=get_cdp_executor_bridge(self),
+				lock=self._lock,
+				limiter=self._capacity_limiter,
+		)
 	
 	@property
 	def browser_exe(self) -> Optional[pathlib.Path]:
 		return self._browser_exe_impl
+	
+	@property
+	def cdp(self) -> CDPExecutor:
+		return self._cdp_executor
 	
 	@property
 	def debugging_ip(self) -> Optional[str]:

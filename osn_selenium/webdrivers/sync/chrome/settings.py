@@ -2,6 +2,7 @@ from typing import Optional
 from osn_selenium.models import WindowRect
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.chrome import ChromeFlags
+from osn_selenium.webdrivers.sync.blink.settings import BlinkSettingsMixin
 from osn_selenium.webdrivers.unified.chrome.settings import (
 	UnifiedChromeSettingsMixin
 )
@@ -13,7 +14,11 @@ from osn_selenium.abstract.webdriver.chrome.settings import (
 __all__ = ["ChromeSettingsMixin"]
 
 
-class ChromeSettingsMixin(UnifiedChromeSettingsMixin, AbstractChromeSettingsMixin):
+class ChromeSettingsMixin(
+		UnifiedChromeSettingsMixin,
+		BlinkSettingsMixin,
+		AbstractChromeSettingsMixin
+):
 	"""
 	Mixin for configuring and updating settings of the Chrome WebDriver.
 

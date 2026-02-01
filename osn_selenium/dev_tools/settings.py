@@ -64,14 +64,14 @@ class CDPLoggerSettings(DictModel):
 		log_level_filter_mode (Literal["exclude", "include"]): The mode for filtering log levels.
 			"exclude" means log levels in `log_level_filter` will be excluded.
 			"include" means only log levels in `log_level_filter` will be included.
-			Defaults to "exclude".
+			Defaults to "include".
 		log_level_filter (Optional[Union[CDPLogLevelsType, Sequence[CDPLogLevelsType]]]):
 			A single log level or a sequence of log levels to filter by.
 			Used in conjunction with `log_level_filter_mode`. Defaults to None.
 		target_type_filter_mode (Literal["exclude", "include"]): The mode for filtering target types.
 			"exclude" means target types in `target_type_filter` will be excluded.
 			"include" means only target types in `target_type_filter` will be included.
-			Defaults to "exclude".
+			Defaults to "include".
 		target_type_filter (Optional[Union[str, Sequence[str]]]):
 			A single target type string or a sequence of target type strings to filter by.
 			Used in conjunction with `target_type_filter_mode`. Defaults to None.
@@ -79,9 +79,9 @@ class CDPLoggerSettings(DictModel):
 	"""
 	
 	buffer_size: int = 100
-	log_level_filter_mode: Literal["exclude", "include"] = "exclude"
+	log_level_filter_mode: Literal["exclude", "include"] = "include"
 	log_level_filter: Optional[Union[CDP_LOG_LEVELS_TYPEHINT, Sequence[CDP_LOG_LEVELS_TYPEHINT]]] = None
-	target_type_filter_mode: Literal["exclude", "include"] = "exclude"
+	target_type_filter_mode: Literal["exclude", "include"] = "include"
 	target_type_filter: Optional[Union[str, Sequence[str]]] = None
 	send_wait: bool = False
 

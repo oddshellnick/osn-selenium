@@ -1,9 +1,9 @@
 import trio
 from osn_selenium.models import WindowRect
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.common.bidi.session import Session
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
@@ -12,10 +12,12 @@ from typing import (
 	Type
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.executors.trio_threads.cdp import CDPExecutor
 from osn_selenium.executors.trio_threads.javascript import JSExecutor
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
+from osn_selenium.webdrivers._bridges import (
+	get_js_executor_bridge
+)
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from osn_selenium._typehints import (
 	ARCHITECTURES_TYPEHINT,
@@ -26,10 +28,6 @@ from osn_selenium.abstract.webdriver.core.base import (
 )
 from selenium.webdriver.remote.webdriver import (
 	WebDriver as legacyWebDriver
-)
-from osn_selenium.webdrivers._bridges import (
-	get_cdp_executor_bridge,
-	get_js_executor_bridge
 )
 
 
@@ -104,12 +102,6 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 				else trio.CapacityLimiter(100),
 		)
 		
-		self._cdp_executor = CDPExecutor(
-				execute_function=get_cdp_executor_bridge(self),
-				lock=self._lock,
-				limiter=self._capacity_limiter,
-		)
-		
 		self._js_executor = JSExecutor(
 				execute_function=get_js_executor_bridge(self),
 				lock=self._lock,
@@ -131,10 +123,6 @@ class CoreBaseMixin(UnifiedCoreBaseMixin, TrioThreadMixin, AbstractCoreBaseMixin
 	@caps.setter
 	def caps(self, value: Dict[str, Any]) -> None:
 		self._caps_set_impl(value=value)
-	
-	@property
-	def cdp(self) -> CDPExecutor:
-		return self._cdp_executor
 	
 	@property
 	def command_executor(self) -> RemoteConnection:

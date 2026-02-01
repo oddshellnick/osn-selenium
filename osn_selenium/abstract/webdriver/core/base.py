@@ -11,7 +11,6 @@ from osn_selenium._typehints import (
 	ARCHITECTURES_TYPEHINT
 )
 from selenium.webdriver.remote.errorhandler import ErrorHandler
-from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
 from selenium.webdriver.remote.locator_converter import LocatorConverter
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.abstract.executors.javascript import AbstractJSExecutor
@@ -86,19 +85,6 @@ class AbstractCoreBaseMixin(ABC):
 
 		Args:
 			value (Dict[str, Any]): Dictionary of capabilities.
-		"""
-		
-		...
-	
-	@property
-	@abstractmethod
-	def cdp(self) -> AbstractCDPExecutor:
-		"""
-		Returns the CDP (Chrome DevTools Protocol) executor.
-
-		Returns:
-			AbstractCDPExecutor: The CDP executor instance used for sending
-			commands directly to the browser via the DevTools protocol.
 		"""
 		
 		...

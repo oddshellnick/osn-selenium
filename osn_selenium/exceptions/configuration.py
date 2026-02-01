@@ -5,14 +5,7 @@ from osn_selenium._typehints import (
 	TYPES_FOR_FLATTENING_TYPEHINT
 )
 
-
-__all__ = [
-	"ConfigurationError",
-	"DuplicationError",
-	"NotExpectedTypeError",
-	"NotExpectedValueError"
-]
-
+__all__ = ["ConfigurationError", "DuplicationError", "NotExpectedTypeError", "NotExpectedValueError"]
 
 class ConfigurationError(OSNSeleniumError):
 	"""

@@ -1,8 +1,8 @@
 from typing import Union
+from osn_selenium.exceptions.base import OSNSeleniumError
 from osn_selenium._cdp_import import (
 	check_cdp_version_exists_on_github
 )
-
 
 __all__ = ["CDPPackageError", "DependencyError"]
 
@@ -19,7 +19,7 @@ If you need this specific version, you can generate it using the https://github.
 """.strip("\n")
 
 
-class DependencyError(Exception):
+class DependencyError(OSNSeleniumError):
 	"""
 	Base exception for dependency-related issues.
 	"""

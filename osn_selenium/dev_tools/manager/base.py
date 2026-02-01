@@ -1,20 +1,15 @@
 import trio
-from contextlib import (
-	AbstractAsyncContextManager
-)
+from typing import Dict, Optional
+from contextlib import AsyncExitStack
 from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.dev_tools.logger.main import MainLogger
-from osn_selenium.dev_tools.domains import DomainsSettings
 from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.settings import DevToolsSettings
-from typing import (
-	Any,
-	Dict,
-	Optional,
-	TYPE_CHECKING
-)
 from osn_selenium.dev_tools._system_utils import prepare_log_dir
 from selenium.webdriver.remote.bidi_connection import BidiConnection
+from osn_selenium.webdrivers._typehints import (
+	ANY_TRIO_WEBDRIVER_TYPEHINT
+)
 from osn_selenium.dev_tools.logger.models import (
 	CDPLogLevelStats,
 	CDPMainLogEntry,
@@ -26,9 +21,6 @@ from osn_selenium.dev_tools.logger.models import (
 
 
 __all__ = ["BaseMixin"]
-
-if TYPE_CHECKING:
-	from osn_selenium.webdrivers.trio_threads.core import CoreWebDriver
 
 
 class BaseMixin:
@@ -47,14 +39,14 @@ class BaseMixin:
 	
 	def __init__(
 			self,
-			parent_webdriver: "CoreWebDriver",
+			parent_webdriver: ANY_TRIO_WEBDRIVER_TYPEHINT,
 			devtools_settings: Optional[DevToolsSettings] = None
 	):
 		"""
 		Initializes the DevTools manager.
 
 		Args:
-			parent_webdriver (CoreWebDriver): The WebDriver instance to which this DevTools manager is attached.
+			parent_webdriver (ANY_TRIO_WEBDRIVER_TYPEHINT): The WebDriver instance to which this DevTools manager is attached.
 			devtools_settings (Optional[DevToolsSettings]): Configuration settings for DevTools.
 				If None, default settings will be used.
 		"""
@@ -74,12 +66,11 @@ class BaseMixin:
 			for filter_ in devtools_settings.new_targets_filter
 		] if devtools_settings.new_targets_filter is not None else None
 		
-		self._bidi_connection: Optional[AbstractAsyncContextManager[BidiConnection, Any]] = None
-		self._bidi_connection_object: Optional[BidiConnection] = None
+		self._bidi_connection: Optional[BidiConnection] = None
+		self._nursery: Optional[trio.Nursery] = None
+		self._exit_stack = AsyncExitStack()
 		self._devtools_package: Optional[DevToolsPackage] = None
 		self._websocket_url: Optional[str] = None
-		self._nursery: Optional[AbstractAsyncContextManager[trio.Nursery, Optional[bool]]] = None
-		self._nursery_object: Optional[trio.Nursery] = None
 		self._handling_targets: Dict[str, DevToolsTarget] = {}
 		self.targets_lock = trio.Lock()
 		self.exit_event: Optional[trio.Event] = None

@@ -23,11 +23,6 @@ class CDPExecutor(AbstractCDPExecutor):
 
 	def __init__(self, execute_function: Callable[[str, Dict[str, Any]], Any]):
 		self._execute_function = execute_function
-		self._v140 = None
-		self._v141 = None
-		self._v142 = None
-		self._v143 = None
-		self._v144 = None
 
 	def get(self, version: int) -> Any:
 		"""

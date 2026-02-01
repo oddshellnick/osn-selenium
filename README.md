@@ -225,6 +225,7 @@ Utilities for executing JS and managing browser fingerprints.
     The `trio_threads` implementation is built using a unified `trio.Lock`. This means that every driver function and every associated instance (including `ActionChains`, `WebElement`, `Alert`, etc.) can execute only one operation at a time. Do not attempt to parallelize multiple operations (coroutines) within a single browser instance, as they will be queued sequentially. The primary purpose of this asynchronous implementation is to enable the simultaneous management of **multiple browser instances** within a single event loop, rather than concurrent interactions with one browser.
 *   **CDP Domains and Background Tasks:** 
     When configuring the domains for network interception, it is highly recommended to provide a `target_background_task` in your `DevToolsSettings`. This is especially critical for websites that dynamically create numerous targets (such as iframes or workers). Without a proper background task to handle these events, the browser's execution flow might hang or fail to process requests for nested targets properly.
+*   **Experimental `trio_bidi` Architecture:** A new experimental architecture, `trio_bidi`, has been introduced. While it currently does not cover 100% of browser capabilities, it supports all core functionalities, including page navigation and element interactions, through native BiDi communication.
 
 ## Future Notes
 
@@ -233,4 +234,4 @@ Utilities for executing JS and managing browser fingerprints.
 *   **macOS Support:** Extending browser auto-detection and lifecycle management for macOS environments.
 *   **High-Level CDP Handlers:** Expanding the `dev_tools.domains` module to include simplified event-driven logic for `Network`, `Page`, and `Runtime` domains, similar to the current `Fetch` implementation.
 *   **Enhanced Human-Like Actions:** Adding more complex Bezier-based mouse movement patterns and advanced typing jitter to further decrease automation footprints.
-*   **Single-Instance Internal Concurrency Research:** While the current `trio_threads` implementation is optimized for managing multiple browser instances concurrently, we are researching ways to enable parallel command execution within a *single* browser instance. This long-term goal involves moving away from the global `trio.Lock` toward a more granular task-dispatching system (potentially using `trio.MemorySendChannel` or direct CDP interaction) to allow simultaneous operations without protocol desynchronization.
+*   **Full BiDi Coverage:** Implementing comprehensive Selenium feature coverage using BiDi mappings to eventually replace the need for synchronous thread pools in async mode.

@@ -27,11 +27,6 @@ class CDPExecutor(AbstractCDPExecutor):
 		self._execute_function = execute_function
 		self._lock = lock
 		self._limiter = limiter
-		self._v140 = None
-		self._v141 = None
-		self._v142 = None
-		self._v143 = None
-		self._v144 = None
 
 	def get(self, version: int) -> Any:
 		"""

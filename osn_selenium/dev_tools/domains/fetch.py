@@ -1,11 +1,9 @@
 import trio
 from pydantic import Field
 from osn_selenium._base_models import DictModel
+from osn_selenium.exceptions.base import ExceptionThrown
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools._functions import execute_cdp_command
-from osn_selenium.exceptions.devtools import (
-	CDPEndExceptions,
-	ExceptionThrown
-)
 from typing import (
 	Any,
 	Callable,
@@ -134,7 +132,7 @@ async def _build_kwargs_from_handlers_func(self: DevToolsTarget, handlers: DictM
 				kwargs_ready_event = trio.Event()
 				kwargs_ready_events.append(kwargs_ready_event)
 	
-				self._nursery_object.start_soon(
+				self._nursery.start_soon(
 						handler_settings.func,
 						self,
 						kwargs_ready_event,
@@ -243,7 +241,7 @@ async def _handle_auth_required(
 				)
 	
 				if response_handle_func is not None:
-					self._nursery_object.start_soon(response_handle_func, self, response)
+					self._nursery.start_soon(response_handle_func, self, response)
 			except* CDPEndExceptions:
 				pass
 			except* BaseException as error:
@@ -505,7 +503,7 @@ async def _handle_request_paused(
 				)
 	
 				if response_handle_func is not None:
-					self._nursery_object.start_soon(response_handle_func, self, response)
+					self._nursery.start_soon(response_handle_func, self, response)
 			except* CDPEndExceptions:
 				pass
 			except* BaseException as error:

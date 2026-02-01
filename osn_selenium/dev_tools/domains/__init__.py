@@ -1,9 +1,9 @@
-from osn_selenium._base_models import ExtraDictModel
 from typing import (
 	Literal,
 	Optional,
 	Union
 )
+from osn_selenium._base_models import ExtraDictModel
 from osn_selenium.dev_tools.domains.fetch import FetchSettings
 
 

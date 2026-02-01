@@ -1,11 +1,13 @@
+from types import TracebackType
 from osn_selenium.models import WindowRect
+from osn_selenium.flags.models.base import BrowserFlags
 from typing import (
 	Any,
 	Dict,
 	Optional,
+	Type,
 	Union
 )
-from osn_selenium.flags.models.base import BrowserFlags
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.webdrivers.unified.core.lifecycle import (
 	UnifiedCoreLifecycleMixin
@@ -26,8 +28,47 @@ class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, AbstractCoreLifecycleMixin):
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	def close_webdriver(self) -> None:
-		self._close_webdriver_impl()
+	def start_webdriver(
+			self,
+			flags: Optional[BrowserFlags] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		self._start_webdriver_impl(flags=flags, window_rect=window_rect)
+	
+	def __enter__(
+			self,
+			flags: Optional[BrowserFlags] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		self.start_webdriver(flags=flags, window_rect=window_rect)
+	
+	def stop_webdriver(self) -> None:
+		self._stop_webdriver_impl()
+	
+	def __exit__(
+			self,
+			exc_type: Optional[Type[BaseException]],
+			exc_val: Optional[BaseException],
+			exc_tb: Optional[TracebackType],
+	) -> bool:
+		"""
+		Synchronously exits the WebDriver context.
+
+		Args:
+			exc_type (Optional[Type[BaseException]]): The exception type, if any.
+			exc_val (Optional[BaseException]): The exception value, if any.
+			exc_tb (Optional[TracebackType]): The exception traceback, if any.
+
+		Returns:
+			bool: True if an exception was suppressed, False otherwise.
+		"""
+		
+		self.stop_webdriver()
+		
+		if exc_type is not None and exc_val is not None and exc_tb is not None:
+			return True
+		
+		return False
 	
 	def quit(self) -> None:
 		self._quit_impl()
@@ -47,13 +88,6 @@ class CoreLifecycleMixin(UnifiedCoreLifecycleMixin, AbstractCoreLifecycleMixin):
 	
 	def start_session(self, capabilities: Dict[str, Any]) -> None:
 		self._start_session_impl(capabilities=capabilities)
-	
-	def start_webdriver(
-			self,
-			flags: Optional[BrowserFlags] = None,
-			window_rect: Optional[WindowRect] = None,
-	) -> None:
-		self._start_webdriver_impl(flags=flags, window_rect=window_rect)
 	
 	def stop_client(self) -> None:
 		self._stop_client_impl()

@@ -5,6 +5,7 @@ from typing import (
 	List
 )
 from osn_selenium.trio_threads_mixin import TrioThreadMixin
+from selenium.webdriver.remote.file_detector import FileDetector
 from osn_selenium.webdrivers.unified.core.file import UnifiedCoreFileMixin
 from osn_selenium.abstract.webdriver.core.file import (
 	AbstractCoreFileMixin
@@ -29,11 +30,11 @@ class CoreFileMixin(UnifiedCoreFileMixin, TrioThreadMixin, AbstractCoreFileMixin
 		await self.sync_to_trio(sync_function=self._download_file_impl)(file_name=file_name, target_directory=target_directory)
 	
 	@property
-	async def file_detector(self) -> Any:
+	async def file_detector(self) -> FileDetector:
 		return await self.sync_to_trio(sync_function=self._file_detector_get_impl)()
 	
 	@file_detector.setter
-	async def file_detector(self, value: Any) -> None:
+	async def file_detector(self, value: FileDetector) -> None:
 		await self.sync_to_trio(sync_function=self._file_detector_set_impl)(value=value)
 	
 	@asynccontextmanager

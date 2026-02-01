@@ -2,6 +2,7 @@ from abc import abstractmethod
 from selenium import webdriver
 from typing import Optional, Union
 from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium.abstract.executors.cdp import AbstractCDPExecutor
 from osn_selenium.abstract.webdriver.core.base import (
 	AbstractCoreBaseMixin
 )
@@ -27,6 +28,19 @@ class AbstractBlinkBaseMixin(AbstractCoreBaseMixin):
 		Returns:
 			Optional[PATH_TYPEHINT]: The path to the executable,
 			or None if not managed by this instance.
+		"""
+		
+		...
+	
+	@property
+	@abstractmethod
+	def cdp(self) -> AbstractCDPExecutor:
+		"""
+		Returns the CDP (Chrome DevTools Protocol) executor.
+
+		Returns:
+			AbstractCDPExecutor: The CDP executor instance used for sending
+			commands directly to the browser via the DevTools protocol.
 		"""
 		
 		...

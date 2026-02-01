@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pydantic import Field
 from typing import Dict, List, Literal
 from osn_selenium._base_models import DictModel
@@ -42,7 +43,7 @@ class FingerprintSettings(DictModel):
 		"""
 		
 		if self.use_preset_registry:
-			registry_ = FINGERPRINT_REGISTRY.copy()
+			registry_ = deepcopy(FINGERPRINT_REGISTRY)
 		else:
 			registry_ = {}
 		

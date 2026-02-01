@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from typing import Any, Generator, List
 from osn_selenium.webdrivers._decorators import requires_driver
+from selenium.webdriver.remote.file_detector import FileDetector
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
@@ -23,11 +24,11 @@ class UnifiedCoreFileMixin(UnifiedCoreBaseMixin):
 			yield file_detector
 	
 	@requires_driver
-	def _file_detector_get_impl(self) -> Any:
+	def _file_detector_get_impl(self) -> FileDetector:
 		return self._driver_impl.file_detector
 	
 	@requires_driver
-	def _file_detector_set_impl(self, value: Any) -> None:
+	def _file_detector_set_impl(self, value: FileDetector) -> None:
 		self._driver_impl.file_detector = value
 	
 	@requires_driver

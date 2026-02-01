@@ -118,7 +118,7 @@ class FingerprintMixin(LoggingMixin):
 						run_immediately=True,
 				)
 		
-				self._nursery_object.start_soon(self._run_fingerprint_detect_listener, ready_event)
+				self._nursery.start_soon(self._run_fingerprint_detect_listener, ready_event)
 			except* CDPEndExceptions as error:
 				raise error
 			except* BaseException as error:

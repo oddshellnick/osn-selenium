@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Optional
+from selenium.webdriver.remote.script_key import ScriptKey
 from osn_selenium.abstract.instances.script import AbstractScript
 
 
@@ -51,7 +52,7 @@ class AbstractCoreScriptMixin(ABC):
 		...
 	
 	@abstractmethod
-	def pin_script(self, script: str, script_key: Optional[Any] = None) -> Any:
+	def pin_script(self, script: str, script_key: Optional[Any] = None) -> ScriptKey:
 		"""
 		Pins a script to the browser for faster execution.
 
@@ -60,7 +61,7 @@ class AbstractCoreScriptMixin(ABC):
 			script_key (Optional[Any]): An optional key to identify the script.
 
 		Returns:
-			Any: The key associated with the pinned script.
+			ScriptKey: The key associated with the pinned script.
 		"""
 		
 		...
@@ -77,12 +78,12 @@ class AbstractCoreScriptMixin(ABC):
 		...
 	
 	@abstractmethod
-	def unpin(self, script_key: Any) -> None:
+	def unpin(self, script_key: ScriptKey) -> None:
 		"""
 		Unpins a previously pinned script.
 
 		Args:
-			script_key (Any): The key of the script to unpin.
+			script_key (ScriptKey): The key of the script to unpin.
 		"""
 		
 		...

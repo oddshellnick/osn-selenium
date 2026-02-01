@@ -14,6 +14,6 @@ __all__ = [
 ]
 
 DEVICES_TYPEHINT = Union[PointerInput, KeyInput, WheelInput]
-ARCHITECTURES_TYPEHINT = Literal["sync", "trio_threads"]
+ARCHITECTURES_TYPEHINT = Literal["sync", "trio_threads", "trio_bidi"]
 PATH_TYPEHINT = Union[str, bytes, pathlib.Path, os.PathLike]
 TYPES_FOR_FLATTENING_TYPEHINT = Union[str, Type]

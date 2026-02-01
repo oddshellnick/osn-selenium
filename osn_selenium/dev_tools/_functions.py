@@ -1,5 +1,7 @@
 import trio
 import random
+from osn_selenium.exceptions.base import ExceptionThrown
+from osn_selenium.exceptions.devtools import CDPEndExceptions
 from typing import (
 	Any,
 	Callable,
@@ -9,10 +11,6 @@ from typing import (
 )
 from osn_selenium.exceptions.configuration import (
 	NotExpectedValueError
-)
-from osn_selenium.exceptions.devtools import (
-	CDPEndExceptions,
-	ExceptionThrown
 )
 
 

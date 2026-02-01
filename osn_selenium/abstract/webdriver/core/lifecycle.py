@@ -17,14 +17,6 @@ class AbstractCoreLifecycleMixin(ABC):
 	"""Mixin responsible for driver lifecycle, creation, session, and connection management."""
 	
 	@abstractmethod
-	def close_webdriver(self) -> None:
-		"""
-		Closes the WebDriver instance and all associated windows.
-		"""
-		
-		...
-	
-	@abstractmethod
 	def quit(self) -> None:
 		"""
 		Quits the driver and closes every associated window.
@@ -98,6 +90,14 @@ class AbstractCoreLifecycleMixin(ABC):
 	def stop_client(self) -> None:
 		"""
 		Stops the underlying webdriver client.
+		"""
+		
+		...
+	
+	@abstractmethod
+	def stop_webdriver(self) -> None:
+		"""
+		Stops the WebDriver instance and all associated windows.
 		"""
 		
 		...

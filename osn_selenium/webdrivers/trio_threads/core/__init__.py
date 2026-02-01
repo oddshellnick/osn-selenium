@@ -6,10 +6,8 @@ from typing import (
 	Type
 )
 from osn_selenium._typehints import PATH_TYPEHINT
-from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.base import BrowserFlagsManager
 from osn_selenium.flags.models.base import BrowserFlags
-from osn_selenium.dev_tools.settings import DevToolsSettings
 from osn_selenium.webdrivers.trio_threads.core.auth import CoreAuthMixin
 from osn_selenium.webdrivers.trio_threads.core.base import CoreBaseMixin
 from osn_selenium.webdrivers.trio_threads.core.file import CoreFileMixin
@@ -67,7 +65,6 @@ class CoreWebDriver(
 			page_load_timeout: int = 5,
 			script_timeout: int = 5,
 			window_rect: Optional[WindowRect] = None,
-			devtools_settings: Optional[DevToolsSettings] = None,
 			capacity_limiter: Optional[trio.CapacityLimiter] = None,
 			cdp_versioned_packages_paths: Optional[Mapping[int, PATH_TYPEHINT]] = None,
 			ignore_cdp_version_package_missing: bool = True,
@@ -89,7 +86,6 @@ class CoreWebDriver(
 				asynchronous script to finish execution. Defaults to 5.
 			window_rect (Optional[WindowRect]): The initial size and position of the
 				browser window. Defaults to None.
-			devtools_settings (Optional[DevToolsSettings]): Configuration for Chrome DevTools Protocol.
 			capacity_limiter (Optional[trio.CapacityLimiter]): A Trio capacity limiter used to
 				throttle concurrent thread-based operations. Defaults to None.
 		"""
@@ -107,9 +103,3 @@ class CoreWebDriver(
 				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
 				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
-		
-		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
-	
-	@property
-	def devtools(self) -> DevTools:
-		return self._devtools

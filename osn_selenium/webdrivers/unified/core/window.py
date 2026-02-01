@@ -1,11 +1,12 @@
+from selenium.webdriver.remote.switch_to import SwitchTo
+from osn_selenium.webdrivers._decorators import requires_driver
 from typing import (
-	Any,
+	Dict,
 	List,
 	Literal,
 	Optional,
 	Union
 )
-from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.common.exceptions import (
 	InvalidSessionIdException
 )
@@ -30,7 +31,7 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 		self._driver_impl.close()
 	
 	@requires_driver
-	def _switch_to_impl(self) -> Any:
+	def _switch_to_impl(self) -> SwitchTo:
 		return self._driver_impl.switch_to
 	
 	@requires_driver
@@ -89,15 +90,15 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 		self._driver_impl.fullscreen_window()
 	
 	@requires_driver
-	def _get_window_position_impl(self, windowHandle: str = "current") -> Any:
+	def _get_window_position_impl(self, windowHandle: str = "current") -> Dict[str, int]:
 		return self._driver_impl.get_window_position(windowHandle=windowHandle)
 	
 	@requires_driver
-	def _get_window_rect_impl(self) -> Any:
+	def _get_window_rect_impl(self) -> Dict[str, int]:
 		return self._driver_impl.get_window_rect()
 	
 	@requires_driver
-	def _get_window_size_impl(self, windowHandle: str = "current") -> Any:
+	def _get_window_size_impl(self, windowHandle: str = "current") -> Dict[str, int]:
 		return self._driver_impl.get_window_size(windowHandle=windowHandle)
 	
 	@requires_driver
@@ -117,7 +118,7 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 		setattr(self._driver_impl, "orientation", value)
 	
 	@requires_driver
-	def _set_window_position_impl(self, x: int, y: int, windowHandle: str = "current") -> Any:
+	def _set_window_position_impl(self, x: int, y: int, windowHandle: str = "current") -> Dict[str, int]:
 		return self._driver_impl.set_window_position(x=x, y=y, windowHandle=windowHandle)
 	
 	@requires_driver
@@ -127,7 +128,7 @@ class UnifiedCoreWindowMixin(UnifiedCoreBaseMixin):
 			y: Optional[int] = None,
 			width: Optional[int] = None,
 			height: Optional[int] = None,
-	) -> Any:
+	) -> Dict[str, int]:
 		return self._driver_impl.set_window_rect(x=x, y=y, width=width, height=height)
 	
 	@requires_driver

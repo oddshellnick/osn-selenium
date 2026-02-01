@@ -1,9 +1,7 @@
 from typing import Iterable, Union
 from osn_selenium.exceptions.base import OSNSeleniumError
 
-
 __all__ = ["JavaScriptError", "JavaScriptResourceError"]
-
 
 class JavaScriptError(OSNSeleniumError):
 	"""

@@ -42,21 +42,21 @@ class EdgeFlagsManager(BlinkFlagsManager):
 		debugging port, user agent, proxy, and BiDi protocol.
 		"""
 		
-		yandex_flags_types = {}
+		edge_flags_types = {}
 		
 		if flags_types is not None:
-			yandex_flags_types.update(flags_types)
+			edge_flags_types.update(flags_types)
 		
-		yandex_flags_definitions = {}
+		edge_flags_definitions = {}
 		
 		if flags_definitions is not None:
-			yandex_flags_definitions.update(flags_definitions)
+			edge_flags_definitions.update(flags_definitions)
 		
 		super().__init__(
 				browser_exe=browser_exe,
 				start_page_url=start_page_url,
-				flags_types=yandex_flags_types,
-				flags_definitions=yandex_flags_definitions,
+				flags_types=edge_flags_types,
+				flags_definitions=edge_flags_definitions,
 		)
 	
 	def _build_options_arguments(self, options: Options) -> Options:

@@ -4,8 +4,8 @@ from typing import (
 	TYPE_CHECKING,
 	Tuple
 )
+from osn_selenium._exception_helpers import log_exception
 from osn_selenium.exceptions.devtools import TrioEndExceptions
-from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.exceptions.configuration import ConfigurationError
 from osn_selenium.dev_tools.logger.models import (
 	CDPMainLogEntry,
@@ -30,7 +30,7 @@ class MainLogger:
 	def __init__(
 			self,
 			logger_settings: "LoggerSettings",
-			nursery_object: trio.Nursery,
+			nursery: trio.Nursery,
 			cdp_receive_channel: Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]],
 			fingerprint_receive_channel: Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]
 	):
@@ -39,7 +39,7 @@ class MainLogger:
 
 		Args:
 			logger_settings ("LoggerSettings"): The settings for logging, including log directory.
-			nursery_object (trio.Nursery): The Trio nursery to spawn background tasks.
+			nursery (trio.Nursery): The Trio nursery to spawn background tasks.
 			cdp_receive_channel (Optional[trio.MemoryReceiveChannel[CDPMainLogEntry]]):
 				The channel from which CDP main log entries are received.
 			fingerprint_receive_channel (Optional[trio.MemoryReceiveChannel[FingerprintMainLogEntry]]):
@@ -49,7 +49,7 @@ class MainLogger:
 			ValueError: If settings require logging but `dir_path` is not set.
 		"""
 		
-		self._nursery_object = nursery_object
+		self._nursery = nursery
 		self._cdp_receive_channel = cdp_receive_channel
 		self._fingerprint_receive_channel = fingerprint_receive_channel
 		self._cdp_file_path = None
@@ -162,12 +162,12 @@ class MainLogger:
 				self._cdp_file_writing_stopped = trio.Event()
 		
 				if self._cdp_file_path is not None:
-					self._nursery_object.start_soon(self._write_cdp_file)
+					self._nursery.start_soon(self._write_cdp_file)
 		
 				self._fingerprint_file_writing_stopped = trio.Event()
 		
 				if self._fingerprint_file_path is not None:
-					self._nursery_object.start_soon(self._write_fingerprint_file)
+					self._nursery.start_soon(self._write_fingerprint_file)
 		
 				self._is_active = True
 		except* TrioEndExceptions:
@@ -177,7 +177,7 @@ class MainLogger:
 			await self.close()
 
 
-def build_main_logger(nursery_object: trio.Nursery, logger_settings: "LoggerSettings") -> Tuple[
+def build_main_logger(nursery: trio.Nursery, logger_settings: "LoggerSettings") -> Tuple[
 	Optional[trio.MemorySendChannel[CDPMainLogEntry]],
 	Optional[trio.MemorySendChannel[FingerprintMainLogEntry]],
 	MainLogger
@@ -186,7 +186,7 @@ def build_main_logger(nursery_object: trio.Nursery, logger_settings: "LoggerSett
 	Builds and initializes a `MainLogger` instance along with its send channels.
 
 	Args:
-		nursery_object (trio.Nursery): The Trio nursery to associate with the logger for background tasks.
+		nursery (trio.Nursery): The Trio nursery to associate with the logger for background tasks.
 		logger_settings ("LoggerSettings"): The logger configuration settings.
 
 	Returns:
@@ -206,7 +206,7 @@ def build_main_logger(nursery_object: trio.Nursery, logger_settings: "LoggerSett
 	
 	target_logger = MainLogger(
 			logger_settings=logger_settings,
-			nursery_object=nursery_object,
+			nursery=nursery,
 			cdp_receive_channel=cdp_recv,
 			fingerprint_receive_channel=fp_recv,
 	)
