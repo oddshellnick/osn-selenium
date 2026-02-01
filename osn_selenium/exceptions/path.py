@@ -2,15 +2,7 @@ from typing import Any
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.exceptions.base import OSNSeleniumError
 
-
-__all__ = [
-	"BrowserExecutableNotFoundError",
-	"ExecutableError",
-	"PathError",
-	"PathValidationError",
-	"WebDriverExecutableNotFoundError"
-]
-
+__all__ = ["BrowserExecutableNotFoundError", "ExecutableError", "PathError", "PathValidationError", "WebDriverExecutableNotFoundError"]
 
 class PathError(OSNSeleniumError):
 	"""

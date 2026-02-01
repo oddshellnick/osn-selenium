@@ -4,6 +4,7 @@ from typing import (
 	List,
 	Optional
 )
+from selenium.webdriver.common.bidi.storage import Storage
 from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
@@ -33,5 +34,5 @@ class UnifiedCoreStorageMixin(UnifiedCoreBaseMixin):
 		return self._driver_impl.get_cookies()
 	
 	@requires_driver
-	def _storage_impl(self) -> Any:
+	def _storage_impl(self) -> Storage:
 		return self._driver_impl.storage

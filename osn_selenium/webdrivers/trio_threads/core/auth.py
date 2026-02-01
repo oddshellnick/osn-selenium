@@ -1,10 +1,10 @@
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	List,
 	Optional,
 	Union
 )
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.fedcm import FedCM
 from osn_selenium.instances.trio_threads.dialog import Dialog
 from osn_selenium.webdrivers.unified.core.auth import UnifiedCoreAuthMixin

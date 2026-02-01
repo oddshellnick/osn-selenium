@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from typing import Any, Generator, List
+from selenium.webdriver.remote.file_detector import FileDetector
 from osn_selenium.webdrivers.unified.core.file import UnifiedCoreFileMixin
 from osn_selenium.abstract.webdriver.core.file import (
 	AbstractCoreFileMixin
@@ -24,11 +25,11 @@ class CoreFileMixin(UnifiedCoreFileMixin, AbstractCoreFileMixin):
 		self._download_file_impl(file_name=file_name, target_directory=target_directory)
 	
 	@property
-	def file_detector(self) -> Any:
+	def file_detector(self) -> FileDetector:
 		return self._file_detector_get_impl()
 	
 	@file_detector.setter
-	def file_detector(self, value: Any) -> None:
+	def file_detector(self, value: FileDetector) -> None:
 		self._file_detector_set_impl(value)
 	
 	@contextmanager

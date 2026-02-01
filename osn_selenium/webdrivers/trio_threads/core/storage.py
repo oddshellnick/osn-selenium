@@ -1,10 +1,10 @@
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	Any,
 	Dict,
 	List,
 	Optional
 )
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.storage import Storage
 from osn_selenium.instances.convert import (
 	get_trio_thread_instance_wrapper

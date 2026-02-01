@@ -1,4 +1,9 @@
-from typing import Any, Callable, Self
+from typing import (
+	Any,
+	Callable,
+	Dict,
+	Self
+)
 from osn_selenium.instances._typehints import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
 from osn_selenium.instances.unified.script import UnifiedScript
@@ -38,7 +43,7 @@ class Script(UnifiedScript, AbstractScript):
 	def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
 		return self._add_javascript_error_handler_impl(handler=handler)
 	
-	def execute(self, script: str, *args: Any) -> Any:
+	def execute(self, script: str, *args: Any) -> Dict[str, Any]:
 		return self._execute_impl(script, *args)
 	
 	@classmethod

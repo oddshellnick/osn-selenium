@@ -59,7 +59,7 @@ class EventHandlersMixin(LoggingMixin):
 		while keep_alive:
 			try:
 				event = await receiver_channel.receive()
-				self._nursery_object.start_soon(handler, self, event_config, event)
+				self._nursery.start_soon(handler, self, event_config, event)
 			except* CDPEndExceptions:
 				keep_alive = False
 			except* BaseException as error:
@@ -99,7 +99,7 @@ class EventHandlersMixin(LoggingMixin):
 					event_handler_ready_event = trio.Event()
 					events_handlers_ready_events.append(event_handler_ready_event)
 		
-					self._nursery_object.start_soon(
+					self._nursery.start_soon(
 							self._run_event_handler,
 							event_handler_ready_event,
 							getattr(domain_config.handlers, event_name)

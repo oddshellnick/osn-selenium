@@ -10,7 +10,7 @@ from typing import (
 	Optional,
 	TYPE_CHECKING
 )
-from osn_selenium.dev_tools._exception_helpers import (
+from osn_selenium._exception_helpers import (
 	extract_exception_trace,
 	log_exception
 )

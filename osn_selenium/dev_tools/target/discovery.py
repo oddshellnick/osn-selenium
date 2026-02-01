@@ -65,7 +65,7 @@ class DiscoveryMixin(LoggingMixin):
 							flatten=True
 					)
 		
-					self._nursery_object.start_soon(self._add_target_func, event)
+					self._nursery.start_soon(self._add_target_func, event)
 			except* CDPEndExceptions:
 				keep_alive = False
 			except* BaseException as error:

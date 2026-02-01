@@ -1,15 +1,16 @@
 import trio
 from types import TracebackType
 from typing import Optional, Type
-from osn_selenium.dev_tools._decorators import log_on_error
+from osn_selenium._decorators import log_on_error
+from osn_selenium._exception_helpers import log_exception
 from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.manager.targets import TargetsMixin
 from osn_selenium.dev_tools.logger.main import build_main_logger
-from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.exceptions.devtools import (
 	BidiConnectionNotEstablishedError,
 	CDPEndExceptions,
-	CantEnterDevToolsContextError
+	CantEnterDevToolsContextError,
+	TrioEndExceptions
 )
 
 
@@ -41,9 +42,11 @@ class LifecycleMixin(TargetsMixin):
 		
 			if driver is None:
 				self._websocket_url = None
+				return
 		
 			if driver.caps.get("se:cdp"):
 				self._websocket_url = driver.caps.get("se:cdp")
+				return
 		
 			self._websocket_url = driver._get_cdp_details()[1]
 		except CDPEndExceptions as error:
@@ -64,8 +67,8 @@ class LifecycleMixin(TargetsMixin):
 		"""
 		
 		try:
-			if self._bidi_connection_object is not None:
-				self._devtools_package = DevToolsPackage(package=self._bidi_connection_object.devtools)
+			if self._bidi_connection is not None:
+				self._devtools_package = DevToolsPackage(package=self._bidi_connection.devtools)
 			else:
 				raise BidiConnectionNotEstablishedError()
 		except CDPEndExceptions as error:
@@ -74,9 +77,9 @@ class LifecycleMixin(TargetsMixin):
 			log_exception(error)
 			raise error
 	
-	async def run(self) -> None:
+	async def start(self) -> None:
 		"""
-		Initializes and runs the DevTools manager.
+		Initializes and starts the DevTools manager.
 
 		This method sets up the BiDi connection, starts the Trio nursery, retrieves
 		necessary CDP packages and URLs, initializes the main logger, and adds the
@@ -89,21 +92,18 @@ class LifecycleMixin(TargetsMixin):
 		if self._webdriver.driver is None:
 			raise CantEnterDevToolsContextError(reason="Driver is not initialized")
 		
-		self._bidi_connection = self._webdriver.bidi_connection()
-		self._bidi_connection_object = await self._bidi_connection.__aenter__()
-		
-		self._nursery = trio.open_nursery()
-		self._nursery_object = await self._nursery.__aenter__()
+		self._nursery = await self._exit_stack.enter_async_context(trio.open_nursery())
+		self._bidi_connection = await self._exit_stack.enter_async_context(self._webdriver.bidi_connection())
 		
 		self._get_devtools_package()
 		self._get_websocket_url()
 		
-		self._main_logger_cdp_send_channel, self._main_logger_fingerprint_send_channel, self._main_logger = build_main_logger(self._nursery_object, self._logger_settings)
+		self._main_logger_cdp_send_channel, self._main_logger_fingerprint_send_channel, self._main_logger = build_main_logger(nursery=self._nursery, logger_settings=self._logger_settings)
 		await self._main_logger.run()
 		
 		self.exit_event = trio.Event()
 		
-		self._fingerprint_injection_script = await self._webdriver.sync_to_trio(sync_function=self._fingerprint_settings.generate_js)()
+		self._fingerprint_injection_script = await self._webdriver.sync_to_trio(sync_function=self._fingerprint_settings.generate_js)() if self._fingerprint_settings is not None else None
 		main_target = (await self._get_all_targets())[0]
 		
 		await self._add_target(target_event=main_target, is_main_target=True)
@@ -122,44 +122,46 @@ class LifecycleMixin(TargetsMixin):
 			BaseException: If any other unexpected error occurs during context entry.
 		"""
 		
-		await self.run()
+		await self.start()
 	
-	async def stop(
-			self,
-			exc_type: Optional[Type[BaseException]],
-			exc_val: Optional[BaseException],
-			exc_tb: Optional[TracebackType],
-	) -> None:
+	async def stop(self) -> None:
 		"""
 		Stops the DevTools manager and cleans up resources.
 
 		This method signals all targets to stop, closes the main logger, cancels the nursery,
 		and closes the BiDi connection.
-
-		Args:
-			exc_type (Optional[Type[BaseException]]): The exception type if stopping due to an error.
-			exc_val (Optional[BaseException]): The exception value if stopping due to an error.
-			exc_tb (Optional[TracebackType]): The traceback if stopping due to an error.
 		"""
 		
 		@log_on_error
-		async def _stop_main_logger():
+		async def _stop_main_logger() -> None:
 			"""Stops the main logger and closes its channels."""
 			
 			if self._main_logger_cdp_send_channel is not None:
-				await self._main_logger_cdp_send_channel.aclose()
+				try:
+					await self._main_logger_cdp_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger_cdp_send_channel = None
 			
 			if self._main_logger_fingerprint_send_channel is not None:
-				await self._main_logger_fingerprint_send_channel.aclose()
+				try:
+					await self._main_logger_fingerprint_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger_fingerprint_send_channel = None
 			
 			if self._main_logger is not None:
-				await self._main_logger.close()
+				try:
+					await self._main_logger.close()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger = None
 		
 		@log_on_error
-		async def _stop_all_targets():
+		async def _stop_all_targets() -> None:
 			"""Signals all active targets to stop and waits for their completion."""
 			
 			for target in self._handling_targets.copy().values():
@@ -169,68 +171,75 @@ class LifecycleMixin(TargetsMixin):
 				except (BaseException,):
 					pass
 			
-			self._handling_targets = {}
+			self._handling_targets.clear()
 		
 		@log_on_error
-		async def _close_nursery():
-			"""Asynchronously exits the Trio nursery context manager."""
-			
-			if self._nursery_object is not None:
-				self._nursery_object.cancel_scope.cancel()
-				self._nursery_object = None
+		async def _close_async_stack() -> None:
+			"""
+			Closes the asynchronous resource stack.
+			"""
 			
 			if self._nursery is not None:
-				await self._nursery.__aexit__(exc_type, exc_val, exc_tb)
+				try:
+					self._nursery.cancel_scope.cancel()
+				except TrioEndExceptions:
+					pass
+			
 				self._nursery = None
-		
-		@log_on_error
-		async def _close_bidi_connection():
-			"""Asynchronously exits the BiDi connection context manager."""
 			
 			if self._bidi_connection is not None:
-				await self._bidi_connection.__aexit__(exc_type, exc_val, exc_tb)
 				self._bidi_connection = None
-				self._bidi_connection_object = None
+			
+			try:
+				await self._exit_stack.aclose()
+			except TrioEndExceptions:
+				pass
+			except AssertionError:
+				pass  # TODO solve exit issue
 		
-		if self._is_active:
-			self._is_closing = True
-			self.exit_event.set()
+		if not self._is_active:
+			return
 		
-			await _stop_all_targets()
-			await _stop_main_logger()
-			await _close_nursery()
-			await _close_bidi_connection()
+		self._is_closing = True
+		self.exit_event.set()
 		
-			self.exit_event = None
-			self._devtools_package = None
-			self._websocket_url = None
-			self._num_cdp_logs = 0
-			self._num_fingerprint_logs = 0
-			self._cdp_targets_types_stats = {}
-			self._cdp_log_level_stats = {}
-			self._fingerprint_categories_stats = {}
-			self._fingerprint_log_level_stats = {}
-			self._is_active = False
-			self._is_closing = False
+		await _stop_all_targets()
+		await _stop_main_logger()
+		await _close_async_stack()
+		
+		self.exit_event = None
+		self._devtools_package = None
+		self._websocket_url = None
+		self._num_cdp_logs = 0
+		self._num_fingerprint_logs = 0
+		self._cdp_targets_types_stats.clear()
+		self._cdp_log_level_stats.clear()
+		self._fingerprint_categories_stats.clear()
+		self._fingerprint_log_level_stats.clear()
+		self._is_active = False
+		self._is_closing = False
 	
 	async def __aexit__(
 			self,
 			exc_type: Optional[Type[BaseException]],
 			exc_val: Optional[BaseException],
 			exc_tb: Optional[TracebackType],
-	):
+	) -> bool:
 		"""
 		Asynchronously exits the DevTools event handling context.
 
-		This method is called when exiting an `async with` block with a DevTools instance.
-		It ensures that all event listeners are cancelled, the Trio nursery is closed,
-		and the BiDi connection is properly shut down. Cleanup attempts are made even if
-		an exception occurred within the `async with` block.
-
 		Args:
-			exc_type (Optional[Type[BaseException]]): The exception type, if any, that caused the context to be exited.
+			exc_type (Optional[Type[BaseException]]): The exception type, if any.
 			exc_val (Optional[BaseException]): The exception value, if any.
 			exc_tb (Optional[TracebackType]): The exception traceback, if any.
+
+		Returns:
+			bool: True if an exception was suppressed, False otherwise.
 		"""
 		
-		await self.stop(exc_type=exc_type, exc_val=exc_val, exc_tb=exc_tb)
+		await self.stop()
+		
+		if exc_type is not None and exc_val is not None and exc_tb is not None:
+			return True
+		
+		return False

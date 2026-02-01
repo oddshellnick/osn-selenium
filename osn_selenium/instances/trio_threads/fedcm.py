@@ -1,11 +1,11 @@
 import trio
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	Dict,
 	List,
 	Optional,
 	Self
 )
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances._typehints import FEDCM_TYPEHINT
 from osn_selenium.instances.unified.fedcm import UnifiedFedCM
 from osn_selenium.instances.convert import get_legacy_instance

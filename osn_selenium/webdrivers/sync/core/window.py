@@ -47,6 +47,9 @@ class CoreWindowMixin(UnifiedCoreWindowMixin, AbstractCoreWindowMixin):
 	def fullscreen_window(self) -> None:
 		self._fullscreen_window_impl()
 	
+	def get_orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
+		return self._orientation_get_impl()
+	
 	def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		return self._get_window_handle_impl(window=window)
 	
@@ -67,9 +70,6 @@ class CoreWindowMixin(UnifiedCoreWindowMixin, AbstractCoreWindowMixin):
 	
 	def minimize_window(self) -> None:
 		self._minimize_window_impl()
-	
-	def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
-		return self._orientation_get_impl()
 	
 	def set_orientation(self, value: Literal["LANDSCAPE", "PORTRAIT"]) -> None:
 		self._orientation_set_impl(value=value)

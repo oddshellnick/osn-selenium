@@ -58,8 +58,8 @@ class BrowsingContext(UnifiedBrowsingContext, TrioThreadMixin, AbstractBrowsingC
 		
 		TrioThreadMixin.__init__(self, lock=lock, limiter=limiter)
 	
-	async def activate(self, context: str) -> Any:
-		return await self.sync_to_trio(sync_function=self._activate_impl)(context=context)
+	async def activate(self, context: str) -> None:
+		await self.sync_to_trio(sync_function=self._activate_impl)(context=context)
 	
 	async def add_event_handler(
 			self,

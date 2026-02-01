@@ -1,5 +1,6 @@
 from typing import Any, List, Optional
 from osn_selenium.instances.sync.script import Script
+from selenium.webdriver.remote.script_key import ScriptKey
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper
 )
@@ -41,7 +42,7 @@ class CoreScriptMixin(UnifiedCoreScriptMixin, AbstractCoreScriptMixin):
 	def get_pinned_scripts(self) -> List[str]:
 		return self._get_pinned_scripts_impl()
 	
-	def pin_script(self, script: str, script_key: Optional[Any] = None) -> Any:
+	def pin_script(self, script: str, script_key: Optional[Any] = None) -> ScriptKey:
 		return self._pin_script_impl(script=script, script_key=script_key)
 	
 	def script(self) -> Script:
@@ -49,5 +50,5 @@ class CoreScriptMixin(UnifiedCoreScriptMixin, AbstractCoreScriptMixin):
 		
 		return get_sync_instance_wrapper(wrapper_class=Script, legacy_object=legacy)
 	
-	def unpin(self, script_key: Any) -> None:
+	def unpin(self, script_key: ScriptKey) -> None:
 		self._unpin_impl(script_key=script_key)

@@ -1,11 +1,13 @@
+from types import TracebackType
 from osn_selenium.models import WindowRect
+from osn_selenium.flags.models.base import BrowserFlags
 from typing import (
 	Any,
 	Dict,
 	Optional,
+	Type,
 	Union
 )
-from osn_selenium.flags.models.base import BrowserFlags
 from osn_selenium.webdrivers._decorators import requires_driver
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from osn_selenium.exceptions.logic import (
@@ -56,7 +58,7 @@ class UnifiedCoreLifecycleMixin(UnifiedCoreSettingsMixin, UnifiedCoreTimeoutsMix
 	def _quit_impl(self) -> None:
 		self._driver_impl.quit()
 	
-	def _close_webdriver_impl(self) -> None:
+	def _stop_webdriver_impl(self) -> None:
 		if self._driver_impl is not None:
 			self._quit_impl()
 		
@@ -68,7 +70,7 @@ class UnifiedCoreLifecycleMixin(UnifiedCoreSettingsMixin, UnifiedCoreTimeoutsMix
 			flags: Optional[BrowserFlags] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		self._close_webdriver_impl()
+		self._stop_webdriver_impl()
 		self._start_webdriver_impl(flags=flags, window_rect=window_rect)
 	
 	@requires_driver

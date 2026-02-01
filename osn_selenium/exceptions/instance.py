@@ -10,15 +10,7 @@ from osn_selenium._typehints import (
 	TYPES_FOR_FLATTENING_TYPEHINT
 )
 
-
-__all__ = [
-	"CannotConvertTypeError",
-	"ElementInteractionError",
-	"ElementNotVisibleError",
-	"InstanceError",
-	"NotExpectedTypeError"
-]
-
+__all__ = ["CannotConvertTypeError", "ElementInteractionError", "ElementNotVisibleError", "InstanceError", "NotExpectedTypeError"]
 
 class InstanceError(OSNSeleniumError):
 	"""

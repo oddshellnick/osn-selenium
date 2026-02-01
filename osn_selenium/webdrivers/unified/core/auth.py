@@ -1,9 +1,11 @@
+from selenium.webdriver.remote.fedcm import FedCM
 from typing import (
 	Any,
 	List,
 	Optional,
 	Union
 )
+from selenium.webdriver.common.fedcm.dialog import Dialog
 from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 from selenium.webdriver.common.virtual_authenticator import (
@@ -30,7 +32,7 @@ class UnifiedCoreAuthMixin(UnifiedCoreBaseMixin):
 			timeout: int = 5,
 			poll_frequency: float = 0.5,
 			ignored_exceptions: Any = None,
-	) -> Any:
+	) -> Dialog:
 		return self._driver_impl.fedcm_dialog(
 				timeout=timeout,
 				poll_frequency=poll_frequency,
@@ -38,7 +40,7 @@ class UnifiedCoreAuthMixin(UnifiedCoreBaseMixin):
 		)
 	
 	@requires_driver
-	def _fedcm_impl(self) -> Any:
+	def _fedcm_impl(self) -> FedCM:
 		return self._driver_impl.fedcm
 	
 	@requires_driver

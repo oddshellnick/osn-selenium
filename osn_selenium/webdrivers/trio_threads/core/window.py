@@ -1,10 +1,10 @@
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	List,
 	Literal,
 	Optional,
 	Union
 )
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.models import (
 	Position,
 	Rectangle,
@@ -48,6 +48,9 @@ class CoreWindowMixin(UnifiedCoreWindowMixin, TrioThreadMixin, AbstractCoreWindo
 	async def fullscreen_window(self) -> None:
 		await self.sync_to_trio(sync_function=self._fullscreen_window_impl)()
 	
+	async def get_orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
+		return await self.sync_to_trio(sync_function=self._orientation_get_impl)()
+	
 	async def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		return await self.sync_to_trio(sync_function=self._get_window_handle_impl)(window=window)
 	
@@ -68,9 +71,6 @@ class CoreWindowMixin(UnifiedCoreWindowMixin, TrioThreadMixin, AbstractCoreWindo
 	
 	async def minimize_window(self) -> None:
 		await self.sync_to_trio(sync_function=self._minimize_window_impl)()
-	
-	async def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
-		return await self.sync_to_trio(sync_function=self._orientation_get_impl)()
 	
 	async def set_orientation(self, value: Literal["LANDSCAPE", "PORTRAIT"]) -> None:
 		await self.sync_to_trio(sync_function=self._orientation_set_impl)(value=value)

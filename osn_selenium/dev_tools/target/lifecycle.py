@@ -1,7 +1,7 @@
 import trio
 from typing import List
+from osn_selenium._decorators import log_on_error
 from osn_selenium.dev_tools.target.detach import DetachMixin
-from osn_selenium.exceptions.devtools import CDPEndExceptions
 from osn_selenium.dev_tools.target.discovery import DiscoveryMixin
 from osn_selenium.dev_tools.target.events import EventHandlersMixin
 from osn_selenium.dev_tools.logger.target import build_target_logger
@@ -16,6 +16,10 @@ from osn_selenium.dev_tools._decorators import (
 from osn_selenium.dev_tools._functions import (
 	execute_cdp_command,
 	wait_one
+)
+from osn_selenium.exceptions.devtools import (
+	CDPEndExceptions,
+	TrioEndExceptions
 )
 
 
@@ -32,41 +36,96 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		Closes all active resources, channels, and loggers associated with the target.
 		"""
 		
-		if self._new_target_receive_channel is not None:
-			await self._new_target_receive_channel[0].aclose()
-			await self._new_target_receive_channel[1].wait()
-			self._new_target_receive_channel = None
+		@log_on_error
+		async def _close_new_target_receive_channel() -> None:
+			if self._new_target_receive_channel is not None:
+				try:
+					await self._new_target_receive_channel[0].aclose()
+					await self._new_target_receive_channel[1].wait()
+				except TrioEndExceptions:
+					pass
+			
+				self._new_target_receive_channel = None
 		
-		if self._detached_receive_channel is not None:
-			await self._detached_receive_channel.aclose()
-			self._detached_receive_channel = None
+		@log_on_error
+		async def _close_logger_fingerprint_send_channel() -> None:
+			if self._logger_fingerprint_send_channel is not None:
+				try:
+					await self._logger_fingerprint_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
+				self._logger_fingerprint_send_channel = None
 		
-		if self._logger_cdp_send_channel is not None:
-			await self._logger_cdp_send_channel.aclose()
-			self._logger_cdp_send_channel = None
+		@log_on_error
+		async def _close_logger_cdp_send_channel() -> None:
+			if self._logger_cdp_send_channel is not None:
+				try:
+					await self._logger_cdp_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
+				self._logger_cdp_send_channel = None
 		
-		if self._logger_fingerprint_send_channel is not None:
-			await self._logger_fingerprint_send_channel.aclose()
-			self._logger_fingerprint_send_channel = None
+		@log_on_error
+		async def _close_logger() -> None:
+			if self._logger is not None:
+				try:
+					await self._logger.close()
+				except TrioEndExceptions:
+					pass
+			
+				self._logger = None
 		
-		if self._logger is not None:
-			await self._logger.close()
-			self._logger = None
+		@log_on_error
+		async def _close_events_receive_channels() -> None:
+			for event_name, channel in self._events_receive_channels.items():
+				try:
+					await channel[0].aclose()
+					await channel[1].wait()
+				except TrioEndExceptions:
+					pass
+			
+			self._events_receive_channels.clear()
 		
-		for event_name, channel in self._events_receive_channels.items():
-			await channel[0].aclose()
-			await channel[1].wait()
+		@log_on_error
+		async def _close_detached_receive_channel() -> None:
+			if self._detached_receive_channel is not None:
+				try:
+					await self._detached_receive_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
+				self._detached_receive_channel = None
 		
-		self._events_receive_channels = {}
+		@log_on_error
+		def _close_cancel_scopes() -> None:
+			for scope_name, scope in self._cancel_scopes.items():
+				try:
+					scope.cancel()
+				except TrioEndExceptions:
+					pass
+			
+			self._cancel_scopes.clear()
 		
-		for scope_name, scope in self._cancel_scopes.items():
-			scope.cancel()
+		@log_on_error
+		async def _close_background_task() -> None:
+			if self.background_task_ended is not None:
+				try:
+					await self.background_task_ended.wait()
+				except TrioEndExceptions:
+					pass
+			
+				self.background_task_ended = None
 		
-		self._cancel_scopes = {}
-		
-		if self.background_task_ended is not None:
-			await self.background_task_ended.wait()
-			self.background_task_ended = None
+		await _close_new_target_receive_channel()
+		await _close_detached_receive_channel()
+		await _close_logger_cdp_send_channel()
+		await _close_logger_fingerprint_send_channel()
+		await _close_logger()
+		await _close_events_receive_channels()
+		_close_cancel_scopes()
+		await _close_background_task()
 	
 	async def _setup_target(self):
 		"""
@@ -93,9 +152,9 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 			fingerprint_detecting_ready_event = trio.Event()
 			target_ready_events.append(fingerprint_detecting_ready_event)
 		
-			self._nursery_object.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
-			self._nursery_object.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
-			self._nursery_object.start_soon(self._run_detach_checking)
+			self._nursery.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
+			self._nursery.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
+			self._nursery.start_soon(self._run_detach_checking)
 		
 			if self._domains_settings:
 				for domain_name, domain_config in self._domains_settings.model_dump(exclude_none=True).items():
@@ -117,7 +176,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		
 					domain_handlers_ready_event = trio.Event()
 					target_ready_events.append(domain_handlers_ready_event)
-					self._nursery_object.start_soon(
+					self._nursery.start_soon(
 							self._run_events_handlers,
 							domain_handlers_ready_event,
 							getattr(self._domains_settings, domain_name)
@@ -151,7 +210,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		"""
 		
 		try:
-			self._logger_cdp_send_channel, self._logger_fingerprint_send_channel, self._logger = build_target_logger(self.target_data, self._nursery_object, self._logger_settings)
+			self._logger_cdp_send_channel, self._logger_fingerprint_send_channel, self._logger = build_target_logger(self.target_data, self._nursery, self._logger_settings)
 		
 			if self._cdp_target_type_log_accepted:
 				await self._logger.run()
@@ -167,8 +226,9 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 					await self._setup_target()
 		
 					if self._target_background_task is not None:
-						self._nursery_object.start_soon(background_task_decorator(self._target_background_task), self)
-		
+						self._nursery.start_soon(background_task_decorator(self._target_background_task), self)
+
+					self.started_event.set()
 					await wait_one(self.exit_event, self.about_to_stop_event)
 		except* (BrowserError, RuntimeError):
 			self.about_to_stop_event.set()

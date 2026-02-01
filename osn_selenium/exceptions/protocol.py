@@ -2,15 +2,12 @@ from osn_selenium.exceptions.base import OSNSeleniumError
 from typing import (
 	Any,
 	Iterable,
-	Protocol,
 	Type,
 	Union,
 	get_origin
 )
 
-
 __all__ = ["ProtocolComplianceError", "ProtocolError"]
-
 
 class ProtocolError(OSNSeleniumError):
 	"""

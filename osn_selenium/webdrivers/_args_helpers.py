@@ -1,6 +1,13 @@
+import math
 import trio
-from typing import Any, Callable, Dict
 from osn_selenium.instances.protocols import AnyInstanceWrapper
+from typing import (
+	Any,
+	Callable,
+	Dict,
+	Optional,
+	Union
+)
 from osn_selenium.exceptions.protocol import (
 	ProtocolComplianceError
 )
@@ -13,15 +20,20 @@ from osn_selenium.instances.sync.web_element import (
 from selenium.webdriver.remote.webelement import (
 	WebElement as SeleniumWebElement
 )
-from osn_selenium.webdrivers.protocols import (
-	SyncWebDriver,
-	TrioThreadWebDriver
+from osn_selenium.instances.trio_bidi.web_element import (
+	WebElement as TrioBiDiWebElement
 )
 from osn_selenium.instances.trio_threads.web_element import (
 	WebElement as TrioThreadWebElement
 )
+from osn_selenium.webdrivers.protocols import (
+	SyncWebDriver,
+	TrioBiDiWebDriver,
+	TrioThreadWebDriver
+)
 from osn_selenium.instances.convert import (
 	get_sync_instance_wrapper,
+	get_trio_bidi_instance_wrapper,
 	get_trio_thread_instance_wrapper
 )
 
@@ -31,6 +43,7 @@ __all__ = [
 	"get_wrap_args_function",
 	"unwrap_args",
 	"wrap_sync_args",
+	"wrap_trio_bidi_args",
 	"wrap_trio_thread_args"
 ]
 
@@ -60,6 +73,91 @@ def unwrap_args(args: Any) -> Any:
 	
 	if isinstance(args, AnyInstanceWrapper):
 		return args.legacy
+	
+	return args
+
+
+def wrap_trio_bidi_args(
+		args: Any,
+		lock: trio.Lock,
+		limiter: trio.CapacityLimiter,
+		trio_token: Optional[trio.lowlevel.TrioToken] = None,
+		bidi_buffer_size: Union[int, float] = math.inf,
+) -> Any:
+	"""
+	Recursively wraps Selenium WebElements into TrioBiDiWebElement instances.
+
+	Args:
+		args (Any): Data structure containing potential Selenium WebElements.
+		lock (trio.Lock): Trio lock for synchronization.
+		limiter (trio.CapacityLimiter): Trio capacity limiter.
+		trio_token (Optional[trio.lowlevel.TrioToken]): The Trio token for the current event loop.
+		bidi_buffer_size (Union[int, float]): Buffer size for the BiDi task channel.
+
+	Returns:
+		Any: Data structure with wrapped elements.
+	"""
+	
+	if isinstance(args, list):
+		return [
+			wrap_trio_bidi_args(
+					arg,
+					lock=lock,
+					limiter=limiter,
+					trio_token=trio_token,
+					bidi_buffer_size=bidi_buffer_size,
+			) for arg in args
+		]
+	
+	if isinstance(args, set):
+		return {
+			wrap_trio_bidi_args(
+					arg,
+					lock=lock,
+					limiter=limiter,
+					trio_token=trio_token,
+					bidi_buffer_size=bidi_buffer_size,
+			) for arg in args
+		}
+	
+	if isinstance(args, tuple):
+		return (
+				wrap_trio_bidi_args(
+						arg,
+						lock=lock,
+						limiter=limiter,
+						trio_token=trio_token,
+						bidi_buffer_size=bidi_buffer_size,
+				) for arg in args
+		)
+	
+	if isinstance(args, dict):
+		return {
+			wrap_trio_bidi_args(
+					key,
+					lock=lock,
+					limiter=limiter,
+					trio_token=trio_token,
+					bidi_buffer_size=bidi_buffer_size,
+			): wrap_trio_bidi_args(
+					value,
+					lock=lock,
+					limiter=limiter,
+					trio_token=trio_token,
+					bidi_buffer_size=bidi_buffer_size,
+			)
+			for key, value in args.items()
+		}
+	
+	if isinstance(args, SeleniumWebElement):
+		return get_trio_bidi_instance_wrapper(
+				wrapper_class=TrioBiDiWebElement,
+				legacy_object=args,
+				lock=lock,
+				limiter=limiter,
+				trio_token=trio_token,
+				bidi_buffer_size=bidi_buffer_size,
+		)
 	
 	return args
 
@@ -158,7 +256,22 @@ def get_wrap_args_function(driver: ANY_WEBDRIVER_PROTOCOL_TYPEHINT) -> Callable[
 	
 		return wrapper
 	
-	raise ProtocolComplianceError(instance=driver, expected_protocols=(SyncWebDriver, TrioThreadWebDriver))
+	if isinstance(driver, TrioBiDiWebDriver) and driver.architecture == "trio_bidi":
+		def wrapper(args: Any) -> Any:
+			return wrap_trio_bidi_args(
+					args,
+					lock=driver.lock,
+					limiter=driver.capacity_limiter,
+					trio_token=driver.trio_token,
+					bidi_buffer_size=driver.trio_bidi_buffer_size,
+			)
+	
+		return wrapper
+	
+	raise ProtocolComplianceError(
+			instance=driver,
+			expected_protocols=(SyncWebDriver, TrioThreadWebDriver, TrioBiDiWebDriver)
+	)
 
 
 def build_cdp_kwargs(**kwargs: Any) -> Dict[str, Any]:

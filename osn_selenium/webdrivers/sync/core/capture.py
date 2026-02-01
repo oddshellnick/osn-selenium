@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Optional
+from selenium.webdriver.common.print_page_options import PrintOptions
 from osn_selenium.webdrivers.unified.core.capture import (
 	UnifiedCoreCaptureMixin
 )
@@ -30,7 +31,7 @@ class CoreCaptureMixin(UnifiedCoreCaptureMixin, AbstractCoreCaptureMixin):
 	def page_source(self) -> str:
 		return self._page_source_impl()
 	
-	def print_page(self, print_options: Optional[Any] = None) -> str:
+	def print_page(self, print_options: Optional[PrintOptions] = None) -> str:
 		return self._print_page_impl(print_options=print_options)
 	
 	def save_screenshot(self, filename: str) -> bool:

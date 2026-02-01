@@ -2,7 +2,7 @@ from typing import Optional
 from osn_selenium.models import WindowRect
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.edge import EdgeFlags
-from osn_selenium.webdrivers.trio_threads.blink import BlinkSettingsMixin
+from osn_selenium.webdrivers.trio_threads.blink.settings import BlinkSettingsMixin
 from osn_selenium.webdrivers.unified.edge.settings import (
 	UnifiedEdgeSettingsMixin
 )

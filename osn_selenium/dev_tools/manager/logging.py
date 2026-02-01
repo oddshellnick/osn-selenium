@@ -1,7 +1,7 @@
 import trio
 from osn_selenium.dev_tools.manager.base import BaseMixin
+from osn_selenium._exception_helpers import log_exception
 from osn_selenium.exceptions.devtools import CDPEndExceptions
-from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.logger.models import (
 	CDPLogLevelStats,
 	CDPMainLogEntry,

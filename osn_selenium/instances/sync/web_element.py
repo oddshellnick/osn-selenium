@@ -126,7 +126,7 @@ class WebElement(UnifiedWebElement, AbstractWebElement):
 		
 		return self.from_legacy(legacy_object=web_element)
 	
-	def rect(self) -> Dict:
+	def rect(self) -> Dict[str, int]:
 		return self._rect_impl()
 	
 	def screenshot(self, filename: str) -> bool:

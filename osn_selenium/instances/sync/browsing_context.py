@@ -47,8 +47,8 @@ class BrowsingContext(UnifiedBrowsingContext, AbstractBrowsingContext):
 		
 		UnifiedBrowsingContext.__init__(self, selenium_browsing_context=selenium_browsing_context)
 	
-	def activate(self, context: str) -> Any:
-		return self._activate_impl(context=context)
+	def activate(self, context: str) -> None:
+		self._activate_impl(context=context)
 	
 	def add_event_handler(
 			self,

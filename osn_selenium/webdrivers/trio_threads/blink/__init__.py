@@ -6,6 +6,7 @@ from typing import (
 	Type
 )
 from osn_selenium._typehints import PATH_TYPEHINT
+from osn_selenium.dev_tools.manager import DevTools
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.blink import BlinkFlags
 from osn_selenium.dev_tools.settings import DevToolsSettings
@@ -108,7 +109,6 @@ class BlinkWebDriver(
 				page_load_timeout=page_load_timeout,
 				script_timeout=script_timeout,
 				window_rect=window_rect,
-				devtools_settings=devtools_settings,
 				capacity_limiter=capacity_limiter,
 				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
 				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
@@ -132,3 +132,9 @@ class BlinkWebDriver(
 				cdp_versioned_packages_paths=cdp_versioned_packages_paths,
 				ignore_cdp_version_package_missing=ignore_cdp_version_package_missing,
 		)
+		
+		self._devtools = DevTools(parent_webdriver=self, devtools_settings=devtools_settings)
+	
+	@property
+	def devtools(self) -> DevTools:
+		return self._devtools

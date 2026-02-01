@@ -1,5 +1,10 @@
 import trio
-from typing import Any, Callable, Self
+from typing import (
+	Any,
+	Callable,
+	Dict,
+	Self
+)
 from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances._typehints import SCRIPT_TYPEHINT
 from osn_selenium.instances.convert import get_legacy_instance
@@ -49,7 +54,7 @@ class Script(UnifiedScript, TrioThreadMixin, AbstractScript):
 	async def add_javascript_error_handler(self, handler: Callable[[Any], None]) -> int:
 		return await self.sync_to_trio(sync_function=self._add_javascript_error_handler_impl)(handler=handler)
 	
-	async def execute(self, script: str, *args: Any) -> Any:
+	async def execute(self, script: str, *args: Any) -> Dict[str, Any]:
 		return await self.sync_to_trio(sync_function=self._execute_impl)(script, *args)
 	
 	@classmethod

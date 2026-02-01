@@ -101,7 +101,7 @@ class BaseMixin:
 		self.websocket_url = websocket_url
 		self._new_targets_filter_list = new_targets_filter_list
 		self._new_targets_buffer_size = new_targets_buffer_size
-		self._nursery_object = nursery
+		self._nursery = nursery
 		self.exit_event = exit_event
 		self._target_background_task = target_background_task
 		self._add_target_func = add_target_func
@@ -112,11 +112,14 @@ class BaseMixin:
 		
 		self._new_targets_events_filters = validate_target_event_filter(filter_=new_targets_filter_list)
 		
-		self._cdp_target_type_log_accepted = validate_type_filter(
-				type_=self.type_,
-				filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
-				filter_instances=self._logger_settings.cdp_settings.target_type_filter
-		)
+		if self._logger_settings.cdp_settings is not None:
+			self._cdp_target_type_log_accepted = validate_type_filter(
+					type_=self.type_,
+					filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
+					filter_instances=self._logger_settings.cdp_settings.target_type_filter
+			)
+		else:
+			self._cdp_target_type_log_accepted = False
 		
 		self._cdp_log_stats = CDPLoggerChannelStats(
 				target_id=target_data.target_id,
@@ -163,11 +166,15 @@ class BaseMixin:
 			value (Optional[str]): The new target type.
 		"""
 		
-		self._cdp_target_type_log_accepted = validate_type_filter(
-				type_=value,
-				filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
-				filter_instances=self._logger_settings.cdp_settings.target_type_filter
-		)
+		if self._logger_settings.cdp_settings is not None:
+			self._cdp_target_type_log_accepted = validate_type_filter(
+					type_=value,
+					filter_mode=self._logger_settings.cdp_settings.target_type_filter_mode,
+					filter_instances=self._logger_settings.cdp_settings.target_type_filter
+			)
+		else:
+			self._cdp_target_type_log_accepted = False
+		
 		self.target_data.type_ = value
 	
 	@property

@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from selenium.webdriver.common.bidi.network import Network
 from typing import (
 	Any,
 	AsyncGenerator,
@@ -27,7 +28,7 @@ class UnifiedCoreDevToolsMixin(UnifiedCoreBaseMixin):
 		return self._driver_impl.execute_cdp_cmd(cmd=cmd, cmd_args=build_cdp_kwargs(**cmd_args))
 	
 	@requires_driver
-	def _network_impl(self) -> Any:
+	def _network_impl(self) -> Network:
 		return self._driver_impl.network
 	
 	@requires_driver

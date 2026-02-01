@@ -20,14 +20,6 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 	"""
 	
 	@abstractmethod
-	async def close_webdriver(self) -> None:
-		"""
-		Closes the WebDriver connection and terminates the browser process.
-		"""
-		
-		...
-	
-	@abstractmethod
 	async def restart_webdriver(
 			self,
 			flags: Optional[BlinkFlags] = None,
@@ -71,6 +63,14 @@ class AbstractBlinkLifecycleMixin(AbstractCoreLifecycleMixin):
 			use_browser_exe (Optional[bool]): Whether to manage the browser executable process.
 			start_page_url (Optional[str]): URL to open immediately upon start.
 			window_rect (Optional[WindowRect]): Initial dimensions and position of the window.
+		"""
+		
+		...
+	
+	@abstractmethod
+	async def stop_webdriver(self) -> None:
+		"""
+		Stops the WebDriver connection and terminates the browser process.
 		"""
 		
 		...

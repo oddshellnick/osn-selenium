@@ -67,6 +67,17 @@ class AbstractCoreWindowMixin(ABC):
 		...
 	
 	@abstractmethod
+	def get_orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
+		"""
+		Gets the current orientation of the browser.
+
+		Returns:
+			Literal["LANDSCAPE", "PORTRAIT"]: The current orientation.
+		"""
+		
+		...
+	
+	@abstractmethod
 	def get_window_handle(self, window: Optional[Union[str, int]] = None) -> str:
 		"""
 		Gets the handle of a specific window by handle or index.
@@ -136,17 +147,6 @@ class AbstractCoreWindowMixin(ABC):
 	def minimize_window(self) -> None:
 		"""
 		Minimizes the current window.
-		"""
-		
-		...
-	
-	@abstractmethod
-	def orientation(self) -> Literal["LANDSCAPE", "PORTRAIT"]:
-		"""
-		Gets the current orientation of the browser.
-
-		Returns:
-			Literal["LANDSCAPE", "PORTRAIT"]: The current orientation.
 		"""
 		
 		...

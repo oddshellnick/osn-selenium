@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Dict
 from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.common.bidi.script import (
 	Script as legacyScript
@@ -21,7 +21,7 @@ class UnifiedScript:
 	def _add_javascript_error_handler_impl(self, handler: Callable[[Any], None]) -> int:
 		return self._legacy_impl.add_javascript_error_handler(handler=handler)
 	
-	def _execute_impl(self, script: str, *args: Any) -> Any:
+	def _execute_impl(self, script: str, *args: Any) -> Dict[str, Any]:
 		return self._legacy_impl.execute(script, *args)
 	
 	@property

@@ -26,8 +26,41 @@ class BlinkLifecycleMixin(
 	underlying browser instance, ensuring clean session management.
 	"""
 	
-	async def close_webdriver(self) -> None:
-		await self.sync_to_trio(sync_function=self._close_webdriver_impl)()
+	async def start_webdriver(
+			self,
+			flags: Optional[BlinkFlags] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
+			browser_name_in_system: Optional[str] = None,
+			use_browser_exe: Optional[bool] = None,
+			start_page_url: Optional[str] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		await self.sync_to_trio(sync_function=self._start_webdriver_impl)(
+				flags=flags,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				use_browser_exe=use_browser_exe,
+				start_page_url=start_page_url,
+				window_rect=window_rect,
+		)
+	
+	async def __aenter__(
+			self,
+			flags: Optional[BlinkFlags] = None,
+			browser_exe: Optional[PATH_TYPEHINT] = None,
+			browser_name_in_system: Optional[str] = None,
+			use_browser_exe: Optional[bool] = None,
+			start_page_url: Optional[str] = None,
+			window_rect: Optional[WindowRect] = None,
+	) -> None:
+		await self.start_webdriver(
+				flags=flags,
+				browser_exe=browser_exe,
+				browser_name_in_system=browser_name_in_system,
+				use_browser_exe=use_browser_exe,
+				start_page_url=start_page_url,
+				window_rect=window_rect,
+		)
 	
 	async def restart_webdriver(
 			self,
@@ -47,20 +80,5 @@ class BlinkLifecycleMixin(
 				window_rect=window_rect
 		)
 	
-	async def start_webdriver(
-			self,
-			flags: Optional[BlinkFlags] = None,
-			browser_exe: Optional[PATH_TYPEHINT] = None,
-			browser_name_in_system: Optional[str] = None,
-			use_browser_exe: Optional[bool] = None,
-			start_page_url: Optional[str] = None,
-			window_rect: Optional[WindowRect] = None,
-	) -> None:
-		await self.sync_to_trio(sync_function=self._start_webdriver_impl)(
-				flags=flags,
-				browser_exe=browser_exe,
-				browser_name_in_system=browser_name_in_system,
-				use_browser_exe=use_browser_exe,
-				start_page_url=start_page_url,
-				window_rect=window_rect,
-		)
+	async def stop_webdriver(self) -> None:
+		await self.sync_to_trio(sync_function=self._stop_webdriver_impl)()

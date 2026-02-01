@@ -1,5 +1,9 @@
-from typing import Mapping, Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from selenium.webdriver import Edge as legacyEdge
 from osn_selenium.flags.models.edge import EdgeFlags
 from osn_selenium.flags.edge import EdgeFlagsManager

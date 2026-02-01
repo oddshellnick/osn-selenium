@@ -1,7 +1,7 @@
 from typing import Optional
 from osn_selenium.models import WindowRect
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.flags.models.base import BrowserFlags
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.webdrivers.unified.core.settings import (
 	UnifiedCoreSettingsMixin
 )

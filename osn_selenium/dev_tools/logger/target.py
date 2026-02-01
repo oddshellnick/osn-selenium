@@ -6,10 +6,10 @@ from typing import (
 	Tuple
 )
 from osn_selenium.dev_tools.models import TargetData
+from osn_selenium._exception_helpers import log_exception
 from osn_selenium.dev_tools.settings import LoggerSettings
 from osn_selenium.exceptions.devtools import TrioEndExceptions
 from osn_selenium.dev_tools._validators import validate_log_filter
-from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.logger.models import (
 	CDPTargetLogEntry,
 	FingerprintTargetLogEntry
@@ -30,7 +30,7 @@ class TargetLogger:
 	def __init__(
 			self,
 			logger_settings: LoggerSettings,
-			nursery_object: trio.Nursery,
+			nursery: trio.Nursery,
 			target_data: TargetData,
 			cdp_receive_channel: Optional[trio.MemoryReceiveChannel[CDPTargetLogEntry]],
 			fingerprint_receive_channel: Optional[trio.MemoryReceiveChannel[FingerprintTargetLogEntry]],
@@ -40,7 +40,7 @@ class TargetLogger:
 
 		Args:
 			logger_settings (LoggerSettings): Configuration for logging.
-			nursery_object (trio.Nursery): The Trio nursery to spawn background tasks.
+			nursery (trio.Nursery): The Trio nursery to spawn background tasks.
 			target_data (TargetData): The data of the browser target this logger will log for.
 			cdp_receive_channel (Optional[trio.MemoryReceiveChannel[CDPTargetLogEntry]]):
 				Channel to receive CDP logs.
@@ -52,7 +52,7 @@ class TargetLogger:
 		"""
 		
 		self._target_data = target_data
-		self._nursery_object = nursery_object
+		self._nursery = nursery
 		self._cdp_receive_channel = cdp_receive_channel
 		self._fingerprint_receive_channel = fingerprint_receive_channel
 		self._cdp_file_path: Optional[pathlib.Path] = None
@@ -220,12 +220,12 @@ class TargetLogger:
 				self._cdp_file_writing_stopped = trio.Event()
 		
 				if self._cdp_file_path is not None:
-					self._nursery_object.start_soon(self._write_cdp_file)
+					self._nursery.start_soon(self._write_cdp_file)
 		
 				self._fingerprint_file_writing_stopped = trio.Event()
 		
 				if self._fingerprint_file_path is not None:
-					self._nursery_object.start_soon(self._write_fingerprint_file)
+					self._nursery.start_soon(self._write_fingerprint_file)
 		
 				self._is_active = True
 		except* TrioEndExceptions:
@@ -269,7 +269,7 @@ def build_target_logger(
 	
 	target_logger = TargetLogger(
 			logger_settings=logger_settings,
-			nursery_object=nursery_object,
+			nursery=nursery_object,
 			target_data=target_data,
 			cdp_receive_channel=cdp_recv,
 			fingerprint_receive_channel=fp_recv,
