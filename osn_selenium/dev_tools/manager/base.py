@@ -4,7 +4,6 @@ from contextlib import (
 )
 from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium.dev_tools.logger.main import MainLogger
-from osn_selenium.dev_tools.domains import DomainsSettings
 from osn_selenium.dev_tools._wrappers import DevToolsPackage
 from osn_selenium.dev_tools.settings import DevToolsSettings
 from typing import (
@@ -74,12 +73,12 @@ class BaseMixin:
 			for filter_ in devtools_settings.new_targets_filter
 		] if devtools_settings.new_targets_filter is not None else None
 		
-		self._bidi_connection: Optional[AbstractAsyncContextManager[BidiConnection, Any]] = None
-		self._bidi_connection_object: Optional[BidiConnection] = None
+		self._bidi_connection_context: Optional[AbstractAsyncContextManager[BidiConnection, Any]] = None
+		self._bidi_connection: Optional[BidiConnection] = None
+		self._nursery_context: Optional[AbstractAsyncContextManager[trio.Nursery, Optional[bool]]] = None
+		self._nursery: Optional[trio.Nursery] = None
 		self._devtools_package: Optional[DevToolsPackage] = None
 		self._websocket_url: Optional[str] = None
-		self._nursery: Optional[AbstractAsyncContextManager[trio.Nursery, Optional[bool]]] = None
-		self._nursery_object: Optional[trio.Nursery] = None
 		self._handling_targets: Dict[str, DevToolsTarget] = {}
 		self.targets_lock = trio.Lock()
 		self.exit_event: Optional[trio.Event] = None

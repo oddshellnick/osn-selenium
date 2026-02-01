@@ -101,7 +101,7 @@ class BaseMixin:
 		self.websocket_url = websocket_url
 		self._new_targets_filter_list = new_targets_filter_list
 		self._new_targets_buffer_size = new_targets_buffer_size
-		self._nursery_object = nursery
+		self._nursery = nursery
 		self.exit_event = exit_event
 		self._target_background_task = target_background_task
 		self._add_target_func = add_target_func

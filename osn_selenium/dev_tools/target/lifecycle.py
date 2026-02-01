@@ -93,9 +93,9 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 			fingerprint_detecting_ready_event = trio.Event()
 			target_ready_events.append(fingerprint_detecting_ready_event)
 		
-			self._nursery_object.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
-			self._nursery_object.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
-			self._nursery_object.start_soon(self._run_detach_checking)
+			self._nursery.start_soon(self._run_new_targets_listener, new_targets_listener_ready_event)
+			self._nursery.start_soon(self._setup_fingerprint_injection, fingerprint_detecting_ready_event)
+			self._nursery.start_soon(self._run_detach_checking)
 		
 			if self._domains_settings:
 				for domain_name, domain_config in self._domains_settings.model_dump(exclude_none=True).items():
@@ -117,7 +117,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		
 					domain_handlers_ready_event = trio.Event()
 					target_ready_events.append(domain_handlers_ready_event)
-					self._nursery_object.start_soon(
+					self._nursery.start_soon(
 							self._run_events_handlers,
 							domain_handlers_ready_event,
 							getattr(self._domains_settings, domain_name)
@@ -151,7 +151,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 		"""
 		
 		try:
-			self._logger_cdp_send_channel, self._logger_fingerprint_send_channel, self._logger = build_target_logger(self.target_data, self._nursery_object, self._logger_settings)
+			self._logger_cdp_send_channel, self._logger_fingerprint_send_channel, self._logger = build_target_logger(self.target_data, self._nursery, self._logger_settings)
 		
 			if self._cdp_target_type_log_accepted:
 				await self._logger.run()
@@ -167,7 +167,7 @@ class LifecycleMixin(DiscoveryMixin, EventHandlersMixin, DetachMixin, Fingerprin
 					await self._setup_target()
 		
 					if self._target_background_task is not None:
-						self._nursery_object.start_soon(background_task_decorator(self._target_background_task), self)
+						self._nursery.start_soon(background_task_decorator(self._target_background_task), self)
 		
 					await wait_one(self.exit_event, self.about_to_stop_event)
 		except* (BrowserError, RuntimeError):

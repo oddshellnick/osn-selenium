@@ -1,8 +1,8 @@
 from typing import Any, List, Optional
 from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.target import DevToolsTarget
+from osn_selenium._exception_helpers import log_exception
 from osn_selenium.dev_tools.manager.logging import LoggingMixin
-from osn_selenium.dev_tools._exception_helpers import log_exception
 from osn_selenium.dev_tools.logger.models import CDPTargetTypeStats
 from osn_selenium.exceptions.devtools import (
 	BidiConnectionNotEstablishedError,
@@ -106,7 +106,7 @@ class TargetsMixin(LoggingMixin):
 							websocket_url=self._websocket_url,
 							new_targets_filter_list=self._new_targets_filter,
 							new_targets_buffer_size=self._new_targets_buffer_size,
-							nursery=self._nursery_object,
+							nursery=self._nursery,
 							exit_event=self.exit_event,
 							fingerprint_injection_script=self._fingerprint_injection_script,
 							target_background_task=self._target_background_task,
@@ -123,7 +123,7 @@ class TargetsMixin(LoggingMixin):
 		
 					await self._add_main_cdp_log()
 		
-					self._nursery_object.start_soon(self._handling_targets[target_id].run)
+					self._nursery.start_soon(self._handling_targets[target_id].run)
 		
 					return True
 				else:
@@ -156,7 +156,7 @@ class TargetsMixin(LoggingMixin):
 		"""
 		
 		try:
-			if self._bidi_connection_object is not None:
+			if self._bidi_connection is not None:
 				targets_filter = self._devtools_package.get("target.TargetFilter")(
 						[
 							{"exclude": False, "type": "page"},
@@ -165,7 +165,7 @@ class TargetsMixin(LoggingMixin):
 						]
 				)
 		
-				return await self._bidi_connection_object.session.execute(self._devtools_package.get("target.get_targets")(targets_filter))
+				return await self._bidi_connection.session.execute(self._devtools_package.get("target.get_targets")(targets_filter))
 		
 			raise BidiConnectionNotEstablishedError()
 		except CDPEndExceptions as error:

@@ -7,6 +7,7 @@ from typing import (
 	List,
 	Optional
 )
+from osn_selenium.exceptions.instance import NotExpectedTypeError
 from selenium.webdriver.remote.shadowroot import (
 	ShadowRoot as legacyShadowRoot
 )
@@ -24,10 +25,7 @@ __all__ = ["UnifiedWebElement"]
 class UnifiedWebElement:
 	def __init__(self, selenium_web_element: legacyWebElement):
 		if not isinstance(selenium_web_element, legacyWebElement):
-			raise ExpectedTypeError(
-					expected_class=legacyWebElement,
-					received_instance=selenium_web_element
-			)
+			raise NotExpectedTypeError(expected_type=legacyWebElement, received_instance=selenium_web_element)
 		
 		self._selenium_web_element = selenium_web_element
 	

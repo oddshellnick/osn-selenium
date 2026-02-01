@@ -2,7 +2,6 @@ from osn_selenium.exceptions.base import OSNSeleniumError
 from typing import (
 	Any,
 	Iterable,
-	Protocol,
 	Type,
 	Union,
 	get_origin
