@@ -169,7 +169,7 @@ class LifecycleMixin(TargetsMixin):
 				except (BaseException,):
 					pass
 			
-			self._handling_targets = {}
+			self._handling_targets.clear()
 		
 		@log_on_error
 		async def _close_nursery() -> None:
@@ -207,10 +207,10 @@ class LifecycleMixin(TargetsMixin):
 		self._websocket_url = None
 		self._num_cdp_logs = 0
 		self._num_fingerprint_logs = 0
-		self._cdp_targets_types_stats = {}
-		self._cdp_log_level_stats = {}
-		self._fingerprint_categories_stats = {}
-		self._fingerprint_log_level_stats = {}
+		self._cdp_targets_types_stats.clear()
+		self._cdp_log_level_stats.clear()
+		self._fingerprint_categories_stats.clear()
+		self._fingerprint_log_level_stats.clear()
 		self._is_active = False
 		self._is_closing = False
 	

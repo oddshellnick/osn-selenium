@@ -770,8 +770,8 @@ class BlinkFlagsManager(BrowserFlagsManager):
 	def clear_blink_features(self):
 		"""Clears all configured Blink features."""
 		
-		self._enable_blink_features = {}
-		self._disable_blink_features = {}
+		self._enable_blink_features.clear()
+		self._disable_blink_features.clear()
 	
 	def remove_blink_feature(self, blink_feature_name: str):
 		"""
