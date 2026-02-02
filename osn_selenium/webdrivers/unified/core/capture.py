@@ -1,5 +1,6 @@
-from typing import Any, Optional
+from typing import Optional
 from osn_selenium.webdrivers._decorators import requires_driver
+from selenium.webdriver.common.print_page_options import PrintOptions
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
 
@@ -24,7 +25,7 @@ class UnifiedCoreCaptureMixin(UnifiedCoreBaseMixin):
 		return self._driver_impl.page_source
 	
 	@requires_driver
-	def _print_page_impl(self, print_options: Optional[Any] = None) -> str:
+	def _print_page_impl(self, print_options: Optional[PrintOptions] = None) -> str:
 		return self._driver_impl.print_page(print_options=print_options)
 	
 	@requires_driver

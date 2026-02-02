@@ -93,7 +93,7 @@ class UnifiedWebElement:
 	def _parent_impl(self) -> Any:
 		return self._legacy_impl.parent
 	
-	def _rect_impl(self) -> Dict:
+	def _rect_impl(self) -> Dict[str, int]:
 		return self._legacy_impl.rect
 	
 	def _screenshot_as_base64_impl(self) -> str:

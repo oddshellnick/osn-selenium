@@ -1,10 +1,10 @@
-from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from typing import (
 	List,
 	Literal,
 	Optional,
 	Union
 )
+from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.models import (
 	Position,
 	Rectangle,

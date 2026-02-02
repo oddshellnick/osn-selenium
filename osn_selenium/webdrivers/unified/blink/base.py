@@ -1,6 +1,10 @@
 import pathlib
-from typing import Mapping, Optional, Type
 from osn_selenium.models import WindowRect
+from typing import (
+	Mapping,
+	Optional,
+	Type
+)
 from osn_selenium.flags.blink import BlinkFlagsManager
 from osn_selenium.flags.models.values import ArgumentValue
 from osn_selenium.browsers_handler import get_path_to_browser

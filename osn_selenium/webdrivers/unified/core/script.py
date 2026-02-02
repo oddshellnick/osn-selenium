@@ -1,4 +1,6 @@
 from typing import Any, List, Optional
+from selenium.webdriver.common.bidi.script import Script
+from selenium.webdriver.remote.script_key import ScriptKey
 from osn_selenium.webdrivers._decorators import requires_driver
 from osn_selenium.webdrivers.unified.core.base import UnifiedCoreBaseMixin
 
@@ -20,13 +22,13 @@ class UnifiedCoreScriptMixin(UnifiedCoreBaseMixin):
 		return self._driver_impl.get_pinned_scripts()
 	
 	@requires_driver
-	def _pin_script_impl(self, script: str, script_key: Optional[Any] = None) -> Any:
+	def _pin_script_impl(self, script: str, script_key: Optional[Any] = None) -> ScriptKey:
 		return self._driver_impl.pin_script(script=script, script_key=script_key)
 	
 	@requires_driver
-	def _script_impl(self) -> Any:
+	def _script_impl(self) -> Script:
 		return self._driver_impl.script
 	
 	@requires_driver
-	def _unpin_impl(self, script_key: Any) -> None:
+	def _unpin_impl(self, script_key: ScriptKey) -> None:
 		self._driver_impl.unpin(script_key=script_key)

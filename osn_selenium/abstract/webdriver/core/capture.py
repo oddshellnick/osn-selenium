@@ -1,5 +1,6 @@
-from typing import Any, Optional
+from typing import Optional
 from abc import ABC, abstractmethod
+from selenium.webdriver.common.print_page_options import PrintOptions
 
 
 __all__ = ["AbstractCoreCaptureMixin"]
@@ -56,12 +57,12 @@ class AbstractCoreCaptureMixin(ABC):
 		...
 	
 	@abstractmethod
-	def print_page(self, print_options: Optional[Any] = None) -> str:
+	def print_page(self, print_options: Optional[PrintOptions] = None) -> str:
 		"""
 		Prints the current page to a PDF.
 
 		Args:
-			print_options (Optional[Any]): Options for printing the page.
+			print_options (Optional[PrintOptions]): Options for printing the page.
 
 		Returns:
 			str: A base64-encoded string of the PDF.

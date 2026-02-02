@@ -1,4 +1,5 @@
 from typing import Any, List, Optional
+from selenium.webdriver.remote.script_key import ScriptKey
 from osn_selenium.trio_threads_mixin import TrioThreadMixin
 from osn_selenium.instances.trio_threads.script import Script
 from osn_selenium.instances.convert import (
@@ -42,7 +43,7 @@ class CoreScriptMixin(UnifiedCoreScriptMixin, TrioThreadMixin, AbstractCoreScrip
 	async def get_pinned_scripts(self) -> List[str]:
 		return await self.sync_to_trio(sync_function=self._get_pinned_scripts_impl)()
 	
-	async def pin_script(self, script: str, script_key: Optional[Any] = None) -> Any:
+	async def pin_script(self, script: str, script_key: Optional[Any] = None) -> ScriptKey:
 		return await self.sync_to_trio(sync_function=self._pin_script_impl)(script=script, script_key=script_key)
 	
 	async def script(self) -> Script:
@@ -55,5 +56,5 @@ class CoreScriptMixin(UnifiedCoreScriptMixin, TrioThreadMixin, AbstractCoreScrip
 				limiter=self._capacity_limiter,
 		)
 	
-	async def unpin(self, script_key: Any) -> None:
+	async def unpin(self, script_key: ScriptKey) -> None:
 		await self.sync_to_trio(sync_function=self._unpin_impl)(script_key=script_key)
