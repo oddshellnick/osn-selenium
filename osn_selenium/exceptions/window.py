@@ -1,13 +1,6 @@
 from osn_selenium.exceptions.base import OSNSeleniumError
 
-
-__all__ = [
-	"InvalidWindowHandleError",
-	"InvalidWindowIndexError",
-	"NoWindowHandlesFoundError",
-	"WindowManagementError"
-]
-
+__all__ = ["InvalidWindowHandleError", "InvalidWindowIndexError", "NoWindowHandlesFoundError", "WindowManagementError"]
 
 class WindowManagementError(OSNSeleniumError):
 	"""

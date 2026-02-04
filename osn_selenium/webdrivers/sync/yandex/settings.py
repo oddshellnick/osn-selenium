@@ -2,6 +2,7 @@ from typing import Optional
 from osn_selenium.models import WindowRect
 from osn_selenium._typehints import PATH_TYPEHINT
 from osn_selenium.flags.models.yandex import YandexFlags
+from osn_selenium.webdrivers.sync.chrome.settings import ChromeSettingsMixin
 from osn_selenium.webdrivers.unified.yandex.settings import (
 	UnifiedYandexSettingsMixin
 )
@@ -13,7 +14,11 @@ from osn_selenium.abstract.webdriver.yandex.settings import (
 __all__ = ["YandexSettingsMixin"]
 
 
-class YandexSettingsMixin(UnifiedYandexSettingsMixin, AbstractYandexSettingsMixin):
+class YandexSettingsMixin(
+		UnifiedYandexSettingsMixin,
+		ChromeSettingsMixin,
+		AbstractYandexSettingsMixin
+):
 	"""
 	Mixin for configuring and updating settings of the Yandex WebDriver.
 

@@ -73,7 +73,7 @@ class UnifiedBlinkLifecycleMixin(UnifiedBlinkSettingsMixin, UnifiedCoreLifecycle
 			self._create_driver_impl()
 			self._is_active = True
 	
-	def _close_webdriver_impl(self) -> None:
+	def _stop_webdriver_impl(self) -> None:
 		if self._browser_exe_impl is not None:
 			debugging_port = self._debugging_port_impl
 			pids_with_ports = get_localhost_pids_with_ports()
@@ -83,8 +83,10 @@ class UnifiedBlinkLifecycleMixin(UnifiedBlinkSettingsMixin, UnifiedCoreLifecycle
 					kill_process_by_pid(pid=pid, force=True)
 		
 					is_active = self._check_browser_exe_active_impl()
+		
 					while is_active:
 						is_active = self._check_browser_exe_active_impl()
+		
 						if is_active:
 							time.sleep(0.05)
 		
@@ -103,7 +105,7 @@ class UnifiedBlinkLifecycleMixin(UnifiedBlinkSettingsMixin, UnifiedCoreLifecycle
 			start_page_url: Optional[str] = None,
 			window_rect: Optional[WindowRect] = None,
 	) -> None:
-		self._close_webdriver_impl()
+		self._stop_webdriver_impl()
 		self._start_webdriver_impl(
 				flags=flags,
 				browser_exe=browser_exe,

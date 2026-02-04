@@ -4,7 +4,6 @@ from osn_selenium._cdp_import import (
 	check_cdp_version_exists_on_github
 )
 
-
 __all__ = ["CDPPackageError", "DependencyError"]
 
 _CDP_PACKAGE_EXISTS = """

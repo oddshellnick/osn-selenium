@@ -7,9 +7,7 @@ from typing import (
 	get_origin
 )
 
-
 __all__ = ["ProtocolComplianceError", "ProtocolError"]
-
 
 class ProtocolError(OSNSeleniumError):
 	"""

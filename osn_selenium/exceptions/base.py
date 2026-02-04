@@ -2,9 +2,7 @@ from osn_selenium._exception_helpers import (
 	extract_exception_trace
 )
 
-
 __all__ = ["ExceptionThrown", "OSNSeleniumError"]
-
 
 class OSNSeleniumError(Exception):
 	"""

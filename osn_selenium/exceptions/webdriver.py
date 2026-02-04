@@ -1,12 +1,6 @@
 from osn_selenium.exceptions.base import OSNSeleniumError
 
-
-__all__ = [
-	"WebDriverAlreadyRunningError",
-	"WebDriverError",
-	"WebDriverNotStartedError"
-]
-
+__all__ = ["WebDriverAlreadyRunningError", "WebDriverError", "WebDriverNotStartedError"]
 
 class WebDriverError(OSNSeleniumError):
 	"""

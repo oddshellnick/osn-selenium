@@ -1,20 +1,12 @@
 import trio
+import trio_websocket
 from osn_selenium.exceptions.base import OSNSeleniumError
 from selenium.webdriver.common.bidi.cdp import (
 	BrowserError,
 	CdpConnectionClosed
 )
 
-
-__all__ = [
-	"BidiConnectionNotEstablishedError",
-	"CDPCommandNotFoundError",
-	"CDPEndExceptions",
-	"CantEnterDevToolsContextError",
-	"DevToolsError",
-	"TrioEndExceptions"
-]
-
+__all__ = ["BidiConnectionNotEstablishedError", "CDPCommandNotFoundError", "CDPEndExceptions", "CantEnterDevToolsContextError", "DevToolsError", "TrioEndExceptions", "WebSocketEndExceptions"]
 
 class DevToolsError(OSNSeleniumError):
 	"""
@@ -77,6 +69,12 @@ class BidiConnectionNotEstablishedError(DevToolsError):
 
 
 TrioEndExceptions = (trio.Cancelled, trio.EndOfChannel, trio.ClosedResourceError)
+WebSocketEndExceptions = (
+		trio.Cancelled,
+		trio.EndOfChannel,
+		trio.ClosedResourceError,
+		trio_websocket.ConnectionClosed
+)
 CDPEndExceptions = (
 		trio.Cancelled,
 		trio.EndOfChannel,

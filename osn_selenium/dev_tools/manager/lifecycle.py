@@ -9,7 +9,8 @@ from osn_selenium.dev_tools.logger.main import build_main_logger
 from osn_selenium.exceptions.devtools import (
 	BidiConnectionNotEstablishedError,
 	CDPEndExceptions,
-	CantEnterDevToolsContextError
+	CantEnterDevToolsContextError,
+	TrioEndExceptions
 )
 
 
@@ -41,9 +42,11 @@ class LifecycleMixin(TargetsMixin):
 		
 			if driver is None:
 				self._websocket_url = None
+				return
 		
 			if driver.caps.get("se:cdp"):
 				self._websocket_url = driver.caps.get("se:cdp")
+				return
 		
 			self._websocket_url = driver._get_cdp_details()[1]
 		except CDPEndExceptions as error:
@@ -89,11 +92,8 @@ class LifecycleMixin(TargetsMixin):
 		if self._webdriver.driver is None:
 			raise CantEnterDevToolsContextError(reason="Driver is not initialized")
 		
-		self._bidi_connection_context = self._webdriver.bidi_connection()
-		self._bidi_connection = await self._bidi_connection_context.__aenter__()
-		
-		self._nursery_context = trio.open_nursery()
-		self._nursery = await self._nursery_context.__aenter__()
+		self._nursery = await self._exit_stack.enter_async_context(trio.open_nursery())
+		self._bidi_connection = await self._exit_stack.enter_async_context(self._webdriver.bidi_connection())
 		
 		self._get_devtools_package()
 		self._get_websocket_url()
@@ -103,7 +103,7 @@ class LifecycleMixin(TargetsMixin):
 		
 		self.exit_event = trio.Event()
 		
-		self._fingerprint_injection_script = await self._webdriver.sync_to_trio(sync_function=self._fingerprint_settings.generate_js)()
+		self._fingerprint_injection_script = await self._webdriver.sync_to_trio(sync_function=self._fingerprint_settings.generate_js)() if self._fingerprint_settings is not None else None
 		main_target = (await self._get_all_targets())[0]
 		
 		await self._add_target(target_event=main_target, is_main_target=True)
@@ -124,22 +124,12 @@ class LifecycleMixin(TargetsMixin):
 		
 		await self.start()
 	
-	async def stop(
-			self,
-			exc_type: Optional[Type[BaseException]],
-			exc_val: Optional[BaseException],
-			exc_tb: Optional[TracebackType],
-	) -> None:
+	async def stop(self) -> None:
 		"""
 		Stops the DevTools manager and cleans up resources.
 
 		This method signals all targets to stop, closes the main logger, cancels the nursery,
 		and closes the BiDi connection.
-
-		Args:
-			exc_type (Optional[Type[BaseException]]): The exception type if stopping due to an error.
-			exc_val (Optional[BaseException]): The exception value if stopping due to an error.
-			exc_tb (Optional[TracebackType]): The traceback if stopping due to an error.
 		"""
 		
 		@log_on_error
@@ -147,15 +137,27 @@ class LifecycleMixin(TargetsMixin):
 			"""Stops the main logger and closes its channels."""
 			
 			if self._main_logger_cdp_send_channel is not None:
-				await self._main_logger_cdp_send_channel.aclose()
+				try:
+					await self._main_logger_cdp_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger_cdp_send_channel = None
 			
 			if self._main_logger_fingerprint_send_channel is not None:
-				await self._main_logger_fingerprint_send_channel.aclose()
+				try:
+					await self._main_logger_fingerprint_send_channel.aclose()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger_fingerprint_send_channel = None
 			
 			if self._main_logger is not None:
-				await self._main_logger.close()
+				try:
+					await self._main_logger.close()
+				except TrioEndExceptions:
+					pass
+			
 				self._main_logger = None
 		
 		@log_on_error
@@ -172,24 +174,28 @@ class LifecycleMixin(TargetsMixin):
 			self._handling_targets.clear()
 		
 		@log_on_error
-		async def _close_nursery() -> None:
-			"""Asynchronously exits the Trio nursery context manager."""
+		async def _close_async_stack() -> None:
+			"""
+			Closes the asynchronous resource stack.
+			"""
 			
-			if self._nursery_context is not None:
-				await self._nursery_context.__aexit__(exc_type, exc_val, exc_tb)
+			if self._nursery is not None:
+				try:
+					self._nursery.cancel_scope.cancel()
+				except TrioEndExceptions:
+					pass
 			
-				self._nursery_context = None
 				self._nursery = None
-		
-		@log_on_error
-		async def _close_bidi_connection() -> None:
-			"""Asynchronously exits the BiDi connection context manager."""
 			
-			if self._bidi_connection_context is not None:
-				await self._bidi_connection_context.__aexit__(exc_type, exc_val, exc_tb)
-			
-				self._bidi_connection_context = None
+			if self._bidi_connection is not None:
 				self._bidi_connection = None
+			
+			try:
+				await self._exit_stack.aclose()
+			except TrioEndExceptions:
+				pass
+			except AssertionError:
+				pass  # TODO solve exit issue
 		
 		if not self._is_active:
 			return
@@ -199,8 +205,7 @@ class LifecycleMixin(TargetsMixin):
 		
 		await _stop_all_targets()
 		await _stop_main_logger()
-		await _close_nursery()
-		await _close_bidi_connection()
+		await _close_async_stack()
 		
 		self.exit_event = None
 		self._devtools_package = None
@@ -219,19 +224,22 @@ class LifecycleMixin(TargetsMixin):
 			exc_type: Optional[Type[BaseException]],
 			exc_val: Optional[BaseException],
 			exc_tb: Optional[TracebackType],
-	):
+	) -> bool:
 		"""
 		Asynchronously exits the DevTools event handling context.
 
-		This method is called when exiting an `async with` block with a DevTools instance.
-		It ensures that all event listeners are cancelled, the Trio nursery is closed,
-		and the BiDi connection is properly shut down. Cleanup attempts are made even if
-		an exception occurred within the `async with` block.
-
 		Args:
-			exc_type (Optional[Type[BaseException]]): The exception type, if any, that caused the context to be exited.
+			exc_type (Optional[Type[BaseException]]): The exception type, if any.
 			exc_val (Optional[BaseException]): The exception value, if any.
 			exc_tb (Optional[TracebackType]): The exception traceback, if any.
+
+		Returns:
+			bool: True if an exception was suppressed, False otherwise.
 		"""
 		
-		await self.stop(exc_type=exc_type, exc_val=exc_val, exc_tb=exc_tb)
+		await self.stop()
+		
+		if exc_type is not None and exc_val is not None and exc_tb is not None:
+			return True
+		
+		return False

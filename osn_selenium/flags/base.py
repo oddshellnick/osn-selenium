@@ -463,7 +463,9 @@ class BrowserFlagsManager:
 		
 		for type_name, type_functions in self._flags_types.items():
 			options = type_functions.build_options_function(options)
-		
+
+		options.set_capability("webSocketUrl", True)
+
 		return options
 	
 	def remove_option(self, option: FlagDefinition):

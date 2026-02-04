@@ -1,8 +1,6 @@
 from osn_selenium.exceptions.base import OSNSeleniumError
 
-
 __all__ = ["AbstractImplementationError", "LogicError"]
-
 
 class LogicError(OSNSeleniumError):
 	"""

@@ -52,12 +52,13 @@ from selenium.webdriver.common.bidi.permissions import (
 from selenium.webdriver.common.bidi.webextension import (
 	WebExtension as legacyWebExtension
 )
-from osn_selenium.instances.protocols import (
-	SyncInstanceWrapper,
-	TrioThreadInstanceWrapper
-)
 from selenium.webdriver.common.bidi.browsing_context import (
 	BrowsingContext as legacyBrowsingContext
+)
+from osn_selenium.instances.protocols import (
+	SyncInstanceWrapper,
+	TrioBiDiInstanceWrapper,
+	TrioThreadInstanceWrapper
 )
 from osn_selenium.instances._typehints import (
 	ACTION_CHAINS_TYPEHINT,
@@ -85,11 +86,13 @@ __all__ = [
 	"get_legacy_frame_reference",
 	"get_legacy_instance",
 	"get_sync_instance_wrapper",
+	"get_trio_bidi_instance_wrapper",
 	"get_trio_thread_instance_wrapper"
 ]
 
 _SYNC_WRAPPER_TYPE = TypeVar("_SYNC_WRAPPER_TYPE", bound=SyncInstanceWrapper)
 _TRIO_THREAD_WRAPPER_TYPE = TypeVar("_TRIO_THREAD_WRAPPER_TYPE", bound=TrioThreadInstanceWrapper)
+_TRIO_BIDI_WRAPPER_TYPE = TypeVar("_TRIO_BIDI_WRAPPER_TYPE", bound=TrioBiDiInstanceWrapper)
 
 
 @overload
@@ -241,6 +244,44 @@ def get_trio_thread_instance_wrapper(
 		raise ProtocolComplianceError(instance=wrapper_class, expected_protocols=TrioThreadInstanceWrapper)
 	
 	return wrapper_class.from_legacy(legacy_object=legacy_object, lock=lock, limiter=limiter)
+
+
+def get_trio_bidi_instance_wrapper(
+		wrapper_class: Type[_TRIO_BIDI_WRAPPER_TYPE],
+		legacy_object: Any,
+		lock: trio.Lock,
+		limiter: trio.CapacityLimiter,
+		trio_token: Optional[trio.lowlevel.TrioToken],
+		bidi_buffer_size: Union[int, float],
+) -> _TRIO_BIDI_WRAPPER_TYPE:
+	"""
+	Creates a Trio-compatible BiDi instance wrapper for a legacy Selenium object.
+
+	Args:
+		wrapper_class (Type[_TRIO_BIDI_WRAPPER_TYPE]): The class used to wrap the legacy object.
+		legacy_object (Any): The legacy Selenium object to be wrapped.
+		lock (trio.Lock): The lock for Trio synchronization.
+		limiter (trio.CapacityLimiter): The capacity limiter for Trio.
+		trio_token (Optional[trio.lowlevel.TrioToken]): The Trio token for the current event loop.
+		bidi_buffer_size (Union[int, float]): Buffer size for the BiDi task channel.
+
+	Returns:
+		_TRIO_BIDI_WRAPPER_TYPE: An instance of the wrapper class.
+
+	Raises:
+		TypeIsNotWrapper: If the provided wrapper_class does not implement TrioBiDiInstanceWrapper.
+	"""
+	
+	if not isinstance(wrapper_class, TrioBiDiInstanceWrapper):
+		raise ProtocolComplianceError(instance=wrapper_class, expected_protocols=TrioBiDiInstanceWrapper)
+	
+	return wrapper_class.from_legacy(
+			legacy_object=legacy_object,
+			lock=lock,
+			limiter=limiter,
+			trio_token=trio_token,
+			bidi_buffer_size=bidi_buffer_size
+	)
 
 
 def get_sync_instance_wrapper(wrapper_class: Type[_SYNC_WRAPPER_TYPE], legacy_object: Any) -> _SYNC_WRAPPER_TYPE:

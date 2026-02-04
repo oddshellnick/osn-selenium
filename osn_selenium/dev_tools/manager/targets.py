@@ -1,4 +1,7 @@
 from typing import Any, List, Optional
+
+import trio
+
 from osn_selenium.dev_tools.models import TargetData
 from osn_selenium.dev_tools.target import DevToolsTarget
 from osn_selenium._exception_helpers import log_exception
@@ -123,7 +126,12 @@ class TargetsMixin(LoggingMixin):
 		
 					await self._add_main_cdp_log()
 		
-					self._nursery.start_soon(self._handling_targets[target_id].run)
+					if is_main_target:
+						self._nursery.start_soon(self._handling_targets[target_id].run)
+						await self._handling_targets[target_id].started_event.wait()
+						await trio.sleep(1.0)
+					else:
+						self._nursery.start_soon(self._handling_targets[target_id].run)
 		
 					return True
 				else:
